@@ -954,9 +954,10 @@ package rdb {
 					")
 		op Column[0..1] getPrimaryColumn();
 	
+		//Upraveno jako neusporadana mnozina (z 19.10.)
 		@DVU (subsets="self.ownedMembers")
 		@DVU (subsets="self.columns")
-		ordered val TableColumn[*]#_owningTable ownedColumns;
+		!ordered val TableColumn[*]#_owningTable ownedColumns;
 	
 		@DVU (subsets="self.ownedMembers")
 		!ordered val TableConstraint[*]#owningTable constraints;
@@ -1006,7 +1007,9 @@ package rdb {
 	@OCL(inv="let first : TableColumn = self.columnsMap->first() in
 			  self.columns->forAll(col | col._owningTable = first._owningTable)")
 	class Index extends DbObject {
-		ordered ref TableColumn[1..*] columns;
+		
+		//Upraveno jako neusporadana mnozina (z 19.10.)
+		!ordered ref TableColumn[1..*] columns;
 		
 		@OCL(drv ="self.columns->first()._owningTable")
 		transient derived readonly volatile 
@@ -1029,12 +1032,15 @@ package rdb {
 	//Tady zacina nas kod
 	
 	abstract class Operations {
-		   
+		@DVU (subsets="self.namespace")	
+		derived readonly ref Schema[1] owningSchema;
 	}
 	
 	class CreateTable extends Operations {
 	   attr String tableName;
-	   ordered ref TableColumn[*] tableColumns;
+	   
+	   //Upraveno jako neusporadana mnozina (z 19.10.)
+	   !ordered ref TableColumn[*] tableColumns;
 	   !ordered ref TableConstraint[*] tableConstraints;
 	   ref PrimaryKey[0..1] primaryKey;
 	   
