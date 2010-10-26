@@ -1043,10 +1043,11 @@ package rdb {
 	   !ordered ref TableColumn[*] tableColumns;
 	   !ordered ref TableConstraint[*] tableConstraints;
 	   ref PrimaryKey[0..1] primaryKey;
+	   readonly ref Sequence[1] generateID;
 	   
 	   op boolean createTable(String tableName, TableColumn[*] tableColumns,
 	   						  TableConstraint[*] tableConstraints,
-	   						  PrimaryKey[0..1] primaryKey);
+	   						  PrimaryKey[0..1] primaryKey, Sequence[1] generateID);
 	}
 	
 	class RenameTable extends Operations {
