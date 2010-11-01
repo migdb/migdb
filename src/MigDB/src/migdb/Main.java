@@ -26,11 +26,10 @@ package migdb;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import migdb.ecore.EcoreUtil;
-import migdb.sql.PostgreDialect;
 import migdb.sql.SqlGenerator;
+import migdb.util.Executor;
+import migdb.util.InputParser;
 
 /**
  *
@@ -38,99 +37,10 @@ import migdb.sql.SqlGenerator;
  */
 public class Main {
 
-    private static SqlGenerator sqlGenerator;
-    private static EcoreUtil ecoreUtil;
+    public static void main(String[] args) throws Exception {
 
-    public static void main(String[] args) {
+        Executor executor = new Executor("test.ecore", "input.xml", "postgre");
 
-        try {
-            ecoreUtil = new EcoreUtil("test.ecore");
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-
-        sqlGenerator = new SqlGenerator(ecoreUtil, new PostgreDialect());
-
-        Map<String, String> atts = new HashMap<String, String>();
-        atts.put("jmeno", "string");
-        atts.put("vek", "int");
-        
-        System.out.println(addTable("clovek", atts));
-          System.out.println(addColumn("clovek", "iq", "int"));
-        System.out.println(renameTable("clovek", "opice"));
-   //       System.out.println(renameColumn("opice", "jmeno", "prezdivka"));
-   //     System.out.println(deleteColumn("opice", "iq"));
-   //     System.out.println(deleteTable("opice"));
-   
-   //     System.out.println(deleteTable("opice"));
-        try {
-            ecoreUtil.save();
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
-
-    private static String addTable(String tableName, Map<String, String> columns) {
-        try {
-            ecoreUtil.addClass(tableName);
-        } catch (IOException ex) {
-            return ex.getMessage();
-        }
-        for (String column : columns.keySet()) {
-            try {
-                ecoreUtil.addAttribute(tableName, column, columns.get(column));
-            } catch (IOException ex) {
-                return ex.getMessage();
-            }
-        }
-        return sqlGenerator.addTable(tableName);
-    }
-
-    private static String addColumn(String tableName, String colName, String colType) {
-        try {
-            ecoreUtil.addAttribute(tableName, colName, colType);
-            return sqlGenerator.addColumn(tableName, colName);
-        } catch (IOException ex) {
-            return ex.getMessage();
-        }
-    }
-
-    private static String renameTable(String oldName, String newName) {
-        try {
-            ecoreUtil.renameClass(oldName, newName);
-            return sqlGenerator.renameTable(oldName, newName);
-        } catch (IOException ex) {
-            return ex.getMessage();
-        }
-    }
-
-    private static String renameColumn(String tableName, String oldName, String newName) {
-        try {
-            ecoreUtil.renameAttribute(tableName, oldName, newName);
-            return sqlGenerator.renameColumn(tableName, oldName, newName);
-        } catch (IOException ex) {
-            return ex.getMessage();
-        }
-    }
-
-    private static String deleteTable(String tableName) {
-        try {
-            ecoreUtil.delClass(tableName);
-            return sqlGenerator.delTable(tableName);
-        } catch (IOException ex) {
-            return ex.getMessage();
-        }
-    }
-
-    private static String deleteColumn(String tableName, String columnName) {
-        try {
-            ecoreUtil.delAttribute(tableName, columnName);
-            return sqlGenerator.delColumn(tableName, columnName);
-        } catch (IOException ex) {
-        return ex.getMessage();
-        }
-
+        System.out.println(executor.run());
     }
 }

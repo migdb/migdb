@@ -66,7 +66,7 @@ public class EcoreUtil {
     }
 
     public void addClass(String className) throws IOException {
-        if( getClassByName(className) != null) {
+        if (getClassByName(className) != null) {
             throw new IOException("Trida " + className + "jiz existuje");
         }
 
@@ -76,9 +76,9 @@ public class EcoreUtil {
     }
 
     public void addAttribute(String className, String attName, String attType) throws IOException {
-        
-        if( getAttributeByName(className, attName) != null){
-            throw new IOException("Atribut " + attName + " jiz v tride "+className + " existuje");
+
+        if (getAttributeByName(className, attName) != null) {
+            throw new IOException("Atribut " + attName + " jiz v tride " + className + " existuje");
         }
         EAttribute newAttribute = ecoreFactory.createEAttribute();
         newAttribute.setName(attName);
@@ -88,7 +88,7 @@ public class EcoreUtil {
     }
 
     public void renameClass(String oldClassName, String newClassName) throws IOException {
-        if(getClassByName(newClassName) != null){
+        if (getClassByName(newClassName) != null) {
             throw new IOException("Trida s jmenem " + newClassName + " jiz existuje");
         }
         EClass eClass = getClassByName(oldClassName);
@@ -96,23 +96,23 @@ public class EcoreUtil {
     }
 
     public void renameAttribute(String className, String oldAttName, String newAttName) throws IOException {
-        if( getAttributeByName(className, newAttName) != null){
-            throw new IOException("Atribut " + newAttName + " jiz v tride " +className + " existuje");
+        if (getAttributeByName(className, newAttName) != null) {
+            throw new IOException("Atribut " + newAttName + " jiz v tride " + className + " existuje");
         }
         EAttribute attribute = getAttributeByName(className, oldAttName);
         attribute.setName(newAttName);
     }
 
     public void delClass(String className) throws IOException {
-        if(getClassByName(className) == null) {
+        if (getClassByName(className) == null) {
             throw new IOException("Trida s zadanym jmenem " + className + " neexistuje");
         }
         ePackage.getEClassifiers().remove(getClassByName(className));
     }
 
     public void delAttribute(String className, String attName) throws IOException {
-        if( getAttributeByName(className, attName) == null){
-            throw new IOException("Atribut " + attName + " v tride "+className + " nexistuje");
+        if (getAttributeByName(className, attName) == null) {
+            throw new IOException("Atribut " + attName + " v tride " + className + " nexistuje");
         }
         EAttribute attribute = getAttributeByName(className, attName);
         EClass eClass = getClassByName(className);
@@ -153,16 +153,16 @@ public class EcoreUtil {
 
     private EAttribute getAttributeByName(String className, String attName) {
         EList<EAttribute> attributesList = null;
-        try{
-        attributesList = getClassByName(className).getEAllAttributes();
-        } catch (NullPointerException ex){
+        try {
+            attributesList = getClassByName(className).getEAllAttributes();
+        } catch (NullPointerException ex) {
             return null;
         }
 
         for (EAttribute attribute : attributesList) {
-                if (attribute.getName().equals(attName)) {
-                    return attribute;
-                }
+            if (attribute.getName().equals(attName)) {
+                return attribute;
+            }
         }
         return null;
     }

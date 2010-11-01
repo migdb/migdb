@@ -44,6 +44,7 @@ public class SqlGenerator {
         StringBuffer sql = new StringBuffer();
 
         sql.append("CREATE TABLE " + tableName + " (");
+ 
         Map<String, String> columns = ecoreUtil.getClassAttributes(tableName);
 
         boolean first = true;
@@ -55,7 +56,7 @@ public class SqlGenerator {
             }
             sql.append(columnName + " " + dialect.getType(columns.get(columnName)));
         }
-        sql.append(");");
+        sql.append(");\n");
 
         return sql.toString();
     }
@@ -63,26 +64,26 @@ public class SqlGenerator {
     public String addColumn(String tableName, String columnName) {
         return "ALTER TABLE " + tableName + " ADD COLUMN "
                 + columnName + " "
-                + dialect.getType(ecoreUtil.getAttributeType(tableName, columnName)) + ";";
+                + dialect.getType(ecoreUtil.getAttributeType(tableName, columnName)) + ";\n";
     }
 
     public String renameTable(String oldName, String newName) {
         return "ALTER TABLE " + oldName + " RENAME "
-                + newName + ";";
+                + newName + ";\n";
     }
 
     public String renameColumn(String tableName, String oldName, String newName) {
         return "ALTER TABLE " + tableName + " MODIFY "
                 + oldName + " "
                 + newName + " "
-                + dialect.getType(ecoreUtil.getAttributeType(tableName, newName)) + ";";
+                + dialect.getType(ecoreUtil.getAttributeType(tableName, newName)) + ";\n";
     }
 
     public String delTable(String tableName) {
-        return "DROP TABLE " + tableName + ";";
+        return "DROP TABLE " + tableName + ";\n";
     }
 
     public String delColumn(String tableName, String columnName) {
-        return "ALTER TABLE " + tableName + " DROP " + columnName + ";";
+        return "ALTER TABLE " + tableName + " DROP " + columnName + ";\n";
     }
 }
