@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mmrdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb mm.fel.ecore#//rdb">
+  <mmrdb:RenameTable newName="a"/>
+  <mmrdb:RenameTable newName="b"/>
+  <mmrdb:RenameTable newName="b"/>
+</xmi:XMI>

@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
+    nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
+  <eSubpackages name="reduced" nsURI="http://www.collectionspro.eu/jam/mm/reduced-jam"
+      nsPrefix="reduced">
+    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="sourceModel" lowerBound="1"
+          eType="#//reduced/Model" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="targetModel" eType="#//reduced/Model"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
+          eType="#//reduced/ModelOperation" containment="true" eOpposite="#//reduced/ModelOperation/modelRoot"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Model">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="classes" ordered="false"
+          upperBound="-1" eType="#//reduced/Class" containment="true" eOpposite="#//reduced/Class/owningModel"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
+          eType="#//reduced/ModelRoot" changeable="false" derived="true" eOpposite="#//reduced/ModelRoot/operations"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NamedElement" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Class" eSuperTypes="#//reduced/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
+          eType="#//reduced/Model" changeable="false" derived="true" eOpposite="#//reduced/Model/classes"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//reduced/Class"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
+          upperBound="-1" eType="#//reduced/Property" containment="true" eOpposite="#//reduced/Property/owningClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="classSerialization" eType="#//reduced/ClassSerialization"
+          containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="InheritanceType">
+      <eLiterals name="__not_defined"/>
+      <eLiterals name="singleTable" value="1"/>
+      <eLiterals name="tablePerClass" value="2"/>
+      <eLiterals name="joined" value="3"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ReferenceType">
+      <eLiterals name="__not_defined"/>
+      <eLiterals name="basic" value="1"/>
+      <eLiterals name="oneToOne" value="2"/>
+      <eLiterals name="manyToOne" value="3"/>
+      <eLiterals name="oneToMany" value="4"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ClassSerialization">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isTransient" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEmbedded" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
+          eType="#//reduced/InheritanceType" derived="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//reduced/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningClass" lowerBound="1"
+          eType="#//reduced/Class" changeable="false" derived="true" eOpposite="#//reduced/Class/properties"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="serialization" eType="#//reduced/PropertySerialization"
+          containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
+          eType="#//reduced/Class"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="opositeProperty" eType="#//reduced/Property"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          defaultValueLiteral="0"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
+          defaultValueLiteral="1"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isUnique" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isOrdered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PropertySerialization">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isTransient" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEmbedded" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnNamePattern" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isID" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="false"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="mmrdb">
+    <eClassifiers xsi:type="ecore:EClass" name="Database" eSuperTypes="#//reduced/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
+          upperBound="-1" eType="#//rdb/Schema" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DbObject" abstract="true" eSuperTypes="#//reduced/NamedElement"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Schema" eSuperTypes="#//rdb/DbObject">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="tables" ordered="false"
+          upperBound="-1" eType="#//rdb/Table" containment="true" eOpposite="#//rdb/Table/owningSchema"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="sequences" ordered="false"
+          upperBound="-1" eType="#//rdb/Sequence" containment="true" eOpposite="#//rdb/Sequence/owningSchema"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="indexes" ordered="false"
+          upperBound="-1" eType="#//rdb/Index" containment="true" eOpposite="#//rdb/Index/owningSchema"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Relation" abstract="true">
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.primaryKey->notEmpty() implies in self.indexes->contains(self.primaryKey)"/>
+      </eAnnotations>
+      <eOperations name="getColumns" ordered="false" upperBound="-1" eType="#//rdb/Column"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Table" eSuperTypes="#//rdb/DbObject #//rdb/Relation">
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.primaryKey->notEmpty() implies in self.indexes->contains(self.primaryKey)"/>
+      </eAnnotations>
+      <eOperations name="getPrimaryColumn" eType="#//rdb/Column">
+        <eAnnotations source="OCL">
+          <details key="body" value="if self.primaryKey->isEmpty() then&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;null&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;else&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;self.primaryKey.underlyingIndex.columns->first()&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;endif&#xD;&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;"/>
+        </eAnnotations>
+      </eOperations>
+      <eOperations name="getColumns" ordered="false" upperBound="-1" eType="#//rdb/Column"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
+          eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/tables"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="ownedColumns" ordered="false"
+          upperBound="-1" eType="#//rdb/TableColumn" containment="true" eOpposite="#//rdb/TableColumn/_owningTable"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
+          upperBound="-1" eType="#//rdb/TableConstraint" containment="true" eOpposite="#//rdb/TableConstraint/owningTable"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Sequence" eSuperTypes="#//rdb/DbObject">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
+          eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/sequences"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="cacheSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Constraint" abstract="true" eSuperTypes="#//rdb/DbObject"/>
+    <eClassifiers xsi:type="ecore:EClass" name="TableConstraint" abstract="true" eSuperTypes="#//rdb/Constraint #//reduced/NamedElement">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
+          eType="#//rdb/Table" changeable="false" derived="true" eOpposite="#//rdb/Table/constraints"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ColumnConstraint" abstract="true"
+        eSuperTypes="#//rdb/Constraint">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningColumn" lowerBound="1"
+          eType="#//rdb/TableColumn" changeable="false" derived="true" eOpposite="#//rdb/TableColumn/constraints"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/TableConstraint">
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.constrainedColumn.owningTable = self.targetTable)"/>
+      </eAnnotations>
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.targetTable.getPrimaryColumn()->notEmpty()"/>
+      </eAnnotations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="targetTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constrainedColumn" lowerBound="1"
+          eType="#//rdb/TableColumn"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Column" abstract="true" eSuperTypes="#//reduced/NamedElement">
+      <eOperations name="getOwningTable" eType="#//rdb/Table"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TableColumn" eSuperTypes="#//rdb/Column">
+      <eOperations name="getOwningTable" eType="#//rdb/Table">
+        <eAnnotations source="OCL">
+          <details key="body" value="self._owningTable"/>
+        </eAnnotations>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="_owningTable" lowerBound="1"
+          eType="#//rdb/Table" changeable="false" derived="true" eOpposite="#//rdb/Table/ownedColumns"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
+          upperBound="-1" eType="#//rdb/ColumnConstraint" containment="true" eOpposite="#//rdb/ColumnConstraint/owningColumn"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Index" eSuperTypes="#//rdb/DbObject">
+      <eAnnotations source="OCL">
+        <details key="inv" value="let first : TableColumn = self.columnsMap->first() in&#xD;&#xA;&#x9;&#x9;&#x9;  self.columns->forAll(col | col._owningTable = first._owningTable)"/>
+      </eAnnotations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
+          lowerBound="1" upperBound="-1" eType="#//rdb/TableColumn"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="indexedTable" lowerBound="1"
+          eType="#//rdb/Table" changeable="false" volatile="true" transient="true"
+          derived="true">
+        <eAnnotations source="OCL">
+          <details key="drv" value="self.columns->first()._owningTable"/>
+        </eAnnotations>
+      </eStructuralFeatures>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
+          eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/indexes"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="UniqueIndex" eSuperTypes="#//rdb/TableConstraint">
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.owningTable = self.underlyingIndex.indexedTable"/>
+      </eAnnotations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="underlyingIndex" lowerBound="1"
+          eType="#//rdb/Index"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PrimaryKey" eSuperTypes="#//rdb/UniqueIndex">
+      <eAnnotations source="OCL">
+        <details key="inv" value="self.underlyingIndex.columns.size() = 1"/>
+      </eAnnotations>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Operations" abstract="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
+          eType="#//rdb/Schema" changeable="false" derived="true">
+        <eAnnotations source="DVU">
+          <details key="subsets" value="self.namespace"/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CreateTable" eSuperTypes="#//rdb/Operations">
+      <eOperations name="createTable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="tableName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eParameters name="tableColumns" upperBound="-1" eType="#//rdb/TableColumn"/>
+        <eParameters name="tableConstraints" upperBound="-1" eType="#//rdb/TableConstraint"/>
+        <eParameters name="primaryKey" eType="#//rdb/PrimaryKey"/>
+        <eParameters name="generateID" lowerBound="1" eType="#//rdb/Sequence"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="tableColumns" ordered="false"
+          upperBound="-1" eType="#//rdb/TableColumn"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="tableConstraints" ordered="false"
+          upperBound="-1" eType="#//rdb/TableConstraint"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="generateID" lowerBound="1"
+          eType="#//rdb/Sequence" changeable="false"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RenameTable" eSuperTypes="#//rdb/Operations">
+      <eOperations name="renameTable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="newName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eParameters name="renamedTable" eType="#//rdb/Table"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="renamedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="newName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DeleteTable" eSuperTypes="#//rdb/Operations">
+      <eOperations name="deleteTable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="deletedTable" eType="#//rdb/Table"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="deletedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="AddColumn" eSuperTypes="#//rdb/Operations">
+      <eOperations name="addColumn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="changedTable" eType="#//rdb/Table"/>
+        <eParameters name="newColumnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eParameters name="columnConstrains" upperBound="-1" eType="#//rdb/ColumnConstraint"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="newColumnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="changedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="columnConstrains" ordered="false"
+          upperBound="-1" eType="#//rdb/ColumnConstraint"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="RenameColumn" eSuperTypes="#//rdb/Operations">
+      <eOperations name="renameColumn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="newColumnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eParameters name="changedTable" eType="#//rdb/Table"/>
+        <eParameters name="renamedColumn" eType="#//rdb/TableColumn"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="newColumnName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="changedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="renamedColumn" lowerBound="1"
+          eType="#//rdb/TableColumn">
+        <eAnnotations source="OCL">
+          <details key="inv" value="self.owningTable = changedTable"/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TypeChangeToColumn" eSuperTypes="#//rdb/Operations">
+      <eOperations name="typeChangeToColumn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="newType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eParameters name="changedTable" eType="#//rdb/Table"/>
+        <eParameters name="changedTypeColumn" eType="#//rdb/TableColumn"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="newType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="changedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="changedTypeColumn" lowerBound="1"
+          eType="#//rdb/TableColumn">
+        <eAnnotations source="OCL">
+          <details key="inv" value="self.owningTable = changedTable"/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="DeleteColumn" eSuperTypes="#//rdb/Operations">
+      <eOperations name="deleteColumn" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+        <eParameters name="changedTable" eType="#//rdb/Table"/>
+        <eParameters name="deleteColumn" eType="#//rdb/TableColumn"/>
+      </eOperations>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="changedTable" lowerBound="1"
+          eType="#//rdb/Table"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="deleteColumn" lowerBound="1"
+          eType="#//rdb/TableColumn">
+        <eAnnotations source="OCL">
+          <details key="inv" value="self.owningTable = changedTable"/>
+        </eAnnotations>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eSubpackages name="dml" nsURI="http://www.collectionspro.eu/jam/mm/rdb-dml" nsPrefix="mmrdb-dml">
+      <eClassifiers xsi:type="ecore:EClass" name="Query" eSuperTypes="#//rdb/Relation">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="columnReferences" lowerBound="1"
+            upperBound="-1" eType="#//rdb/dml/ColumnReference" containment="true">
+          <eAnnotations source="DVU">
+            <details key="subsets" value="self.columns"/>
+          </eAnnotations>
+        </eStructuralFeatures>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ColumnReference" eSuperTypes="#//rdb/Column">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="reference" lowerBound="1"
+            eType="#//rdb/Column"/>
+      </eClassifiers>
+    </eSubpackages>
+  </eSubpackages>
+</ecore:EPackage>
