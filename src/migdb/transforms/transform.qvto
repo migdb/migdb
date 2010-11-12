@@ -39,3 +39,10 @@ mapping UML::PrejmenujTridu::model2RDBModel() : RDB::rdb::RenameTable {
 	log("tady #2");
 	newName := self.novyNazev;
 }
+
+query RDB::reduced::Class::isTransient() : Boolean {
+	if (self.classSerialization->notEmpty()) then
+		return self.classSerialization.isTransient
+	endif;
+	return false
+}
