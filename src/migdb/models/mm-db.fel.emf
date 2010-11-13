@@ -1,20 +1,24 @@
 @namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
 package mm;
 
-
-
 @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="mmrdb")
 package rdb {
-
+	
+	class ModelRoot {
+		val Database[1] sourceDB;
+		val Database[1] targetDB;
+		ordered val Operation[0..*]#modelRoot operations;
+	} 
+	
 	abstract class NamedElement {
 		attr String[1] name;
 	}
 	
-	class Database extends rdb.NamedElement {
+	class Database extends NamedElement {
 		!ordered val Schema[*] schemas;
 	}
 	
-	abstract class DbObject extends rdb.NamedElement {
+	abstract class DbObject extends NamedElement {
 	}
 	
 	class Schema extends DbObject {
@@ -65,7 +69,7 @@ package rdb {
 		
 	}
 	
-	abstract class TableConstraint extends Constraint, rdb.NamedElement {
+	abstract class TableConstraint extends Constraint, NamedElement {
 		derived readonly ref Table[1]#constraints owningTable;	   
 	}
 	
@@ -80,7 +84,7 @@ package rdb {
 		ref TableColumn[1] constrainedColumn;
 	}
 	
-	abstract class Column extends rdb.NamedElement {
+	abstract class Column extends NamedElement {
 	
 		// Implemented in subclasses
 		op Table getOwningTable();
@@ -118,12 +122,11 @@ package rdb {
 	class PrimaryKey extends UniqueIndex {
 	}
 		
-	abstract class Operations {
-		@DVU (subsets="self.namespace")	
-		derived readonly ref Schema[1] owningSchema;
+	abstract class Operation {
+		derived readonly ref ModelRoot[1]#operations modelRoot;
 	}
 	
-	class CreateTable extends Operations {
+	class CreateTable extends Operation {
 	   attr String tableName;
 	   
 	   !ordered ref TableColumn[*] tableColumns;
@@ -137,20 +140,20 @@ package rdb {
 	   						  PrimaryKey[0..1] primaryKey, Sequence[1] generateID);
 	}
 	
-	class RenameTable extends Operations {
+	class RenameTable extends Operation {
 	   ref Table[1] renamedTable;
 	   attr String newName;
 	   
 	   op boolean renameTable(String newName, Table renamedTable);
 	}
 	
-	class DeleteTable extends Operations {
+	class DeleteTable extends Operation {
 		ref Table[1] deletedTable;
 		
 		op boolean deleteTable(Table deletedTable);		   
 	}
 	
-	class AddColumn extends Operations {
+	class AddColumn extends Operation {
 	   attr String newColumnName;
 	   ref Table[1] changedTable;
 	   !ordered ref ColumnConstraint[*] columnConstrains;
@@ -159,7 +162,7 @@ package rdb {
 	   						ColumnConstraint[*] columnConstrains);
 	}
 	
-	class RenameColumn extends Operations {
+	class RenameColumn extends Operation {
 	   attr String newColumnName;
 	   ref Table[1] changedTable;
 	   
@@ -170,7 +173,7 @@ package rdb {
 	   						   TableColumn renamedColumn);
 	}
 	
-	class TypeChangeToColumn extends Operations {
+	class TypeChangeToColumn extends Operation {
 	   attr String newType;
 	   ref Table[1] changedTable;
 	   
@@ -182,7 +185,7 @@ package rdb {
 	   
 	}
 	
-	class DeleteColumn extends Operations {
+	class DeleteColumn extends Operation {
 	   ref Table[1] changedTable;
 	   
 	   @OCL(inv="self.owningTable = changedTable")
@@ -210,4 +213,3 @@ package rdb {
 		*/
 	}
 }
-

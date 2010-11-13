@@ -26,6 +26,7 @@ package reduced {
 		derived readonly ref Model[1]#classes owningModel;
 		
 		ref Class[0..1] parent;	
+		attr boolean isPrimitive = false;
 		!ordered val Property[*]#owningClass properties;
 		
 		val ClassSerialization[0..1] classSerialization;
@@ -58,7 +59,7 @@ package reduced {
 		attr boolean[1] isEmbedded = false;
 
 		// Name of table overriding the default name
-		attr String[0..1] tableName;derived 
+		attr String[0..1] tableName; 
 		attr InheritanceType[1] inheritanceType;
 		
 		//ref kernel.Property[0..1] primaryKeyJoinColumn;
@@ -105,4 +106,3 @@ package reduced {
 		// attr String[0..1] joinColumnName;
 	}
 }
-
