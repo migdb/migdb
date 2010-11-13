@@ -1,21 +1,121 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <trace:Trace xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:trace="http:///www.eclipse.org/m2m/qvt/operational/trace.ecore">
   <traceRecords>
-    <mappingOperation name="model2RDBModel" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//model2RDBModel"/>
+    <mappingOperation name="test" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//test"/>
     </mappingOperation>
     <context>
-      <context name="self" type="PrejmenujTridu">
+      <context name="self" type="ModelRoot">
         <value>
-          <modelElement href="platform:/resource/migdb/SadaZmen.xmi#/"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#/"/>
         </value>
       </context>
     </context>
     <parameters/>
     <result>
-      <result kind="OUT" name="result" type="RenameTable">
+      <result kind="OUT" name="result" type="ModelRoot">
         <value>
-          <modelElement href="platform:/resource/migdb/vystup.xml#/2"/>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#/"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toDBmodel" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toDBmodel"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Model">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Database">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toSchema" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toSchema"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Model">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Schema">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Class">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.1"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Table">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Class">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Table">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Class">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="Table">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.2"/>
         </value>
       </result>
     </result>

@@ -25,6 +25,6 @@
     </classes>
     <classes name="String" isPrimitive="true"/>
     <classes name="Int" isPrimitive="true"/>
-    <classes name="Boolean"/>
+    <classes name="Boolean" isPrimitive="true"/>
   </sourceModel>
 </reduced:ModelRoot>

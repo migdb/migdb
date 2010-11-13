@@ -23,24 +23,44 @@
  * 
  */
  
-modeltype UML uses 'pokus';
-modeltype RDB uses 'mm';
+modeltype APP uses 'mm-app';
+modeltype RDB uses 'mm-db';
 
-transformation Simpleuml_To_Rdb(in uml : UML, out RDB);
+transformation Simpleuml_To_Rdb(in uml : APP, out RDB);
 
 main() {
-	log("tady #1");
-	uml.rootObjects()[UML::PrejmenujTridu]->map model2RDBModel();
-	log("tady #3");
+	log("zacatek transformace");
+	uml.rootObjects()[APP::reduced::ModelRoot]->map test();
+	log("konec transformace");
+}
+
+mapping APP::reduced::ModelRoot::test() : RDB::rdb::ModelRoot {
+	log("zde");
+	sourceDB := self.sourceModel.map toDBmodel();
+}
+
+mapping APP::reduced::Model::toDBmodel() : RDB::rdb::Database {
+	log("tu");
+	schemas += self.map toSchema();
+}
+
+mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
+	log("tutu");
+	self.classes->forEach(Class) {
+		if(Class.isPrimitive = false) then {
+			tables += Class.map toTables();
+		} endif;
+	}
+}
+
+mapping APP::reduced::Class::toTables() : RDB::rdb::Table {
+	log("tututu");
+	name := self.name;
 }
 
 
-mapping UML::PrejmenujTridu::model2RDBModel() : RDB::rdb::RenameTable {
-	log("tady #2");
-	newName := self.novyNazev;
-}
 
-query RDB::reduced::Class::isTransient() : Boolean {
+query APP::reduced::Class::isTransient() : Boolean {
 	if (self.classSerialization->notEmpty()) then
 		return self.classSerialization.isTransient
 	endif;

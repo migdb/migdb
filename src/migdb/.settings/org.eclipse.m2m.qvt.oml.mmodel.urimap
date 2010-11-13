@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
 <uriMap:MappingContainer xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:uriMap="http:///www.eclipse.org/m2m/qvt/oml/MModelUriMap/1.0.0">
-  <mapping sourceURI="mm" targetURI="platform:/resource/migdb/mm.fel.ecore"/>
-  <mapping sourceURI="SadaZmen" targetURI="platform:/resource/migdb/SadaZmen.ecore"/>
-  <mapping sourceURI="pokus" targetURI="platform:/resource/migdb/SadaZmen.ecore"/>
+  <mapping sourceURI="mm-app" targetURI="platform:/resource/migdb/models/mm-app.fel.ecore"/>
+  <mapping sourceURI="mm-db" targetURI="platform:/resource/migdb/models/mm-db.fel.ecore"/>
 </uriMap:MappingContainer>
