@@ -27,6 +27,7 @@ package reduced {
 		derived readonly ref Model[1]#classes owningModel;
 		
 		ref Class[0..1] parent;	
+		attr boolean isPrimitive = false;
 		!ordered val Property[*]#owningClass properties;
 		
 		val ClassSerialization[0..1] classSerialization;
@@ -59,7 +60,7 @@ package reduced {
 		attr boolean[1] isEmbedded = false;
 
 		// Name of table overriding the default name
-		attr String[0..1] tableName;derived 
+		attr String[0..1] tableName; 
 		attr InheritanceType[1] inheritanceType;
 		
 		//ref kernel.Property[0..1] primaryKeyJoinColumn;
@@ -109,6 +110,12 @@ package reduced {
 
 @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="mmrdb")
 package rdb {
+	
+	class ModelRoot {
+		val Database[1] sourceDB;
+		val Database[1] targetDB;
+		ordered val Operation[0..*]#modelRoot operations;
+	} 
 	
 	class Database extends reduced.NamedElement {
 		!ordered val Schema[*] schemas;
@@ -218,12 +225,11 @@ package rdb {
 	class PrimaryKey extends UniqueIndex {
 	}
 		
-	abstract class Operations {
-		@DVU (subsets="self.namespace")	
-		derived readonly ref Schema[1] owningSchema;
+	abstract class Operation {
+		derived readonly ref ModelRoot[1]#operations modelRoot;
 	}
 	
-	class CreateTable extends Operations {
+	class CreateTable extends Operation {
 	   attr String tableName;
 	   
 	   !ordered ref TableColumn[*] tableColumns;
@@ -237,20 +243,20 @@ package rdb {
 	   						  PrimaryKey[0..1] primaryKey, Sequence[1] generateID);
 	}
 	
-	class RenameTable extends Operations {
+	class RenameTable extends Operation {
 	   ref Table[1] renamedTable;
 	   attr String newName;
 	   
 	   op boolean renameTable(String newName, Table renamedTable);
 	}
 	
-	class DeleteTable extends Operations {
+	class DeleteTable extends Operation {
 		ref Table[1] deletedTable;
 		
 		op boolean deleteTable(Table deletedTable);		   
 	}
 	
-	class AddColumn extends Operations {
+	class AddColumn extends Operation {
 	   attr String newColumnName;
 	   ref Table[1] changedTable;
 	   !ordered ref ColumnConstraint[*] columnConstrains;
@@ -259,7 +265,7 @@ package rdb {
 	   						ColumnConstraint[*] columnConstrains);
 	}
 	
-	class RenameColumn extends Operations {
+	class RenameColumn extends Operation {
 	   attr String newColumnName;
 	   ref Table[1] changedTable;
 	   
@@ -270,7 +276,7 @@ package rdb {
 	   						   TableColumn renamedColumn);
 	}
 	
-	class TypeChangeToColumn extends Operations {
+	class TypeChangeToColumn extends Operation {
 	   attr String newType;
 	   ref Table[1] changedTable;
 	   
@@ -282,7 +288,7 @@ package rdb {
 	   
 	}
 	
-	class DeleteColumn extends Operations {
+	class DeleteColumn extends Operation {
 	   ref Table[1] changedTable;
 	   
 	   @OCL(inv="self.owningTable = changedTable")
