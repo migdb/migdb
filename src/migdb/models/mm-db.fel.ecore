@@ -93,6 +93,8 @@
           eType="#//rdb/Table" changeable="false" derived="true" eOpposite="#//rdb/Table/ownedColumns"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
           upperBound="-1" eType="#//rdb/ColumnConstraint" containment="true" eOpposite="#//rdb/ColumnConstraint/owningColumn"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Index" eSuperTypes="#//rdb/DbObject">
       <eAnnotations source="OCL">

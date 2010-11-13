@@ -56,9 +56,41 @@ mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
 mapping APP::reduced::Class::toTables() : RDB::rdb::Table {
 	log("tututu");
 	name := self.name;
+	self.properties->forEach(Property) {
+		if(Property.serialization = null or (Property.serialization.isTransient = false)) then {
+			ownedColumns += Property.map toColumn();
+		} endif;
+	}
 }
 
+mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
 
+	if(self.serialization = null or self.serialization.columnName = "") then {
+		name := self.name;
+	} else {
+		name := self.serialization.columnName;
+	} endif;
+	
+	if(self.type.isPrimitive = true) then {		
+		switch {
+			case (self.type.name = "String") {
+				type:= "varchar";
+			}
+			case (self.type.name = "Int") {
+				type := "number";
+			}
+			case (self.type.name = "Boolean") {
+				type := "number";
+			}
+			else {
+				log("neznamy typ" + self.type.name);
+			}
+		}	
+	} else {
+		// jedna se o FK
+		type := "number";
+	} endif;
+}
 
 query APP::reduced::Class::isTransient() : Boolean {
 	if (self.classSerialization->notEmpty()) then

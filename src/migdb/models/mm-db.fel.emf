@@ -97,6 +97,8 @@ package rdb {
 		
 		@OCL(body="self._owningTable")
 		op Table getOwningTable();
+		
+		attr String[1] type;
 	}
 	
 	@OCL(inv="let first : TableColumn = self.columnsMap->first() in

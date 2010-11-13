@@ -13,8 +13,13 @@
     </classes>
     <classes name="Autor" parent="//@sourceModel/@classes.2">
       <properties name="clovek" type="//@sourceModel/@classes.2"/>
-      <properties name="knihy" type="//@sourceModel/@classes.0" upperBound="-1"/>
+      <properties name="knihy" type="//@sourceModel/@classes.0" upperBound="-1">
+        <serialization isTransient="true"/>
+      </properties>
       <properties name="dobrySpisovatel" type="//@sourceModel/@classes.5"/>
+      <properties name="pocetKnih" type="//@sourceModel/@classes.4">
+        <serialization isTransient="true"/>
+      </properties>
       <classSerialization inheritanceType="joined"/>
     </classes>
     <classes name="Clovek">
