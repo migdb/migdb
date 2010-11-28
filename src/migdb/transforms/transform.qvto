@@ -30,22 +30,22 @@ transformation Simpleuml_To_Rdb(in uml : APP, out RDB);
 
 main() {
 	log("zacatek transformace");
-	uml.rootObjects()[APP::reduced::ModelRoot]->map test();
+	uml.rootObjects()[APP::reduced::ModelRoot]->map toRdbRoot();
 	log("konec transformace");
 }
 
-mapping APP::reduced::ModelRoot::test() : RDB::rdb::ModelRoot {
-	log("zde");
+mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot {
+	log("toRdbRoot sekce");
 	sourceDB := self.sourceModel.map toDBmodel();
 }
 
 mapping APP::reduced::Model::toDBmodel() : RDB::rdb::Database {
-	log("tu");
+	log("toDBmodel sekce");
 	schemas += self.map toSchema();
 }
 
 mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
-	log("tutu");
+	log("toSchema sekce");
 	self.classes->forEach(Class) {
 		if(Class.isPrimitive = false) then {
 			tables += Class.map toTables();
@@ -54,17 +54,32 @@ mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
 }
 
 mapping APP::reduced::Class::toTables() : RDB::rdb::Table {
-	log("tututu");
+	log("toTables sekce");
 	name := self.name;
+	//var collumnSet: Set(RDB::rdb::TableColumn);
+    
 	self.properties->forEach(Property) {
-		if(Property.serialization = null or (Property.serialization.isTransient = false)) then {
-			ownedColumns += Property.map toColumn();
-		} endif;
-	}
+		if((Property.serialization = null or (Property.serialization.isTransient = false))) then {	
+			var col: RDB::rdb::TableColumn = Property.map toColumn(); 
+			ownedColumns += col;	
+			if(Property.serialization.isID = true) then {
+				primaryKey:= col.map toPrimaryKey();	
+		    	constraints+=primaryKey;
+		    }endif;		
+		} endif;		
+	};
+	
+	//constraints->forEach(Constraint){
+		//constraint.
+	//}
+	//primaryKey := map toPK(collumnSet, result);
+	
 }
 
-mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
 
+
+mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
+	log("toColumn sekce");
 	if(self.serialization = null or self.serialization.columnName = "") then {
 		name := self.name;
 	} else {
@@ -91,6 +106,24 @@ mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
 		type := "number";
 	} endif;
 }
+
+mapping RDB::rdb::TableColumn::toPrimaryKey() : RDB::rdb::PrimaryKey{
+	log("toPrimaryKey mappovani");
+	owningTable = self._owningTable;
+	name := self.name+"_"+self._owningTable.name;
+	self._owningTable.primaryKey=result;
+	self._owningTable.constraints+=result;
+	//underlyingIndex := 
+}
+
+//mapping toPK(s:Set(RDB::rdb::TableColumn),table:RDB::rdb::Table) : RDB::rdb::PrimaryKey{
+//		log("vstupuju do PK mappovani");
+//		s->forEach(tableCol){
+//			underlyingIndex.columns+=tableCol;
+//		};
+//		//owningTable:= underlyingIndex.columns->first().;
+//		owningTable = table;
+//}
 
 query APP::reduced::Class::isTransient() : Boolean {
 	if (self.classSerialization->notEmpty()) then
