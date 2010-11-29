@@ -46,33 +46,50 @@ mapping APP::reduced::Model::toDBmodel() : RDB::rdb::Database {
 
 mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
 	log("toSchema sekce");
+		
 	self.classes->forEach(Class) {
 		if(Class.isPrimitive = false) then {
-			tables += Class.map toTables();
+			var table:RDB::rdb::Table:=Class.map toTable();
+			tables += table;
 		} endif;
-	}
+	};
 }
 
-mapping APP::reduced::Class::toTables() : RDB::rdb::Table {
-	log("toTables sekce");
+
+mapping APP::reduced::Class::toTable() : RDB::rdb::Table {
+	log("toTables sekce "+self.name);
 	name := self.name;
-	//var collumnSet: Set(RDB::rdb::TableColumn);
-    
+	
+	//var parent:APP::reduced::Class = self.parent;
+	//var table:RDB::rdb::Table ;
+	//while(parent <> null){
+		//table =
+		// owningSchema.tables+=parent.map toTable();
+			//};
+			
+	if(self.parent <> null)then{
+		primaryKey:= self.map toAncestorId();
+		constraints+=primaryKey;
+		primaryKey.owningTable = result;		
+	}endif;
+	
 	self.properties->forEach(Property) {
 		if((Property.serialization = null or (Property.serialization.isTransient = false))) then {	
 			var col: RDB::rdb::TableColumn = Property.map toColumn(); 
 			ownedColumns += col;	
-			if(Property.serialization.isID = true) then {
+			
+			if(Property.isID() = true) then {
 				primaryKey:= col.map toPrimaryKey();	
 		    	constraints+=primaryKey;
+		    }endif;
+		    
+		    if(Property.isForeignKey() = true) then{
+		    	var const : RDB::rdb::ForeignKey := Property.map toForeignKey();
+	    		const.owningTable =result;
+				result.constraints+=const;
 		    }endif;		
 		} endif;		
 	};
-	
-	//constraints->forEach(Constraint){
-		//constraint.
-	//}
-	//primaryKey := map toPK(collumnSet, result);
 	
 }
 
@@ -80,12 +97,8 @@ mapping APP::reduced::Class::toTables() : RDB::rdb::Table {
 
 mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
 	log("toColumn sekce");
-	if(self.serialization = null or self.serialization.columnName = "") then {
-		name := self.name;
-	} else {
-		name := self.serialization.columnName;
-	} endif;
 	
+	name = self.getName();
 	if(self.type.isPrimitive = true) then {		
 		switch {
 			case (self.type.name = "String") {
@@ -95,15 +108,20 @@ mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn {
 				type := "number";
 			}
 			case (self.type.name = "Boolean") {
-				type := "number";
+				//zatim boolean
+				type := "boolean";
 			}
 			else {
 				log("neznamy typ" + self.type.name);
 			}
 		}	
 	} else {
-		// jedna se o FK
-		type := "number";
+		if(self.serialization.isID) then{
+			type :="PK";
+		} else{
+		// jedna se o FK		
+		type := "FK";
+		} endif;
 	} endif;
 }
 
@@ -115,6 +133,11 @@ mapping RDB::rdb::TableColumn::toPrimaryKey() : RDB::rdb::PrimaryKey{
 	self._owningTable.constraints+=result;
 	//underlyingIndex := 
 }
+
+mapping APP::reduced::Property::toForeignKey(): RDB::rdb::ForeignKey{
+	result.name := "FK "+ self.name;
+	log("toForeignKey sekce" + "  "+ self.name);
+} 
 
 //mapping toPK(s:Set(RDB::rdb::TableColumn),table:RDB::rdb::Table) : RDB::rdb::PrimaryKey{
 //		log("vstupuju do PK mappovani");
@@ -130,4 +153,44 @@ query APP::reduced::Class::isTransient() : Boolean {
 		return self.classSerialization.isTransient
 	endif;
 	return false
+}
+
+query APP::reduced::Property::getName(): String{
+	if(self.serialization = null or self.serialization.columnName = "") then {
+		return self.name;
+	} else {
+		return self.serialization.columnName;
+	} endif;
+	return null;
+}
+
+query APP::reduced::Property::isForeignKey(): Boolean{
+	log("v sekci isForeignKey ");
+	
+	if((self.type.isPrimitive = true) = false and (self.serialization.isID =true) = false) then {
+		return true;
+	} endif;
+	return false;
+}
+
+mapping APP::reduced::Class::toAncestorId():RDB::rdb::PrimaryKey{
+	log("toAncestorID");
+	var temp:APP::reduced::Class := self;
+	while((temp.parent = null)=false){
+		temp:=temp.parent;
+			};
+	temp.properties->forEach(Property){
+		if(Property.isID())then{
+				result.name=Property.name;
+				break;
+			}endif;
+	};
+	//return null;
+}
+
+query APP::reduced::Property::isID():Boolean{
+	if(self.serialization.isID = true) then {
+		return true;
+	}endif;
+	return false;
 }

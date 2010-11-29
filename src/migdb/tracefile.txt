@@ -61,13 +61,13 @@
     </result>
   </traceRecords>
   <traceRecords>
-    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    <mappingOperation name="toTable" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTable"/>
     </mappingOperation>
     <context>
       <context name="self" type="Class">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2"/>
         </value>
       </context>
     </context>
@@ -87,7 +87,7 @@
     <context>
       <context name="self" type="Property">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.2"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2/@properties.1"/>
         </value>
       </context>
     </context>
@@ -107,7 +107,7 @@
     <context>
       <context name="self" type="Property">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.3"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2/@properties.0"/>
         </value>
       </context>
     </context>
@@ -121,53 +121,13 @@
     </result>
   </traceRecords>
   <traceRecords>
-    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
-    </mappingOperation>
-    <context>
-      <context name="self" type="Property">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.1"/>
-        </value>
-      </context>
-    </context>
-    <parameters/>
-    <result>
-      <result kind="OUT" name="result" type="TableColumn">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.2"/>
-        </value>
-      </result>
-    </result>
-  </traceRecords>
-  <traceRecords>
-    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
-    </mappingOperation>
-    <context>
-      <context name="self" type="Property">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.0"/>
-        </value>
-      </context>
-    </context>
-    <parameters/>
-    <result>
-      <result kind="OUT" name="result" type="TableColumn">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.3"/>
-        </value>
-      </result>
-    </result>
-  </traceRecords>
-  <traceRecords>
     <mappingOperation name="toPrimaryKey" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
       <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toPrimaryKey"/>
     </mappingOperation>
     <context>
       <context name="self" type="TableColumn">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.3"/>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.1"/>
         </value>
       </context>
     </context>
@@ -181,8 +141,8 @@
     </result>
   </traceRecords>
   <traceRecords>
-    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    <mappingOperation name="toTable" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTable"/>
     </mappingOperation>
     <context>
       <context name="self" type="Class">
@@ -201,21 +161,21 @@
     </result>
   </traceRecords>
   <traceRecords>
-    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
+    <mappingOperation name="toAncestorId" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toAncestorId"/>
     </mappingOperation>
     <context>
-      <context name="self" type="Property">
+      <context name="self" type="Class">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.1/@properties.2"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.1"/>
         </value>
       </context>
     </context>
     <parameters/>
     <result>
-      <result kind="OUT" name="result" type="TableColumn">
+      <result kind="OUT" name="result" type="PrimaryKey">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1/@ownedColumns.0"/>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1/@constraints.0"/>
         </value>
       </result>
     </result>
@@ -235,19 +195,59 @@
     <result>
       <result kind="OUT" name="result" type="TableColumn">
         <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1/@ownedColumns.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toForeignKey" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toForeignKey"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.1/@properties.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ForeignKey">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1/@constraints.1"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.1/@properties.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="TableColumn">
+        <value>
           <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.1/@ownedColumns.1"/>
         </value>
       </result>
     </result>
   </traceRecords>
   <traceRecords>
-    <mappingOperation name="toTables" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTables"/>
+    <mappingOperation name="toTable" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toTable"/>
     </mappingOperation>
     <context>
       <context name="self" type="Class">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0"/>
         </value>
       </context>
     </context>
@@ -267,7 +267,7 @@
     <context>
       <context name="self" type="Property">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2/@properties.1"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.1"/>
         </value>
       </context>
     </context>
@@ -287,7 +287,7 @@
     <context>
       <context name="self" type="Property">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.2/@properties.0"/>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.0"/>
         </value>
       </context>
     </context>
@@ -316,6 +316,66 @@
       <result kind="OUT" name="result" type="PrimaryKey">
         <value>
           <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.2/@constraints.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.2"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="TableColumn">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.2/@ownedColumns.2"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toColumn"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="TableColumn">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.2/@ownedColumns.3"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toForeignKey" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toForeignKey"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.3"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="ForeignKey">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.2/@constraints.1"/>
         </value>
       </result>
     </result>
