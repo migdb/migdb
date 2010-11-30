@@ -166,7 +166,6 @@ query APP::reduced::Property::getName(): String{
 
 query APP::reduced::Property::isForeignKey(): Boolean{
 	log("v sekci isForeignKey ");
-	
 	if((self.type.isPrimitive = true) = false and (self.serialization.isID =true) = false) then {
 		return true;
 	} endif;
