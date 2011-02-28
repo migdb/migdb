@@ -3,106 +3,98 @@ package mm;
 
 @namespace(uri="http://www.collectionspro.eu/jam/mm/reduced-jam", prefix="reduced")
 package reduced {
+  class ModelRoot {
+    val ModelGeneration[+]#modelRoot modelGenerations;
+    val operations.ModelOperation[*]#modelRoot operations;
+  }
 
-	class ModelRoot {
-		val Model[1] sourceModel;
-		val Model[0..1] targetModel;
-		ordered val ModelOperation[*]#modelRoot operations;
-	}
+  class ModelGeneration {
+    readonly derived ref ModelRoot[1]#modelGenerations modelRoot;
+    attr boolean[1] isMissing = false;
+    !ordered val Class[*]#owningModel classes;
+  }
 
-	class Model {
-		!ordered val Class[*]#owningModel classes;		
-	}
-	
-	abstract class ModelOperation {
-		derived readonly ref ModelRoot[1]#operations modelRoot;			
-	}
+  class Class {
+    readonly derived ref ModelGeneration[1]#classes owningModel;
+    attr String[1] name;
+    ref Class parent;
+    attr boolean isAbstract = false;
+    attr boolean isPrimitive = false;
+    !ordered val Property[*]#owningClass properties;
+    attr boolean[1] isTransient = false;
+    attr boolean[1] isEmbedded = false;
+    attr String tableName;
+    attr InheritanceType[1] inheritanceType;
+  }
 
-	abstract class NamedElement {
-		attr String[1] name;
-	}
+  enum InheritanceType {
+    __not_defined = 0;
+    singleTable = 1;
+    tablePerClass = 2;
+    joined = 3;
+  }
 
-	class Class extends NamedElement {
-		derived readonly ref Model[1]#classes owningModel;
-		
-		ref Class[0..1] parent;	
-		attr boolean isPrimitive = false;
-		!ordered val Property[*]#owningClass properties;
-		
-		val ClassSerialization[0..1] classSerialization;
-	}
-	
-	// singleTable: All classes in the tree hierarchy is persiseted to one common table
-	// tablePerClass: Indepenedent table for each class - DO NOT SUPPORT
-	// joined: Each class int the hierarchy has its own table for owned value attributes 
-	enum InheritanceType {
-		__not_defined;
-		singleTable;	
-		tablePerClass;
-		joined;
-	}
+  class Property {
+    readonly derived ref Class[1]#properties owningClass;
+    attr String[1] name;
+    ref Class[1] type;
+    ref Property opositeProperty;
+    attr int lowerBound = 0;
+    attr int upperBound = 1;
+    attr boolean isUnique = false;
+    attr boolean isOrdered = false;
+    attr boolean[1] isTransient = false;
+    attr boolean[1] isEmbedded = false;
+    attr String columnNamePattern;
+    attr boolean[1] isID = false;
+    attr String sequenceName;
+  }
 
-	enum ReferenceType {
-		__not_defined;
-		basic;
-		oneToOne;
-		manyToOne;
-		oneToMany;
-	}
-	
-	
-	class ClassSerialization {
-		// If true, all other attributes are meaningless and the class is not serialized at all
-		attr boolean[1] isTransient = false;
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/model-ops", prefix="model-ops")
+  package operations {
+    abstract class ModelOperation {
+      readonly derived ref ModelRoot[1]#operations modelRoot;
+    }
 
-		// The class is embedded, so it always persisted in context of owning class 
-		attr boolean[1] isEmbedded = false;
+    class CreateClass extends ModelOperation {
+      attr String[1] ClassName;
+    }
 
-		// Name of table overriding the default name
-		attr String[0..1] tableName; 
-		attr InheritanceType[1] inheritanceType;
-		
-		//ref kernel.Property[0..1] primaryKeyJoinColumn;
-	}
-	
-	class Property extends NamedElement {
-		derived readonly ref Class[1]#properties owningClass;
-		
-		val PropertySerialization[0..1] serialization;
-		ref Class[1] type;
-		ref Property[0..1] opositeProperty;
-		
-		// Multiplicity specification
-		// -1 means *
-		attr int lowerBound = 0;
-		attr int upperBound = 1;
-		// For upper bound > 1 or *
-		attr boolean isUnique = false;
-		attr boolean isOrdered = false;
-		
-		// Do not use yet
-		// attr ReferenceType[0..1] referenceType;
-	}
-	
-	class PropertySerialization {
-		// If true, this property should not be serialized
-		attr boolean[1] isTransient = false;
+    class SetAbstract extends ModelOperation {
+      attr String[1] ClassName;
+      attr boolean[1] IsAbstract;
+    }
 
-		// true for all properties of embedded class, false otherwise
-		attr boolean[1] isEmbedded = false;
-		// if isEmbedded then column name for the property is computed by the pattern 
-		attr String[0..1] columnNamePattern;
+    class SetEmbedded extends ModelOperation {
+      attr String[1] ClassName;
+      attr boolean[1] IsEmbedded;
+    }
 
-		// true if the property holds unique identificator of owner class' instances 
-		// each serialized class has to have 1! property with isID = true
-		attr boolean[1] isID = false;
-		// name of sequence for 
-		attr String[0..1] sequenceName;
-		// if specified, overrides dedfault derived column name
-		attr String[0..1] columnName;
-		
-		// Do not use yet
-		// attr String[0..1] indexColumnName;
-		// attr String[0..1] joinColumnName;
-	}
+    class SetParent extends ModelOperation {
+      attr String[1] ClassName;
+      attr String[1] ParentName;
+    }
+
+    class SetPrimitive extends ModelOperation {
+      attr String[1] ClassName;
+      attr boolean[1] IsPrimitive;
+    }
+
+    class SetOpposite extends ModelOperation {
+      attr String[1] ClassName;
+      attr boolean[1] IsOpposite;
+    }
+
+    class AddProperty extends ModelOperation {
+      attr String[1] PropertyName;
+      attr String[1] Type;
+      attr String[1] DefaultValue;
+      attr String[1] ParentClass;
+      attr int[1] LowerBound;
+      attr int[1] UpperBound;
+    }
+
+  }
+
 }
+
