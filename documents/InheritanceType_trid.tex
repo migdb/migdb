@@ -1,0 +1,132 @@
+%komentář
+\documentclass[11pt,a4paper]{article}   	%základní popis dokumentu (velikost písma, velikost papíru, typ dokumentu)
+\usepackage[utf8]{inputenc}              	%nastavení výchozího kódování textu
+\usepackage[czech]{babel}                	%nastavení českých znaků
+\usepackage[pdftex]{graphicx}				%umožňuje vkládání obrázků v jpg, png
+\usepackage{amsfonts}						%package obsahujici symboly mnozin treba - \mathbb{N}
+%\usepackage{amssymb}						%stejna funkce jako amsfonts
+
+\begin{document}                            %začátek dokumentu
+
+	\section{ Vysvětlivky v dokumentu: }
+		\begin{itemize} 
+  			\item *element značí, že daný element je reference
+  			\item zápis \begin{math}g_1 - g_3\end{math} znamená guardy indexované od 1 do 3, přijde mi to jako nejjednodušší značení 				
+  			\item K [Column] značí kolekci elementů typu Column	
+  			\item predek(i) je třída nacházející se o i úrovní výše v stromu dědičnosti, tzn.
+				dědí od ní třída, na které je testován guard
+			\item $\mathbb{N}$ je zápis množiny přirozených čísel
+			\item root - index kořenu hierarchického stromu - nemá předka  
+		\end{itemize}		
+
+	%\texttt je v dokumentu kvuli zvyrazneni, ale nejspise je nadbytecny
+	\section{Obecné guardy}
+		Obecné guardy by měly splňovat všechny třídy, které jsou serializovatelné, jde
+		zejména o to, aby nebyly Primitive a nebyly transientní
+		\begin{itemize}
+			\item 	\texttt	{
+						$g_1$ : isPrimitive = false $\wedge$ isTransient = false  
+					}
+			\item 	\texttt {
+						$g_2 : \exists i \in \mathbb{N} $: properties [i] . isID =
+						true \&\& properties[i] . isTransient = false
+					}
+		\end{itemize}
+		
+ 	\section{Třídy bez serializovatelného předka}
+ 		\begin{itemize}
+ 			\item 	\texttt {
+ 						$g_3$ : parent = NULL $\vee$ parent.isAbstract = true $\vee$
+ 						$\forall i \in \mathbb{N}: i < root $ predek(i).isTransient 
+ 					}
+ 		 	\item	$\omega_1 (\pi_1, g_1 - g_3)$
+ 		 	\item 	$\pi_1 : E \to $ \{table,  K[Column], primaryKey\}
+ 		 	\item 	mapovací pravidlo namapuje třídu na nově vzniklou tabulku,
+ 		 			množinu jejich sloupců a primární klíč
+ 		\end{itemize}
+ 	\section{Strom dědičnosti s implicitním inheritenceType}
+ 		\begin{itemize}
+ 		  	\item 	\texttt {
+ 		  					$ g_4: inheritanceType = NULL \wedge parent \neq NULL
+ 		  					\forall j \in \mathbb{N} : j \leq root : predek(j).inheritanceType =
+ 		  					NULL$ }
+ 		  	\item 	$\omega_2 (\pi_2, g_1 - g_2 \wedge g_4) $
+ 		  	\item 	$\pi_2 : E \to$ \{ table,  K[Column], *foreignKey\}
+ 		  	\item	implicitní typ Joined vytvoří novou tabulku, sloupce a referuje
+ 		  			přes FK na PK předka
+ 		\end{itemize}
+ 		
+ 	\section{Třídy s jednoduchou dědičností}
+ 	 	\subsection{Joined}
+ 			\begin{itemize}
+ 			  	\item 	\texttt {
+ 			  				$g_5 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  				parentInheritanceType \wedge inheritanceType = Joined) \vee
+ 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
+ 			  				predek(i).inheritanceType = Joined )$ 
+ 			  			}
+ 				\item 	$\omega_3 (\pi_2, g_1 - g_2 \wedge g_5)$
+ 				\item	$\pi_2 : E \to \{ table, $ K[Column], *foreignKey\}
+				\item	typ Joined vytvoří novou tabulku, sloupce a referuje na PK předka 	 			
+ 			\end{itemize}
+ 			
+		\subsection{TablePerClass}
+			\begin{itemize} 
+			  	\item 	\texttt{
+			  				$g_6 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  				parentInheritanceType \wedge inheritanceType = TablePerClass) \vee
+ 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
+ 			  				predek(i).inheritanceType = TablePerClass )$
+ 			  			}
+			  	\item 	$\omega_5 (\pi_4, g_1 - g_2 \wedge g_8) $
+			  	\item 	$\pi_4 : E \to \{ table, $ K[Column], primaryKey\}
+				
+			\end{itemize}
+		
+		\subsection{SingleTable}
+ 			\begin{itemize}
+ 			  \item \texttt{
+ 			  			$g_7 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  				parentInheritanceType \wedge inheritanceType = SingleTable) \vee
+ 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
+ 			  				predek(i).inheritanceType = SingleTable )$
+ 			  		}
+ 			  \item 	$\omega_4 (\pi_3, g_1 - g_2 \wedge g_7) $
+ 			  \item		$\pi_3 : E \to \{ *table, $ K[Column],*K[Column] *primaryKey\}
+ 			  \item 	Typ SingleTable referencuje tabulku, primarni klic, referencuje
+ 			  			sloupce predku a vytvori nove sloupce vstupni tridy 
+ 			\end{itemize}	
+
+
+	\section{Přechodové třídy mezi různými inheritanceTypy}
+		\subsection{sth to SingleTable}
+			\begin{itemize} 
+			  	\item 	\texttt{
+				  				$g_9 : parent \neq NULL \;\exists i \in \matbb{N}: \forall j \in
+				  				\mathbb{N} j < i : predek(j).inheritanceType = NULL,
+				  				(predek(i).inheritanceType = TablePerClass \vee
+				  				predek(i).inheritanceType =  Joined), self.inheritanceType = SingleTable$ 
+				  		}
+			  	\item 	$\omega_6 (\pi_4, g_1 - g_2 \wedge g_9) $
+				\item	$\pi_3 : E \to \{ *table, $ K[Column], *primaryKey\}
+			\end{itemize}
+			
+			
+			%mapovaci pravidlo a funkce
+			
+
+		\subsubsection{sth to Joined}
+			\begin{itemize}
+			  	\item 	\texttt{
+			  					$g_(10) : parent \neq NULL \;\exists i \in \mathbb{N} : \forall j
+			  					\in \mathbb{N} j < i : predek(j).inheritanceType = NULL, (
+								predek(i).inheritanceType = TablePerClass \vee predek(i).inheritanceType
+								= Joined), self.inheritanceType = SingleTable $
+			  			}
+			  	\item 	$\omega_5 (\pi_4, g_1 - g_2 \wedge g_10) $
+			  	\item 	$\pi_4 : E \to \{ table, $ K[Column], FK\}
+			\end{itemize}
+\end{document}
