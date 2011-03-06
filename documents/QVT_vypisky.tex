@@ -1,0 +1,245 @@
+%komentář
+\documentclass[11pt,a4paper]{article}   	%základní popis dokumentu (velikost písma, velikost papíru, typ dokumentu)
+\usepackage[utf8]{inputenc}              	%nastavení výchozího kódování textu
+\usepackage[czech]{babel}                	%nastavení českých znaků
+\usepackage[pdftex]{graphicx}				%umožňuje vkládání obrázků v jpg, png
+\usepackage{amsfonts}						%package obsahujici symboly mnozin treba - \mathbb{N}
+%\usepackage{amssymb}						%stejna funkce jako amsfonts
+\begin{document}
+
+\title{Poznámky k QVTo}
+\section{Úvod}
+V průběhu našeho studování specifikace QVTo jsme si dělali poznámky, abychom se
+lépe orientovali v dané problematice a byli schopni předat naše zkušenosti mezi
+sebou či studentům pokračujícím v projektu. Varování - tyto poznámky obsahují
+náš subjektivní pohled, nezaručujeme jejich naprostou správnost. Autoři poznámek
+předpokládají čtenářovu základní znalost programovacího jazyka Java, protože se
+na něj budou odkazovat.
+
+\subsection{Deklarace proměnných}
+deklarace má tvar var $<$identifikator$>$ : Typ \\
+př. var a: String
+
+\subsection{Komentáře}
+\begin{itemize}
+  \item Komentáře se dělají jako v Javě
+  \item existují dva typy:
+  		\begin{itemize}
+  		  	\item Jednořádkové\\  					% posloupnost znaku \\ je zalomeni radky, 
+				př. \texttt {						% stejne jako \newline
+						//Toto je jednořádkový komentář
+					}
+  		  	\item Obecné (víceřádkové - řádkově neomezené)\\
+				\texttt{ 
+					př. /*Toto je\\
+					dvouřádkový komentář */
+				}
+  		  	\item 
+  		  \end{itemize}
+\end{itemize}
+
+\subsection{Podmínka If then else}
+\begin{itemize}
+   \item 	Podmínka má tvar: \\
+   		 	if ( condition ) then \{ /*statement1 */ \} else \{ /* statement2 */ \}
+   		 	endif;
+   \item 	závorky ani else větev nejsou potřebné, dají se vynechat(závorky značí
+   			jen blok, podobně jako v Javě a jiných jazycích), středník za endif ani
+   			ostatní části vynechatelné nejsou
+   
+   \item 	\texttt {
+   				př. if(0 = 0) then \{ \\ log("Common") \\ 
+   				\}else \{log ("Miracle") \\ \}
+   				\\endif; 
+   			}
+\end{itemize} 
+
+\subsection{Operátory}
+\begin{itemize}
+  	\item	Konec výrazu \\
+			;
+	\item	Přiřazení Objectu nebo Setu \\
+			:=
+	\item	Přidání položky do Setu \\
+			+=
+  	\item 	Operátor je rovno \\
+			=
+	\item 	Operátor není rovno \\
+			$<>$
+	\item  Operátory přístupu \\
+			. $->$
+	\item 
+\end{itemize}
+
+\begin{itemize}
+  \item		Odlišnými oproti běžným programovacím jazykům jsou obzvlášť operátory
+  			+= a $<>$, které nejsou v programovacích jazycích obvyklé
+  \item		S operátorem := je možné použít tzv.  conditional expression k zkrácení
+  			zápisu. Tento operátor slouží k přiřazení  hodnoty proměnné \\př. var a:
+  			String var b: Integer; a:=( if (b = b ) then “Logické” else “Zázrak“ )
+  \item		Operátor = slouží k přiřazení reference nebo k porovnání
+  \item 	Operátor přístupu . slouží k přístupu k jednotlivým proměnným
+  \item 	Operátor přístupu -$>$ se používá k přístupu k položkám a metodám
+  kolekcí
+
+\subsection{klíčové slovo switch}
+příkaz switch se používá k řízení toku podobně jako v Javě, nicméně nepoužívá
+jeden výraz,  ale vždy za klíčovým slovem case následuje podmínka, klíčové slovo
+else je použito, pro případy, kdy není splněna žádná z předchozích podmínek \\
+př. switch { case (condition1) /* Statement1 */ case (condition2) /* Statement2 */ else /* Statement3*/ }
+
+\subsection {klíčové slovo self}
+klíčové slovo self je equivalentní k this v Javě – získáváte pomocí něj přístup 
+k objektu, nad kterým pracujete ( jeho metodám, atributům) př. self.name :=””
+
+\subsection {klíčové slovo result}
+Klíčové slovo result pracuje podobně jako Self s atributy a metodami, ale
+nepracuje s  vstupním objektem, ale výstupním, lze ho použít v mappingu cyklus while
+
+\subsection{cyklus while}
+se používá k opakovanému provádění těla cyklu, stejně jako v Javě \\
+př. while (condition){ /*statement */ }
+
+\subsection {Deklarace transformace}
+\begin{itemize}
+  \item 	skládá se z jména, vstupního a výstupního metamodelu
+  \item 	může být poděděna pomocí klíčového slova extends, v tom případě potomek
+  dědí všechna mapování a dotazy, které může předefinovat
+\end{itemize}
+
+\subsection { klíčové slovo access }
+má podobnou funkci, ale narozdíl od klíčového slova extends není možné cokoliv
+předefinovat, celá transformace je použita jako celek
+
+\subsection {klíčová slova new a transform}
+ slouží k instanciaci přijaté transformace 
+ 
+\subsection {Modeltype definition}
+\begin {itemize}
+  	\item	definice typu modelu  
+  	\item 	reference na modeltype nebo je možné vložit celou definici
+			(inline definice)
+	\item	může referencovat na lokální file(př. 1) nebo je definována pomocí
+			reference na package namespace URI (př. 2) • local specific reference - v
+			Eclipse se to dělá prefixací “platform:/resource/“, za kterou následuje
+			relativní cesta k souboru v workspacu
+	\item 	př. 1 modeltype MM1 uses
+			“platform:/resource/MM1toMM2/transforms/MM1.ecore“
+	\item	př. 2 modeltype MM1 uses “http://mm1/1.0“
+\end{itemize} 
+
+
+\subsection {Helper}
+\begin {itemize}
+  	\item	Operace, která vykonává výpočet na jednom nebo více objektech
+			(parametrech) a tvoří výsledek
+	\item	Tělo helperu je uspořádaný seznam výrazů, které jsou vykonány v řadě po
+			sobě (v sekvenci). Helper může jako vedlejší efekt modifikovat parametry
+\end{itemize}
+Pozn: Autoři textu nevyužívali helpery a zadavatel vyslovil podezření na nefunkčnost helperů v současné verzi QVTo, předcházející definice je vytažena z QVTo Specifikace Query \end{itemize}. 
+
+\subsection{Query }
+je helper bez vedlejších efektů, tzn nemění vstupní „objekt“\\
+př. \texttt {
+				query APP::reduced::Property::isID():Boolean\{
+		if(self.serialization.isID = true) then \{ return true; \}endif; return
+		false;\} }
+
+\subsection{when}
+\begin{itemize}
+  	\item 	podmínka následující po klíčovém slově when je nazývána
+			pre-condition nebo též guard
+	\item	k provedení daného mapování musí být tato precondition splněna
+	\item	\texttt { 
+					tvar: mapping MM1::Model::toModel() : MM2::Model \\
+					when \{self.Name.startWith(“M”);\} \{ //konkrétní mapping \}
+			}			 
+\end{itemize}
+
+%fakt hodne blbe prelozeny
+\subsection{Disjuncts}
+	\begin {itemize}
+	  \item 	seřazený seznam mapování
+	  \item 	je zavolané první mapování, jehož guard (typ a podmínka uvozená
+	  			klíčovým slovem when) je platný
+	  \item 	pokud není platný žádný guard je vrácena hodnota null
+	  \item 	pomocí disjuncts lze nahradit nemožnost přetížení mapování
+	  \item 	př.	\texttt { 
+	  					mapping UML::Feature::convertFeature() : JAVA::Element \\ disjuncts
+	  					convertAttribute, convertOperation\{\}
+					}
+
+					\texttt{	
+						\\mapping UML::Attribute::convertAttribute : JAVA::Field \{\\
+						name := self.name;\\ \}
+					}
+
+					\texttt{	
+						mapping UML::Operation::convertConstructor : JAVA::Constructor \\
+						when \{ self.name = self.namespace.name;\} \{ \\name := self.name; \\ \}
+					}
+
+
+					\texttt{
+						mapping UML::Operation::convertOperation : JAVA::Constructor \\ when \{
+						self.name <> self.namespace.name;\\ \} \{ name := self.name; \}
+					}
+	\end{itemize}
+
+\subsection {Main funkce}
+účel funkce main() je nastavit proměnné prostředí a zavolat první mapování
+
+
+\subsection{log(“message”)}
+\begin{itemize}
+	\item	vypisuje zprávu do konzole
+	\item	má tři levely: warning, error a fatal
+	\item	Při nesplnění assertu levelu fatal transformace skončí
+	\item	Je tvaru: assert level (condition) with log(“message”)
+	\item	Pozn. V příkladě od zadavatele je assert bez levelu, nejspíš je implicitní level warning nebo error
+	\item 	assert warning (self.x $>$ 2) with log(“Hodnota x je menší než 2 a je
+	rovna:” + self.x)
+\end{itemize}
+
+\subsection {Map vs xmap}
+\begin{itemize}
+  	\item	map - v případě, že se neprovede mapování, vrátí null
+  	\item	xmap – v případě, že se nepovede mapování, vyvolá výjimku
+\end{itemize}
+
+\subsection{Dictionary}
+\begin {itemize}
+  	\item 	Javovská Map = Kolekce (container) uskladňující data uspořádaná
+			podle klíče 
+	\item	úplný popis operací viz 8.3.7 v specifikaci QVT
+	\item 	proveditelné operace s Dictionary:\\
+	 		\begin {itemize}
+	 		  	\item 	Dictionary( KeyT , T ) :: get ( k : KeyT ) : T
+				\item 	Dictionary( KeyT , T ) :: hasKey ( k : KeyT ) : Boolean
+				\item 	Dictionary( KeyT , T ) :: put ( k : KeyT , v : T ) : Void
+				\item 	Dictionary ( KeyT , T ) :: size ( ) : Integer
+				\item	Dictionary(KeyT,T)::values() : List(T)
+				\item	Dictionary(KeyT,T)::keys() : List(KeyT)
+				\item	Dictionary(KeyT,T)::isEmpty() : Boolean
+			\end{itemize}
+	\item	př. var x:Dict(String,Actor); // Dictionary Itemů typu Actor s klíčem String
+\end{itemize}
+
+\subsection{ForEach}
+\begin{itemize}
+  	\item	Iterátor nad kolekcí, provede tělo pro všechny prvky, pro něž je
+			zadaná podmínka platná
+	\item	\texttt {
+						self.owningClass.owningModel.classes->forEach(cl | cl.isPrimitive =
+						true)\{\\ if(cl.name = self.type.name) then \{\\ return true; \\ \} endif;
+			}
+	 
+\end{itemize}
+
+\subsection{ForOne}
+\begin{itemize}
+  	\item 	Iterátor nad kolekcí, provede tělo pro první prvek, pro který je
+			zadaná podmínka platná, pro další prvky již ne
+	\item	forEach i forOne jsou popsány v specifikaci v sekci 8.2.2.6
+\end{itemize} 
+\end{document}
