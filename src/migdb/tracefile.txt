@@ -81,6 +81,46 @@
     </result>
   </traceRecords>
   <traceRecords>
+    <mappingOperation name="toID" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toID"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="Property">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="TableColumn">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
+    <mappingOperation name="toPrimaryKey" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
+      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toPrimaryKey"/>
+    </mappingOperation>
+    <context>
+      <context name="self" type="TableColumn">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.0"/>
+        </value>
+      </context>
+    </context>
+    <parameters/>
+    <result>
+      <result kind="OUT" name="result" type="PrimaryKey">
+        <value>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@constraints.0"/>
+        </value>
+      </result>
+    </result>
+  </traceRecords>
+  <traceRecords>
     <mappingOperation name="toNx1_FKColumn" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
       <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toNx1_FKColumn"/>
     </mappingOperation>
@@ -95,7 +135,7 @@
     <result>
       <result kind="OUT" name="result" type="TableColumn">
         <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.0"/>
+          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.1"/>
         </value>
       </result>
     </result>
@@ -114,46 +154,6 @@
     <parameters/>
     <result>
       <result kind="OUT" name="result" type="ForeignKey">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@constraints.0"/>
-        </value>
-      </result>
-    </result>
-  </traceRecords>
-  <traceRecords>
-    <mappingOperation name="toID" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toID"/>
-    </mappingOperation>
-    <context>
-      <context name="self" type="Property">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-app.xmi#//@sourceModel/@classes.0/@properties.0"/>
-        </value>
-      </context>
-    </context>
-    <parameters/>
-    <result>
-      <result kind="OUT" name="result" type="TableColumn">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.1"/>
-        </value>
-      </result>
-    </result>
-  </traceRecords>
-  <traceRecords>
-    <mappingOperation name="toPrimaryKey" package="Simpleuml_To_Rdb" module="Simpleuml_To_Rdb">
-      <runtimeMappingOperation href="platform:/resource/migdb/transforms/transform.qvtox#//toPrimaryKey"/>
-    </mappingOperation>
-    <context>
-      <context name="self" type="TableColumn">
-        <value>
-          <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@ownedColumns.1"/>
-        </value>
-      </context>
-    </context>
-    <parameters/>
-    <result>
-      <result kind="OUT" name="result" type="PrimaryKey">
         <value>
           <modelElement href="platform:/resource/migdb/data/mm-db.xmi#//@sourceDB/@schemas.0/@tables.0/@constraints.1"/>
         </value>

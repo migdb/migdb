@@ -5,10 +5,8 @@
     nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="mmrdb">
     <eClassifiers xsi:type="ecore:EClass" name="ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="sourceDB" lowerBound="1"
-          eType="#//rdb/Database" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="targetDB" lowerBound="1"
-          eType="#//rdb/Database" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="DBgenerations" lowerBound="1"
+          upperBound="-1" eType="#//rdb/Database" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//rdb/Operation" containment="true" eOpposite="#//rdb/Operation/modelRoot"/>
     </eClassifiers>

@@ -26,93 +26,106 @@
 modeltype APP uses 'mm-app';
 modeltype RDB uses 'mm-db';
 
-transformation Simpleuml_To_Rdb(in uml : APP, out RDB);
+transformation Simpleuml_To_Rdb(in appModel : APP, out RDB);
 
+//vstupni bod transformace, najde vsechny RootObjecty, pretypuje na ModelRoot a mapuje pres toRdbRoot
 main() {
 	log("zacatek transformace");
-	uml.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
+	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
 	log("konec transformace");
 }
 
+
 mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot {
 	log("toRdbRoot sekce");
-	sourceDB := self.sourceModel.map toDBmodel();
+	//self.modelGenerations->forEach(generation){
+	//	result.DBgenerations += generation.map toDBmodel();
+	//}
 }
 
-mapping APP::reduced::Model::toDBmodel() : RDB::rdb::Database {
+// namapuje ModelGeneration na DBgeneration, ktera je prazdna, pokud ma atribut 
+// missing nastaven na true, jinak obsahuje schema vyplnene tabulkami namapovanych trid
+mapping APP::reduced::ModelGeneration::toDBmodel() : RDB::rdb::Database {
 	log("toDBmodel sekce");
-	schemas += self.map toSchema();
+	if(self.isMissing = false) then {
+		schemas += self.map toSchema();
+	}endif;
 }
 
-mapping APP::reduced::Model::toSchema() : RDB::rdb::Schema {
-	log("toSchema sekce");
-		
-	self.classes->forEach(Class) {
-		if(Class.isPrimitive = false) then {
-			var table:RDB::rdb::Table:= Class.map toTable();
-			tables += table;
-		} endif;
-	};
+
+mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
+	log("toSchema sekce");		
 	
-	log("uprava");
-	result.tables->forEach(repairedTable){
-		repairedTable.subobjectsOfType(RDB::rdb::ForeignKey)[RDB::rdb::ForeignKey]->forEach(constraint){
-		result.tables ->forEach(table){
-				log(table.name + "-------" + constraint.name);
-				if("fk "+table.name.toLower() = constraint.name.toLower() ) then {
-				table.ownedColumns->forEach(Column){
-					
-					if(Column.isID()) then {
-						log("bingo");
-						constraint.targetTable := table;
-						constraint.constrainedColumn := Column;					
-					}endif;
-				};
-				}endif;	
-			}
-		}
-	}
+	self.classes->forEach(clss|clss.isGeneralClassSerializable() and clss.hasSerializableAncestor() = false){
+		
+	}			
 }
 
 
-mapping APP::reduced::Class::toTable() : RDB::rdb::Table {
-	log("toTable sekce "+self.name);
+
+//Namapuje tridu bez serializovatelneho potomka na tabulku
+mapping APP::reduced::Class::toSimpleTable() : RDB::rdb::Table 
+when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = false}
+{
+	log("toTable sekce " + self.name);
 	name := self.name;
 	
-	if(self.parent <> null)then{
-		primaryKey := self.map toAncestorId();
-		constraints += primaryKey;
-		primaryKey.owningTable = result;		
-	}endif;
+	var temp : APP::reduced::Class = self;
+	var pkColumns : OrderedSet(RDB::rdb::TableColumn); 
 	
-	self.properties->forEach(Property) {
-		if((Property.serialization = null or (Property.serialization.isTransient = false))) then {	
-			var col: RDB::rdb::TableColumn = Property.map toColumn(); 
-			ownedColumns += col;	
-			
-			if(Property.isID()) then {
-				primaryKey:= col.map toPrimaryKey();
-				
-				constraints+=primaryKey;
-		    }endif;
-		    
-		    if(Property.isForeignKey()) then{
-		    	var const : RDB::rdb::ForeignKey := Property.map toForeignKey();
-	    		const.owningTable =result;
-				result.constraints+=const;
-		    }endif;		
-		} endif;		
+	temp.properties->forEach(prop | prop.isTransient = false){
+						ownedColumns+=prop.map toColumn( result );
+					};
+	 
+	while(temp.parent <> null){
+		temp = temp.parent;
+		temp.properties->forEach(prop | prop.isTransient = false){
+							var tableColumn:RDB::rdb::TableColumn = prop.map toColumn( result ); 
+							ownedColumns+= tableColumn;
+							if(prop.isID = true)then{
+								pkColumns += tableColumn;
+							}endif;
+						};		
 	};
 	
+	var PK:RDB::rdb::PrimaryKey = pkColumns->map toPK();
+	result.constraints += PK;
+	
 }
 
-mapping APP::reduced::Property::toColumn() : RDB::rdb::TableColumn 
-disjuncts APP::reduced::Property::toPrimitive, APP::reduced::Property::toID, APP::reduced::Property::toNx1_FKColumn, APP::reduced::Property::toMxN_FKColumn{
+mapping OrderedSet(RDB::rdb::TableColumn)::toPK():RDB::rdb::PrimaryKey{
+	init{
+		object result : RDB::rdb::PrimaryKey{
+			underlyingIndex = object RDB::rdb::Index{					
+			}
+		};	
+	}
+	population{		
+		self->forEach(col){
+				result.underlyingIndex.columns+= col;
+			}
+		}
+}
+
+
+query APP::reduced::Property::isSerializable() : Boolean {
+	if(self.isTransient)then {
+		return false;
+	}endif;
+	
+	return true;
+}
+
+mapping APP::reduced::Property::toColumn( table : RDB::rdb::Table ) : RDB::rdb::TableColumn 
+disjuncts APP::reduced::Property::toPrimitive
+ //,APP::reduced::Property::toNx1_FKColumn, APP::reduced::Property::toMxN_FKColumn
+ {
 
 }
 
-mapping APP::reduced::Property::toPrimitive() : RDB::rdb::TableColumn
-when {	self.isPrimitive()	}
+// tohle je asi spatne
+mapping APP::reduced::Property::toPrimitive( table : RDB::rdb::Table ) : RDB::rdb::TableColumn
+when {	self.isPrimitive()}
 {
 		name:= self.name;
 		switch {
@@ -129,16 +142,11 @@ when {	self.isPrimitive()	}
 			else {
 				log("neznamy typ" + self.type.name);
 			}
-		}
+		};
+		
 }
 	
-mapping APP::reduced::Property::toID() : RDB::rdb::TableColumn
-when {	self.isID()	}
-{
-			name := self.name;
-			type :="PK";
-}
-
+//nejpravdepodobneji je uplne k nicemu
 query RDB::rdb::TableColumn::isID():Boolean{
 	if(self.type = "PK") then {
 			return true;
@@ -146,7 +154,8 @@ query RDB::rdb::TableColumn::isID():Boolean{
 	return false;
 }
 
-mapping APP::reduced::Property::toNx1_FKColumn() : RDB::rdb::TableColumn
+//nejpravdepodobneji je uplne k nicemu
+mapping APP::reduced::Property::toNx1_FKColumn( table: RDB::rdb::Table ) : RDB::rdb::TableColumn
 when {	self.isForeignKey() and self.upperBound=1	}
 {
 	log("mapping toNx1_FK");
@@ -156,7 +165,8 @@ when {	self.isForeignKey() and self.upperBound=1	}
 	 } endif;
 }
 
-mapping APP::reduced::Property::toMxN_FKColumn() : RDB::rdb::TableColumn
+//nejpravdepodobneji je uplne k nicemu
+mapping APP::reduced::Property::toMxN_FKColumn( table : RDB::rdb::Table ) : RDB::rdb::TableColumn
 //zatim se neprovadi
 when {	self.isForeignKey() and false	}
 {
@@ -164,14 +174,7 @@ when {	self.isForeignKey() and false	}
 	 //name:= "FK "+self.name;
 }
 
-mapping RDB::rdb::TableColumn::toPrimaryKey() : RDB::rdb::PrimaryKey{
-	log("toPrimaryKey mappovani");
-	result.owningTable = self._owningTable;
-	result.name := self.name+"_"+self._owningTable.name;
-	self._owningTable.primaryKey=result;
-	self._owningTable.constraints+=result;
-}
-
+//nejpravdepodobneji je uplne k nicemu
 mapping APP::reduced::Property::toForeignKey(): RDB::rdb::ForeignKey{
 	result.name := "FK "+ self.name;
 	
@@ -194,15 +197,7 @@ mapping APP::reduced::Property::toForeignKey(): RDB::rdb::ForeignKey{
 	log("toForeignKey sekce" + "  "+ self.name);
 } 
 
-query APP::reduced::Property::getName(): String{
-	if(self.serialization = null or self.serialization.columnName = "") then {
-		return self.name;
-	} else {
-		return self.serialization.columnName;
-	} endif;
-	return null;
-}
-
+// je spatne
 query APP::reduced::Property::isForeignKey(): Boolean{
 	log("v sekci isForeignKey ");
 	if(self.isPrimitive() = false and self.isID() = false ) then {
@@ -211,37 +206,93 @@ query APP::reduced::Property::isForeignKey(): Boolean{
 	return false;
 }
 
-mapping APP::reduced::Class::toAncestorId():RDB::rdb::PrimaryKey{
-	log("toAncestorID");
-	var temp := self.getHighestAncestor();
-	temp.properties->forEach(Property){
-		if(Property.isID())then{
-				result.name:=Property.name +" "+ temp.name;
-				log(result.name);
-				break;
-			}endif;
-	};
-}
 
-// vrati nejvyssiho predka, tj predka, ktery nema rodice
-query APP::reduced::Class::getHighestAncestor():APP::reduced::Class{
-	var temp:APP::reduced::Class := self;
-	while(temp.parent <> null){
-		temp:=temp.parent;
-			};	
-			return temp;
+// query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen jednosloupcovy ID
+query APP::reduced::Class::isGeneralClassSerializable():Boolean{
+	if(self.isPrimitive = true) then {
+		return false;
+	}endif;
+	
+	if(self.isTransient = true) then {
+		return false;
+	}endif;
+	
+	//Mozna tato cast neni potreba
+	var count : Integer = 0;
+	self.properties->forEach( prop){
+		if(prop.isID() and prop.isSerializable()) then {
+			count = count + 1;
+		}endif;
+	};
+	
+	if(count = 1) then {
+		return true;
+	}endif;
+	
+	return false;
 }
 
 query APP::reduced::Property::isID():Boolean{
-	if(self.serialization.isID = true) then {
+	if(self.isID = true) then {
 		return true;
 	}endif;
+	
 	return false;
 }
 
+// zjisti, jestli je dana Property primitivni prolezenim vsech primitivnich trid a porovnanim jmena
 query APP::reduced::Property::isPrimitive():Boolean{
-	if(self.type.isPrimitive = true) then {
-		return true;
-	} endif;
+	self.owningClass.owningModel.classes->forEach(cl | cl.isPrimitive = true){
+		if(cl.name = self.type.name) then {
+			return true;
+		} endif;
+	};
+	
 	return false;
+}
+
+//zjisti, jestli ma dana trida serializovatelneho predka, v analyze je potrebna oprava
+query APP::reduced::Class::hasSerializableAncestor():Boolean{
+	var temp:APP::reduced::Class = self;
+	
+	while(temp.parent <> null and temp.parent.isAbstract = false){
+		if(temp.parent.isTransient = false) then {
+			return true;
+		}endif;
+		temp = temp.parent;
+	};
+	 
+	return false;
+}
+
+//zjisti, jestli ma nejaky predek zadany InheritanceType
+query APP::reduced::Class::hasImplicitInheritanceType():Boolean{
+	return self.hasChosenInheritanceType(0);	
+} 
+
+query APP::reduced::Class::hasSingleTableInheritanceType():Boolean{
+	return self.hasChosenInheritanceType(1);	
+}
+
+query APP::reduced::Class::hasTablePerClassInheritanceType():Boolean{
+	return self.hasChosenInheritanceType(2);	
+}
+
+query APP::reduced::Class::hasJoinedInheritanceType():Boolean{
+	return self.hasChosenInheritanceType(3);	
+}
+
+
+query APP::reduced::Class::hasChosenInheritanceType( chosenType:Integer):Boolean{
+	var temp:APP::reduced::Class = self;
+	
+	while(temp.parent <> null ){
+		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
+			return true;
+		}endif;
+		temp = temp.parent;
+	};
+	
+	return true;
+
 }

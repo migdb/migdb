@@ -16,6 +16,69 @@ náš subjektivní pohled, nezaručujeme jejich naprostou správnost. Autoři po
 předpokládají čtenářovu základní znalost programovacího jazyka Java, protože se
 na něj budou odkazovat.
 
+
+\section {Modeltype definition}
+\begin {itemize}
+  	\item	definice typu modelu  
+  	\item 	reference na modeltype nebo je možné vložit celou definici
+			(inline definice)
+	\item	může referencovat na lokální file(př. 1) nebo je definována pomocí
+			reference na package namespace URI (př. 2) • local specific reference - v
+			Eclipse se to dělá prefixací “platform:/resource/“, za kterou následuje
+			relativní cesta k souboru v workspacu
+	\item 	př. 1 modeltype MM1 uses
+			“platform:/resource/MM1toMM2/transforms/MM1.ecore“
+	\item	př. 2 modeltype MM1 uses “http://mm1/1.0“
+\end{itemize} 
+
+\section {Deklarace transformace}
+\begin{itemize}
+  \item 	skládá se z jména, vstupního a výstupního metamodelu
+  \item 	může být poděděna pomocí klíčového slova extends, v tom případě potomek
+  dědí všechna mapování a dotazy, které může předefinovat
+\end{itemize}
+
+
+\section{Mapování}
+Mapování je rozděleno do několika sekcí \\
+\texttt{
+	mapping <dirkind0> X::mappingname
+		(<dirkind1> p1:P1, <dirkind2> p2:P2) : r1:R1, r2:R2
+		when \{ … \}\\
+		where \{ … \}\\
+	\{\\
+		init \{ … \}\\
+		population \{ … \}\\
+		end \{ … \}\\
+	\}
+}
+
+$<dirkind>$ určuje typ parametru (in, out, inout), p1 je typu P1, p2 je typu P2,
+r1 typu R1, r2 typu R2. When clause určuje za jakých podmínek proběhne mapování.
+Where je postcondition - jaké podmínky by měly být splněny na konci mapování.
+Sekce init připravuje atributy proměnné result k dalšímu zpracování. Po init
+sekci následuje tzv. Implicitní sekce, která nastaví automaticky nenastavené
+atributy z Init sekce. V populační sekci jsou ''dopočítávány'' hodnoty atributů
+výstupních proměnných. Klíčové slovo population může být vynecháno - jinak
+řečeno vše bez popisku je v population sekci. End sekce může obsahovat kód
+navíc, který se provede před opuštěním mapování.
+
+\subsection{when}
+\begin{itemize}
+  	\item 	podmínka následující po klíčovém slově when je nazývána
+			pre-condition nebo též guard
+	\item	k provedení daného mapování musí být tato precondition splněna
+	\item	\texttt { 
+					tvar: mapping MM1::Model1::toModel() : MM2::Model2 \\
+					when \{self.Name.startWith(“M”);\} \{ //konkrétní mapping \}
+			}			 
+\end{itemize}
+
+
+\section{Ostatní}
+Tento dokument se stále vyvíjí, některé jeho části nejsou zařazeny exaktně tam,
+kde by měly být, proto jsou zařazeny pod tuto sekci.
+
 \subsection{Deklarace proměnných}
 deklarace má tvar var $<$identifikator$>$ : Typ \\
 př. var a: String
@@ -100,34 +163,13 @@ nepracuje s  vstupním objektem, ale výstupním, lze ho použít v mappingu cyk
 se používá k opakovanému provádění těla cyklu, stejně jako v Javě \\
 př. while (condition){ /*statement */ }
 
-\subsection {Deklarace transformace}
-\begin{itemize}
-  \item 	skládá se z jména, vstupního a výstupního metamodelu
-  \item 	může být poděděna pomocí klíčového slova extends, v tom případě potomek
-  dědí všechna mapování a dotazy, které může předefinovat
-\end{itemize}
 
 \subsection { klíčové slovo access }
 má podobnou funkci, ale narozdíl od klíčového slova extends není možné cokoliv
 předefinovat, celá transformace je použita jako celek
 
 \subsection {klíčová slova new a transform}
- slouží k instanciaci přijaté transformace 
- 
-\subsection {Modeltype definition}
-\begin {itemize}
-  	\item	definice typu modelu  
-  	\item 	reference na modeltype nebo je možné vložit celou definici
-			(inline definice)
-	\item	může referencovat na lokální file(př. 1) nebo je definována pomocí
-			reference na package namespace URI (př. 2) • local specific reference - v
-			Eclipse se to dělá prefixací “platform:/resource/“, za kterou následuje
-			relativní cesta k souboru v workspacu
-	\item 	př. 1 modeltype MM1 uses
-			“platform:/resource/MM1toMM2/transforms/MM1.ecore“
-	\item	př. 2 modeltype MM1 uses “http://mm1/1.0“
-\end{itemize} 
-
+ slouží k instanciaci přijaté transformace
 
 \subsection {Helper}
 \begin {itemize}
@@ -144,17 +186,6 @@ př. \texttt {
 				query APP::reduced::Property::isID():Boolean\{
 		if(self.serialization.isID = true) then \{ return true; \}endif; return
 		false;\} }
-
-\subsection{when}
-\begin{itemize}
-  	\item 	podmínka následující po klíčovém slově when je nazývána
-			pre-condition nebo též guard
-	\item	k provedení daného mapování musí být tato precondition splněna
-	\item	\texttt { 
-					tvar: mapping MM1::Model::toModel() : MM2::Model \\
-					when \{self.Name.startWith(“M”);\} \{ //konkrétní mapping \}
-			}			 
-\end{itemize}
 
 %fakt hodne blbe prelozeny
 \subsection{Disjuncts}
@@ -241,5 +272,15 @@ př. \texttt {
   	\item 	Iterátor nad kolekcí, provede tělo pro první prvek, pro který je
 			zadaná podmínka platná, pro další prvky již ne
 	\item	forEach i forOne jsou popsány v specifikaci v sekci 8.2.2.6
-\end{itemize} 
+\end{itemize}
+
+\subsection{Vytvoření nové instance}
+Novou instanci lze vytvořit
+\begin{itemize}
+  \item		Jako výsledek mapování
+  \item 	Pomocí klíčového slova object
+  \item 	Pomocí konstruktoru
+\end{itemize}
+
 \end{document}
+
