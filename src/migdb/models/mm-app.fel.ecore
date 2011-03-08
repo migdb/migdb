@@ -162,7 +162,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RenameProperty" eSuperTypes="#//reduced/ModelGeneration">
+      <eClassifiers xsi:type="ecore:EClass" name="RenameProperty" eSuperTypes="#//reduced/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="PropertyName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1"
