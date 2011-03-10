@@ -7,40 +7,41 @@
 \section{Mapování vazeb}
 	\subsection{Úvod - upřesnění formulace}
 	Zápisem tohoto typu:\\ 
-	\texttt	{SELF.b.isOpposite.isCollection.isUnique \&\& SELF.b.a.isCollection.isUnique; \\} 
+	\texttt	{SELF.b.isOpposite.isCollection.isUnique $\wedge$ SELF.b.a.isCollection.isUnique; \\} 
 	Mám na mysli následující:\\
-	\texttt{b} má protějšek a zároveň je unykátní kolekcí a zároveň protějšek \texttt {a} je unikátní kolekcí.
-	Ze zápisu tedy vyplývá, že vypisuji pouze TRUE vlastnosti danný property. 		  							
+	\texttt{b} má protějšek a je unikátní kolekcí a zároveň protějšek \texttt {a} je unikátní kolekcí.
+	Ze zápisu tedy vyplývá, že vypisuji pouze TRUE vlastnosti danný property. \\
+	Zkratka $OC$ (Ordering Column) značí sloupec, určující pořadí prvků, tedy vlastnost property isOrdered. \\
+	$FK[B]$ značí cizí klíč ze třídy B. 		  							
 	                                
 	\subsection{Vlastnosti mapované na prázdnou množinu}
    		Jedná se o dvě základní vlastnosti tříd. Pokud je třída Embedded, nebo
-   		Transient, namapují se jejich atributy na prázdnou množinu. 
+   		Transient, namapují se jejich property na prázdnou množinu. 
    		\begin{itemize}				    
          	\item \texttt	{
          					$\pi_0(b) \to \{ 0\}$  
          					}
    		\end{itemize}
    	\subsection{Jednostranně navigabilní vazby}
-   		Třída A vidí zkrz svůji property na trídu B, ale B nemá žádnou takovou property a 
-   		tak třídu A nevidí a ani neví, že je třídou A viděn. Při jednostranně navigabilním
+   		Třída A vidí skrz svoji property na trídu B, ale B nemá žádnou takovou property a 
+   		tak třídu A nevidí a ani neví, že je třídou A viděna. Při jednostranně navigabilním
    		mapování sice třída B třídu A nevidí, ale v databázi na ni má uloženy FK.
    		\\
    		Máme dva případy mapování:
    		\begin{itemize}				    
          	\item \texttt	{SELF.b.isCollection.isOrdered; \\}
-         					(Toto mapování obsahuje i sloupec s pořadím prvků) \\
-         					$\pi_1(b) \to \{ sloupec\}$
+         					$\pi_1(b) \to \{ sloupec, OC\}$
          					
          	\item \texttt	{SELF.b.isCollection.isUnique; \\
          					 SELF.b.isCollection; \\
          					$\pi_2(b) \to \{ sloupec\}$
          					}
          	\item Jako třetí případ můžeme považovat \texttt   {SELF.b}. Tento případ je ale stejný, 
-         	jako u případů oboustraně navigabilních, tak bude mezi nimi.
+         	jako u případů oboustranně navigabilních, tak bude mezi nimi.
          		  							
    		\end{itemize}
    	\subsection{Oboustranně navigabilní vazby}
-   		Třída A vidí zkrz svůji property na trídu B a třída vidí skrz svou property na třídu A. \\
+   		Třída A vidí skrz svoji property na třídu B a třída vidí skrz svou property na třídu A. \\
    		Máme sedm případů mapování, které je asi nejlepší rozdělit podle toho, zda je \texttt   {SELF.b.isOpposite} kolekce, či ne.
    		\subsubsection{SELF.b.isOpposite - isCollection = FALSE}
    		V tomto případě máme obecně už jen dva možné výstupy:
@@ -49,42 +50,38 @@
          							 SELF.b; \\
          							 SELF.b.a.isCollection;\\
          							 SELF.b.a.isCollection.isUnique;\\
-         							$\pi_3(b) \to \{ sloupec, FK\}$ \\
+         							$\pi_3(b) \to \{ sloupec, FK[A]\}$ \\
          							$\pi_3(a) \to \{ 0\}$
          							}
          			\item \texttt	{SELF.b.a.isCollection.isOrdered; \\}
-         							(Toto mapování obsahuje v \texttt {b} i sloupec s pořadím prvků) \\
-         							$\pi_4(b) \to \{ sloupec, FK\}$ \\
+         							$\pi_4(b) \to \{ sloupec, OC, FK[A]\}$ \\
          							$\pi_4(a) \to \{ 0\}$  		  							
    				\end{itemize}
    		\subsubsection{SELF.b.isOpposite - isCollection = TRUE}
    		Tato část je poměrně obsáhlá, ale ve finále vede pouze na pět různých mapování:
    				\begin{itemize}				    
-         			\item \texttt	{SELF.b.isOpposite.isCollection.isOrdered \&\& SELF.b.a; \\}
-         							(Toto mapování obsahuje v \texttt {b} i sloupec s pořadím prvků) \\        							
-         							$\pi_5(b) \to \{ sloupec\}$ \\
-         							$\pi_5(a) \to \{ sloupec, FK\}$		
-         			\item \texttt	{SELF.b.isOpposite.isCollection.isOrdered \&\& SELF.b.a.isCollection.isOrdered; \\}
-         							(Toto mapování obsahuje v \texttt {b, a} i sloupec s pořadím prvků) \\        							
-         							$\pi_6(b) \to \{ sloupec\}$ \\
-         							$\pi_6(a) \to \{ sloupec\}$	\\	
+         			\item \texttt	{SELF.b.isOpposite.isCollection.isOrdered $\wedge$ SELF.b.a; \\}        							
+         							$\pi_5(b) \to \{ sloupec, OC\}$ \\
+         							$\pi_5(a) \to \{ sloupec, FK[B]\}$		
+         			\item \texttt	{SELF.b.isOpposite.isCollection.isOrdered $\wedge$ SELF.b.a.isCollection.isOrdered; \\}      							
+         							$\pi_6(b) \to \{ sloupec, OC\}$ \\
+         							$\pi_6(a) \to \{ sloupec, OC\}$	\\	
          							(Vznik vazební tabulky s cizími klíči)
-         			\item \texttt	{SELF.b.isOpposite.isCollection.isUnique \&\& SELF.b.a; \\
-         							 SELF.b.isOpposite.isCollection \&\& SELF.b.a; \\}    							
+         			\item \texttt	{SELF.b.isOpposite.isCollection.isUnique $\wedge$ SELF.b.a; \\
+         							 SELF.b.isOpposite.isCollection $\wedge$ SELF.b.a; \\}    							
          							$\pi_7(b) \to \{ 0\}$ \\
-         							$\pi_7(a) \to \{ sloupec, FK\}$	\\
-         			\item \texttt	{SELF.b.isOpposite.isCollection.isUnique \&\& SELF.b.a.isCollection.isOrdered; \\
-         							 SELF.b.isOpposite.isCollection \&\& SELF.b.a.isCollection.isOrdered; \\
-         							 SELF.b.isOpposite.isCollection.isOrdered \&\& SELF.b.a.isCollection.isUnique; \\
-         							 SELF.b.isOpposite.isCollection.isOrdered \&\& SELF.b.a.isCollection; \\}
-         							(Toto mapování obsahuje v \texttt {a} i sloupec s pořadím prvků) \\        							
+         							$\pi_7(a) \to \{ sloupec, FK[B]\}$	\\
+         			\item \texttt	{SELF.b.isOpposite.isCollection.isUnique $\wedge$ SELF.b.a.isCollection.isOrdered; \\
+         							 SELF.b.isOpposite.isCollection $\wedge$ SELF.b.a.isCollection.isOrdered; \\
+         							 SELF.b.isOpposite.isCollection.isOrdered $\wedge$ SELF.b.a.isCollection.isUnique; \\
+         							 SELF.b.isOpposite.isCollection.isOrdered $\wedge$ SELF.b.a.isCollection; \\}       							
          							$\pi_8(b) \to \{ 0\}$ \\
-         							$\pi_8(a) \to \{ sloupec\}$	\\	
+         							$\pi_8(a) \to \{ sloupec, OC\}$	\\	
          							(Vznik vazební tabulky s cizími klíči)	 
-         		     \item \texttt	{SELF.b.isOpposite.isCollection.isUnique \&\& SELF.b.a.isCollection.isUnique; \\
-         							 SELF.b.isOpposite.isCollection.isUnique \&\& SELF.b.a.isCollection; \\
-         							 SELF.b.isOpposite.isCollection \&\& SELF.b.a.isCollection.isUnique; \\
-         							 SELF.b.isOpposite.isCollection \&\& SELF.b.a.isCollection; \\}       							
+         		     \item \texttt	{SELF.b.isOpposite.isCollection.isUnique $\wedge$ SELF.b.a.isCollection.isUnique; \\
+         							 SELF.b.isOpposite.isCollection.isUnique $\wedge$ SELF.b.a.isCollection; \\
+         							 SELF.b.isOpposite.isCollection $\wedge$ SELF.b.a.isCollection.isUnique; \\
+         							 SELF.b.isOpposite.isCollection $\wedge$ SELF.b.a.isCollection; \\}       							
          							$\pi_9(b) \to \{ 0\}$ \\
          							$\pi_9(a) \to \{ 0\}$	\\	
          							(Vznik vazební tabulky s cizími klíči)	 				   							

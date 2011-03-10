@@ -1,0 +1,74 @@
+\documentclass[11pt,a4paper]{article}   	
+\usepackage[utf8]{inputenc}              	
+\usepackage[czech]{babel}                	
+\usepackage[pdftex]{graphicx}
+\usepackage{amsfonts}				
+\begin{document}
+\section{Operace nad modelem}
+	\subsection{createClass}
+	Operace pro vytvoření třídy. \\
+	OCL: pre: class v systemu nesmí existovat post: vytvoření třídy\\
+	\texttt{
+			    class CreateClass extends ModelOperation \{ \\
+      				attr String[1] ClassName; \\
+   				\}	
+	}
+	\subsection{setAbstract}
+	Nastavení třídy jako abstraktní \\
+	OCL: pre: třída nesmí být abstraktní post: nastavení vlastnosti \\
+	\texttt{
+			    class SetAbstract extends ModelOperation \{\\
+      				attr String[1] ClassName;\\
+      				attr boolean[1] IsAbstract;\\
+    		\}
+	}
+	\subsection{setEmbedded}
+	Nastavení třídy jako embedded \\
+	OCL: pre: třída nesmí být embedded post: nastavení vlastnosti \\
+	\texttt{
+    class SetEmbedded extends ModelOperation \{\\
+      attr String[1] ClassName;\\
+      attr boolean[1] IsEmbedded;\\
+    \}
+	}
+	\subsection{setParent}
+	Nastavení předka třídy \\
+	OCL: post: nastavení předka \\
+	\texttt{
+    class SetParent extends ModelOperation \{\\
+      attr String[1] ClassName;\\
+      attr String[1] ParentName;\\
+    \}
+	}
+	\subsection{setPrimitive}
+	Nastavení třídy jako primitivní \\
+	OCL: post: nastavení vlastnosti \\
+	\texttt{
+    class SetPrimitive extends ModelOperation \{\\
+      attr String[1] ClassName;\\
+      attr boolean[1] IsPrimitive;\\
+    \}
+	}
+	\subsection{setOpposite}
+	Nastavení opposite vlastnosti pro property třídy \\
+	OCL: post: nastavení vlastnosti \\
+	\texttt{
+    class SetOpposite extends ModelOperation \{\\
+      attr String[1] ClassName;\\
+      attr boolean[1] IsOpposite;\\
+    \}
+	}
+	\subsection{addProperty}
+	Přidání property do třídy \\
+	OCL: pre: musi existovat třída; nesmí v ní existovat danná property post: přidání property \\
+	\texttt{
+    class AddProperty extends ModelOperation \{\\
+      attr String[1] PropertyName;\\
+      attr String[1] Type;\\
+      attr String[1] DefaultValue;\\
+      attr String[1] ParentClass;\\
+      attr int[1] LowerBound;\\
+      attr int[1] UpperBound;\\
+    \}
+	}			
+\end{document} %konec dokumentu
