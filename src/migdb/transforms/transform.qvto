@@ -38,9 +38,9 @@ main() {
 
 mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot {
 	log("toRdbRoot sekce");
-	//self.modelGenerations->forEach(generation){
-	//	result.DBgenerations += generation.map toDBmodel();
-	//}
+	self.modelGenerations->forEach(generation){
+		result.DBgenerations += generation.xmap toDBmodel();
+	}
 }
 
 // namapuje ModelGeneration na DBgeneration, ktera je prazdna, pokud ma atribut 
@@ -48,23 +48,122 @@ mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot {
 mapping APP::reduced::ModelGeneration::toDBmodel() : RDB::rdb::Database {
 	log("toDBmodel sekce");
 	if(self.isMissing = false) then {
-		schemas += self.map toSchema();
+		schemas += self.xmap toSchema();
 	}endif;
 }
-
 
 mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 	log("toSchema sekce");		
 	
-	self.classes->forEach(clss|clss.isGeneralClassSerializable() and clss.hasSerializableAncestor() = false){
-		
-	}			
+	self.classes->forEach(clss|clss.isGeneralClassSerializable() = true and clss.hasSerializableAncestor() = false){
+		result.tables+=clss.xmap toSimpleTable();
+	};
+	
+	var maximalDepth : Integer := 0;
+	var tempDepth : Integer := 0;
+	self.classes->forEach(clss | clss.hasImplicitInheritanceType() or clss.hasJoinedInheritanceType() ){
+		tempDepth := clss.getTreeDepth();
+		if( tempDepth > maximalDepth ) then {
+			maximalDepth := tempDepth;
+		}endif;
+	};
+	
+	var i : Integer := 0;
+	while( i < maximalDepth){
+		self.classes ->forEach(clss){
+			
+		};
+	};		
 }
 
+//tohle je jeste furt blbe
+mapping APP::reduced::Class::toJoinedTable():RDB::rdb::Table 
+when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) and self.isGeneralClassSerializable()}
+{
+	init{
+		var precedessor:RDB::rdb::Table := self.parent.resolveone(RDB::rdb::Table);
+	}
+	population{
+		
+	}
+}
+
+mapping APP::reduced::Class::toTablePerClass():RDB::rdb::Table
+when { self.hasTablePerClassInheritanceType() and self.isGeneralClassSerializable()}	
+{
+	log("toTablePerClass sekce " + self.name);
+	name := self.name;
+	
+	var temp : APP::reduced::Class = self;
+	var propSet: OrderedSet(APP::reduced::Property);
+	
+	while(temp.parent <> null){
+		temp := temp.parent;
+		temp->properties->forEach(prop){
+			propSet+=prop;
+		};
+	};
+	
+	propSet->xmap toColumns(result);
+		
+}
+
+mapping APP::reduced::Class::toSingleTable() : RDB::rdb::Table
+when { self.hasSingleTableInheritanceType() and self.isGeneralClassSerializable()}
+{	
+	// v init sekci je nalezena tabulka, do ktere se budou pridavat sloupce
+	init{
+		var temp:APP::reduced::Class := self;
+		while(temp.parent <> null and temp.isTransient = false and temp.resolveone(RDB::rdb::Table)<> null){
+			temp := temp.parent;
+		};
+		result := temp.resolveone(RDB::rdb::Table);
+		
+	}	
+
+	population{
+	
+		var propSet: OrderedSet(APP::reduced::Property);	
+		
+		//tento while cyklus by mel zajistit, ze netransientni property transientnich predku mezi aktualni mapovanou tridou a 
+		//tridou predka, ktera se namapovala na tabulku, se namapuji take na sloupce, mozna je nadbytecny
+		while(temp.parent <> null or temp.parent.resolveone(RDB::rdb::Table) <> null){
+				temp := temp.parent;
+				temp->properties->forEach(prop | prop.isTransient = false){
+					propSet+=prop;
+				};
+		};
+		
+		propSet->xmap toColumns(result);
+		
+	}	
+} 
 
 
 //Namapuje tridu bez serializovatelneho potomka na tabulku
 mapping APP::reduced::Class::toSimpleTable() : RDB::rdb::Table 
+when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = false}
+{
+	log("toSimpleTable sekce " + self.name);
+	name := self.name;
+	
+	var temp : APP::reduced::Class = self;
+	var propSet: OrderedSet(APP::reduced::Property);
+	
+	while(temp.parent <> null ){
+		temp := temp.parent;
+		temp->properties->forEach(prop){
+			propSet+=prop;
+		};
+	};
+	
+	propSet->xmap toColumns(result);
+	
+}
+
+//Pripravena verze pro vicesloupcovy PK 
+//Namapuje tridu bez serializovatelneho potomka na tabulku
+/* mapping APP::reduced::Class::toSimpleTable() : RDB::rdb::Table 
 when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = false}
 {
 	log("toTable sekce " + self.name);
@@ -74,15 +173,20 @@ when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = fal
 	var pkColumns : OrderedSet(RDB::rdb::TableColumn); 
 	
 	temp.properties->forEach(prop | prop.isTransient = false){
-						ownedColumns+=prop.map toColumn( result );
+						var tableColumn:RDB::rdb::TableColumn = prop.map toColumn( result ); 
+						ownedColumns+=tableColumn;
+						if(prop.isID = true)then{		
+								pkColumns += tableColumn;
+							}endif;
 					};
 	 
 	while(temp.parent <> null){
-		temp = temp.parent;
+		temp := temp.parent;
 		temp.properties->forEach(prop | prop.isTransient = false){
 							var tableColumn:RDB::rdb::TableColumn = prop.map toColumn( result ); 
 							ownedColumns+= tableColumn;
-							if(prop.isID = true)then{
+							result.primaryKey = tableColumn.map toPK();
+							if(prop.isID = true)then{		
 								pkColumns += tableColumn;
 							}endif;
 						};		
@@ -91,22 +195,51 @@ when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = fal
 	var PK:RDB::rdb::PrimaryKey = pkColumns->map toPK();
 	result.constraints += PK;
 	
-}
+}*/
 
-mapping OrderedSet(RDB::rdb::TableColumn)::toPK():RDB::rdb::PrimaryKey{
+//mapovani toPK()
+mapping RDB::rdb::TableColumn::toPK():RDB::rdb::PrimaryKey{
 	init{
 		object result : RDB::rdb::PrimaryKey{
-			underlyingIndex = object RDB::rdb::Index{					
+			underlyingIndex := object RDB::rdb::Index{
 			}
 		};	
 	}
-	population{		
-		self->forEach(col){
-				result.underlyingIndex.columns+= col;
-			}
+	population{
+				result.underlyingIndex.columns += self;
 		}
 }
 
+
+//pripravene mapovani pro vicesloupcove PK
+/* mapping OrderedSet(RDB::rdb::TableColumn)::toPK():RDB::rdb::PrimaryKey{
+	init{
+		object result : RDB::rdb::PrimaryKey{
+			underlyingIndex := object RDB::rdb::Index{
+			}
+		};	
+	}
+	population{
+				result.underlyingIndex.columns += self;
+		log("toPK sekce ");
+		self->forEach(col){
+				log("col" + col.name);
+				result.underlyingIndex.columns+= col;
+			}
+		}
+} */
+
+
+mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Table){
+	self->forEach(prop | prop.isTransient = false){
+						var tableColumn:RDB::rdb::TableColumn = prop.xmap toColumn(); 
+						table.ownedColumns+=tableColumn;
+						if(prop.isID = true)then{		
+								table.primaryKey = tableColumn.xmap toPK();
+							}endif;
+					};	
+			table.constraints+=table.primaryKey;
+}
 
 query APP::reduced::Property::isSerializable() : Boolean {
 	if(self.isTransient)then {
@@ -116,23 +249,23 @@ query APP::reduced::Property::isSerializable() : Boolean {
 	return true;
 }
 
-mapping APP::reduced::Property::toColumn( table : RDB::rdb::Table ) : RDB::rdb::TableColumn 
+mapping APP::reduced::Property::toColumn( ) : RDB::rdb::TableColumn 
 disjuncts APP::reduced::Property::toPrimitive
- //,APP::reduced::Property::toNx1_FKColumn, APP::reduced::Property::toMxN_FKColumn
- {
+{
 
 }
 
 // tohle je asi spatne
-mapping APP::reduced::Property::toPrimitive( table : RDB::rdb::Table ) : RDB::rdb::TableColumn
+mapping APP::reduced::Property::toPrimitive( ) : RDB::rdb::TableColumn
 when {	self.isPrimitive()}
 {
+		log("toPrimitive property sekce "  + self.name);
 		name:= self.name;
 		switch {
 			case (self.type.name = "String") {
 				type:= "varchar";
 			}
-			case (self.type.name = "Int") {
+			case (self.type.name = "Integer") {
 				type := "number";
 			}
 			case (self.type.name = "Boolean") {
@@ -154,75 +287,28 @@ query RDB::rdb::TableColumn::isID():Boolean{
 	return false;
 }
 
-//nejpravdepodobneji je uplne k nicemu
-mapping APP::reduced::Property::toNx1_FKColumn( table: RDB::rdb::Table ) : RDB::rdb::TableColumn
-when {	self.isForeignKey() and self.upperBound=1	}
-{
-	log("mapping toNx1_FK");
-	if(self.type <> null) then {
-		var FK_class:APP::reduced::Class := self.type;
-	 	name:= "FK "+FK_class.name;
-	 } endif;
-}
-
-//nejpravdepodobneji je uplne k nicemu
-mapping APP::reduced::Property::toMxN_FKColumn( table : RDB::rdb::Table ) : RDB::rdb::TableColumn
-//zatim se neprovadi
-when {	self.isForeignKey() and false	}
-{
-		log("neimplementovana sekce toMxN_FK");
-	 //name:= "FK "+self.name;
-}
-
-//nejpravdepodobneji je uplne k nicemu
-mapping APP::reduced::Property::toForeignKey(): RDB::rdb::ForeignKey{
-	result.name := "FK "+ self.name;
+// query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen jednosloupcovy ID
+query APP::reduced::Class::isGeneralClassSerializable():Boolean{
+	if(self.isPrimitive = true or self.isAbstract = true or self.isTransient = true and self.hasOneIDProperty()) then {
+		return false;
+	}endif;
 	
-	result.targetTable = self.owningClass.owningModel.classes->forEach(Class){
-			if(Class.name = self.name)then {
-				log("bingo");
-				break;
-			}
-			endif;
-	};
-	
-	
-	result.targetTable.ownedColumns->forEach(Column){
-		if(Column.isID())then{
-			result.constrainedColumn = Column;
-			break;
-		}endif;
-	};
-	
-	log("toForeignKey sekce" + "  "+ self.name);
-} 
-
-// je spatne
-query APP::reduced::Property::isForeignKey(): Boolean{
-	log("v sekci isForeignKey ");
-	if(self.isPrimitive() = false and self.isID() = false ) then {
-		return true;
-	} endif;
 	return false;
 }
 
-
-// query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen jednosloupcovy ID
-query APP::reduced::Class::isGeneralClassSerializable():Boolean{
-	if(self.isPrimitive = true) then {
-		return false;
-	}endif;
-	
-	if(self.isTransient = true) then {
-		return false;
-	}endif;
-	
-	//Mozna tato cast neni potreba
+//validace existence prave jedne Property PK v stromu dedicnosti, 
+//v budoucich verzich nebude nutna jeji splnitelnost
+query APP::reduced::Class::hasOneIDProperty():Boolean{
+	var temp : APP::reduced::Class = self;
 	var count : Integer = 0;
-	self.properties->forEach( prop){
-		if(prop.isID() and prop.isSerializable()) then {
-			count = count + 1;
-		}endif;
+	
+	while(temp.parent <> null){	
+		temp.properties->forEach( prop){
+			if(prop.isID() and prop.isSerializable()) then {
+				count := count + 1;
+			}endif;
+		};
+		temp := temp.parent;
 	};
 	
 	if(count = 1) then {
@@ -256,10 +342,10 @@ query APP::reduced::Class::hasSerializableAncestor():Boolean{
 	var temp:APP::reduced::Class = self;
 	
 	while(temp.parent <> null and temp.parent.isAbstract = false){
+		temp := temp.parent;
 		if(temp.parent.isTransient = false) then {
 			return true;
 		}endif;
-		temp = temp.parent;
 	};
 	 
 	return false;
@@ -267,32 +353,44 @@ query APP::reduced::Class::hasSerializableAncestor():Boolean{
 
 //zjisti, jestli ma nejaky predek zadany InheritanceType
 query APP::reduced::Class::hasImplicitInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(0);	
+	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::__not_defined);	
 } 
 
 query APP::reduced::Class::hasSingleTableInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(1);	
+	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::singleTable);	
 }
 
 query APP::reduced::Class::hasTablePerClassInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(2);	
+	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::tablePerClass);	
 }
 
 query APP::reduced::Class::hasJoinedInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(3);	
+	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::joined);	
 }
 
 
-query APP::reduced::Class::hasChosenInheritanceType( chosenType:Integer):Boolean{
+query APP::reduced::Class::hasChosenInheritanceType( chosenType:APP::reduced::InheritanceType):Boolean{
 	var temp:APP::reduced::Class = self;
 	
 	while(temp.parent <> null ){
 		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
 			return true;
 		}endif;
-		temp = temp.parent;
+		temp := temp.parent;
 	};
 	
 	return true;
 
+}
+
+query APP::reduced::Class::getTreeDepth():Integer{
+	var depth : Integer = 0;
+	var temp := self;
+	
+	while(temp.parent <> null){
+		temp = temp.parent;
+		depth := depth + 1;
+	};
+	
+	return depth;
 }
