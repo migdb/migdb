@@ -7,7 +7,8 @@
 \section{Operace nad modelem}
 	\subsection{createClass}
 	Operace pro vytvoření třídy. \\
-	OCL: pre: class v systemu nesmí existovat post: vytvoření třídy\\
+	OCL: pre: class se stejným jménem v systemu nesmí existovat \\
+	post: vytvoření třídy\\
 	\texttt{
 			    class CreateClass extends ModelOperation \{ \\
       				attr String[1] ClassName; \\
@@ -15,7 +16,8 @@
 	}
 	\subsection{setAbstract}
 	Nastavení třídy jako abstraktní \\
-	OCL: pre: třída nesmí být abstraktní post: nastavení vlastnosti \\
+	OCL: pre: třída musí existovat\\
+	post: nastavení abstrakce \\
 	\texttt{
 			    class SetAbstract extends ModelOperation \{\\
       				attr String[1] ClassName;\\
@@ -24,7 +26,8 @@
 	}
 	\subsection{setEmbedded}
 	Nastavení třídy jako embedded \\
-	OCL: pre: třída nesmí být embedded post: nastavení vlastnosti \\
+	OCL: pre: třída musí existovat\\ 
+	post: nastavení embedded \\
 	\texttt{
     class SetEmbedded extends ModelOperation \{\\
       attr String[1] ClassName;\\
@@ -33,7 +36,8 @@
 	}
 	\subsection{setParent}
 	Nastavení předka třídy \\
-	OCL: post: nastavení předka \\
+	OCL: pre: třída musí existovat $\wedge$ musí existovat předek\\
+	post: nastavení předka \\
 	\texttt{
     class SetParent extends ModelOperation \{\\
       attr String[1] ClassName;\\
@@ -42,19 +46,22 @@
 	}
 	\subsection{setPrimitive}
 	Nastavení třídy jako primitivní \\
-	OCL: post: nastavení vlastnosti \\
+	OCL: pre: třída musí existovat post: nastavení vlastnosti \\
 	\texttt{
     class SetPrimitive extends ModelOperation \{\\
       attr String[1] ClassName;\\
       attr boolean[1] IsPrimitive;\\
     \}
 	}
-	\subsection{setOpposite}
+	\subsection{addAsociation}
 	Nastavení opposite vlastnosti pro property třídy \\
 	OCL: post: nastavení vlastnosti \\
 	\texttt{
     class SetOpposite extends ModelOperation \{\\
       attr String[1] ClassName;\\
+      attr String[1] PropertyName;\\
+      attr String[1] OppositeClassName;\\
+      attr String[1] OppositePropertyName;\\
       attr boolean[1] IsOpposite;\\
     \}
 	}
