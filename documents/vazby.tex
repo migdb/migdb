@@ -8,7 +8,11 @@
 	\subsection{Úvod - upřesnění formulace}
 	Zkratka $OC$ (Ordering Column) značí sloupec, určující pořadí prvků, tedy vlastnost property isOrdered. \\
 	$FK[B]$ značí cizí klíč ze třídy B.
-	
+		\begin{figure}	             
+    		\includegraphics[scale=0.9]{./AB.png}
+    		\caption{Pro lepší představu obrázek vazby}			     
+    		\label{pict:vazba}		             
+   		\end{figure}
 	\subsection{Obecné guardy}
 	     \begin{itemize}
 	     	\item $ g_0 $\texttt : {Pouze obyčejná vazba}				
@@ -25,7 +29,7 @@
          					$\pi_0(b) : E \to \{ 0\}$  
          					}
    		\end{itemize}
-   		Pokud je třída Embadded, namapují se její sloupce do třídy, která třídu využívá\\
+   		Pokud je třída Embadded, namapují se její sloupce do třídy, která třídu využívá.
    	\subsection{Jednostranně navigabilní vazby}
    		Třída A vidí skrz svoji property na trídu B, ale B nemá žádnou takovou property a 
    		tak třídu A nevidí a ani neví, že je třídou A viděna. Při jednostranně navigabilním
