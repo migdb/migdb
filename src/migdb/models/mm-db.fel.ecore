@@ -68,7 +68,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/TableConstraint">
       <eAnnotations source="OCL">
-        <details key="inv" value="self.constrainedColumn.owningTable = self.targetTable)"/>
+        <details key="inv" value="self.constrainedColumn.owningTable = self.owningTable)"/>
       </eAnnotations>
       <eAnnotations source="OCL">
         <details key="inv" value="self.targetTable.getPrimaryColumn()->notEmpty()"/>
