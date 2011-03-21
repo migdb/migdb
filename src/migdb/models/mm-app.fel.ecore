@@ -128,17 +128,15 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="UpperBound" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SetOpposite" eSuperTypes="#//reduced/operations/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="AddAssociation" eSuperTypes="#//reduced/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="PropertyName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="OppositeClassName"
-            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="OppositePropertyName"
-            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="IsOpposite" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="SetUnique" eSuperTypes="#//reduced/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
@@ -167,11 +165,33 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="Name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="EditPropertyType" eSuperTypes="#//reduced/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="PropertyName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="Type" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DeleteClass" eSuperTypes="#//reduced/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DeleteProperty" eSuperTypes="#//reduced/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="PropertyName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DeleteAssociation" eSuperTypes="#//reduced/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="ClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="PropertyName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="OppositeClassName"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="OppositePropertyName"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
     </eSubpackages>

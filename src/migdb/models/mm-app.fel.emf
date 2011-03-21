@@ -90,12 +90,11 @@ package reduced {
       attr int[1] UpperBound;
     }
 
-    class SetOpposite extends ModelOperation {
+    class AddAssociation extends ModelOperation {
       attr String[1] ClassName;
       attr String[1] PropertyName;
-      attr String[1] OppositeClassName;
-      attr String[1] OppositePropertyName;
-      attr boolean[1] IsOpposite;
+      attr String OppositeClassName;
+      attr String OppositePropertyName;
     }
 
     class SetUnique extends ModelOperation {
@@ -118,11 +117,28 @@ package reduced {
     class RenameProperty extends ModelOperation {
       attr String[1] PropertyName;
       attr String[1] Name;
+      attr String[1] ClassName;
     }
 
     class EditPropertyType extends ModelOperation {
       attr String[1] PropertyName;
       attr String[1] Type;
+    }
+
+    class DeleteClass extends ModelOperation {
+      attr String[1] ClassName;
+    }
+
+    class DeleteProperty extends ModelOperation {
+      attr String[1] ClassName;
+      attr String[1] PropertyName;
+    }
+
+    class DeleteAssociation extends ModelOperation {
+      attr String[1] ClassName;
+      attr String[1] PropertyName;
+      attr String OppositeClassName;
+      attr String OppositePropertyName;
     }
 
   }
