@@ -46,18 +46,19 @@
 	}
 	\subsection{setPrimitive}
 	Nastavení třídy jako primitivní \\
-	OCL: pre: třída musí existovat post: nastavení vlastnosti \\
+	OCL: pre: třída musí existovat \\
+	post: nastavení vlastnosti \\
 	\texttt{
     class SetPrimitive extends ModelOperation \{\\
       attr String[1] ClassName;\\
       attr boolean[1] IsPrimitive;\\
     \}
 	}
-	\subsection{addAsociation}
+	\subsection{addAssociation}
 	Nastavení opposite vlastnosti pro property třídy \\
 	OCL: post: nastavení vlastnosti \\
 	\texttt{
-    class SetOpposite extends ModelOperation \{\\
+    class AddAssociation extends ModelOperation \{\\
       attr String[1] ClassName;\\
       attr String[1] PropertyName;\\
       attr String[1] OppositeClassName;\\
@@ -67,7 +68,8 @@
 	}
 	\subsection{addProperty}
 	Přidání property do třídy \\
-	OCL: pre: musi existovat třída; nesmí v ní existovat danná property post: přidání property \\
+	OCL: pre: musí existovat třída $\wedge$ nesmí v ní existovat danná property \\	
+	post: přidání property \\
 	\texttt{
     class AddProperty extends ModelOperation \{\\
       attr String[1] PropertyName;\\
@@ -77,5 +79,67 @@
       attr int[1] LowerBound;\\
       attr int[1] UpperBound;\\
     \}
-	}			
+	}	
+	\subsection{RenameClass}
+	Přejmenování třídy \\
+	OCL: pre: musí existovat třída	$\wedge$ jméno již nesmí existovat \\
+	post: přejmenování třídy \\
+	\texttt{
+     class RenameClass extends ModelOperation \{ \\
+      attr String[1] ClassName;\\
+      attr String[1] Name;\\
+    \}
+	}
+	\subsection{RenameProperty}
+	Přejmenování property \\
+	OCL: pre: musí existovat property $\wedge$ jméno již nesmí existovat $\wedge$ musí existovat třída \\
+	post: přejmenování property \\
+	\texttt{
+    class RenameProperty extends ModelOperation \{ \\
+      attr String[1] PropertyName; \\
+      attr String[1] Name; \\
+    \}
+	}
+	\subsection{EditPropertyType}
+	Změna typu property \\
+	OCL: pre: musí existovat property $\wedge$ musí existovat třída \\
+	post: změna typu property \\
+	\texttt{
+    class EditPropertyType extends ModelOperation \{ \\
+      attr String[1] ClassName;\\
+      attr String[1] PropertyName;\\
+      attr String[1] Type;\\
+    \}
+	}
+	\subsection{DeleteClass}
+	Smazání třídy \\
+	OCL: pre: musí existovat třída \\
+	post: smazání třídy \\
+	\texttt{
+    class DeleteClass extends ModelOperation \{ \\
+      attr String[1] ClassName;\\
+    \}
+	}
+	\subsection{DeleteProperty}
+	Smazání property \\
+	OCL: pre: musí existovat třída $\wedge$ musí existovat property $\wedge$ property nesmí být součástí asociace \\
+	post: smazání property \\
+	\texttt{
+    class DeleteProperty extends ModelOperation \{ \\
+      attr String[1] ClassName; \\
+      attr String[1] PropertyName; \\
+    \}
+	}
+	\subsection{DeleteAssociation}
+	Smazání asociace \\
+	OCL: pre: asociace musí exitovat \\
+	post: smazání asociace \\
+	\texttt{
+    class DeleteAssociation extends ModelOperation \{ \\
+      attr String[1] ClassName; \\
+      attr String[1] PropertyName; \\
+      attr String OppositeClassName; \\
+      attr String OppositePropertyName; \\
+    \}
+	}								
 \end{document} %konec dokumentu
