@@ -63,7 +63,6 @@
       attr String[1] PropertyName;\\
       attr String[1] OppositeClassName;\\
       attr String[1] OppositePropertyName;\\
-      attr boolean[1] IsOpposite;\\
     \}
 	}
 	\subsection{addProperty}
@@ -111,7 +110,7 @@
       attr String[1] Type;\\
     \}
 	}
-	\subsection{DeleteClass}
+	\subsection{RemoveClass}
 	Smazání třídy \\
 	OCL: pre: musí existovat třída \\
 	post: smazání třídy \\
@@ -120,7 +119,7 @@
       attr String[1] ClassName;\\
     \}
 	}
-	\subsection{DeleteProperty}
+	\subsection{RemoveProperty}
 	Smazání property \\
 	OCL: pre: musí existovat třída $\wedge$ musí existovat property $\wedge$ property nesmí být součástí asociace \\
 	post: smazání property \\
@@ -130,7 +129,7 @@
       attr String[1] PropertyName; \\
     \}
 	}
-	\subsection{DeleteAssociation}
+	\subsection{RemoveAssociation}
 	Smazání asociace \\
 	OCL: pre: asociace musí exitovat \\
 	post: smazání asociace \\
@@ -138,8 +137,8 @@
     class DeleteAssociation extends ModelOperation \{ \\
       attr String[1] ClassName; \\
       attr String[1] PropertyName; \\
-      attr String OppositeClassName; \\
-      attr String OppositePropertyName; \\
+      attr String[1] OppositeClassName; \\
+      attr String[1] OppositePropertyName; \\
     \}
 	}								
 \end{document} %konec dokumentu
