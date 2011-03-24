@@ -93,8 +93,8 @@ package reduced {
     class AddAssociation extends ModelOperation {
       attr String[1] ClassName;
       attr String[1] PropertyName;
-      attr String OppositeClassName;
-      attr String OppositePropertyName;
+      attr String[1] OppositeClassName;
+      attr String[1] OppositePropertyName;
     }
 
     class SetUnique extends ModelOperation {
@@ -125,16 +125,16 @@ package reduced {
       attr String[1] Type;
     }
 
-    class DeleteClass extends ModelOperation {
+    class RemoveClass extends ModelOperation {
       attr String[1] ClassName;
     }
 
-    class DeleteProperty extends ModelOperation {
+    class RemoveProperty extends ModelOperation {
       attr String[1] ClassName;
       attr String[1] PropertyName;
     }
 
-    class DeleteAssociation extends ModelOperation {
+    class RemoveAssociation extends ModelOperation {
       attr String[1] ClassName;
       attr String[1] PropertyName;
       attr String OppositeClassName;
