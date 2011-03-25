@@ -70,21 +70,20 @@ mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 	};
 	
 	self.classes->forEach(clss | clss.hasImplicitInheritanceType() or clss.hasJoinedInheritanceType() ){
-//		tempDepth := clss.getTreeDepth();
-
+		tempDepth := clss.getClassDepth();
 		if( tempDepth > maximalDepth ) then {
 			maximalDepth := tempDepth;
 		}endif;
 	};
 	
-/*	var i : Integer := 0;
-	while( i < maximalDepth){
-		self.classes ->forEach(clss | clss.getTreeDepth() = i and (clss.hasJoinedInheritanceType() or clss.hasImplicitInheritanceType())){
+	var i : Integer := 0;
+	while( i <= maximalDepth){
+		self.classes ->forEach(clss | clss.getClassDepth() = i and (clss.hasJoinedInheritanceType() or clss.hasImplicitInheritanceType())){
 			tables+= clss.xmap toJoinedTable();
 		};
 		i := i+1;
 	};
-*/	
+	
 	self.classes->forEach(clss | clss.hasTablePerClassInheritanceType() and clss.hasSerializableAncestor() = true){
 		tables+=clss.xmap toTablePerClass();
 	};
@@ -104,22 +103,27 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 	init{
 		var precedessor:RDB::rdb::Table;
 		
-		var temp: APP::reduced::Class;
+		var temp: APP::reduced::Class = self.parent;
 		//najdi serializovaneho predka
-		while(temp.isTransient){
+		while(temp.isTransient=true){
 		 	temp := temp.parent;
 		 };
+		 	 
 		 precedessor := temp.resolveone(RDB::rdb::Table);
 	}
 	population{
-		log("toJoined Sekce"+self.name);
-		var FK:RDB::rdb::ForeignKey;
-		FK.name := "FK " + precedessor.name;
-		FK.owningTable = result;
+		log("toJoined Sekce "+self.name);
+		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
+			name := "FK " + precedessor.name;	
+			targetTable := precedessor;
+		};
+		
+		result.constraints+=FK;
 		
 		var PKcol:RDB::rdb::TableColumn:= object RDB::rdb::TableColumn{
 			name:= self.name + " id";
 		};
+		
 		result.ownedColumns+= PKcol;
 		
 		var pk : RDB::rdb::PrimaryKey := object RDB::rdb::PrimaryKey{
@@ -129,8 +133,10 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 			}
 		};
 		
-		//FK.targetTable := precedessor;
-		FK.constrainedColumn := PKcol; 		
+		result.constraints+= pk;
+		
+		FK.constrainedColumn := PKcol;
+		result.name := self.name;  		
 	}
 }
 
@@ -160,11 +166,7 @@ when { self.hasSingleTableInheritanceType() = true and self.isGeneralClassSerial
 		var temp:APP::reduced::Class := self.getSerializableRoot();
 		
 		log("toSingleTable sekce "+self.name);
-		var rootTable:RDB::rdb::Table := temp.resolveone(RDB::rdb::Table);
-//		log("==============");
-//		log("resolve "+ rootTable.name);
-//		log("==============");
-		
+		var rootTable:RDB::rdb::Table := temp.resolveone(RDB::rdb::Table);		
 		var propSet: OrderedSet(APP::reduced::Property);	
 		
 		//tento while cyklus by mel zajistit, ze netransientni property transientnich predku mezi aktualni mapovanou tridou a 
@@ -212,42 +214,6 @@ when {self.isGeneralClassSerializable()= true and self.hasSerializableAncestor()
 	
 }
 
-//Pripravena verze pro vicesloupcovy PK 
-//Namapuje tridu bez serializovatelneho potomka na tabulku
-/* mapping APP::reduced::Class::toSimpleTable() : RDB::rdb::Table 
-when {self.isGeneralClassSerializable() and self.hasSerializableAncestor() = false}
-{
-	log("toTable sekce " + self.name);
-	name := self.name;
-	
-	var temp : APP::reduced::Class = self;
-	var pkColumns : OrderedSet(RDB::rdb::TableColumn); 
-	
-	temp.properties->forEach(prop | prop.isTransient = false){
-						var tableColumn:RDB::rdb::TableColumn = prop.map toColumn( result ); 
-						ownedColumns+=tableColumn;
-						if(prop.isID = true)then{		
-								pkColumns += tableColumn;
-							}endif;
-					};
-	 
-	while(temp.parent <> null){
-		temp := temp.parent;
-		temp.properties->forEach(prop | prop.isTransient = false){
-							var tableColumn:RDB::rdb::TableColumn = prop.map toColumn( result ); 
-							ownedColumns+= tableColumn;
-							result.primaryKey = tableColumn.map toPK();
-							if(prop.isID = true)then{		
-								pkColumns += tableColumn;
-							}endif;
-						};		
-	};
-	
-	var PK:RDB::rdb::PrimaryKey = pkColumns->map toPK();
-	result.constraints += PK;
-	
-}*/
-
 //mapovani toPK()
 mapping RDB::rdb::TableColumn::toPK():RDB::rdb::PrimaryKey{
 	init{
@@ -260,25 +226,6 @@ mapping RDB::rdb::TableColumn::toPK():RDB::rdb::PrimaryKey{
 				result.underlyingIndex.columns += self;
 		}
 }
-
-
-//pripravene mapovani pro vicesloupcove PK
-/* mapping OrderedSet(RDB::rdb::TableColumn)::toPK():RDB::rdb::PrimaryKey{
-	init{
-		object result : RDB::rdb::PrimaryKey{
-			underlyingIndex := object RDB::rdb::Index{
-			}
-		};	
-	}
-	population{
-				result.underlyingIndex.columns += self;
-		log("toPK sekce ");
-		self->forEach(col){
-				log("col" + col.name);
-				result.underlyingIndex.columns+= col;
-			}
-		}
-} */
 
 
 mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Table){
