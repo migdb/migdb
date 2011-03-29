@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,15 +26,19 @@
 modeltype APP uses 'mm-app';
 modeltype RDB uses 'mm-db';
 
-transformation APP_To_Rdb(in appModel : APP, out RDB);
+
+transformation APP_To_Rdb(in appModel : APP, out rdb : RDB, out app : APP );
 
 //vstupni bod transformace, najde vsechny RootObjecty, pretypuje na ModelRoot a mapuje pres toRdbRoot
 main() {
 	log("zacatek transformace");
-	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();	
+	//zakomentovanim nasledujiciho radku se neprovede mapovani operaci
+	appModel.rootObjects()[APP::reduced::ModelRoot]->toOperated();
+	
+	//zakomentovani nasledujiciho radku se neprovede mapovani appMoodelu na RDB model
+	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
 	log("konec transformace");
 }
-
 
 mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot{
 	log("toRdbRoot sekce");
@@ -236,7 +240,8 @@ mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Tab
 							tableColumn:= prop.xmap toColumn(); 
 							}else{
 							var help :RDB::rdb::TableColumn = prop.resolveone(RDB::rdb::TableColumn);
-							tableColumn := help.deepclone()[RDB::rdb::TableColumn]->any(oclIsKindOf(RDB::rdb::TableColumn));
+							tableColumn := help.deepclone().oclAsType(RDB::rdb::TableColumn);
+							//[RDB::rdb::TableColumn]->any(oclIsKindOf(RDB::rdb::TableColumn));
 						}endif;
 						
 						tableColumn._owningTable = table;
@@ -432,5 +437,50 @@ query APP::reduced::Class::hasIdProperty():Boolean{
 			return true;
 		}endif;
 	};
+	return false;
+}
+
+//toto mapovani ted neni naimplementovano spravne, implementace slouzi jen k otestovani operace AddClass
+mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
+
+	self.modelGenerations->forEach(generation){
+		var newGeneration : APP::reduced::ModelGeneration :=object APP::reduced::ModelGeneration{
+				classes := generation.classes.deepclone()[APP::reduced::Class];
+				log("Generation");
+			};
+				
+		self.operations->select(oclIsTypeOf(APP::reduced::operations::CreateClass))[APP::reduced::operations::CreateClass]->forEach(operation){
+			
+			log("--------------------"+operation.ClassName+"-----------------------------------");
+			newGeneration.classes += operation.xmap AddClass(newGeneration);
+		};							
+		result.modelGenerations+= newGeneration;
+	}
+}
+
+//operace se namapuje do nove tridy dane generace, pokud trida v generaci neexistuje
+mapping APP::reduced::operations::CreateClass::AddClass(inout generation: APP::reduced::ModelGeneration) : APP::reduced::Class when{
+	generation.isClassInGeneration(self.ClassName) = false;
+}
+{
+	log("AddClass " + self.ClassName);
+	result.name:= self.ClassName;
+	result.isAbstract :=false;
+	result.isEmbedded := false;
+	result.isPrimitive := false;
+	result.inheritanceType := APP::reduced::InheritanceType::__not_defined;
+	result.parent := null;
+	result.isTransient := false;
+	
+	generation.classes+= result;
+}
+
+//overi, jestli v dane generaci existuje trida s danym jmenem
+query APP::reduced::ModelGeneration::isClassInGeneration( clssName : String):Boolean{
+	self.classes->forOne(clss | clss.name = clssName ){
+//		log("--------------------query.TRUE-------------------------");
+		return true;
+	};
+//	log("--------------------query.FALSE-------------------------");
 	return false;
 }
