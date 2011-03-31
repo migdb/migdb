@@ -449,7 +449,7 @@ mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
 				log("Generation");
 			};
 				
-		self.operations->select(oclIsTypeOf(APP::reduced::operations::CreateClass))[APP::reduced::operations::CreateClass]->forEach(operation){
+		self.operations->select(oclIsTypeOf(APP::reduced::operations::AddClass))[APP::reduced::operations::AddClass]->forEach(operation){
 			
 			log("--------------------"+operation.ClassName+"-----------------------------------");
 			newGeneration.classes += operation.xmap AddClass(newGeneration);
@@ -458,29 +458,67 @@ mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
 	}
 }
 
-//operace se namapuje do nove tridy dane generace, pokud trida v generaci neexistuje
-mapping APP::reduced::operations::CreateClass::AddClass(inout generation: APP::reduced::ModelGeneration) : APP::reduced::Class when{
-	generation.isClassInGeneration(self.ClassName) = false;
-}
-{
-	log("AddClass " + self.ClassName);
-	result.name:= self.ClassName;
-	result.isAbstract :=false;
-	result.isEmbedded := false;
-	result.isPrimitive := false;
-	result.inheritanceType := APP::reduced::InheritanceType::__not_defined;
-	result.parent := null;
-	result.isTransient := false;
-	
-	generation.classes+= result;
-}
-
-//overi, jestli v dane generaci existuje trida s danym jmenem
-query APP::reduced::ModelGeneration::isClassInGeneration( clssName : String):Boolean{
-	self.classes->forOne(clss | clss.name = clssName ){
-//		log("--------------------query.TRUE-------------------------");
+// overi, jestli v dane generaci existuje trida s danym jmenem
+query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
+	self.classes->forOne(c | c.name = cName ) {
 		return true;
 	};
-//	log("--------------------query.FALSE-------------------------");
 	return false;
+}
+
+// operace namapuje tridu do dane generace, pokud trida v generaci neexistuje
+mapping APP::reduced::operations::AddClass::
+AddClass(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when { g.isClassInGeneration(self.ClassName) = false; }
+{
+	log("AddClass " + self.ClassName);
+	result.name := self.ClassName;
+	result.inheritanceType := APP::reduced::InheritanceType::__not_defined;
+	result.parent := null;
+	// AddID
+	result.isAbstract := false;
+	result.isEmbedded := false;
+	result.isPrimitive := false;
+	result.isTransient := false;
+	
+	g.classes += result;
+}
+
+// overi, jestli v dane tride existuje property s danym jmenem
+query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
+	self.properties->forOne(p | p.name = pName ) {
+		return true;
+	};
+	return false;
+}
+
+// oeprace namapuje property do dane tridy, pokud property ve tride neexistuje
+mapping APP::reduced::operations::AddProperty::
+AddProperty(inout c : APP::reduced::Class) : APP::reduced::Property
+when { c.isPropertyInClass(self.PropertyName) = false; }
+{
+	log("AddProperty " + self.PropertyName);
+	result.name := self.PropertyName;
+	// result.type := self.Type;
+	// defaultValue
+	// result.owningClass := self.ParentName;
+	result.lowerBound := self.LowerBound;
+	result.upperBound := self.UpperBound;
+	
+	c.properties += result;
+}
+
+// operace vytvori oboustranne navigabilni asociaci mezi tridami
+mapping APP::reduced::operations::AddAssociation::
+AddAssociation(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+//when {
+//	g.isClassInGeneration(self.ClassName) = false and
+//	ve tride self.ClassName neexistuje property self.ProeprtyName and
+//	g.isClassInGeneration(self.OppositeClassName) = false and
+//	ve tride self.OppositeClassName neexistuje property self.OppositePropertyName;
+//}
+{
+	log("AddAssociation between " + self.ClassName + " and " + self.OppositeClassName);
+	// AddProperty(self.ClassName)
+	// AddProperty(self.OppositeClassName)
 }

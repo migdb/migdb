@@ -82,7 +82,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
             eType="#//reduced/ModelRoot" changeable="false" derived="true" eOpposite="#//reduced/ModelRoot/operations"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CreateClass" eSuperTypes="#//reduced/operations/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="AddClass" eSuperTypes="#//reduced/operations/ModelOperation">
         <eAnnotations source="OCL">
           <details key="pre" value="self.ClassName"/>
           <details key="post" value="self.ClassName"/>
