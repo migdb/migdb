@@ -459,6 +459,9 @@ mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
 	}
 }
 
+
+/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
 // najde tridu dle jejiho jmena
 query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class
 {
@@ -492,6 +495,9 @@ query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
 	};
 	return false;
 }
+
+
+/* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
 // operace namapuje tridu do dane generace, pokud trida v generaci neexistuje
 mapping APP::reduced::operations::AddClass::
@@ -549,6 +555,9 @@ when {
 	// namapování AddProperty() - self.secondClassName
 }
 
+
+/* ++++++++++ SET OPERATIONS ++++++++++++++++++++ */
+
 // operace, ktera nastavi vlastnost isAbstract
 mapping APP::reduced::operations::SetAbstract::
 SetAbstract(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
@@ -559,9 +568,7 @@ when{
 	var c : APP::reduced::Class := g.findClass(self.name);
 
 	log("SetAbstract " + self.name);
-	result.isAbstract = self.isAbstract;
-
-    g.classes += result; // pridani nove tridy do generace
+	c.isAbstract = self.isAbstract;
 }
 
 // operace, ktera nastavi vlastsnost isEmbedded
@@ -574,9 +581,7 @@ when{
 	var c : APP::reduced::Class := g.findClass(self.name);
 
 	log("SetEmbedded " + self.name);
-	result.isEmbedded = self.isEmbedded;
-
-    g.classes += result; // pridani nove tridy do generace
+	c.isEmbedded = self.isEmbedded;
 }
 
 // operace, ktera nastavi vlastsnost parent
@@ -589,11 +594,10 @@ when{
 	var c : APP::reduced::Class := g.findClass(self.name);
 
 	log("SetParent " + self.name);
-	result.parent = self.parentName;
+	c.parent = self.parentName;
 	
 	// ID problem
 
-    g.classes += result; // pridani nove tridy do generace
 }
 
 // operace, ktera nastavi vlastsnost isPrimitive
@@ -606,9 +610,7 @@ when{
 	var c : APP::reduced::Class := g.findClass(self.name);
 
 	log("SetPrimitive " + self.name);
-	result.isPrimitive = self.isPrimitive;
-
-    g.classes += result; // pridani nove tridy do generace
+	c.isPrimitive = self.isPrimitive;
 }
 
 // operace, ktera nastavi vlastsnost isID
@@ -623,9 +625,7 @@ when {
 	var p : APP::reduced::Property := c.findProperty(self.name);
 
 	log("SetID " + self.name);
-	result.isID = self.isID;
-
-    c.properties += result; // pridani nove property do tridy
+	p.isID = self.isID;
 }
 
 // operace, ktera nastavi vlastsnost isOrdered
@@ -640,9 +640,7 @@ when {
 	var p : APP::reduced::Property := c.findProperty(self.name);
 
 	log("SetOrdered " + self.name);
-	result.isOrdered = self.isOrdered;
-
-    c.properties += result; // pridani nove property do tridy
+	p.isOrdered = self.isOrdered;
 }
 
 // operace, ktera nastavi vlastsnost isUnique
@@ -657,7 +655,53 @@ when {
 	var p : APP::reduced::Property := c.findProperty(self.name);
 
 	log("SetUnique " + self.name);
-	result.isUnique = self.isUnique;
+	p.isUnique = self.isUnique;
+}
 
-    c.properties += result; // pridani nove property do tridy
+
+/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
+
+// operace, ktera prejmenuje danou tridu, jestlize existuje
+mapping APP::reduced::operations::RenameClass::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when {
+	g.isClassInGeneration(self.name) = true and 
+	g.isClassInGeneration(self.newName) = false;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.name);
+
+	log("RenameClass " + self.name);
+	c.name = self.newName;
+}
+
+// operace, ktera prejmenuje danou property, jestlize existuje
+mapping APP::reduced::operations::RenameProperty::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
+when {
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true and
+	g.findClass(self.owningClassName).isPropertyInClass(self.newName) = false;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	log("RenameProperty " + self.name);
+	p.name = self.newName;
+}
+
+// operace, ktera zmeni datovy typ dane property, jestlize existuje
+mapping APP::reduced::operations::EditPropertyType::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
+when {
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	log("EditPropertyType " + self.name);
+	p.type := g.findClass(self.type); // null
 }
