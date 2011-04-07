@@ -452,7 +452,7 @@ mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
 		self.operations->select(oclIsTypeOf(APP::reduced::operations::AddClass))
 			[APP::reduced::operations::AddClass]->forEach(operation){
 			
-			log("--------------------"+operation.ClassName+"-----------------------------------");
+			log("--------------------"+operation.name+"-----------------------------------");
 			newGeneration.classes += operation.xmap AddClass(newGeneration);
 		};							
 		result.modelGenerations+= newGeneration;
@@ -496,10 +496,10 @@ query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
 // operace namapuje tridu do dane generace, pokud trida v generaci neexistuje
 mapping APP::reduced::operations::AddClass::
 AddClass(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
-when { g.isClassInGeneration(self.ClassName) = false; }
+when { g.isClassInGeneration(self.name) = false; }
 {
-	log("AddClass " + self.ClassName);
-	result.name := self.ClassName;
+	log("AddClass " + self.name);
+	result.name := self.name;
 	result.inheritanceType := APP::reduced::InheritanceType::__not_defined;
 	result.parent := null;
 	result.isAbstract := false;
@@ -517,17 +517,17 @@ when { g.isClassInGeneration(self.ClassName) = false; }
 mapping APP::reduced::operations::AddProperty::
 AddProperty(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
-	g.isClassInGeneration(self.OwningClassName) = true and 
-	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
 	
-	log("AddProperty " + self.PropertyName);
-	result.name := self.PropertyName;	
-	result.type := g.findClass(self.Type); // null
-	result.lowerBound := self.LowerBound;
-	result.upperBound := self.UpperBound;
+	log("AddProperty " + self.name);
+	result.name := self.name;	
+	result.type := g.findClass(self.type); // null
+	result.lowerBound := self.lowerBound;
+	result.upperBound := self.upperBound;
 	
 	// defaultValue
 	
@@ -538,28 +538,28 @@ when {
 mapping APP::reduced::operations::AddAssociation::
 AddAssociation(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
 when {
-	g.isClassInGeneration(self.ClassName) = true and
-	g.findClass(self.ClassName).isPropertyInClass(self.PropertyName) = true and
-	g.isClassInGeneration(self.OppositeClassName) = true and
-	g.findClass(self.OppositeClassName).isPropertyInClass(self.OppositePropertyName) = true;
+	g.isClassInGeneration(self.firstClassName) = true and
+	g.findClass(self.firstClassName).isPropertyInClass(self.firstPropertyName) = true and
+	g.isClassInGeneration(self.secondClassName) = true and
+	g.findClass(self.secondClassName).isPropertyInClass(self.secondPropertyName) = true;
 }
 {
-	log("AddAssociation between " + self.ClassName + " and " + self.OppositeClassName);
-	// namapování AddProperty() - self.ClassName
-	// namapování AddProperty() - self.OppositeClassName
+	log("AddAssociation between " + self.firstClassName + " and " + self.secondClassName);
+	// namapování AddProperty() - self.firstClassName
+	// namapování AddProperty() - self.secondClassName
 }
 
 // operace, ktera nastavi vlastnost isAbstract
 mapping APP::reduced::operations::SetAbstract::
 SetAbstract(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
 when{ 
-	g.isClassInGeneration(self.ClassName) = true;
+	g.isClassInGeneration(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.ClassName);
+	var c : APP::reduced::Class := g.findClass(self.name);
 
-	log("SetAbstract " + self.ClassName);
-	result.isAbstract = self.IsAbstract;
+	log("SetAbstract " + self.name);
+	result.isAbstract = self.isAbstract;
 
     g.classes += result; // pridani nove tridy do generace
 }
@@ -568,13 +568,13 @@ when{
 mapping APP::reduced::operations::SetEmbedded::
 SetEmbedded(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
 when{ 
-	g.isClassInGeneration(self.ClassName) = true;
+	g.isClassInGeneration(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.ClassName);
+	var c : APP::reduced::Class := g.findClass(self.name);
 
-	log("SetEmbedded " + self.ClassName);
-	result.isEmbedded = self.IsEmbedded;
+	log("SetEmbedded " + self.name);
+	result.isEmbedded = self.isEmbedded;
 
     g.classes += result; // pridani nove tridy do generace
 }
@@ -583,13 +583,13 @@ when{
 mapping APP::reduced::operations::SetParent::
 SetParent(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
 when{ 
-	g.isClassInGeneration(self.ClassName) = true;
+	g.isClassInGeneration(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.ClassName);
+	var c : APP::reduced::Class := g.findClass(self.name);
 
-	log("SetParent " + self.ClassName);
-	result.parent = self.ParentName;
+	log("SetParent " + self.name);
+	result.parent = self.parentName;
 	
 	// ID problem
 
@@ -600,13 +600,13 @@ when{
 mapping APP::reduced::operations::SetPrimitive::
 SetPrimitive(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
 when{ 
-	g.isClassInGeneration(self.ClassName) = true;
+	g.isClassInGeneration(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.ClassName);
+	var c : APP::reduced::Class := g.findClass(self.name);
 
-	log("SetPrimitive " + self.ClassName);
-	result.isPrimitive = self.IsPrimitive;
+	log("SetPrimitive " + self.name);
+	result.isPrimitive = self.isPrimitive;
 
     g.classes += result; // pridani nove tridy do generace
 }
@@ -615,14 +615,14 @@ when{
 mapping APP::reduced::operations::SetID::
 SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
-	g.isClassInGeneration(self.OwningClassName) = true and 
-	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
-	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
 
-	log("SetID " + self.PropertyName);
+	log("SetID " + self.name);
 	result.isID = self.isID;
 
     c.properties += result; // pridani nove property do tridy
@@ -632,15 +632,15 @@ when {
 mapping APP::reduced::operations::SetOrdered::
 SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
-	g.isClassInGeneration(self.OwningClassName) = true and 
-	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
-	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
 
-	log("SetOrdered " + self.PropertyName);
-	result.isOrdered = self.IsOrdered;
+	log("SetOrdered " + self.name);
+	result.isOrdered = self.isOrdered;
 
     c.properties += result; // pridani nove property do tridy
 }
@@ -649,15 +649,15 @@ when {
 mapping APP::reduced::operations::SetUnique::
 SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
-	g.isClassInGeneration(self.OwningClassName) = true and 
-	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+	g.isClassInGeneration(self.owningClassName) = true and 
+	g.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
-	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+	var c : APP::reduced::Class := g.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
 
-	log("SetUnique " + self.PropertyName);
-	result.isUnique = self.IsUnique;
+	log("SetUnique " + self.name);
+	result.isUnique = self.isUnique;
 
     c.properties += result; // pridani nove property do tridy
 }
