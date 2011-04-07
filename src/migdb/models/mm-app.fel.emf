@@ -57,7 +57,7 @@ package reduced {
     }
 
     @OCL(pre="self.ClassName", post="self.ClassName")
-    class CreateClass extends ModelOperation {
+    class AddClass extends ModelOperation {
       attr String[1] ClassName;
     }
 

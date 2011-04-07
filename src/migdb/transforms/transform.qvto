@@ -460,11 +460,12 @@ mapping APP::reduced::ModelRoot::toOperated() : APP::reduced::ModelRoot{
 }
 
 // najde tridu dle jejiho jmena
-query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {
+query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class
+{
 	self.classes->forOne(c | c.name = cName ) {
 		return c;
 	};
-	return null;
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
 }
 
 // overi, jestli v dane generaci existuje trida s danym jmenem
@@ -473,6 +474,15 @@ query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boole
 		return true;
 	};
 	return false;
+}
+
+// najde property dle jejiho jmena
+query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property
+{
+	self.properties->forOne(p | p.name = pName ) {
+		return p;
+	};
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
 }
 
 // overi, jestli v dane tride existuje property s danym jmenem
@@ -497,7 +507,7 @@ when { g.isClassInGeneration(self.ClassName) = false; }
 	result.isPrimitive := false;
 	result.isTransient := false;
 	
-	// AddID
+	// ID problem
 	// PrimitiveClass -> defaultValue
 	
 	g.classes += result;
@@ -507,11 +517,11 @@ when { g.isClassInGeneration(self.ClassName) = false; }
 mapping APP::reduced::operations::AddProperty::
 AddProperty(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
-	g.isClassInGeneration(self.ParentName) = true and 
-	g.findClass(self.ParentName).isPropertyInClass(self.PropertyName)
+	g.isClassInGeneration(self.OwningClassName) = true and 
+	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
 }
 {
-	var c : APP::reduced::Class := g.findClass(self.ParentName);
+	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
 	
 	log("AddProperty " + self.PropertyName);
 	result.name := self.PropertyName;	
@@ -537,4 +547,117 @@ when {
 	log("AddAssociation between " + self.ClassName + " and " + self.OppositeClassName);
 	// namapování AddProperty() - self.ClassName
 	// namapování AddProperty() - self.OppositeClassName
+}
+
+// operace, ktera nastavi vlastnost isAbstract
+mapping APP::reduced::operations::SetAbstract::
+SetAbstract(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when{ 
+	g.isClassInGeneration(self.ClassName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.ClassName);
+
+	log("SetAbstract " + self.ClassName);
+	result.isAbstract = self.IsAbstract;
+
+    g.classes += result; // pridani nove tridy do generace
+}
+
+// operace, ktera nastavi vlastsnost isEmbedded
+mapping APP::reduced::operations::SetEmbedded::
+SetEmbedded(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when{ 
+	g.isClassInGeneration(self.ClassName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.ClassName);
+
+	log("SetEmbedded " + self.ClassName);
+	result.isEmbedded = self.IsEmbedded;
+
+    g.classes += result; // pridani nove tridy do generace
+}
+
+// operace, ktera nastavi vlastsnost parent
+mapping APP::reduced::operations::SetParent::
+SetParent(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when{ 
+	g.isClassInGeneration(self.ClassName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.ClassName);
+
+	log("SetParent " + self.ClassName);
+	result.parent = self.ParentName;
+	
+	// ID problem
+
+    g.classes += result; // pridani nove tridy do generace
+}
+
+// operace, ktera nastavi vlastsnost isPrimitive
+mapping APP::reduced::operations::SetPrimitive::
+SetPrimitive(inout g : APP::reduced::ModelGeneration) : APP::reduced::Class
+when{ 
+	g.isClassInGeneration(self.ClassName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.ClassName);
+
+	log("SetPrimitive " + self.ClassName);
+	result.isPrimitive = self.IsPrimitive;
+
+    g.classes += result; // pridani nove tridy do generace
+}
+
+// operace, ktera nastavi vlastsnost isID
+mapping APP::reduced::operations::SetID::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
+when {
+	g.isClassInGeneration(self.OwningClassName) = true and 
+	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+
+	log("SetID " + self.PropertyName);
+	result.isID = self.isID;
+
+    c.properties += result; // pridani nove property do tridy
+}
+
+// operace, ktera nastavi vlastsnost isOrdered
+mapping APP::reduced::operations::SetOrdered::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
+when {
+	g.isClassInGeneration(self.OwningClassName) = true and 
+	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+
+	log("SetOrdered " + self.PropertyName);
+	result.isOrdered = self.IsOrdered;
+
+    c.properties += result; // pridani nove property do tridy
+}
+
+// operace, ktera nastavi vlastsnost isUnique
+mapping APP::reduced::operations::SetUnique::
+SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
+when {
+	g.isClassInGeneration(self.OwningClassName) = true and 
+	g.findClass(self.OwningClassName).isPropertyInClass(self.PropertyName) = true;
+}
+{
+	var c : APP::reduced::Class := g.findClass(self.OwningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.PropertyName);
+
+	log("SetUnique " + self.PropertyName);
+	result.isUnique = self.IsUnique;
+
+    c.properties += result; // pridani nove property do tridy
 }
