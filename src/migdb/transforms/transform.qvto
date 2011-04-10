@@ -551,8 +551,8 @@ when {
 }
 {
 	log("AddAssociation between " + self.firstClassName + " and " + self.secondClassName);
-	// namapování AddProperty() - self.firstClassName
-	// namapování AddProperty() - self.secondClassName
+	// namapovï¿½nï¿½ AddProperty() - self.firstClassName
+	// namapovï¿½nï¿½ AddProperty() - self.secondClassName
 }
 
 
