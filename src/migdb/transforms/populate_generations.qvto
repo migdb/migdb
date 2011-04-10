@@ -1,0 +1,58 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+
+modeltype APP uses 'mm-app';
+
+transformation APP_To_Rdb(in inModel : APP, out outModel : APP);
+main() {
+	assert(inModel.rootObjects()->size() = 1);
+	assert(inModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
+	
+	log("transformation started...");
+	
+	inModel.rootObjects().deepclone();
+
+	var root : APP::reduced::ModelRoot = outModel.rootObjects()![APP::reduced::ModelRoot];
+	var gen0 : APP::reduced::ModelGeneration = root.modelGenerations->first();
+	
+	// root.modelGenerations += gen0; 
+	
+	// Apply all operations on the last, just created, model generation
+	root.operations->forEach(op) {
+		log("	iterating over operation " + op.repr());
+		op.xmap apply(gen0);
+	};
+	
+	root.operations = root.operations->reject(true);
+}
+
+abstract mapping APP::reduced::operations::ModelOperation::apply(inout generation : APP::reduced::ModelGeneration);
+
+mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration) {
+	gen.classes += object APP::reduced::Class {
+		name := self.name;
+		
+	};
+}

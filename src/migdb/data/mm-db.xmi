@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mmrdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb ../models/mm-db.fel.ecore#//rdb">
+  <mmrdb:ModelRoot>
+    <DBgenerations>
+      <schemas>
+        <tables name="ST_Parent" primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.0/@constraints.0">
+          <ownedColumns name="ST_parent_ID" type="Integer"/>
+          <ownedColumns name="ST_grandchild_property" type="Integer"/>
+          <ownedColumns name="discriminator" type="String"/>
+          <ownedColumns name="ST_child_property" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/1"/>
+        </tables>
+        <tables name="JOIN_Parent" primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.1/@constraints.0">
+          <ownedColumns name="JOIN_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/2"/>
+        </tables>
+        <tables name="TPC_Parent" primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.2/@constraints.0">
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/3"/>
+        </tables>
+        <tables name="JOIN_Child">
+          <ownedColumns name="JOIN_Child id"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK JOIN_Parent" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.1" constrainedColumn="/0/@DBgenerations.0/@schemas.0/@tables.3/@ownedColumns.0"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk JOIN_Child" underlyingIndex="/4"/>
+        </tables>
+        <tables name="JOIN_GrandChild">
+          <ownedColumns name="JOIN_GrandChild id"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK JOIN_Child" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.3" constrainedColumn="/0/@DBgenerations.0/@schemas.0/@tables.4/@ownedColumns.0"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk JOIN_GrandChild" underlyingIndex="/5"/>
+        </tables>
+        <tables name="TPC_GrandChild" primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.5/@constraints.0">
+          <ownedColumns name="TPC_grandchild_property" type="Integer"/>
+          <ownedColumns name="TPC_child_property" type="Integer"/>
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/6"/>
+        </tables>
+        <tables name="TPC_Child" primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.6/@constraints.0">
+          <ownedColumns name="TPC_child_property" type="Integer"/>
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/7"/>
+        </tables>
+      </schemas>
+    </DBgenerations>
+  </mmrdb:ModelRoot>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.0"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.1/@ownedColumns.0"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.2/@ownedColumns.0"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.3/@ownedColumns.0"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.4/@ownedColumns.0"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.5/@ownedColumns.2"/>
+  <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.6/@ownedColumns.1"/>
+  <mmrdb:ModelRoot>
+    <DBgenerations>
+      <schemas>
+        <tables name="JOIN_Parent" primaryKey="/8/@DBgenerations.0/@schemas.0/@tables.0/@constraints.0">
+          <ownedColumns name="JOIN_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/9"/>
+        </tables>
+        <tables name="ST_Parent" primaryKey="/8/@DBgenerations.0/@schemas.0/@tables.1/@constraints.0">
+          <ownedColumns name="ST_parent_ID" type="Integer"/>
+          <ownedColumns name="ST_child_property" type="Integer"/>
+          <ownedColumns name="discriminator" type="String"/>
+          <ownedColumns name="ST_grandchild_property" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/10"/>
+        </tables>
+        <tables name="TPC_Parent" primaryKey="/8/@DBgenerations.0/@schemas.0/@tables.2/@constraints.0">
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/11"/>
+        </tables>
+        <tables name="JOIN_Child">
+          <ownedColumns name="JOIN_Child id"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK JOIN_Parent" targetTable="/8/@DBgenerations.0/@schemas.0/@tables.0" constrainedColumn="/8/@DBgenerations.0/@schemas.0/@tables.3/@ownedColumns.0"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk JOIN_Child" underlyingIndex="/12"/>
+        </tables>
+        <tables name="JOIN_GrandChild">
+          <ownedColumns name="JOIN_GrandChild id"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK JOIN_Child" targetTable="/8/@DBgenerations.0/@schemas.0/@tables.3" constrainedColumn="/8/@DBgenerations.0/@schemas.0/@tables.4/@ownedColumns.0"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk JOIN_GrandChild" underlyingIndex="/13"/>
+        </tables>
+        <tables name="TPC_Child" primaryKey="/8/@DBgenerations.0/@schemas.0/@tables.5/@constraints.0">
+          <ownedColumns name="TPC_child_property" type="Integer"/>
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/14"/>
+        </tables>
+        <tables name="TPC_GrandChild" primaryKey="/8/@DBgenerations.0/@schemas.0/@tables.6/@constraints.0">
+          <ownedColumns name="TPC_grandchild_property" type="Integer"/>
+          <ownedColumns name="TPC_child_property" type="Integer"/>
+          <ownedColumns name="TPC_parent_ID" type="Integer"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" underlyingIndex="/15"/>
+        </tables>
+      </schemas>
+    </DBgenerations>
+  </mmrdb:ModelRoot>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.0"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.1/@ownedColumns.0"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.2/@ownedColumns.0"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.3/@ownedColumns.0"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.4/@ownedColumns.0"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.5/@ownedColumns.1"/>
+  <mmrdb:Index columns="/8/@DBgenerations.0/@schemas.0/@tables.6/@ownedColumns.2"/>
+</xmi:XMI>
