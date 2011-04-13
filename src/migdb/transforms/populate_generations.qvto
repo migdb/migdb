@@ -50,9 +50,71 @@ main() {
 
 abstract mapping APP::reduced::operations::ModelOperation::apply(inout generation : APP::reduced::ModelGeneration);
 
-mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration) {
+mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration)
+when { not gen.isClassInGeneration(self.name) }
+{
 	gen.classes += object APP::reduced::Class {
 		name := self.name;
-		
+		parent := gen.findClass(self.parent);
+		isAbstract := self.isAbstract;
+		isEmbedded := self.isEmbedded;
+		isPrimitive := self.isPrimitive;
+		// isID property
 	};
+}
+
+mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) = true and 
+	gen.findClass(self.owningClassName).isPropertyInClass(self.name) = true;
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	
+	c.properties += object APP::reduced::Property {
+		name := self.name;
+		type := gen.findClass(self.type);
+		lowerBound := self.lowerBound;
+		upperBound := self.upperBound;
+		isOrdered := self.isOrdered;
+		isUnique := self.isUnique;
+		// defaultValue
+		// isID
+	};
+}
+
+/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
+// najde tridu dle jejiho jmena
+query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class
+{
+	self.classes->forOne(c | c.name = cName ) {
+		return c;
+	};
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+}
+
+// overi, jestli v dane generaci existuje trida s danym jmenem
+query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
+	self.classes->forOne(c | c.name = cName ) {
+		return true;
+	};
+	return false;
+}
+
+// najde property dle jejiho jmena
+query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property
+{
+	self.properties->forOne(p | p.name = pName ) {
+		return p;
+	};
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+}
+
+// overi, jestli v dane tride existuje property s danym jmenem
+query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
+	self.properties->forOne(p | p.name = pName ) {
+		return true;
+	};
+	return false;
 }

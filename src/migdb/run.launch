@@ -4,17 +4,17 @@
 <booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.clearContents2" value="true"/>
 <booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.clearContents3" value="true"/>
 <mapAttribute key="org.eclipse.m2m.qvt.oml.interpreter.configurationProperties"/>
-<intAttribute key="org.eclipse.m2m.qvt.oml.interpreter.elemCount" value="3"/>
+<intAttribute key="org.eclipse.m2m.qvt.oml.interpreter.elemCount" value="2"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName1" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName3" value=""/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/transform.qvto"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/test-inheritanceTypes.xmi"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/mm-db.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/populate_generations.qvto"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/mm-app-test-pokus.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/mm-app-test-pokus-target.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel3" value="platform:/resource/migdb/data/APP-AfterOperations.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType3" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.traceFile" value="platform:/resource/migdb/tracefile.txt"/>
-<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.useTraceFile" value="true"/>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.useTraceFile" value="false"/>
 </launchConfiguration>
