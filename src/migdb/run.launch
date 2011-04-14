@@ -9,8 +9,8 @@
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName3" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/populate_generations.qvto"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/mm-app-test-pokus.xmi"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/mm-app-test-pokus-target.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/mm-app-test-source.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/mm-app-test-target.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel3" value="platform:/resource/migdb/data/APP-AfterOperations.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>
