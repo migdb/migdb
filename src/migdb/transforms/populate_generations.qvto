@@ -69,7 +69,7 @@ when { not gen.isClassInGeneration(self.name) }
 mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	not gen.findClass(self.owningClassName).isPropertyInClass(self.name);
+	not gen.isPropertyInClass(self.name, self.owningClassName);
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
@@ -79,10 +79,10 @@ when {
 		type := gen.findClass(self.type);
 		lowerBound := self.lowerBound;
 		upperBound := self.upperBound;
+		isID := self.isID;	
 		isOrdered := self.isOrdered;
-		isUnique := self.isUnique;		
+		isUnique := self.isUnique;	
 		// defaultValue
-		// isID
 	};
 }
 
@@ -132,7 +132,7 @@ when{ gen.isClassInGeneration(self.name); }
 mapping APP::reduced::operations::SetID::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	gen.findClass(self.owningClassName).isPropertyInClass(self.name);
+	gen.isPropertyInClass(self.name, self.owningClassName);
 	// ID problem
 }
 {
@@ -146,7 +146,7 @@ when {
 mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	gen.findClass(self.owningClassName).isPropertyInClass(self.name) and
+	gen.isPropertyInClass(self.name, self.owningClassName) and
 	gen.isClassInGeneration(self.type);
 }
 {
@@ -160,7 +160,7 @@ when {
 mapping APP::reduced::operations::SetOrdered::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	gen.findClass(self.owningClassName).isPropertyInClass(self.name);
+	gen.isPropertyInClass(self.name, self.owningClassName);
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
@@ -172,8 +172,8 @@ when {
 // operace, ktera nastavi vlastsnost isUnique
 mapping APP::reduced::operations::SetUnique::apply(inout gen : APP::reduced::ModelGeneration)
 when {
-	gen.isClassInGeneration(self.owningClassName) and 
-	gen.findClass(self.owningClassName).isPropertyInClass(self.name);
+	gen.isClassInGeneration(self.owningClassName) and
+	gen.isPropertyInClass(self.name, self.owningClassName);
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
@@ -181,6 +181,7 @@ when {
 
 	p.isUnique := self.isUnique;
 }
+
 
 /* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
@@ -200,8 +201,8 @@ when {
 mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	gen.findClass(self.owningClassName).isPropertyInClass(self.name) and
-	not gen.findClass(self.owningClassName).isPropertyInClass(self.newName);
+	gen.isPropertyInClass(self.name, self.owningClassName) and
+	not gen.isPropertyInClass(self.newName, self.owningClassName);
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
@@ -214,8 +215,7 @@ when {
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 // najde tridu dle jejiho jmena
-query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class
-{
+query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {
 	self.classes->forOne(c | c.name = cName ) {
 		return c;
 	};
@@ -231,8 +231,7 @@ query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boole
 }
 
 // najde property dle jejiho jmena
-query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property
-{
+query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property {
 	self.properties->forOne(p | p.name = pName ) {
 		return p;
 	};
@@ -240,9 +239,21 @@ query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property
 }
 
 // overi, jestli v dane tride existuje property s danym jmenem
-query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
-	self.properties->forOne(p | p.name = pName ) {
-		return true;
-	};
+query APP::reduced::ModelGeneration::isPropertyInClass(pName : String, cName : String) : Boolean {
+	if (self.isClassInGeneration(cName)) then {
+		var c : APP::reduced::Class := self.findClass(cName);		
+		c.properties->forOne(p | p.name = pName ) {
+			return true;
+		};
+	} endif;	
+	
 	return false;
+}
+
+query APP::reduced::ModelGeneration::isSelfParent(cName : String, oName : String) : Boolean {
+	var o : APP::reduced::Class := self.findClass(oName);
+	if (o <> null) then {
+		
+	} endif;
+	return true;
 }
