@@ -48,7 +48,7 @@ main() {
 	root.operations = root.operations->reject(true);
 }
 
-abstract mapping APP::reduced::operations::ModelOperation::apply(inout generation : APP::reduced::ModelGeneration);
+abstract mapping APP::reduced::operations::ModelOperation::apply(inout gen : APP::reduced::ModelGeneration);
 
 
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
@@ -77,12 +77,12 @@ when {
 	c.properties += object APP::reduced::Property {
 		name := self.name;
 		type := gen.findClass(self.type);
+		defaultValue := self.defaultValue;
 		lowerBound := self.lowerBound;
 		upperBound := self.upperBound;
 		isID := self.isID;	
 		isOrdered := self.isOrdered;
-		isUnique := self.isUnique;	
-		// defaultValue
+		isUnique := self.isUnique;
 	};
 }
 
@@ -113,10 +113,8 @@ when{ gen.isClassInGeneration(self.name); }
 {
 	var c : APP::reduced::Class := gen.findClass(self.name);
 
-	c.parent := gen.findClass(self.parentName);
-	
+	c.parent := gen.findClass(self.parentName);	
 	// ID problem
-
 }
 
 // operace, ktera nastavi vlastsnost isPrimitive
@@ -133,13 +131,13 @@ mapping APP::reduced::operations::SetID::apply(inout gen : APP::reduced::ModelGe
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
 	gen.isPropertyInClass(self.name, self.owningClassName);
-	// ID problem
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
 	var p : APP::reduced::Property := c.findProperty(self.name);
 	
 	p.isID := self.isID;
+	// ID problem
 }
 
 // operace, ktera nastavi vlastsnost type
