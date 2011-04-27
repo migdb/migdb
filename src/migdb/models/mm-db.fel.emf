@@ -5,57 +5,50 @@ package mm;
 package rdb {
   class ModelRoot {
     val Database[+] DBgenerations;
-    val Operation[*]#modelRoot operations;
+    val ComposedOperation[*]#owningModelRoot composedOperations;
   }
 
-  abstract class NamedElement {
+  class Database {
+    !ordered val Schema[*] schemas;
     attr String[1] name;
   }
 
-  class Database extends NamedElement {
-    !ordered val Schema[*] schemas;
-  }
-
-  abstract class DbObject extends NamedElement {
-  }
-
-  class Schema extends DbObject {
+  class Schema {
     !ordered val Table[*]#owningSchema tables;
     !ordered val Sequence[*]#owningSchema sequences;
     !ordered val Index[*]#owningSchema indexes;
+    attr String[1] name;
   }
 
   @OCL(inv="self.primaryKey->notEmpty() implies in self.indexes->contains(self.primaryKey)")
-  abstract class Relation {
-    !ordered op Column[*] getColumns();
-  }
-
-  @OCL(inv="self.primaryKey->notEmpty() implies in self.indexes->contains(self.primaryKey)")
-  class Table extends DbObject, Relation {
-
+  class Table {
+  
     @OCL(body="if self.primaryKey->isEmpty() then
 						null
 					else
 						self.primaryKey.underlyingIndex.columns->first()
 					endif
 					")
-    op Column getPrimaryColumn();
-    !ordered op Column[*] getColumns();
+    op TableColumn getPrimaryColumn();
+    !ordered op TableColumn[*] getColumns();
     readonly derived ref Schema[1]#tables owningSchema;
     ref PrimaryKey primaryKey;
-    !ordered val TableColumn[*]#_owningTable ownedColumns;
+    !ordered val TableColumn[*] ownedColumns;
     !ordered val TableConstraint[*]#owningTable constraints;
+    attr String[1] name;
   }
 
-  class Sequence extends DbObject {
+  class Sequence {
     readonly derived ref Schema[1]#sequences owningSchema;
     attr int cacheSize;
+    attr String[1] name;
   }
 
-  abstract class Constraint extends DbObject {
+  abstract class Constraint {
+    attr String[1] name;
   }
 
-  abstract class TableConstraint extends Constraint, NamedElement {
+  abstract class TableConstraint extends Constraint {
     readonly derived ref Table[1]#constraints owningTable;
   }
 
@@ -70,27 +63,25 @@ package rdb {
     ref TableColumn[1] constrainedColumn;
   }
 
-  abstract class Column extends NamedElement {
-    op Table getOwningTable();
-  }
-
-  class TableColumn extends Column {
+  class TableColumn {
 
     @OCL(body="self._owningTable")
     op Table getOwningTable();
-    readonly derived ref Table[1]#ownedColumns _owningTable;
     !ordered val ColumnConstraint[*]#owningColumn constraints;
+    ref Table[1] _owningTable;
     attr String[1] type;
+    attr String[1] name;
   }
 
   @OCL(inv="let first : TableColumn = self.columnsMap->first() in
 			  self.columns->forAll(col | col._owningTable = first._owningTable)")
-  class Index extends DbObject {
+  class Index {
     !ordered ref TableColumn[+] columns;
 
     @OCL(drv="self.columns->first()._owningTable")
     readonly volatile transient derived ref Table[1] indexedTable;
     readonly derived ref Schema[1]#indexes owningSchema;
+    attr String[1] name;
   }
 
   @OCL(inv="self.owningTable = self.underlyingIndex.indexedTable")
@@ -102,73 +93,87 @@ package rdb {
   class PrimaryKey extends UniqueIndex {
   }
 
-  abstract class Operation {
-    readonly derived ref ModelRoot[1]#operations modelRoot;
+  class ComposedOperation {
+    val Operations.Operation[*]#owningComposedOperation operations;
+    readonly derived ref ModelRoot[1]#composedOperations owningModelRoot;
   }
 
-  class CreateTable extends Operation {
-    op boolean createTable(String tableName, TableColumn[*] tableColumns, TableConstraint[*] tableConstraints, PrimaryKey primaryKey, Sequence[1] generateID);
-    attr String tableName;
-    !ordered ref TableColumn[*] tableColumns;
-    !ordered ref TableConstraint[*] tableConstraints;
-    ref PrimaryKey primaryKey;
-    readonly ref Sequence[1] generateID;
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/operations", prefix="mmrdb-operations")
+  package Operations {
+    abstract class Operation {
+      readonly derived ref ComposedOperation[1]#operations owningComposedOperation;
+      attr String[1] tableName;
+    }
+
+    class CreateTable extends Operation {
+      attr String[+] columnName;
+      attr String[+] columnType;
+      attr String[1] primaryKeyName;
+    }
+
+    class RenameTable extends Operation {
+      attr String[1] newName;
+    }
+
+    class DeleteTable extends Operation {
+    }
+
+    class AddColumn extends Operation {
+      attr String[1] columnName;
+      attr String[1] columnType;
+    }
+
+    class RenameColumn extends Operation {
+      attr String[1] columnName;
+      attr String[1] newName;
+    }
+
+    class SetColumnType extends Operation {
+      attr String[1] columnName;
+      attr String[1] newType;
+    }
+
+    class DeleteColumn extends Operation {
+      attr String[1] columnName;
+    }
+	
+	class CreateIndex extends Operation {
+	   attr boolean [1] isUnique;
+	   attr String [+] columnNames;
+	}
+	
+	class CreateForeignKey extends Operation{
+		attr String [1] columnName;
+		attr String [1] refColumnName;
+		attr String [1] refTableName;
+	}
+	
+	class CreatePrimaryKey extends Operation{
+	   attr String [1] columnName;
+	}
+	
+	class SetDefaultValue extends Operation{
+		attr String [1] columnName;
+		attr String [1] value;	
+	}
+	
+	class SetNull extends Operation{
+		attr String [1] columnName;
+		attr boolean[1] isNullable;   
+	}
   }
-
-  class RenameTable extends Operation {
-    op boolean renameTable(String newName, Table renamedTable);
-    ref Table[1] renamedTable;
-    attr String newName;
-  }
-
-  class DeleteTable extends Operation {
-    op boolean deleteTable(Table deletedTable);
-    ref Table[1] deletedTable;
-  }
-
-  class AddColumn extends Operation {
-    op boolean addColumn(Table changedTable, String newColumnName, ColumnConstraint[*] columnConstrains);
-    attr String newColumnName;
-    ref Table[1] changedTable;
-    !ordered ref ColumnConstraint[*] columnConstrains;
-  }
-
-  class RenameColumn extends Operation {
-    op boolean renameColumn(String newColumnName, Table changedTable, TableColumn renamedColumn);
-    attr String newColumnName;
-    ref Table[1] changedTable;
-
-    @OCL(inv="self.owningTable = changedTable")
-    ref TableColumn[1] renamedColumn;
-  }
-
-  class TypeChangeToColumn extends Operation {
-    op boolean typeChangeToColumn(String newType, Table changedTable, TableColumn changedTypeColumn);
-    attr String newType;
-    ref Table[1] changedTable;
-
-    @OCL(inv="self.owningTable = changedTable")
-    ref TableColumn[1] changedTypeColumn;
-  }
-
-  class DeleteColumn extends Operation {
-    op boolean deleteColumn(Table changedTable, TableColumn deleteColumn);
-    ref Table[1] changedTable;
-
-    @OCL(inv="self.owningTable = changedTable")
-    ref TableColumn[1] deleteColumn;
-  }
+  
 
   @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-dml", prefix="mmrdb-dml")
   package dml {
-    class Query extends Relation {
+    class Query {
 
       @DVU(subsets="self.columns")
       val ColumnReference[+] columnReferences;
     }
 
-    class ColumnReference extends Column {
-      ref Column[1] reference;
+    class ColumnReference extends TableColumn {
+      ref TableColumn[1] reference;
     }
 
   }
