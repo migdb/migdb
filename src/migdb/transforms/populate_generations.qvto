@@ -39,7 +39,6 @@ main() {
 	
 	// root.modelGenerations += gen0; 
 	
-	// Apply all operations on the last, just created, model generation
 	root.operations->forEach(op) {
 		log("	iterating over operation " + op.repr());
 		op.xmap apply(gen0);
@@ -58,11 +57,13 @@ when { not gen.isClassInGeneration(self.name) }
 {
 	gen.classes += object APP::reduced::Class {
 		name := self.name;
-		parent := gen.findClass(self.parent);
+		parent := gen.findClass(self.parent); // if a parent doesn't exist, set to null
 		isAbstract := self.isAbstract;
 		isEmbedded := self.isEmbedded;
 		isPrimitive := self.isPrimitive;
-		// ID problem
+		tableName := self.tableName;
+		inheritanceType := self.inheritanceType;
+		// ID property
 	};
 }
 
@@ -76,13 +77,16 @@ when {
 	
 	c.properties += object APP::reduced::Property {
 		name := self.name;
-		type := gen.findClass(self.type);
-		defaultValue := self.defaultValue;
-		lowerBound := self.lowerBound;
-		upperBound := self.upperBound;
-		isID := self.isID;	
-		isOrdered := self.isOrdered;
-		isUnique := self.isUnique;
+		type := gen.findClass(self.type); // if a type doesn't exist, set to null
+		defaultValue := self.defaultValue; // a value type has to be equal with a type of property
+		lowerBound := self.lowerBound;	// lowerBound <= upperBound
+		upperBound := self.upperBound; // upperBound >= lowerBound
+		isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
+		isUnique := self.isUnique; // has to be a collection (upperBound == -1)
+		isID := self.isID; // just one property has isID = true
+		columnName := self.columnName;
+		columnNamePattern := self.columnNamePattern;
+		sequenceName := self.sequenceName;
 	};
 }
 
