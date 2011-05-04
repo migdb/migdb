@@ -5,7 +5,7 @@ package mm;
 package rdb {
   class ModelRoot {
     val Database[+] DBgenerations;
-    val ComposedOperation[*]#owningModelRoot composedOperations;
+    val operations.Operation[*]#owningModelRoot composedoperations;
   }
 
   class Database {
@@ -93,74 +93,98 @@ package rdb {
   class PrimaryKey extends UniqueIndex {
   }
 
-  class ComposedOperation {
-    val Operations.Operation[*]#owningComposedOperation operations;
-    readonly derived ref ModelRoot[1]#composedOperations owningModelRoot;
-  }
-
+  
   @namespace(uri="http://www.collectionspro.eu/jam/mm/operations", prefix="mmrdb-operations")
-  package Operations {
+  package operations {
     abstract class Operation {
-      readonly derived ref ComposedOperation[1]#operations owningComposedOperation;
-      attr String[1] tableName;
+  	}
+  
+  	class ComposedTableOperation  extends Operation {
+    	ordered val operations.TableOperation[1..*] operations;
+  	}
+  
+    abstract class TableOperation extends Operation {
+      	attr String[1] tableName;
     }
 
-    class CreateTable extends Operation {
-      attr String[+] columnName;
-      attr String[+] columnType;
-      attr String[1] primaryKeyName;
+	abstract class CreateConstraintOperation extends TableOperation{
+		attr String[1] constraintName;		   
+	}
+	
+    class CreateTable extends TableOperation {
+      	attr String[+] columnName;
+      	attr String[+] columnType;
+	  	attr String[1] primaryKeyName;
+    }
+  
+    class RenameTable extends TableOperation {
+      	attr String[1] newName;
     }
 
-    class RenameTable extends Operation {
-      attr String[1] newName;
+    class DeleteTable extends TableOperation {
     }
 
-    class DeleteTable extends Operation {
-    }
-
-    class AddColumn extends Operation {
+    class AddColumn extends TableOperation {
       attr String[1] columnName;
       attr String[1] columnType;
+		attr String[0..1] default;
     }
 
-    class RenameColumn extends Operation {
+    class RenameColumn extends TableOperation {
       attr String[1] columnName;
       attr String[1] newName;
     }
 
-    class SetColumnType extends Operation {
+    class SetColumnType extends TableOperation {
       attr String[1] columnName;
       attr String[1] newType;
     }
 
-    class DeleteColumn extends Operation {
+    class DeleteColumn extends TableOperation {
       attr String[1] columnName;
     }
 	
-	class CreateIndex extends Operation {
+	class CreateSequence extends Operation{
+		attr String [1] sequenceName;   
+		attr int [?] minValue;
+		attr int [?] maxValue;
+		attr int [?] increment;  		
+	}
+	
+	class DropSequence extends Operation{
+	   attr String [1] sequenceName;
+	}
+	
+	class CreateIndex extends CreateConstraintOperation {
 	   attr boolean [1] isUnique;
 	   attr String [+] columnNames;
 	}
 	
-	class CreateForeignKey extends Operation{
+	class CreateForeignKey extends CreateConstraintOperation{
 		attr String [1] columnName;
 		attr String [1] refColumnName;
 		attr String [1] refTableName;
 	}
 	
-	class CreatePrimaryKey extends Operation{
+	class CreatePrimaryKey extends CreateConstraintOperation{
 	   attr String [1] columnName;
 	}
 	
-	class SetDefaultValue extends Operation{
+	class SetDefaultValue extends TableOperation{
 		attr String [1] columnName;
 		attr String [1] value;	
 	}
 	
-	class SetNull extends Operation{
+	class SetNull extends CreateConstraintOperation{
 		attr String [1] columnName;
 		attr boolean[1] isNullable;   
 	}
+		
+	class DropConstraint extends TableOperation{
+	   attr String [1] constraintName;
+	}
+	
+	
   }
   
 
@@ -179,4 +203,3 @@ package rdb {
   }
 
 }
-
