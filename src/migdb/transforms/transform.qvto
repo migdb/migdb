@@ -32,9 +32,6 @@ transformation APP_To_Rdb(in appModel : APP, out rdb : RDB, out app : APP );
 //vstupni bod transformace, najde vsechny RootObjecty, pretypuje na ModelRoot a mapuje pres toRdbRoot
 main() {
 	log("zacatek transformace");
-	//zakomentovanim nasledujiciho radku se neprovede mapovani operaci
-	appModel.rootObjects()[APP::reduced::ModelRoot]->toOperated();
-	
 	//zakomentovani nasledujiciho radku se neprovede mapovani appMoodelu na RDB model
 	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
 	log("konec transformace");
@@ -69,7 +66,6 @@ mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 	
 	
 	self.classes->forEach(clss | clss.hasSingleTableInheritanceType() = true  and clss.hasSerializableAncestor() = true){
-		//log(clss.name+" "+ clss.inheritanceType.repr());
 		clss.xmap toSingleTable();
 	};
 	
@@ -92,30 +88,15 @@ mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 		tables+=clss.xmap toTablePerClass();
 	};
 	
-	/*end{
-	var cls : RDB::rdb::Table := self.classes->selectOne(clss | clss.name = "parent")->resolveone(RDB::rdb::Table);
-		log(cls.name);
-	}*/	
-	
 }
 
-//tohle je jeste furt blbe
 mapping APP::reduced::Class::toJoinedTable():RDB::rdb::Table 
 when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) and 
 		self.isGeneralClassSerializable() and self.parent <> null }
 {
-	init{
-		var precedessor:RDB::rdb::Table;
 		
-		var temp: APP::reduced::Class = self.parent;
-		//najdi serializovaneho predka
-		while(temp.isTransient=true){
-		 	temp := temp.parent;
-		 };
-		 	 
-		 precedessor := temp.resolveone(RDB::rdb::Table);
-	}
-	population{
+		var temp: APP::reduced::Class = self.parent; 	 
+		var precedessor:RDB::rdb::Table:= temp.resolveone(RDB::rdb::Table);
 		log("toJoined Sekce "+self.name);
 		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
 			name := "FK " + precedessor.name;	
@@ -141,7 +122,6 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 		
 		FK.constrainedColumn := PKcol;
 		result.name := self.name;  		
-	}
 }
 
 mapping APP::reduced::Class::toTablePerClass():RDB::rdb::Table
@@ -173,11 +153,9 @@ when { self.hasSingleTableInheritanceType() = true and self.isGeneralClassSerial
 		var rootTable:RDB::rdb::Table := temp.resolveone(RDB::rdb::Table);		
 		var propSet: OrderedSet(APP::reduced::Property);	
 		
-		//tento while cyklus by mel zajistit, ze netransientni property transientnich predku mezi aktualni mapovanou tridou a 
-		//tridou predka, ktera se namapovala na tabulku, se namapuji take na sloupce, mozna je nadbytecny
 		temp := self;
-		while(temp <> null and (temp.isTransient = true or temp = self)){
-				temp->properties->forEach(prop | prop.isTransient = false){
+		while(temp <> null and temp = self){
+				temp->properties->forEach(prop ){
 					propSet+=prop;
 //					log(prop.name);
 				};
@@ -204,16 +182,10 @@ when {self.isGeneralClassSerializable()= true and self.hasSerializableAncestor()
 	log("toSerializableRootTable sekce " + self.name);
 	name := self.name;
 	
-	var temp : APP::reduced::Class := self;
-	var propSet: OrderedSet(APP::reduced::Property);
-	
-	while(temp <> null ){
-		temp->properties->forEach(prop){
+	var propSet: OrderedSet(APP::reduced::Property);	
+		self->properties->forEach(prop){
 			propSet += prop;
-		};
-		temp := temp.parent;
-	};
-	
+		};	
 	propSet->xmap toColumns(result);
 	
 }
@@ -234,7 +206,7 @@ mapping RDB::rdb::TableColumn::toPK():RDB::rdb::PrimaryKey{
 
 mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Table){
 	log("toColumns sekce");
-	self->forEach(prop | prop.isTransient = false){
+	self->forEach(prop){
 						var tableColumn:RDB::rdb::TableColumn; 
 						if(prop.resolveone(RDB::rdb::TableColumn) = null)then{
 							tableColumn:= prop.xmap toColumn(); 
@@ -255,10 +227,6 @@ mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Tab
 }
 
 query APP::reduced::Property::isSerializable() : Boolean {
-	if(self.isTransient)then {
-		return false;
-	}endif;
-	
 	return true;
 }
 
@@ -281,7 +249,7 @@ when {	self.isPrimitive() = true}
 // query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen jednosloupcovy ID
 query APP::reduced::Class::isGeneralClassSerializable():Boolean{
 	//log("generalClassSerializationQuerry");
-	if(self.isPrimitive = true or self.isTransient = true or self.hasOneIDProperty() = false) then {
+	if(self.isPrimitive = true or self.hasOneIDProperty() = false) then {
 		return false;
 	}endif;
 	
@@ -331,19 +299,11 @@ query APP::reduced::Property::isPrimitive():Boolean{
 	return false;
 }
 
-//zjisti, jestli ma dana trida serializovatelneho predka, v analyze je potrebna oprava
 query APP::reduced::Class::hasSerializableAncestor():Boolean{
 	var temp:APP::reduced::Class = self;
-	
-	//log("ser_Ancestor" + self.name);
-	while(temp.parent <> null ){
-	//	log(temp.name);
-		temp := temp.parent;
-		if(temp.isTransient = false ) then {
-			return true;
-		}endif;
-	};
-	 
+	if(self.parent <> null)then{
+		return true;
+	}endif;	 
 	return false;
 }
 
@@ -400,9 +360,6 @@ query APP::reduced::Class::getSerializableRoot():APP::reduced::Class{
 	while(index >= 1){
 		temp := list->at(index);
 		log(list->at(index).name);
-		if(temp.isTransient = false)then{
-			break;
-		}endif;
 		index := index - 1;
 	};
 	
@@ -511,7 +468,6 @@ when { g.isClassInGeneration(self.name) = false; }
 	result.isAbstract := false;
 	result.isEmbedded := false;
 	result.isPrimitive := false;
-	result.isTransient := false;
 	
 	// ID problem
 	// PrimitiveClass -> defaultValue
@@ -692,7 +648,7 @@ when {
 }
 
 // operace, ktera zmeni datovy typ dane property, jestlize existuje
-mapping APP::reduced::operations::EditPropertyType::
+mapping APP::reduced::operations::SetType::
 SetID(inout g : APP::reduced::ModelGeneration) : APP::reduced::Property
 when {
 	g.isClassInGeneration(self.owningClassName) = true and 

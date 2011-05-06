@@ -13,105 +13,125 @@
   			\item *element značí, že daný element je reference
   			\item zápis \begin{math}g_1 - g_3\end{math} znamená guardy indexované od 1 do 3, přijde mi to jako nejjednodušší značení 				
   			\item K [Column] značí kolekci elementů typu Column	
-  			\item predek(i) je třída nacházející se o i úrovní výše v stromu dědičnosti, tzn.
-				dědí od ní třída, na které je testován guard
+  			\item precedessor(i) je třída nacházející se o i úrovní výše v stromu dědičnosti, tzn.
+				dědí od ní třída, na které je testován guard\\ Matematicky vyjádřeno:
+				precedessor(1) = parent\\
+				precedessor(i) = precedessor(i - 1).parent\\
+				$i \in \mathbb{N}$ 
 			\item $\mathbb{N}$ je zápis množiny přirozených čísel
 			\item root - index kořenu hierarchického stromu - nemá předka  
 		\end{itemize}		
 
-	%\texttt je v dokumentu kvuli zvyrazneni, ale nejspise je nadbytecny
+	\section {Primitivni typy}		
+		
+		\begin{itemize}
+ 			\item	$guard : isPrimitive = true$
+ 		 	\item	$\omega_1 (\pi_0, guard)$
+ 		 	\item	$\pi_0 : class \to  {K[column]}$
+ 		 	\item   $class \in Class, column \in TableColumn$
+ 		 	\item	Třída, která je primitivní se nenamapuje do databázového modelu na Tabulku.
+					Tyto tridy se namapuji na Sloupce v databázi daného typu.
+ 		\end{itemize}
+		
+	\section{EmbeddedClass}
+		\begin{itemize}
+		  \item 	\item	$guard_1 : isPrimitive = true$
+ 		 	\item	$\omega_1 (\pi_1, guard1)$
+ 		 	\item	$\pi_1 : class \to  {column}$
+ 		 	\item   $class \in Class, column \in TableColumn$
+ 		 	\item	Embedded třídy se namapují na sloupce třídy, na níž jsou embedded
+		\end{itemize}	
+		
+	
 	\section{Obecné guardy}
 		Obecné guardy by měly splňovat všechny třídy, které jsou serializovatelné, jde
-		zejména o to, aby nebyly Primitive a nebyly transientní
+		o to, aby nebyly Primitive a měly právě jedno ID a nebyly embedded
 		\begin{itemize}
-			\item 	\texttt	{
-						$g_1$ : isPrimitive = false $\wedge$ isTransient = false  
-					}
-			\item 	\texttt {
-						$g_2 : \exists i \in \mathbb{N} $: properties [i] . isID =
-						true \&\& properties[i] . isTransient = false
-					}
+			\item	$g_1 : isPrimitive = false \wedge isEmbedded = false$
+			\item	$g_2 : \exists i \in \mathbb{N} : properties [i] . isID = true$
 		\end{itemize}
-		
+	
  	\section{Třídy bez serializovatelného předka}
  		\begin{itemize}
- 			\item 	\texttt {
- 						$g_3$ : parent = NULL $\vee$ parent.isAbstract = true $\vee$
- 						$\forall i \in \mathbb{N}: i < root $ predek(i).isTransient 
- 					}
- 		 	\item	$\omega_1 (\pi_1, g_1 - g_3)$
- 		 	\item 	$\pi_1 : E \to $ \{table,  K[Column], primaryKey\}
+ 			\item	$g_3 : parent = NULL$ 
+ 		 	\item	$\omega_1 (\pi_2, g_1 - g_3)$
+ 		 	\item 	$\pi_2 : class \to  \{table,  K[column], primaryKey\}$
+ 		 	\item 	$class \in Class, column \in TableColumn, table \in Table,
+ 		 			primaryKey \in PrimaryKey$
  		 	\item 	mapovací pravidlo namapuje třídu na nově vzniklou tabulku,
  		 			množinu jejich sloupců a primární klíč
  		\end{itemize}
- 	\section{Strom dědičnosti s implicitním inheritenceType}
- 		\begin{itemize}
- 		  	\item 	\texttt {
- 		  					$ g_4: inheritanceType = NULL \wedge parent \neq NULL
- 		  					\forall j \in \mathbb{N} : j \leq root : predek(j).inheritanceType =
- 		  					NULL$ }
- 		  	\item 	$\omega_2 (\pi_2, g_1 - g_2 \wedge g_4) $
- 		  	\item 	$\pi_2 : E \to$ \{ table,  K[Column], *foreignKey\}
- 		  	\item	implicitní typ Joined vytvoří novou tabulku, sloupce a referuje
- 		  			přes FK na PK předka
- 		\end{itemize}
- 		
+ 		 		
  	\section{Třídy s jednoduchou dědičností}
- 	 	\subsection{Joined}
+ 		Všechny typy dědičnosti předpokládají již namapovanou třídu předka, není
+ 		nutný předpoklad namapování všech předchů v hierarchickém stromě,
+ 		tento je rekurzivně splněn, pokud je namapován předek, matematicky
+ 		znězorněno: \\ 
+ 		$g_4 : parent.resol veOne(Table) = true$
+ 	 	\subsection{Joined nebo implicitní inteheritanceType}
  			\begin{itemize}
- 			  	\item 	\texttt {
- 			  				$g_5 : (parent \neq NULL) \wedge (( inheritanceType =
- 			  				parentInheritanceType \wedge inheritanceType = Joined) \vee
- 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
- 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
- 			  				predek(i).inheritanceType = Joined )$ 
- 			  			}
- 				\item 	$\omega_3 (\pi_2, g_1 - g_2 \wedge g_5)$
- 				\item	$\pi_2 : E \to \{ table, $ K[Column], *foreignKey\}
-				\item	typ Joined vytvoří novou tabulku, sloupce a referuje na PK předka 	 			
+ 			  	\item 	$ g_5: inheritanceType = \_\_not\_defined" \wedge parent \neq
+ 			  			NULL \forall j \in \mathbb{N} : j \leq root :
+ 			  			precedessor(j).inheritanceType = "\_\_not\_defined"$
+ 			  	\item	$g_6 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  			parent.InheritanceType \wedge inheritanceType = Joined) \vee
+ 			  			inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  			\mathbb{N} : j < i : precedessor(j).inheritanceType = NULL ,
+ 			  			precedessor(i).inheritanceType = Joined ) $ 
+ 				\item 	$\omega_3 (\pi_3, g_1 \wedge g_2 \wedge g_4 \wedge ( g_5 \vee g_6))$
+ 				\item	$\pi_3 : class \to \{ table,  K[column], * parentPrimaryKeyColumn,
+ 						K[precedessorColumn], foreignKey, primaryKey\}$
+ 				\item 	$class \in Class, column \in TableColumn, table \in Table,
+ 		 				primaryKey \in PrimaryKey, foreignKey in ForeignKey,
+ 		 				parentPrimaryKeyColumn, parentColumn \in TableColumn$ \\
+				\item	typ Joined vytvoří novou tabulku, sloupce a referuje na id sloupec
+						předka
+				\item	data se budou vkládat do všech sloupců tabulek předků označované jako
+						$K[precedessorColumn]$
  			\end{itemize}
  			
 		\subsection{TablePerClass}
 			\begin{itemize} 
-			  	\item 	\texttt{
-			  				$g_6 : (parent \neq NULL) \wedge (( inheritanceType =
- 			  				parentInheritanceType \wedge inheritanceType = TablePerClass) \vee
- 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
- 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
- 			  				predek(i).inheritanceType = TablePerClass )$
- 			  			}
-			  	\item 	$\omega_5 (\pi_4, g_1 - g_2 \wedge g_8) $
-			  	\item 	$\pi_4 : E \to \{ table, $ K[Column], primaryKey\}
-				
+			  	\item	$g_7 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  			parent.InheritanceType \wedge inheritanceType = TablePerClass) \vee
+ 			  			inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  			\mathbb{N} : j < i : precedessor(j).inheritanceType = NULL ,
+ 			  			precedessor(i).inheritanceType = TablePerClass )$
+			  	\item 	$\omega_5 (\pi_4, g_1 \wedge g_2 \wedge g_4 \wedge g_7) $
+			  	\item 	$\pi_4 : class \to \{ table,  K[Column], primaryKey\}$
+			  	\item 	$class \in Class, column \in TableColumn, table \in Table,
+ 		 				primaryKey \in PrimaryKey$
 			\end{itemize}
 		
 		\subsection{SingleTable}
  			\begin{itemize}
- 			  \item \texttt{
- 			  			$g_7 : (parent \neq NULL) \wedge (( inheritanceType =
- 			  				parentInheritanceType \wedge inheritanceType = SingleTable) \vee
- 			  				inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
- 			  				\mathbb{N} : j < i : predek(j).inheritanceType = NULL ,
- 			  				predek(i).inheritanceType = SingleTable )$
- 			  		}
- 			  \item 	$\omega_4 (\pi_3, g_1 - g_2 \wedge g_7) $
- 			  \item		$\pi_3 : E \to \{ *table, $ K[Column],*K[Column] *primaryKey\}
- 			  \item 	Typ SingleTable referencuje tabulku, primarni klic, referencuje
- 			  			sloupce predku a vytvori nove sloupce vstupni tridy 
+ 			  \item		$g_8 : (parent \neq NULL) \wedge (( inheritanceType =
+ 			  			parentInheritanceType \wedge inheritanceType = SingleTable) \vee
+ 			  			inheritanceType = NULL \wedge \exists i \in \mathbb{N}: \forall j \in
+ 			  			\mathbb{N} : j < i : precedessor(j).inheritanceType = NULL ,
+ 			  			precedessor(i).inheritanceType = SingleTable )$
+ 			  \item 	$\omega_4 (\pi_3, g_1 \wedge g_2 \wedge g_4 \wedge g_8) $
+ 			  \item		$\pi_3 : class \to \{ *table,  K[column],*K[treeColumn]
+ 			  			*primaryKey\}$
+ 			  \item 	$class \in Class, column \in TableColumn, table \in Table,
+ 		 				primaryKey \in PrimaryKey, treeColumn \in TableColumn$
+ 			  \item 	Typ SingleTable referencuje tabulku, primární klíč,
+ 			  			vytvoří nové sloupce vstupní třídy, součástí namapované tabulky jsou
+ 			  			sloupce celé hierarchie 
+ 			  \item		Na \tetxbf{datové} vrstě budou data vkládána i do sloupců
+ 			  			hierarchické struktury v zápisu označovaných jako K[treeColumn]
  			\end{itemize}	
 
 
-	\section{Přechodové třídy mezi různými inheritanceTypy}
+	\section{Přechodové třídy mezi různými inheritanceTypy - nedodělané}	
 		\subsection{sth to SingleTable}
 			\begin{itemize} 
-			  	\item 	\texttt{
-				  				$g_9 : parent \neq NULL \;\exists i \in \matbb{N}: \forall j \in
-				  				\mathbb{N} j < i : predek(j).inheritanceType = NULL,
-				  				(predek(i).inheritanceType = TablePerClass \vee
-				  				predek(i).inheritanceType =  Joined), self.inheritanceType = SingleTable$ 
-				  		}
+			  	\item	$g_9 : parent \neq NULL \;\exists i \in \matbb{N}: \forall j \in
+						\mathbb{N} j < i : precedessor(j).inheritanceType = NULL,
+				  		(precedessor(i).inheritanceType = TablePerClass \vee
+				  		precedessor(i).inheritanceType =  Joined), self.inheritanceType = SingleTable$ 
 			  	\item 	$\omega_6 (\pi_4, g_1 - g_2 \wedge g_9) $
-				\item	$\pi_3 : E \to \{ *table, $ K[Column], *primaryKey\}
+				\item	$\pi_3 : E \to \{ *table,  K[Column], *primaryKey\}$
 			\end{itemize}
 			
 			
@@ -120,13 +140,11 @@
 
 		\subsubsection{sth to Joined}
 			\begin{itemize}
-			  	\item 	\texttt{
-			  					$g_(10) : parent \neq NULL \;\exists i \in \mathbb{N} : \forall j
-			  					\in \mathbb{N} j < i : predek(j).inheritanceType = NULL, (
-								predek(i).inheritanceType = TablePerClass \vee predek(i).inheritanceType
-								= Joined), self.inheritanceType = SingleTable $
-			  			}
+			  	\item	$g_(10) : parent \neq NULL \;\exists i \in \mathbb{N} : \forall j
+			  			\in \mathbb{N} j < i : precedessor(j).inheritanceType = NULL, (
+						precedessor(i).inheritanceType = TablePerClass \vee precedessor(i).inheritanceType
+						= Joined), self.inheritanceType = SingleTable $
 			  	\item 	$\omega_5 (\pi_4, g_1 - g_2 \wedge g_10) $
-			  	\item 	$\pi_4 : E \to \{ table, $ K[Column], FK\}
+			  	\item 	$\pi_4 : E \to \{ table, K[Column], FK\}$
 			\end{itemize}
 \end{document}
