@@ -53,7 +53,10 @@ package rdb {
   }
 
   abstract class ColumnConstraint extends Constraint {
-    readonly derived ref TableColumn[1]#constraints owningColumn;
+    readonly derived ref TableColumn[1]#columnConstraints owningColumn;
+  }
+  
+  class NotNullConstraint extends ColumnConstraint{
   }
 
   @OCL(inv="self.constrainedColumn.owningTable = self.owningTable)")
@@ -67,12 +70,12 @@ package rdb {
 
     @OCL(body="self._owningTable")
     op Table getOwningTable();
-    !ordered val ColumnConstraint[*]#owningColumn constraints;
+    !ordered val ColumnConstraint[*]#owningColumn columnConstraints;
     ref Table[1] _owningTable;
     attr String[1] type;
     attr String[1] name;
   }
-
+  
   @OCL(inv="let first : TableColumn = self.columnsMap->first() in
 			  self.columns->forAll(col | col._owningTable = first._owningTable)")
   class Index {
@@ -100,7 +103,7 @@ package rdb {
   	}
   
   	class ComposedTableOperation  extends Operation {
-    	ordered val operations.TableOperation[1..*] operations;
+    	ordered val operations.Operation[1..*] operations;
   	}
   
     abstract class TableOperation extends Operation {

@@ -64,8 +64,9 @@
     <eClassifiers xsi:type="ecore:EClass" name="ColumnConstraint" abstract="true"
         eSuperTypes="#//rdb/Constraint">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningColumn" lowerBound="1"
-          eType="#//rdb/TableColumn" changeable="false" derived="true" eOpposite="#//rdb/TableColumn/constraints"/>
+          eType="#//rdb/TableColumn" changeable="false" derived="true" eOpposite="#//rdb/TableColumn/columnConstraints"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NotNullConstraint" eSuperTypes="#//rdb/ColumnConstraint"/>
     <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/TableConstraint">
       <eAnnotations source="OCL">
         <details key="inv" value="self.constrainedColumn.owningTable = self.owningTable)"/>
@@ -84,7 +85,7 @@
           <details key="body" value="self._owningTable"/>
         </eAnnotations>
       </eOperations>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
+      <eStructuralFeatures xsi:type="ecore:EReference" name="columnConstraints" ordered="false"
           upperBound="-1" eType="#//rdb/ColumnConstraint" containment="true" eOpposite="#//rdb/ColumnConstraint/owningColumn"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="_owningTable" lowerBound="1"
           eType="#//rdb/Table"/>
@@ -128,7 +129,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="Operation" abstract="true"/>
       <eClassifiers xsi:type="ecore:EClass" name="ComposedTableOperation" eSuperTypes="#//rdb/operations/Operation">
         <eStructuralFeatures xsi:type="ecore:EReference" name="operations" lowerBound="1"
-            upperBound="-1" eType="#//rdb/operations/TableOperation" containment="true"/>
+            upperBound="-1" eType="#//rdb/operations/Operation" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TableOperation" abstract="true"
           eSuperTypes="#//rdb/operations/Operation">
