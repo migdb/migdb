@@ -40,20 +40,20 @@ main() {
 mapping RDB::rdb::ModelRoot::toSql():SQL::sql::ModelRoot{
 	var gen0 : RDB::rdb::Database = self.DBgenerations->first();
 	var schema0 : RDB::rdb::Schema = gen0[RDB::rdb::Database].schemas![RDB::rdb::Schema];
-	schema0->tables->select(table | table.oclAsType(RDB::rdb::Table).constraints->forOne(fk){
-		fk.oclAsType(RDB::rdb::ForeignKey).targetTable.resolveone(SQL::sql::Statement) <> null	
-	})->forEach(table){
-			result.statements+= table.xmap toCreateTable();
+
+	while(schema0.tables->select(table | table.resolveone(SQL::sql::Statement) = null)->notEmpty()){
+	//while(not schema0.isTotallyMapped()){
+		schema0.tables->select(table | table.resolveone(SQL::sql::Statement)= null and( 
+			table.oclAsType(RDB::rdb::Table).constraints[RDB::rdb::ForeignKey]->isEmpty() or 
+			table.oclAsType(RDB::rdb::Table).constraints[RDB::rdb::ForeignKey]->forAll(fk | 
+			fk.oclAsType(RDB::rdb::ForeignKey).targetTable.resolveone(SQL::sql::Statement) <> null)))
+		->forEach(table){
+			result.statements += table.xmap toCreateTableStatement();
 		};
-	
-	schema0->tables->forEach(table){
-		result.statements+= table.xmap toCreateTable();
 	};
-	
-	
 }
 
-mapping RDB::rdb::Table::toCreateTable():SQL::sql::Statement{
+mapping RDB::rdb::Table::toCreateTableStatement():SQL::sql::Statement{
 	result.sqlCode :="CREATE TABLE " + self.name +" (\n    ";
 	var comma : Boolean := false;
 	
@@ -78,9 +78,16 @@ mapping RDB::rdb::Table::toCreateTable():SQL::sql::Statement{
 }
 
 query getType(in str : String) : String{
-	if(str.match("int")) then return "int" endif;
-	if(str.match("string")) then return "varchar(50)" endif;	
+	if(str.match("int") or str.match("Integer")) then return "int" endif;
+	if(str.match("string") or str.match("String")) then return "varchar(50)" endif;	
 	return "";
+}
+
+query RDB::rdb::Schema::isTotallyMapped():Boolean{
+	self->tables->forOne(table | table.resolveone(SQL::sql::Statement) = null){
+			return false;
+	};
+	return true;
 }
 
 abstract mapping RDB::rdb::TableConstraint::toString(inout statement : SQL::sql::Statement);

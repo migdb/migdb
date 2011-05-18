@@ -27,7 +27,7 @@ modeltype APP uses 'mm-app';
 modeltype RDB uses 'mm-db';
 
 
-transformation APP_To_Rdb(in appModel : APP, out rdb : RDB, out app : APP );
+transformation APP_To_Rdb(in appModel : APP, out rdb : RDB);
 
 /*
 	 Vstupní bod transformace, najde vsechny rootObjecty, pretypuje na ModelRoot 
@@ -37,8 +37,8 @@ main() {
 	assert(appModel.rootObjects()->size() = 1);
 	assert(appModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
 	
-	log("transformation started");
-		
+	log("transformation started");	
+	//zakomentovani nasledujiciho radku se neprovede mapovani appMoodelu na RDB model
 	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
 	log("transformation ended");
 }
@@ -66,44 +66,40 @@ mapping APP::reduced::ModelGeneration::toDBmodel() : RDB::rdb::Database {
 }
 
 /*
-	Vytvoří DB schema, namapuje třídy na tabulky pomocí mapování daných inheritanceType, způsob určení, 
-	co mapovat je zbytečně komplikovaný
+	Vytvoří DB schema, namapuje třídy na tabulky pomocí mapování toTable
 */
 mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 	log("toSchema section");		
 	
-	
-	self.classes->forEach(clss | clss.isGeneralClassSerializable() = true and clss.hasSerializableAncestor() = false ){
-		result.tables+=clss.xmap toSerializableRootTable();
-	};
-	
-	var maximalDepth : Integer := 0;
-	var tempDepth : Integer := 0;
-	
-	
-	self.classes->forEach(clss | clss.hasSingleTableInheritanceType() = true  and clss.hasSerializableAncestor() = true){
-		clss.xmap toSingleTable();
-	};
-	
-	self.classes->forEach(clss | clss.hasImplicitInheritanceType() or clss.hasJoinedInheritanceType() ){
-		tempDepth := clss.getClassDepth();
-		if( tempDepth > maximalDepth ) then {
-			maximalDepth := tempDepth;
-		}endif;
-	};
-	
-	var i : Integer := 0;
-	while( i <= maximalDepth){
-		self.classes ->forEach(clss | clss.getClassDepth() = i and (clss.hasJoinedInheritanceType() or clss.hasImplicitInheritanceType())){
-			tables+= clss.xmap toJoinedTable();
+	//podmínka v while cyklu zajišťuje namapování všech tříd, které nejsou primitivní
+	while(self.classes->select(_class | _class.resolveone(RDB::rdb::Table) = null and _class.isPrimitive = false)->notEmpty()){
+		/*tento select umožňuje postupné mapování tak, aby byly nejdříve mapovány třídy bez potomků, 
+		potom jejich potomci, potom potomci potomků...*/
+		self.classes->select(_class | _class.resolveone(RDB::rdb::Table) = null and _class.isPrimitive = false and
+		(_class.parent.resolveone(RDB::rdb::Table) <> null or _class.parent = null ))->forEach(_class){
+			result.tables += _class.xmap toTable();
 		};
-		i := i+1;
 	};
 	
-	self.classes->forEach(clss | clss.hasTablePerClassInheritanceType() and clss.hasSerializableAncestor() = true){
-		tables+=clss.xmap toTablePerClass();
-	};
-	
+}
+
+/*
+	Toto mapování je "rozcestníkem" pro další 4 mapování 
+*/
+mapping APP::reduced::Class::toTable():RDB::rdb::Table 
+disjuncts APP::reduced::Class::toRootTable, APP::reduced::Class::toJoinedTable,APP::reduced::Class::toTablePerClass, APP::reduced::Class::toSingleTable{
+
+}
+
+/*
+	Namapuje tridu bez serializovatelneho potomka na tabulku
+*/	
+mapping APP::reduced::Class::toRootTable() : RDB::rdb::Table 
+when {self.isGeneralClassSerializable()= true and self.parent = null}
+{
+	log("toSerializableRootTable section " + self.name);
+	name := self.name;
+	self->properties->asOrderedSet()->xmap toColumns(result);
 }
 
 /*
@@ -116,20 +112,23 @@ mapping APP::reduced::Class::toJoinedTable():RDB::rdb::Table
 when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) and 
 		self.isGeneralClassSerializable() and self.parent <> null }
 {
-		
-		var temp: APP::reduced::Class = self.parent; 	 
-		var precedessor:RDB::rdb::Table:= temp.resolveone(RDB::rdb::Table);
+		//obraz třídy předka
+		var precedessorTable:RDB::rdb::Table := self.parent.resolveone(RDB::rdb::Table);		
 		log("toJoined section "+self.name);
-		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
-			name := "FK " + precedessor.name;	
-			targetTable := precedessor;
-		};
 		
+		//vytvoření cizího klíče referencujícího tabulku předka - precedessorTable
+		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
+			name := "FK " + precedessorTable.name;	
+			targetTable := precedessorTable;
+		};
 		result.constraints+=FK;
 		
+		//je nutné vytvořit sloupec id referencující předka
 		var PKcol:RDB::rdb::TableColumn:= object RDB::rdb::TableColumn{
 			name:= self.name + " id";
 		};
+		
+		PKcol.type := self.getRootClass()->properties->selectOne(prop | prop.isID).type.name;
 		
 		result.ownedColumns+= PKcol;
 		
@@ -137,14 +136,14 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 			name:= "pk "+ self.name;
 			underlyingIndex := object RDB::rdb::Index{
 				columns+=PKcol;
+				name := "pk_index";
 			}
 		};
 		
 		result.constraints+= pk;
-		
 		FK.constrainedColumn := PKcol;
-		result.name := self.name;
-		self->properties->asOrderedSet()->xmap toColumns(result);
+		result.name := self.name; 
+		self->properties->asOrderedSet()->xmap toColumns(result); 		
 }
 
 /*
@@ -153,22 +152,15 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 	tříd s správným typem + existenci předka. Mapování sesbírá atributy třídy plus jejich předků a namapuje na sloupce
 */
 mapping APP::reduced::Class::toTablePerClass():RDB::rdb::Table
-when { self.hasTablePerClassInheritanceType() and self.isGeneralClassSerializable() and self.hasSerializableAncestor()}	
+when { self.hasTablePerClassInheritanceType() and self.isGeneralClassSerializable() and self.parent <> null}	
 {
 	log("toTablePerClass section " + self.name);
 	name := self.name;
-	
-	var temp : APP::reduced::Class := self;
-	var propSet: OrderedSet(APP::reduced::Property);
-	
-	while(temp <> null){
-		temp->properties->forEach(prop){
-			propSet+=prop;
-		};
-		temp := temp.parent;
+
+	//tento statement namapuje všechny property třídy a jejich předků	
+	self.getPathToRoot()->forEach(_class){
+		_class->properties->asOrderedSet()->xmap toColumns(result);
 	};
-	
-	propSet->xmap toColumns(result);
 }
 
 /*
@@ -177,86 +169,54 @@ when { self.hasTablePerClassInheritanceType() and self.isGeneralClassSerializabl
 	podmínek pro jakoukoliv serializovatelnou třídu, ostatní guardy zajišťují mapování 
 	tříd s správným typem + existenci předka, typ diskriminačního sloupce je String
 */
-mapping APP::reduced::Class::toSingleTable()
-when { self.hasSingleTableInheritanceType() = true and self.isGeneralClassSerializable() and self.hasSerializableAncestor()}
+mapping APP::reduced::Class::toSingleTable():RDB::rdb::Table
+when { self.hasSingleTableInheritanceType() = true and self.isGeneralClassSerializable() and self.parent <> null}
 {	
-		var temp:APP::reduced::Class := self.getSerializableRoot();
-		
+		init{
+			result := self.getRootClass().resolveone(RDB::rdb::Table);
+		}
 		log("toSingleTable section "+self.name);
-		var rootTable:RDB::rdb::Table := temp.resolveone(RDB::rdb::Table);		
-		var propSet: OrderedSet(APP::reduced::Property);	
 		
-		temp := self;
-		while(temp <> null and temp = self){
-				temp->properties->forEach(prop ){
-					propSet+=prop;
-				};
-				temp := temp.parent;
-		};
-				
+		self.properties->asOrderedSet()->xmap toColumns(result);	
 		
-		propSet->xmap toColumns(rootTable);	
-		
-		if(rootTable.containsDiscriminator() = false)then{
-				rootTable.ownedColumns+=object RDB::rdb::TableColumn{
-				name := "discriminator";
-				type := "String";
-			}
+		if(result.containsDiscriminator() = false)then{
+				result.ownedColumns+=object RDB::rdb::TableColumn{
+					name := "discriminator";
+					type := "String";
+					_owningTable := result;
+				}
 		}endif;
 } 
-
-
-/*
-	Namapuje tridu bez serializovatelneho potomka na tabulku
-*/	
-mapping APP::reduced::Class::toSerializableRootTable() : RDB::rdb::Table 
-when {self.isGeneralClassSerializable()= true and self.hasSerializableAncestor() = false}
-{
-	log("toSerializableRootTable section " + self.name);
-	name := self.name;
-	
-	var propSet: OrderedSet(APP::reduced::Property);	
-		self->properties->forEach(prop){
-			propSet += prop;
-		};	
-	propSet->xmap toColumns(result);
-	
-}
-
-/*
-	namapuje sloupec na primární klíč
-*/	
-mapping RDB::rdb::TableColumn::toPK():RDB::rdb::PrimaryKey{
-	init{
-		object result : RDB::rdb::PrimaryKey{
-			underlyingIndex := object RDB::rdb::Index{
-			}
-		};	
-	}
-	population{
-				result.underlyingIndex.columns += self;
-		}
-}
 
 /*
 	Namapuje Set Properties na sloupce a přiřadí je do Table table
 */	
 mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Table){
 	log("toColumns section");
-	self->forEach(prop){
+	self->forEach(prop ){
 						var tableColumn:RDB::rdb::TableColumn; 
 						if(prop.resolveone(RDB::rdb::TableColumn) = null)then{
 							tableColumn:= prop.xmap toColumn(); 
 							}else{
-							var help :RDB::rdb::TableColumn = prop.resolveone(RDB::rdb::TableColumn);
-							tableColumn := help.deepclone().oclAsType(RDB::rdb::TableColumn);
+							tableColumn := prop.resolveone(RDB::rdb::TableColumn).deepclone().oclAsType(RDB::rdb::TableColumn);
 							//[RDB::rdb::TableColumn]->any(oclIsKindOf(RDB::rdb::TableColumn));
 						}endif;
 						
 						tableColumn._owningTable = table;
 						table.ownedColumns += tableColumn;
-							if(prop.isID = true)then{		
-								table.primaryKey := tableColumn.xmap toPK();
+							if(prop.isID = true)then{
+							
+								var index: RDB::rdb::Index := object RDB::rdb::Index{
+									columns+=tableColumn;
+									name := "pk_index";
+								};
+								
+										
+								table.primaryKey := object RDB::rdb::PrimaryKey{
+									name:= "pk "+ table.name;
+									owningTable = table;
+								};
+								table.primaryKey.underlyingIndex := index;
 							}endif;
 						
 					};	
@@ -289,7 +249,7 @@ when {	self.isPrimitive() = true}
  	jednosloupcovy ID, neprimitivnost, neEmbeddovanost třídy
 */
 query APP::reduced::Class::isGeneralClassSerializable():Boolean{
-	if(self.isPrimitive = true or self.hasOneIDProperty() = false or self.isEmbedded ) then {
+	if(self.isPrimitive = true or self.hasOneIDProperty() = false or self.isEmbedded = true) then {
 		return false;
 	}endif;
 	
@@ -300,31 +260,12 @@ query APP::reduced::Class::isGeneralClassSerializable():Boolean{
 	validace existence prave jedne Property PK v stromu dedicnosti
 */
 query APP::reduced::Class::hasOneIDProperty():Boolean{
-	var temp : APP::reduced::Class = self;
-	var count : Integer = 0;
-
-	while(temp <> null){	
-		temp.properties->forEach( prop){
-			if(prop.isID()) then {
-				count := count + 1;
-			}endif;
-		};
-		temp := temp.parent;
+	var idCount : Integer := 0;
+	self.getPathToRoot()->forEach(_class){
+		idCount:= idCount + _class.properties->select(prop | prop.isID)->size();
 	};
-	
-	if(count = 1) then {
-		return true;
-	}endif;
-	
-	
-	return false;
-}
-
-/*
-	ověřuje, jestli je daná property ID
-*/
-query APP::reduced::Property::isID():Boolean{
-	return self.isID = true;
+	if(idCount <> 1 or self.getRootClass().properties->select(prop | prop.isID)->size() <> 1) then return false endif;
+		return true;	
 }
 
 /*
@@ -338,17 +279,6 @@ query APP::reduced::Property::isPrimitive():Boolean{
 		} endif;
 	};
 	
-	return false;
-}
-
-/*
-	zjistí, jestli má daná třída serializovatelného předka
-*/	
-query APP::reduced::Class::hasSerializableAncestor():Boolean{
-	var temp:APP::reduced::Class = self;
-	if(self.parent <> null)then{
-		return true;
-	}endif;	 
 	return false;
 }
 
@@ -393,39 +323,13 @@ query APP::reduced::Class::hasChosenInheritanceType( chosenType:APP::reduced::In
 		temp := temp.parent;
 	};
 	return true;
-
-}
-
-/*
-	Vrací hloubku třídy v hierarchickém stromu
-*/
-query APP::reduced::Class::getClassDepth():Integer{
-	var depth : Integer = 0;
-	var temp := self;
-	
-	while(temp.parent <> null){
-		temp := temp.parent;
-		depth := depth + 1;
-	};
-	
-	return depth;
 }
 
 /*
 	vrátí serializovatelnou root Class
-*/	
-query APP::reduced::Class::getSerializableRoot():APP::reduced::Class{
-	var list : OrderedSet(APP::reduced::Class) := self.getPathToRoot();
-	var index : Integer := list->size();
-	var temp : APP::reduced::Class;
-	
-	while(index >= 1){
-		temp := list->at(index);
-		log(list->at(index).name);
-		index := index - 1;
-	};
-	
-	return temp;	
+*/
+query APP::reduced::Class::getRootClass():APP::reduced::Class{
+	return self.getPathToRoot()->first();	
 }
 
 /* 
@@ -433,37 +337,13 @@ query APP::reduced::Class::getSerializableRoot():APP::reduced::Class{
 	třída, na které je volané query, využívá rekurzi
 */
 query APP::reduced::Class::getPathToRoot():OrderedSet(APP::reduced::Class){
-	var temp : APP::reduced::Class := self;
-	var list : OrderedSet(APP::reduced::Class);
-	
-	while( temp <> null ){
-		list += temp;
-		temp := temp.parent;	
-	};
-	
-	return list;
+	if(self.parent = null)then {return OrderedSet{self}}endif;
+	return self.parent.getPathToRoot()->append(self);
 }
 
 /*
 	zjistí, jestli tabulka obsahuje diskriminační sloupec
 */
 query RDB::rdb::Table::containsDiscriminator():Boolean{
-	self.ownedColumns->forEach(col){
-		if(col.name = "discriminator")then {
-			return true;
-		}endif;
-	};
-	return false;
-}
-
-/*
-	zjistí, jestli má daná třída IdProperty
-*/
-query APP::reduced::Class::hasIdProperty():Boolean{
-	self.properties->forEach(prop){
-		if(prop.isID = true)then{
-			return true;
-		}endif;
-	};
-	return false;
+	return self.ownedColumns->select(col | col.name ="discriminator")->size()=1;
 }
