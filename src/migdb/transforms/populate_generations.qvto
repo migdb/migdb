@@ -53,7 +53,10 @@ abstract mapping APP::reduced::operations::ModelOperation::apply(inout gen : APP
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
 mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration)
-when { not gen.isClassInGeneration(self.name) }
+when { 
+	not gen.isClassInGeneration(self.name) and 
+	not (self.name = self.parent)
+}
 {
 	gen.classes += object APP::reduced::Class {
 		name := self.name;
@@ -113,7 +116,7 @@ when{ gen.isClassInGeneration(self.name); }
 
 // operace, ktera nastavi vlastsnost parent
 mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::ModelGeneration)
-when{ gen.isClassInGeneration(self.name); }
+when{ gen.isClassInGeneration(self.name) and not gen.isSelfParent(self.parentName, self.name, true) }
 {
 	var c : APP::reduced::Class := gen.findClass(self.name);
 
@@ -252,10 +255,12 @@ query APP::reduced::ModelGeneration::isPropertyInClass(pName : String, cName : S
 	return false;
 }
 
-query APP::reduced::ModelGeneration::isSelfParent(cName : String, oName : String) : Boolean {
-	var o : APP::reduced::Class := self.findClass(oName);
-	if (o <> null) then {
-		
+// overi, jestli je trida sama sobe rodicem
+query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : String, entry : Boolean) : Boolean {
+	var c : APP::reduced::Class := self.findClass(cName);
+	if (c <> null) then {
+		if (not entry and cName = startName) then { return true; } endif;
+		if (c.parent <> null) then { return self.isSelfParent(c.parent.name, startName, false); } endif;
 	} endif;
-	return true;
+	return false;
 }
