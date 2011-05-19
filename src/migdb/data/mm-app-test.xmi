@@ -12,7 +12,7 @@
       <properties name="tools" type="//@modelGenerations.0/@classes.3"/>
     </classes>
     <classes name="Tools" isEmbedded="true" tableName="">
-      <properties name="amount" type="//@modelGenerations.0/@classes.4" lowerBound="1" isEmbedded="true"/>
+      <properties name="amount" type="//@modelGenerations.0/@classes.4"/>
     </classes>
     <classes name="Integer" isPrimitive="true"/>
     <classes name="Red">
