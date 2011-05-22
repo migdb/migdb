@@ -118,14 +118,14 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 		
 		//vytvoření cizího klíče referencujícího tabulku předka - precedessorTable
 		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
-			name := "FK " + precedessorTable.name;	
+			name := "FK_" + precedessorTable.name;	
 			targetTable := precedessorTable;
 		};
 		result.constraints+=FK;
 		
 		//je nutné vytvořit sloupec id referencující předka
 		var PKcol:RDB::rdb::TableColumn:= object RDB::rdb::TableColumn{
-			name:= self.name + " id";
+			name:= self.getRootClass().properties->selectOne(prop | prop.isID).name;
 		};
 		
 		PKcol.type := self.getRootClass()->properties->selectOne(prop | prop.isID).type.name;
@@ -133,7 +133,7 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 		result.ownedColumns+= PKcol;
 		
 		var pk : RDB::rdb::PrimaryKey := object RDB::rdb::PrimaryKey{
-			name:= "pk "+ self.name;
+			name:= "pk_"+ self.name;
 			underlyingIndex := object RDB::rdb::Index{
 				columns+=PKcol;
 				name := "pk_index";
@@ -213,7 +213,7 @@ mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Tab
 								
 										
 								table.primaryKey := object RDB::rdb::PrimaryKey{
-									name:= "pk "+ table.name;
+									name:= "pk_"+ table.name;
 									owningTable = table;
 								};
 								table.primaryKey.underlyingIndex := index;

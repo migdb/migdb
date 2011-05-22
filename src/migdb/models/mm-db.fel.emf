@@ -1,4 +1,4 @@
-@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+b@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
 package mm;
 
 @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="mmrdb")

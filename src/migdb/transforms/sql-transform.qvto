@@ -94,7 +94,7 @@ abstract mapping RDB::rdb::TableConstraint::toString(inout statement : SQL::sql:
 
 mapping RDB::rdb::ForeignKey::toString(inout statement : SQL::sql::Statement){
 	statement.sqlCode := statement.sqlCode + ",\n    CONSTRAINT " + self.name + 
-	" FOREIGN KEY " + self.constrainedColumn.name + " REFERENCES "+ 
+	" FOREIGN KEY (" + self.constrainedColumn.name + ") REFERENCES "+ 
 	self.targetTable.name;
 }
 

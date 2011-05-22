@@ -38,7 +38,8 @@
       <eOperations name="getColumns" ordered="false" upperBound="-1" eType="#//rdb/TableColumn"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
           eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/tables"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"
+          derived="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="ownedColumns" ordered="false"
           upperBound="-1" eType="#//rdb/TableColumn" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
