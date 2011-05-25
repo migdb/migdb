@@ -137,11 +137,11 @@ when{ gen.isClassInGeneration(self.name); }
 mapping APP::reduced::operations::SetID::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
-	gen.isPropertyInClass(self.propertyName, self.owningClassName);
+	gen.isPropertyInClass(self.name, self.owningClassName);
 }
 {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
-	var p : APP::reduced::Property := c.findProperty(self.propertyName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
 	
 	p.isID := self.isID;
 	// ID problem

@@ -8,9 +8,9 @@
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName1" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName3" value=""/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transformations/sql-transform.qvto"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/models/db.xmi"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/models/outSQL.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/sql-transform.qvto"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/inheritance_test_outputs/test4_output.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/sql_output/sql4.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel3" value="platform:/resource/migdb/data/APP-AfterOperations.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>

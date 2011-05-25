@@ -36,13 +36,10 @@ transformation APP_To_Rdb(in appModel : APP, out rdb : RDB);
 main() {
 	assert(appModel.rootObjects()->size() = 1);
 	assert(appModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
-	//kontrola unikatnosti jmena v ramci generace, nevalidni model nebude namapovan
-	assert(appModel.rootObjects()[APP::reduced::ModelRoot]->selectOne(root | true ).modelGenerations->forAll(classes->forAll(hasUniqueName())));
-	
 	
 	log("transformation started");	
 	//zakomentovani nasledujiciho radku se neprovede mapovani appMoodelu na RDB model
-	appModel.rootObjects()[APP::reduced::ModelRoot]->xmap toRdbRoot();
+	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
 	log("transformation ended");
 }
 
@@ -121,7 +118,7 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 		
 		//vytvoření cizího klíče referencujícího tabulku předka - precedessorTable
 		var FK:RDB::rdb::ForeignKey = object RDB::rdb::ForeignKey{
-			name := "FK_" + precedessorTable.name;	
+			name := "FK_" + precedessorTable.name+"_"+self.name;	
 			targetTable := precedessorTable;
 		};
 		result.constraints+=FK;
@@ -207,7 +204,7 @@ mapping OrderedSet(APP::reduced::Property)::toColumns(inout table: RDB::rdb::Tab
 						
 						tableColumn._owningTable = table;
 						table.ownedColumns += tableColumn;
-							if(prop.isID = true)then{
+							if(prop.isID = true )then{
 							
 								var index: RDB::rdb::Index := object RDB::rdb::Index{
 									columns+=tableColumn;
@@ -336,7 +333,7 @@ query APP::reduced::Class::getRootClass():APP::reduced::Class{
 }
 
 /* 
-	Vrátí "cestu" od Root třídy až k mapované třídě, v pořadí první root třída, poslední třída 
+	vrátí "cestu" od Root třídy až k mapované třídě, v pořadí první root třída, poslední třída 
 	třída, na které je volané query, využívá rekurzi
 */
 query APP::reduced::Class::getPathToRoot():OrderedSet(APP::reduced::Class){
@@ -349,11 +346,4 @@ query APP::reduced::Class::getPathToRoot():OrderedSet(APP::reduced::Class){
 */
 query RDB::rdb::Table::containsDiscriminator():Boolean{
 	return self.ownedColumns->select(col | col.name ="discriminator")->size()=1;
-}
-
-/*
-	Toto query vrátí true, pokud má třída v rámci své generace unikátní jméno, jinak false
-*/
-query APP::reduced::Class::hasUniqueName():Boolean{
-	return self.owningModel->classes->select(_class | _class <> self)->forAll(name <> self.name);	
 }

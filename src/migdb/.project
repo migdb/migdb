@@ -15,7 +15,7 @@
 			<arguments>
 				<dictionary>
 					<key>src_container</key>
-					<value>transformations</value>
+					<value>transforms</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>

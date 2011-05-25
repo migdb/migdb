@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="ASCII"?>
+<reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/reduced-jam ../models/mm-app.fel.ecore#//reduced">
+  <modelGenerations>
+    <classes name="root" inheritanceType="joined">
+      <properties name="id" type="//@modelGenerations.0/@classes.1" lowerBound="1" isID="true" columnName=""/>
+      <properties name="name" type="//@modelGenerations.0/@classes.5"/>
+      <properties name="color" type="//@modelGenerations.0/@classes.5"/>
+    </classes>
+    <classes name="Integer" isPrimitive="true"/>
+    <classes name="child1" parent="//@modelGenerations.0/@classes.0" inheritanceType="joined">
+      <properties name="count_child1" type="//@modelGenerations.0/@classes.1" columnName=""/>
+      <properties name="price_child1" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="age_child1" type="//@modelGenerations.0/@classes.1" lowerBound="1"/>
+    </classes>
+    <classes name="child2" parent="//@modelGenerations.0/@classes.0" inheritanceType="joined">
+      <properties name="count_child2" type="//@modelGenerations.0/@classes.1" columnName=""/>
+      <properties name="price_child2" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="age_child2" type="//@modelGenerations.0/@classes.1" lowerBound="1"/>
+    </classes>
+    <classes name="child3" parent="//@modelGenerations.0/@classes.0" inheritanceType="joined">
+      <properties name="count_child3" type="//@modelGenerations.0/@classes.1" columnName=""/>
+      <properties name="price_child3" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="age_child3" type="//@modelGenerations.0/@classes.1" lowerBound="1"/>
+    </classes>
+    <classes name="String" isPrimitive="true"/>
+  </modelGenerations>
+</reduced:ModelRoot>

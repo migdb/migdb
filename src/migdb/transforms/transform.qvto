@@ -33,7 +33,10 @@ transformation APP_To_Rdb(in appModel : APP, out rdb : RDB, out app : APP );
 	 Vstupní bod transformace, najde vsechny rootObjecty, pretypuje na ModelRoot 
 	a mapuje pomocí toRdbRoot na RDB::rdb::ModelRoot
 */
-main() {	
+main() {
+	assert(appModel.rootObjects()->size() = 1);
+	assert(appModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
+	
 	log("transformation started");
 		
 	appModel.rootObjects()[APP::reduced::ModelRoot]->toRdbRoot();
