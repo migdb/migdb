@@ -5,140 +5,221 @@
 \usepackage{amsfonts}				
 \begin{document}
 \section{Operace nad modelem}
-	\subsection{createClass}
+
+Tento dokument popisuje operace nad metamodelem aplikace. Slovem existuje
+chtěl autor říci, že v vstupní generaci dané operace musí být přítomna daná
+Property, třída.. Slovo pre značí precondition, slovo post značí postcondition
+
+	\subsection{AddClass}
 	Operace pro vytvoření třídy. \\
-	OCL: pre: class se stejným jménem v systemu nesmí existovat \\
-	post: vytvoření třídy\\
-	\texttt{
-			    class CreateClass extends ModelOperation \{ \\
-      				attr String[1] ClassName; \\
-   				\}	
-	}
-	\subsection{setAbstract}
+	pre: class se stejným jménem v systému nesmí existovat \\
+	post: vytvoření třídy s jedním sloupcem id typu String, který je sloupec\\
+	\begin{verbatim}
+    class AddClass extends ModelOperation {
+        attr String[1] name;
+        attr String[1] parent;
+        attr boolean[1] isAbstract;
+        attr boolean[1] isEmbedded;
+        attr boolean[1] isPrimitive;
+        attr String[1] tableName;
+        attr InheritanceType[1] inheritanceType;
+    }	
+	\end{verbatim}
+	\subsection{SetAbstract}
 	Nastavení třídy jako abstraktní \\
-	OCL: pre: třída musí existovat\\
+	pre: třída musí existovat\\
 	post: nastavení abstrakce \\
-	\texttt{
-			    class SetAbstract extends ModelOperation \{\\
-      				attr String[1] ClassName;\\
-      				attr boolean[1] IsAbstract;\\
-    		\}
-	}
+	\begin{verbatim}
+	class SetAbstract extends ModelOperation {
+        attr String[1] className;
+        attr boolean[1] isAbstract;
+    }
+	\end{verbatim}
+	
 	\subsection{setEmbedded}
-	Nastavení třídy jako embedded \\
-	OCL: pre: třída musí existovat\\ 
-	post: nastavení embedded \\
-	\texttt{
-    class SetEmbedded extends ModelOperation \{\\
-      attr String[1] ClassName;\\
-      attr boolean[1] IsEmbedded;\\
-    \}
-	}
+	Nastavení atributu třídy isEmbedded na danou hodnotu\\
+	pre: třída musí existovat\\ 
+	post: nastavení správné hodnoty isEmbedded\\
+	\begin{verbatim}
+    class SetEmbedded extends ModelOperation {
+        attr String[1] className;
+        attr boolean[1] isEmbedded;
+    }
+	\end{verbatim}
+	
 	\subsection{setParent}
 	Nastavení předka třídy \\
-	OCL: pre: třída musí existovat $\wedge$ musí existovat předek\\
+	pre: třída musí existovat $\wedge$ musí existovat předek $\wedge$ předek
+	nesmí být potomek třídy className\\
 	post: nastavení předka \\
-	\texttt{
-    class SetParent extends ModelOperation \{\\
-      attr String[1] ClassName;\\
-      attr String[1] ParentName;\\
-    \}
-	}
+		
+	\begin{verbatim}
+    class SetParent extends ModelOperation {
+        attr String[1] className;
+        attr String[1] parentName;
+    }
+    \end{verbatim}
+	
 	\subsection{setPrimitive}
 	Nastavení třídy jako primitivní \\
-	OCL: pre: třída musí existovat \\
-	post: nastavení vlastnosti \\
-	\texttt{
-    class SetPrimitive extends ModelOperation \{\\
-      attr String[1] ClassName;\\
-      attr boolean[1] IsPrimitive;\\
-    \}
-	}
-	\subsection{addAssociation}
-	Nastavení opposite vlastnosti pro property třídy \\
-	OCL: post: nastavení vlastnosti \\
-	\texttt{
-    class AddAssociation extends ModelOperation \{\\
-      attr String[1] ClassName;\\
-      attr String[1] PropertyName;\\
-      attr String[1] OppositeClassName;\\
-      attr String[1] OppositePropertyName;\\
-    \}
-	}
+	pre: třída s className musí existovat \\
+	post: nastavení vlastnosti setPrimitive na danou hodnotu\\
+	\begin{verbatim}
+    class SetPrimitive extends ModelOperation \{
+        attr String[1] className;
+        attr boolean[1] isPrimitive;
+    }
+    \end{verbatim}
+	
 	\subsection{addProperty}
 	Přidání property do třídy \\
-	OCL: pre: musí existovat třída $\wedge$ nesmí v ní existovat danná property \\	
-	post: přidání property \\
-	\texttt{
-    class AddProperty extends ModelOperation \{\\
-      attr String[1] PropertyName;\\
-      attr String[1] Type;\\
-      attr String[1] DefaultValue;\\
-      attr String[1] ParentClass;\\
-      attr int[1] LowerBound;\\
-      attr int[1] UpperBound;\\
-    \}
-	}	
+	pre: musí existovat třída s name owningClassName $\wedge$ nesmí v ní
+	existovat danná property \\ post: přidání property \\
+	\begin{verbatim}
+     class AddProperty extends ModelOperation {
+        attr String[1] owningClassName;
+        attr String[1] name;
+        attr String[1] type;
+        attr String defaultValue;
+        attr int lowerBound;
+        attr int upperBound;
+        attr boolean isOrdered;
+        attr boolean isUnique;
+        attr boolean isID;
+        attr String columnName;
+        attr String columnNamePattern;
+        attr String sequenceName;
+    }
+    \end{verbatim}
+
+	\subsection{SetType}
+	Změna typu property \\
+	pre: musí existovat třída s owningClassName $\wedge$ musí existovat
+	property s propertyName v rámci dané třídy $\wedge$ musí existovat třída s name
+	type 
+	\\ post: změna typu property \\
+	\begin{verbatim}
+    class SetType extends ModelOperation {
+        attr String[1] owningClassName;
+        attr String[1] name;
+        attr String[1] type;
+    }
+	\end{verbatim}
+	
+	\subsection{SetID}
+	Nastavení ID
+	pre: musí existovat třída s name owningClassNamem, musí existovat property
+	s name name\\
+	post: nastavení hodnoty isID
+	\begin{verbatim}
+	class SetID extends ModelOperation {
+        attr String[1] owningClassName;
+        attr String[1] name;
+        attr boolean[1] isID;
+    }
+	\end{verbatim}    
+
+    	
 	\subsection{RenameClass}
 	Přejmenování třídy \\
-	OCL: pre: musí existovat třída	$\wedge$ jméno již nesmí existovat \\
+	pre: musí existovat třída s name className	$\wedge$ třída s jménem name
+	nesmí ještě existovat\\ 
 	post: přejmenování třídy \\
-	\texttt{
-     class RenameClass extends ModelOperation \{ \\
-      attr String[1] ClassName;\\
-      attr String[1] Name;\\
-    \}
-	}
+	\begin{verbatim}
+     class RenameClass extends ModelOperation \{
+        attr String[1] className;
+        attr String[1] name;
+    }
+	\end{verbatim}
+	
 	\subsection{RenameProperty}
 	Přejmenování property \\
-	OCL: pre: musí existovat property $\wedge$ jméno již nesmí existovat $\wedge$ musí existovat třída \\
-	post: přejmenování property \\
-	\texttt{
-    class RenameProperty extends ModelOperation \{ \\
-      attr String[1] PropertyName; \\
-      attr String[1] Name; \\
-    \}
-	}
-	\subsection{EditPropertyType}
-	Změna typu property \\
-	OCL: pre: musí existovat property $\wedge$ musí existovat třída \\
-	post: změna typu property \\
-	\texttt{
-    class EditPropertyType extends ModelOperation \{ \\
-      attr String[1] ClassName;\\
-      attr String[1] PropertyName;\\
-      attr String[1] Type;\\
-    \}
-	}
+	pre: musí existovat třída s className $\wedge$ property s daným jménem
+	ještě nesmí existovat v rámci třídy className $\wedge$ musí existovat třída \\ 
+	post: změna name property na novou hodnotu\\
+	\begin{verbatim}
+    class RenameProperty extends ModelOperatbion {
+        attr String[1] owningClassName;
+        attr String[1] propertyName; 
+        attr String[1] name; 
+    }
+	\end{verbatim}
+	
 	\subsection{RemoveClass}
 	Smazání třídy \\
-	OCL: pre: musí existovat třída \\
-	post: smazání třídy \\
-	\texttt{
-    class DeleteClass extends ModelOperation \{ \\
-      attr String[1] ClassName;\\
-    \}
-	}
+	pre: musí existovat třída s className $\wedge$ třída s className nesmí mít
+	potomka $\wedge$ třída nesmí mít žádnou vazbu na jiné třídy
+	$\wedge$ \\
+	 post: smazání třídy \\
+	\begin{verbatim}
+    class RemodeClass extends ModelOperation {
+        attr String[1] className;
+    }
+	\end{verbatim}
+	
 	\subsection{RemoveProperty}
 	Smazání property \\
-	OCL: pre: musí existovat třída $\wedge$ musí existovat property $\wedge$ property nesmí být součástí asociace \\
+	pre: musí existovat třída s className $\wedge$ musí existovat property v
+	třídě className $\wedge$ property nesmí být součástí asociace \\ 
 	post: smazání property \\
-	\texttt{
-    class DeleteProperty extends ModelOperation \{ \\
-      attr String[1] ClassName; \\
-      attr String[1] PropertyName; \\
-    \}
-	}
+	\begin{verbatim}
+	class DeleteProperty extends ModelOperation {
+      attr String[1] ClassName;
+      attr String[1] name;
+    }
+	\end{verbatim}
+	
 	\subsection{RemoveAssociation}
 	Smazání asociace \\
-	OCL: pre: asociace musí exitovat \\
+	pre: asociace musí exitovat \\
 	post: smazání asociace \\
-	\texttt{
-    class DeleteAssociation extends ModelOperation \{ \\
-      attr String[1] ClassName; \\
-      attr String[1] PropertyName; \\
-      attr String[1] OppositeClassName; \\
-      attr String[1] OppositePropertyName; \\
-    \}
-	}								
+	
+	\begin{verbatim}
+    class DeleteAssociation extends ModelOperation{
+      attr String[1] className; 
+      attr String[1] name;
+      attr String[1] oppositeClassName;
+      attr String[1] oppositePropertyName; 
+    }
+	\end{verbatim}
+	
+	\subsection{SetOrdered}
+	Nastavení atributu isOrdered\\
+	pre: třída s name owningClassName musí existovat $\wedge$ property s name
+	name musí existovat v rámci dané třídy\\
+	post: nastavení hodnoty isOrdered na správnou hodnotu\\
+	\begin{verbatim}
+	class SetOrdered extends ModelOperation { attr String[1] owningClassName;
+        attr String[1] name;
+        attr boolean[1] isOrdered;
+    }
+    \end{verbatim}
+
+	\subsection{SetUnique}
+	Nastavení hodnoty isUnique\\
+	pre: třída s name owningClassName musí existovat $\wedge$ property s name name
+	musí existovat v rámci třídy owningClassName\\
+	post: je nastavena příslušná hodnota
+	\begin{verbatim}
+	class SetUnique extends ModelOperation {
+        attr String[1] owningClassName;
+        attr String[1] name;
+        attr boolean[1] isUnique;
+    }
+    \end{verbatim}
+    
+	\subsection{AddAssociation}
+	přidání asociace\\
+	pre: třída s name firstClassName musí existovat $\wedge$ třída s name
+	secondClassName musí existovat\\
+	post: asociace je vytvořena
+	\begin{verbatim}
+    class AddAssociation extends ModelOperation {
+        attr String[1] firstClassName;
+        attr String[1] firstPropertyName;
+        attr String[1] secondClassName;
+        attr String[1] secondPropertyName;
+    }
+    \end{verbatim}
+									
 \end{document} %konec dokumentu

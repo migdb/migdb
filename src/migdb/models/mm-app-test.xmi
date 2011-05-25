@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/reduced-jam ../metamodels/mm-app.fel.ecore#//reduced">
+  <modelGenerations>
+    <classes name="Parent" isAbstract="true">
+      <properties name="id" type="//@modelGenerations.0/@classes.4" lowerBound="1" isID="true"/>
+    </classes>
+    <classes name="Child" parent="//@modelGenerations.0/@classes.0">
+      <properties name="redCollection" type="//@modelGenerations.0/@classes.5" upperBound="-1"/>
+      <properties name="blueCollection" type="//@modelGenerations.0/@classes.7" upperBound="-1" isOrdered="true" columnNamePattern=""/>
+    </classes>
+    <classes name="GrandChild" parent="//@modelGenerations.0/@classes.1">
+      <properties name="tools" type="//@modelGenerations.0/@classes.3"/>
+    </classes>
+    <classes name="Tools" isEmbedded="true" tableName="">
+      <properties name="amount" type="//@modelGenerations.0/@classes.4"/>
+    </classes>
+    <classes name="Integer" isPrimitive="true"/>
+    <classes name="Red">
+      <properties name="id" type="//@modelGenerations.0/@classes.4" lowerBound="1" isID="true"/>
+      <properties name="greenCollection" type="//@modelGenerations.0/@classes.6" opositeProperty="//@modelGenerations.0/@classes.6/@properties.1" upperBound="-1" isUnique="true"/>
+    </classes>
+    <classes name="Green">
+      <properties name="id" type="//@modelGenerations.0/@classes.4" lowerBound="1" isID="true"/>
+      <properties name="redCollection" type="//@modelGenerations.0/@classes.5" opositeProperty="//@modelGenerations.0/@classes.5/@properties.1" upperBound="-1" isUnique="true" isOrdered="true"/>
+      <properties name="blueOposite" type="//@modelGenerations.0/@classes.7" opositeProperty="//@modelGenerations.0/@classes.7/@properties.1" lowerBound="1"/>
+    </classes>
+    <classes name="Blue">
+      <properties name="id" type="//@modelGenerations.0/@classes.4" lowerBound="1" isID="true"/>
+      <properties name="greenOposite" type="//@modelGenerations.0/@classes.6" opositeProperty="//@modelGenerations.0/@classes.6/@properties.2" lowerBound="1"/>
+    </classes>
+  </modelGenerations>
+</reduced:ModelRoot>

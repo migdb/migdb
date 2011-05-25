@@ -1,4 +1,3 @@
-
 CREATE TABLE TPC_Parent (
     TPC_parent_ID int,
     CONSTRAINT pk_TPC_Parent PRIMARY KEY (TPC_parent_ID)

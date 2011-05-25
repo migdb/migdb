@@ -6,9 +6,9 @@
 <intAttribute key="org.eclipse.m2m.qvt.oml.interpreter.elemCount" value="2"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName1" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/transform_OCL.qvto"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/test_inheritance_types.xmi"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/mm-db.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transformations/transform_OCL.qvto"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/models/test_inheritance_types.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/models/db.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.traceFile" value="platform:/resource/migdb/tracefile.txt"/>

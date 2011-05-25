@@ -1,0 +1,266 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+
+modeltype APP uses 'mm-app';
+
+transformation APP_To_Rdb(in inModel : APP, out outModel : APP);
+main() {
+	assert(inModel.rootObjects()->size() = 1);
+	assert(inModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
+	
+	log("transformation started...");
+	
+	inModel.rootObjects().deepclone();
+
+	var root : APP::reduced::ModelRoot = outModel.rootObjects()![APP::reduced::ModelRoot];
+	var gen0 : APP::reduced::ModelGeneration = root.modelGenerations->first();
+	
+	// root.modelGenerations += gen0; 
+	
+	root.operations->forEach(op) {
+		log("	iterating over operation " + op.repr());
+		op.xmap apply(gen0);
+	};
+	
+	root.operations = root.operations->reject(true);
+}
+
+abstract mapping APP::reduced::operations::ModelOperation::apply(inout gen : APP::reduced::ModelGeneration);
+
+
+/* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
+
+mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration)
+when { 
+	not gen.isClassInGeneration(self.name) and 
+	not (self.name = self.parent)
+}
+{
+	gen.classes += object APP::reduced::Class {
+		name := self.name;
+		parent := gen.findClass(self.parent); // if a parent doesn't exist, set to null
+		isAbstract := self.isAbstract;
+		isEmbedded := self.isEmbedded;
+		isPrimitive := self.isPrimitive;
+		tableName := self.tableName;
+		inheritanceType := self.inheritanceType;
+		// ID property
+	};
+}
+
+mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and 
+	not gen.isPropertyInClass(self.name, self.owningClassName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	
+	c.properties += object APP::reduced::Property {
+		name := self.name;
+		type := gen.findClass(self.type); // if a type doesn't exist, set to null
+		defaultValue := self.defaultValue; // a value type has to be equal with a type of property
+		lowerBound := self.lowerBound;	// lowerBound <= upperBound
+		upperBound := self.upperBound; // upperBound >= lowerBound
+		isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
+		isUnique := self.isUnique; // has to be a collection (upperBound == -1)
+		isID := self.isID; // just one property has isID = true
+		columnName := self.columnName;
+		columnNamePattern := self.columnNamePattern;
+		sequenceName := self.sequenceName;
+	};
+}
+
+
+/* ++++++++++ SET OPERATIONS ++++++++++++++++++++ */
+
+// operace, ktera nastavi vlastnost isAbstract
+mapping APP::reduced::operations::SetAbstract::apply(inout gen : APP::reduced::ModelGeneration)
+when{ gen.isClassInGeneration(self.name); }
+{
+	var c : APP::reduced::Class := gen.findClass(self.name);
+
+	c.isAbstract := self.isAbstract;
+}
+
+// operace, ktera nastavi vlastsnost isEmbedded
+mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::ModelGeneration)
+when{ gen.isClassInGeneration(self.name); }
+{
+	var c : APP::reduced::Class := gen.findClass(self.name);
+
+	c.isEmbedded := self.isEmbedded;
+}
+
+// operace, ktera nastavi vlastsnost parent
+mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::ModelGeneration)
+when{ gen.isClassInGeneration(self.name) and not gen.isSelfParent(self.parentName, self.name, true) }
+{
+	var c : APP::reduced::Class := gen.findClass(self.name);
+
+	c.parent := gen.findClass(self.parentName);	
+	// ID problem
+}
+
+// operace, ktera nastavi vlastsnost isPrimitive
+mapping APP::reduced::operations::SetPrimitive::apply(inout gen : APP::reduced::ModelGeneration)
+when{ gen.isClassInGeneration(self.name); }
+{
+	var c : APP::reduced::Class := gen.findClass(self.name);
+
+	c.isPrimitive := self.isPrimitive;
+}
+
+// operace, ktera nastavi vlastsnost isID
+mapping APP::reduced::operations::SetID::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and 
+	gen.isPropertyInClass(self.propertyName, self.owningClassName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.propertyName);
+	
+	p.isID := self.isID;
+	// ID problem
+}
+
+// operace, ktera nastavi vlastsnost type
+mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and 
+	gen.isPropertyInClass(self.name, self.owningClassName) and
+	gen.isClassInGeneration(self.type);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	p.type := gen.findClass(self.type); // null
+}
+
+// operace, ktera nastavi vlastsnost isOrdered
+mapping APP::reduced::operations::SetOrdered::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and 
+	gen.isPropertyInClass(self.name, self.owningClassName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	p.isOrdered := self.isOrdered;
+}
+
+// operace, ktera nastavi vlastsnost isUnique
+mapping APP::reduced::operations::SetUnique::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and
+	gen.isPropertyInClass(self.name, self.owningClassName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	p.isUnique := self.isUnique;
+}
+
+
+/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
+
+// operace, ktera prejmenuje danou tridu, jestlize existuje
+mapping APP::reduced::operations::RenameClass::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.name) and 
+	not gen.isClassInGeneration(self.newName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.name);
+
+	c.name = self.newName;
+}
+
+// operace, ktera prejmenuje danou property, jestlize existuje
+mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isClassInGeneration(self.owningClassName) and 
+	gen.isPropertyInClass(self.name, self.owningClassName) and
+	not gen.isPropertyInClass(self.newName, self.owningClassName);
+}
+{
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+
+	p.name = self.newName;
+}
+
+
+/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
+// najde tridu dle jejiho jmena
+query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {
+	self.classes->forOne(c | c.name = cName ) {
+		return c;
+	};
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+}
+
+// overi, jestli v dane generaci existuje trida s danym jmenem
+query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
+	self.classes->forOne(c | c.name = cName ) {
+		return true;
+	};
+	return false;
+}
+
+// najde property dle jejiho jmena
+query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property {
+	self.properties->forOne(p | p.name = pName ) {
+		return p;
+	};
+	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+}
+
+// overi, jestli v dane tride existuje property s danym jmenem
+query APP::reduced::ModelGeneration::isPropertyInClass(pName : String, cName : String) : Boolean {
+	if (self.isClassInGeneration(cName)) then {
+		var c : APP::reduced::Class := self.findClass(cName);		
+		c.properties->forOne(p | p.name = pName ) {
+			return true;
+		};
+	} endif;	
+	
+	return false;
+}
+
+// overi, jestli je trida sama sobe rodicem
+query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : String, entry : Boolean) : Boolean {
+	var c : APP::reduced::Class := self.findClass(cName);
+	if (c <> null) then {
+		if (not entry and cName = startName) then { return true; } endif;
+		if (c.parent <> null) then { return self.isSelfParent(c.parent.name, startName, false); } endif;
+	} endif;
+	return false;
+}

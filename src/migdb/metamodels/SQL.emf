@@ -1,0 +1,16 @@
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+package mm;
+
+@namespace(uri="http://www.collectionspro.eu/jam/mm/sql", prefix="sql")
+package sql {
+  class ModelRoot {
+  	ordered val Statement[*]#owningModelRoot statements;  
+    
+  }
+  
+  class Statement{
+  	readonly derived ref ModelRoot[1]#statements owningModelRoot;
+    attr String [1] sqlCode;
+  }
+}
+

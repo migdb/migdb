@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sql:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sql="http://www.collectionspro.eu/jam/mm/sql" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/sql ../metamodels/SQL.ecore#//sql">
+  <statements sqlCode="CREATE TABLE TPC_Parent (&#xA;    TPC_parent_ID int,&#xA;    CONSTRAINT pk_TPC_Parent PRIMARY KEY (TPC_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE TPC_Child (&#xA;    TPC_child_property int, &#xA;    TPC_parent_ID int,&#xA;    CONSTRAINT pk_TPC_Child PRIMARY KEY (TPC_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE ST_Parent (&#xA;    ST_grandchild_property int, &#xA;    ST_parent_ID int, &#xA;    ST_child_property int, &#xA;    discriminator varchar(50),&#xA;    CONSTRAINT pk_ST_Parent PRIMARY KEY (ST_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE TPC_GrandChild (&#xA;    TPC_child_property int, &#xA;    TPC_parent_ID int, &#xA;    TPC_grandchild_property int,&#xA;    CONSTRAINT pk_TPC_GrandChild PRIMARY KEY (TPC_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE JOIN_Parent (&#xA;    JOIN_parent_ID int,&#xA;    CONSTRAINT pk_JOIN_Parent PRIMARY KEY (JOIN_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE JOIN_Child (&#xA;    JOIN_child_property int, &#xA;    JOIN_parent_ID int,&#xA;    CONSTRAINT FK_JOIN_Parent FOREIGN KEY (JOIN_parent_ID) REFERENCES JOIN_Parent,&#xA;    CONSTRAINT pk_JOIN_Child PRIMARY KEY (JOIN_parent_ID)&#xA;);"/>
+  <statements sqlCode="CREATE TABLE JOIN_GrandChild (&#xA;    JOIN_parent_ID int, &#xA;    JOIN_grandchild_property int,&#xA;    CONSTRAINT pk_JOIN_GrandChild PRIMARY KEY (JOIN_parent_ID),&#xA;    CONSTRAINT FK_JOIN_Child FOREIGN KEY (JOIN_parent_ID) REFERENCES JOIN_Child&#xA;);"/>
+</sql:ModelRoot>
