@@ -52,6 +52,7 @@ abstract mapping APP::reduced::operations::ModelOperation::apply(inout gen : APP
 
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
+// operace, ktera vytvori novou tridu v dane generaci
 mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration)
 when { 
 	not gen.isClassInGeneration(self.name) and 
@@ -70,6 +71,7 @@ when {
 	};
 }
 
+// operace, ktera prida novy atribut dane tride
 mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration)
 when {
 	gen.isClassInGeneration(self.owningClassName) and 
@@ -93,6 +95,18 @@ when {
 	};
 }
 
+// operace, ktera svaze dve tridy oboustranne navigabilni asociaci
+mapping APP::reduced::operations::AddAssociation::apply(inout gen : APP::reduced::ModelGeneration)
+when {
+	gen.isPropertyInClass(self.firstPropertyName, self.firstClassName) and
+	gen.isPropertyInClass(self.secondPropertyName, self.secondClassName);
+}
+{
+	var p1 : APP::reduced::Property := gen.findClass(self.firstClassName).findProperty(self.firstPropertyName);
+	var p2 : APP::reduced::Property := gen.findClass(self.secondClassName).findProperty(self.secondPropertyName);
+	p1.opositeProperty := p2;
+	p2.opositeProperty := p1;
+}
 
 /* ++++++++++ SET OPERATIONS ++++++++++++++++++++ */
 
