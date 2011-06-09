@@ -235,38 +235,22 @@ when {
 
 // najde tridu dle jejiho jmena
 query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {
-	self.classes->forOne(c | c.name = cName ) {
-		return c;
-	};
-	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+	return self.classes->selectOne(name = cName);
 }
 
 // overi, jestli v dane generaci existuje trida s danym jmenem
 query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	self.classes->forOne(c | c.name = cName ) {
-		return true;
-	};
-	return false;
+	return self.classes.name->exists(self = cName );
 }
 
 // najde property dle jejiho jmena
 query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property {
-	self.properties->forOne(p | p.name = pName ) {
-		return p;
-	};
-	return null; // nekonzistentni [pozdeji nelze volat na null objektu]
+	return self.properties->selectOne(name = pName);
 }
 
 // overi, jestli v dane tride existuje property s danym jmenem
 query APP::reduced::ModelGeneration::isPropertyInClass(pName : String, cName : String) : Boolean {
-	if (self.isClassInGeneration(cName)) then {
-		var c : APP::reduced::Class := self.findClass(cName);		
-		c.properties->forOne(p | p.name = pName ) {
-			return true;
-		};
-	} endif;	
-	
-	return false;
+	return self.classes->select(name=cName).properties->exists(name=pName);
 }
 
 // overi, jestli je trida sama sobe rodicem
