@@ -1,0 +1,66 @@
+\documentclass[12pt,a4paper,twoside]{memoir}
+%\usepackage{thumbpdf}
+\usepackage{graphicx}
+%\usepackage[notlof, notlot, notindex]{tocbibind}
+%\usepackage{epsfig}
+%\RequirePackage[colorlinks,hyperindex,plainpages=false]{hyperref}
+\def\pdfBorderAttrs{/Border [0 0 0] } % No border arround Links
+\pdfcompresslevel=9
+\usepackage[czech]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{book}
+\usepackage{indentfirst}
+\usepackage{longtable}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage[pdftex,%
+  unicode,%
+  bookmarksnumbered,%
+  colorlinks,%
+  citecolor=black,%
+  filecolor=black,%
+  linkcolor=black,%
+  urlcolor=black%
+]{hyperref}
+%\usepackage[plainpages=false,pdfpagelabels,bookmarksnumbered]{hyperref}
+\usepackage{memhfixc}
+
+%no list of figures, not list of tables in TOC
+%\usepackage[notlof, notlot, notindex]{tocbibind}
+%\settocbibname{References} % Instead of bibliography TOC entry
+
+\input{makra.sty}
+\begin{document}
+ %\selectlanguage{english}
+\frontmatter
+%\include{title}
+\chapterstyle{section}
+%\tableofcontents
+%\clearpage
+%\listoffigures
+%\clearpage
+%\listoftables
+%\chapterstyle{ell} % simple no, 'chapter' title
+%\listoftables
+\setlength{\parindent}{5ex}
+%\setlength{\parskip}{0ex}
+\setlength{\parskip}{1.5ex plus 0.7ex minus 0.6ex}
+%\include{preface}
+\mainmatter
+%\part{Instalace}
+\include{migdb-mapping-content}
+%\part{Základní nastavení software}
+%\part{Obvyklé pracovní postupy}
+%\appendix
+%\include{appendix}
+%\backmatter
+% automatically generated from xml
+%\include{glossary}
+%\addcontentsline{toc}{chapter}{Literatura}
+%\include{references}
+%\addcontentsline{toc}{chapter}{Index}
+%\printindex
+\label{verylast}
+%\mbox{}
+\end{document}
