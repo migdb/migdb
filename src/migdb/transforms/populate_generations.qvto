@@ -212,6 +212,40 @@ mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced
 	p.name = self.newName;
 }
 
+/* ++++++++++ DELETE OPERATIONS ++++++++++++++++++++ */
+
+query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+	return gen.isClassInGeneration(self.name) // testuji zda trida existuje
+		   and not gen.classes.properties->exists(type = self) // testuji, zda neni trida soucasti vazby
+		   and not gen.classes->exists(parent = self); // testuji, zda neni trida v hyerarchii
+}
+
+mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration){
+	//gen.findClass(self.name) = null; // NEVIM JAK MAZAT!!
+}
+
+query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+	return gen.findClass(self.owningClassName).properties->exists(name = self);
+	// nevim jak zaclenit to, ze je soucasti asociace
+}
+
+mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
+	//gen.findClass(self.owningClassName).findProperty(self.name) = null; // NEVIM JAK MAZAT
+}
+
+query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+	return gen.classes->exists(name = self.firstClassName) // testujeme zda existuje trida  first
+		   and gen.classes->exists(name = self.secondClassName) // testujeme zda existuje trida second
+		   and gen.findClass(self.firstClassName).properties->exists(name = self.firstPropertyName) // testujeme zda existuje property ve tride first
+		   and gen.findClass(self.secondClassName).properties->exists(name = self.secondPropertyName); // testujeme zda existuje property ve tride second
+}
+
+mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration){
+	//gen.findClass(self.firstClassName).findProperty(self.firstPropertyName) = null; // NEVIM JAK MAZAT
+	//gen.findClass(self.secondClassName).findProperty(self.secondPropertyName) = null; // NEVIM JAK MAZAT
+	//gen.findClass(self.firstClassName) = null; // NEVIM JAK MAZAT
+	//gen.findClass(self.secondClassName) = null; // NEVIM JAK MAZAT
+}
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
