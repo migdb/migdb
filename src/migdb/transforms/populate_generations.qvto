@@ -221,7 +221,7 @@ query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGe
 }
 
 mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration){
-	//gen.findClass(self.name) = null; // NEVIM JAK MAZAT!!
+	gen.findClass(self.name)->reject(true); // NEVIM JAK MAZAT!!
 }
 
 query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
@@ -230,7 +230,7 @@ query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::Mode
 }
 
 mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
-	//gen.findClass(self.owningClassName).findProperty(self.name) = null; // NEVIM JAK MAZAT
+	gen.findClass(self.owningClassName).findProperty(self.name)->reject(true); // NEVIM JAK MAZAT
 }
 
 query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
@@ -241,10 +241,10 @@ query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::M
 }
 
 mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration){
-	//gen.findClass(self.firstClassName).findProperty(self.firstPropertyName) = null; // NEVIM JAK MAZAT
-	//gen.findClass(self.secondClassName).findProperty(self.secondPropertyName) = null; // NEVIM JAK MAZAT
-	//gen.findClass(self.firstClassName) = null; // NEVIM JAK MAZAT
-	//gen.findClass(self.secondClassName) = null; // NEVIM JAK MAZAT
+	gen.findClass(self.firstClassName).findProperty(self.firstPropertyName)->reject(true); // NEVIM JAK MAZAT
+	gen.findClass(self.secondClassName).findProperty(self.secondPropertyName)->reject(true); // NEVIM JAK MAZAT
+	gen.findClass(self.firstClassName)->reject(true); // NEVIM JAK MAZAT
+	gen.findClass(self.secondClassName)->reject(true); // NEVIM JAK MAZAT
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
