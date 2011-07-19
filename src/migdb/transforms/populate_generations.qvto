@@ -133,7 +133,7 @@ mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::M
 
 query APP::reduced::operations::SetParent::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.name)
-	       and not gen.isSelfParent(self.parentName, self.name, true)
+	       and not gen.isSelfParent(self.parentName, self.name, true);
 }
 
 mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -221,16 +221,17 @@ query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGe
 }
 
 mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration){
-	gen.findClass(self.name)->reject(true); // NEVIM JAK MAZAT!!
+	gen.classes := gen.classes->excluding(gen.findClass(self.name));
 }
 
 query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return gen.findClass(self.owningClassName).properties->exists(name = self);
+	return gen.isPropertyInClass(self.name, self.owningClassName);
 	// nevim jak zaclenit to, ze je soucasti asociace
 }
 
 mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
-	gen.findClass(self.owningClassName).findProperty(self.name)->reject(true); // NEVIM JAK MAZAT
+	var c :  APP::reduced::Class := gen.findClass(self.owningClassName); // ulozime si hledanou tridu 
+	c.properties := c.properties->excluding(c.findProperty(self.name));
 }
 
 query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
@@ -241,10 +242,10 @@ query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::M
 }
 
 mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration){
-	gen.findClass(self.firstClassName).findProperty(self.firstPropertyName)->reject(true); // NEVIM JAK MAZAT
-	gen.findClass(self.secondClassName).findProperty(self.secondPropertyName)->reject(true); // NEVIM JAK MAZAT
-	gen.findClass(self.firstClassName)->reject(true); // NEVIM JAK MAZAT
-	gen.findClass(self.secondClassName)->reject(true); // NEVIM JAK MAZAT
+	var firstClass :  APP::reduced::Class := gen.findClass(self.firstClassName);
+	var secondClass :  APP::reduced::Class := gen.findClass(self.secondClassName);
+	firstClass.properties->excluding(firstClass.findProperty(self.firstPropertyName));
+	secondClass.properties->excluding(secondClass.findProperty(self.secondPropertyName));
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -256,7 +257,7 @@ query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::C
 
 // overi, jestli v dane generaci existuje trida s danym jmenem
 query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.classes.name->exists(self = cName );
+	return self.classes->exists(name = cName );
 }
 
 // vrati property daneho jmena
