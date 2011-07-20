@@ -78,7 +78,9 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 
 query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.owningClassName)
-		   and not gen.isPropertyInClass(self.name, self.owningClassName);
+		   and not gen.isPropertyInClass(self.name, self.owningClassName)
+		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
+		   and self.lowerBound <= self.upperBound; // otestujeme zda je hranice spravne nastavena
 }
 
 mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -246,6 +248,24 @@ mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::redu
 	var secondClass :  APP::reduced::Class := gen.findClass(self.secondClassName);
 	firstClass.properties->excluding(firstClass.findProperty(self.firstPropertyName));
 	secondClass.properties->excluding(secondClass.findProperty(self.secondPropertyName));
+}
+
+/* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
+
+query APP::reduced::operations::CopyProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+	return true;
+}
+
+mapping APP::reduced::operations::CopyProperty::apply(inout gen : APP::reduced::ModelGeneration){
+
+}
+
+query APP::reduced::operations::MoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+	return true;
+}
+
+mapping APP::reduced::operations::MoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
+
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
