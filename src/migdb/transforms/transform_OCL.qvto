@@ -104,7 +104,7 @@ disjuncts APP::reduced::Class::toRootTable, APP::reduced::Class::toJoinedTable,A
 	Namapuje tridu bez serializovatelneho potomka na tabulku
 */	
 mapping APP::reduced::Class::toRootTable(schema : RDB::rdb::Schema) : RDB::rdb::Table 
-when {self.isSerializable()= true and self.parent = null}
+when {self.isSerializable() = true and self.parent = null}
 {
 	log("toSerializableRootTable section " + self.name);
 	name := self.name;
@@ -176,9 +176,8 @@ when { self.hasTablePerClassInheritanceType() and self.isSerializable() and self
 	log("toTablePerClass section " + self.name);
 	name := self.name;
 
-	log(self.getPathToRoot()->properties->select(prop | prop.isPrimitive())->size().repr());
-	
-	
+	//log(self.getPathToRoot()->properties->select(prop | prop.isPrimitive())->size().repr());
+
 	//tento statement namapuje vsechny property tridy a jejich predku	
 	//var pathProperties : Set(APP::reduced::Property) :=
 	 self.getPathToRoot()->properties ->forEach(prop){
@@ -233,7 +232,6 @@ when {	self.isPrimitive()and self.upperBound = 1 and (self.lowerBound = 1 or sel
 		type := self.type.name;
 		table.ownedColumns += result;
 							if(self.isID = true )then{
-							
 								var index : RDB::rdb::Index := object RDB::rdb::Index{
 									columns += result;
 									name := "pk_index";
@@ -284,9 +282,7 @@ when{ self.isPrimitive() and self.upperBound <> 1}
 		ownedColumns := Set{ownerColumn, result};
 		constraints := Set{pk,fk};
 		primaryKey := pk;
-	};
-	
-	
+	};	
 }
 
 /*
@@ -426,7 +422,7 @@ query APP::reduced::ModelGeneration::containsCycle():Boolean{
 	
 
 /*
-	zjisti, jestli tabulka obsahuje diskriminacni sloupec
+	Overuje, jestli tabulka obsahuje diskriminacni sloupec
 */
 query RDB::rdb::Table::containsDiscriminator():Boolean{
 	return self.ownedColumns->select(col | col.name ="discriminator")->size()=1;
