@@ -41,20 +41,18 @@ mapping RDB::rdb::ModelRoot::toSql():SQL::sql::ModelRoot{
 	var gen0 : RDB::rdb::Database = self.DBgenerations->first();
 	var schema0 : RDB::rdb::Schema = gen0[RDB::rdb::Database].schemas![RDB::rdb::Schema];
 
-	while(schema0.tables->select(table | table.resolveone(SQL::sql::Statement) = null)->notEmpty()){
-	//while(not schema0.isTotallyMapped()){
-		schema0.tables->select(table | table.resolveone(SQL::sql::Statement)= null and( 
-			table.oclAsType(RDB::rdb::Table).constraints[RDB::rdb::ForeignKey]->isEmpty() or 
-			table.oclAsType(RDB::rdb::Table).constraints[RDB::rdb::ForeignKey]->forAll(fk | 
-			fk.oclAsType(RDB::rdb::ForeignKey).targetTable.resolveone(SQL::sql::Statement) <> null)))
-		->forEach(table){
-			result.statements += table.xmap toCreateTableStatement();
-		};
+	schema0.tables->forEach(table){
+		result.statements+= table.map toCreateTableStatement();
 	};
+	
+	result.statements += schema0.tables.constraints[RDB::rdb::ForeignKey]->map toStatement();
+	result.statements += schema0.tables.constraints[RDB::rdb::NotNullConstraint]->map toStatement();
+	
 }
 
 mapping RDB::rdb::Table::toCreateTableStatement():SQL::sql::Statement{
 	result.sqlCode :="CREATE TABLE " + self.name +" (\n    ";
+	assert(self.constraints[RDB::rdb::PrimaryKey]->size() < 2);
 	var comma : Boolean := false;
 	
 	self.ownedColumns->forEach(column){
@@ -64,30 +62,30 @@ mapping RDB::rdb::Table::toCreateTableStatement():SQL::sql::Statement{
 								result.sqlCode := result.sqlCode + ", \n    ";
 							}endif;
 			result.sqlCode := result.sqlCode + column.name + " " + getType(column.type);
-		if(column.columnConstraints->select(const | 
-			const.oclIsKindOf(RDB::rdb::NotNullConstraint))->size() <>0)then{
-			result.sqlCode := result.sqlCode + " NOT NULL";
-		}endif;						
 	};	
-	
-	self.constraints->forEach(const){
-		const.map toString(result);
-	};
+	if(self.constraints[RDB::rdb::PrimaryKey]->size() = 1 )then{
+		self.constraints![RDB::rdb::PrimaryKey].map toString(result);
+	} endif;
 	result.sqlCode := result.sqlCode + "\n);";
 	log(result.sqlCode);
 }
+
+mapping RDB::rdb::ForeignKey::toStatement():SQL::sql::Statement{
+	result.sqlCode := "ALTER TABLE " + self.owningTable.name + " ADD "; 
+	self.map toString(result);
+}
+
+mapping RDB::rdb::NotNullConstraint::toStatement():SQL::sql::Statement{
+
+}
+
+
+
 
 query getType(in str : String) : String{
 	if(str.match("int") or str.match("Integer")) then return "int" endif;
 	if(str.match("string") or str.match("String")) then return "varchar(50)" endif;	
 	return "";
-}
-
-query RDB::rdb::Schema::isTotallyMapped():Boolean{
-	self->tables->forOne(table | table.resolveone(SQL::sql::Statement) = null){
-			return false;
-	};
-	return true;
 }
 
 abstract mapping RDB::rdb::TableConstraint::toString(inout statement : SQL::sql::Statement);
