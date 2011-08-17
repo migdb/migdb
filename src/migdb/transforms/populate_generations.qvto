@@ -74,15 +74,28 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 		tableName := self.tableName;
 		inheritanceType := self.inheritanceType;
 	};
+	
+	// hned pri vitvoreni tridy vytvorime sloupec ID
+	var c : APP::reduced::Class := gen.findClass(self.name);
+	c.properties += object APP::reduced::Property{
+		name := "ID";
+		isID := true;
+		// musime nastavit, ze typ je Integer
+	};
 }
 
 query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.owningClassName)
 		   and not gen.isPropertyInClass(self.name, self.owningClassName)
 		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
+		   and gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
 		   and self.lowerBound <= self.upperBound; // otestujeme zda je hranice spravne nastavena
 }
 
+// Pri vytvoreni Property lze vytvorit jednostranne navigabilni asociaci
+// lze nastavit i kolekci:
+//isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
+//isUnique := self.isUnique; // has to be a collection (upperBound == -1)
 mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration) {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
 	
@@ -227,8 +240,8 @@ mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::M
 }
 
 query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return gen.isPropertyInClass(self.name, self.owningClassName);
-	// nevim jak zaclenit to, ze je soucasti asociace
+	return gen.isPropertyInClass(self.name, self.owningClassName)
+		   and gen.findClass(self.owningClassName).findProperty(self.name).opositeProperty = null; // testujeme zda neni property soucasti asociace
 }
 
 mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
@@ -253,7 +266,10 @@ mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::redu
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
 query APP::reduced::operations::CopyProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return true;
+	return gen.classes->exists(name = self.owningClassName)
+		   and gen.classes->exists(name = self.targetClassName);
+		   // NEVIM JAK POCITAT RADKY U TRID
+		   // and ((pocet radku OwningClass == pocet radku TargetClass) or (pocet radku OwningClass < pocet radku TargeClass);
 }
 
 mapping APP::reduced::operations::CopyProperty::apply(inout gen : APP::reduced::ModelGeneration){
