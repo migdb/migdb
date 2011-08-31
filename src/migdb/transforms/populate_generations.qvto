@@ -89,7 +89,7 @@ query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGe
 		   and not gen.isPropertyInClass(self.name, self.owningClassName)
 		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
 		   and gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
-		   and self.lowerBound <= self.upperBound; // otestujeme zda je hranice spravne nastavena
+		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound)); // otestujeme zda je hranice spravne nastavena
 }
 
 // Pri vytvoreni Property lze vytvorit jednostranne navigabilni asociaci
@@ -252,6 +252,9 @@ mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced
 query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
 	return gen.classes->exists(name = self.firstClassName) // testujeme zda existuje trida  first
 		   and gen.classes->exists(name = self.secondClassName) // testujeme zda existuje trida second
+		   // TESTOVAT NULL U OPPOSITE
+		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty = self.secondPropertyName
+		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty = self.firstPropertyName
 		   and gen.findClass(self.firstClassName).properties->exists(name = self.firstPropertyName) // testujeme zda existuje property ve tride first
 		   and gen.findClass(self.secondClassName).properties->exists(name = self.secondPropertyName); // testujeme zda existuje property ve tride second
 }
@@ -267,21 +270,70 @@ mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::redu
 
 query APP::reduced::operations::CopyProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
 	return gen.classes->exists(name = self.owningClassName)
-		   and gen.classes->exists(name = self.targetClassName);
-		   // NEVIM JAK POCITAT RADKY U TRID
-		   // and ((pocet radku OwningClass == pocet radku TargetClass) or (pocet radku OwningClass < pocet radku TargeClass);
+		   and gen.classes->exists(name = self.targetClassName)
+		   and gen.findClass(self.owningClassName).properties->exists(name = self.propertyName)
+		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
+		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
+		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
+		   // OR pouzima proto, ze nejprve testuji zda je target class parentem a jednou childem (je jedno jak hluboko v hierarchii)
+		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName) or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
+/* Operace ma jeste dve property:
+	 andInOwerload (true - zkonceni pri preteceni)
+	 addValueNull (true - pokud bude mene instanci nez v cilove tride, doplnime hodnoty na NULL; false - hodnoty se dopni na default)
+	 
+	 WARNING: property jeste nejsou nijak implementovane
+*/
 mapping APP::reduced::operations::CopyProperty::apply(inout gen : APP::reduced::ModelGeneration){
-
+	var c : APP::reduced::Class := gen.findClass(self.targetClassName);
+	var p : APP::reduced::Property := gen.findClass(self.owningClassName).findProperty(self.propertyName);
+	
+	c.properties += object APP::reduced::Property {
+		name := p.name;
+		type := p.type;
+		defaultValue := p.defaultValue;
+		lowerBound := p.lowerBound;
+		upperBound := p.upperBound;
+		isOrdered := p.isOrdered;
+		isUnique := p.isUnique;
+		columnName := p.columnName;
+		columnNamePattern := p.columnNamePattern;
+		sequenceName := p.sequenceName;
+	};
 }
 
 query APP::reduced::operations::MoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return true;
+	return gen.classes->exists(name = self.owningClassName)
+		   and gen.classes->exists(name = self.targetClassName)
+		   and gen.findClass(self.owningClassName).properties->exists(name = self.propertyName)
+		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
+		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
+		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
+		   // OR pouzima proto, ze nejprve testuji zda je target class parentem a jednou childem (je jedno jak hluboko v hierarchii)
+		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName) or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
 mapping APP::reduced::operations::MoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
-
+	var c : APP::reduced::Class := gen.findClass(self.targetClassName);
+	var p : APP::reduced::Property := gen.findClass(self.owningClassName).findProperty(self.propertyName);
+	
+	c.properties += object APP::reduced::Property {
+		name := p.name;
+		type := p.type;
+		defaultValue := p.defaultValue;
+		lowerBound := p.lowerBound;
+		upperBound := p.upperBound;
+		isOrdered := p.isOrdered;
+		isUnique := p.isUnique;
+		columnName := p.columnName;
+		columnNamePattern := p.columnNamePattern;
+		sequenceName := p.sequenceName;
+	};
+	
+	// smazeme property ze tridy c
+	c.properties := c.properties->excluding(c.findProperty(self.propertyName));
+	
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -313,5 +365,16 @@ query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : St
 		if (not entry and cName = startName) then { return true; } endif;
 		if (c.parent <> null) then { return self.isSelfParent(c.parent.name, startName, false); } endif;
 	} endif;
+	return false;
+}
+
+// overi, zda je socond parentem first
+// pocitame s tim, ze je hierarchyje sestavena spravne
+query APP::reduced::ModelGeneration::isInHierarchy(first : String, second : String) : Boolean{
+	var ourClass : APP::reduced::Class := self.findClass(first);
+	if(ourClass <> null) then {
+		if (ourClass.parent <> null and ourClass.parent = second) then { return true;}endif;
+		if (ourClass.parent <> null) then {return self.isInHierarchy(ourClass.parent.name, second);}endif;
+	}endif;
 	return false;
 }
