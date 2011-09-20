@@ -1,4 +1,4 @@
-b@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
 package mm;
 
 @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="mmrdb")
@@ -74,6 +74,7 @@ package rdb {
     ref Table[1] _owningTable;
     attr String[1] type;
     attr String[1] name;
+    attr String [?] defaultValue;
   }
   
   @OCL(inv="let first : TableColumn = self.columnsMap->first() in
@@ -82,7 +83,6 @@ package rdb {
     !ordered ref TableColumn[+] columns;
 
     @OCL(drv="self.columns->first()._owningTable")
-    readonly volatile transient derived ref Table[1] indexedTable;
     readonly derived ref Schema[1]#indexes owningSchema;
     attr String[1] name;
   }

@@ -4,14 +4,18 @@
     <DBgenerations>
       <schemas>
         <tables primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.0/@constraints.0" name="A">
-          <ownedColumns _owningTable="/0/@DBgenerations.0/@schemas.0/@tables.0" type="integer" name="id"/>
-          <ownedColumns _owningTable="/0/@DBgenerations.0/@schemas.0/@tables.0" type="integer" name="B_association"/>
+          <ownedColumns type="integer" name="id"/>
           <constraints xsi:type="mmrdb:PrimaryKey" name="pk_A" underlyingIndex="/1"/>
-          <constraints xsi:type="mmrdb:ForeignKey" name="FK_association" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.1" constrainedColumn="/0/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.1"/>
         </tables>
         <tables primaryKey="/0/@DBgenerations.0/@schemas.0/@tables.1/@constraints.0" name="B">
-          <ownedColumns _owningTable="/0/@DBgenerations.0/@schemas.0/@tables.1" type="integer" name="id"/>
+          <ownedColumns type="integer" name="id"/>
           <constraints xsi:type="mmrdb:PrimaryKey" name="pk_B" underlyingIndex="/2"/>
+        </tables>
+        <tables name="A_B">
+          <ownedColumns type="integer" name="A"/>
+          <ownedColumns type="integer" name="B"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK_A" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.0" constrainedColumn="/0/@DBgenerations.0/@schemas.0/@tables.2/@ownedColumns.0"/>
+          <constraints xsi:type="mmrdb:ForeignKey" name="FK_B" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.1" constrainedColumn="/0/@DBgenerations.0/@schemas.0/@tables.2/@ownedColumns.1"/>
         </tables>
       </schemas>
     </DBgenerations>

@@ -74,9 +74,8 @@ mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 
 	if(self.containsCycle())then{
 		log("Inheritance hierarchy contains cycle")
-	} else{
+	}else{
 		self.classes->forEach(_class ){
-			//log("cl " + _class.name + " " + _class.isGeneralClassSerializable().repr());
 			result.tables += _class.xmap toTable(result);
 		};
 
@@ -230,6 +229,7 @@ when {	self.isPrimitive()and self.upperBound = 1 and (self.lowerBound = 1 or sel
 		log("toPrimitive property section "  + self.name);
 		name := self.name;
 		type := self.type.name;
+		result.defaultValue := self.defaultValue;
 		table.ownedColumns += result;
 							if(self.isID = true )then{
 								var index : RDB::rdb::Index := object RDB::rdb::Index{
@@ -282,7 +282,9 @@ when{ self.isPrimitive() and self.upperBound <> 1}
 		ownedColumns := Set{ownerColumn, result};
 		constraints := Set{pk,fk};
 		primaryKey := pk;
-	};	
+	};
+	
+	table.owningSchema.tables+= collectionTable;	
 }
 
 /*
@@ -419,7 +421,13 @@ query APP::reduced::Class::containsCycle(inout addedClasses : Set(APP::reduced::
 query APP::reduced::ModelGeneration::containsCycle():Boolean{
 		return not self.classes->forAll(cls | not cls.containsCycle(OrderedSet{}));
 	};
+
 	
+query APP::reduced::ModelGeneration::containsNonleafTPCAssociation():Boolean{
+	return self.classes->properties->exists( prop | not prop.isPrimitive() and prop.owningClass.isNonleafTPCHierarchy() and 
+	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
+}
 
 /*
 	Overuje, jestli tabulka obsahuje diskriminacni sloupec
@@ -462,7 +470,8 @@ query APP::reduced::Property::isOneToOneBidirectional():Boolean{
 	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-M
 */	
 query APP::reduced::Property::isOneToManyUnidirectional():Boolean{
-	return not self.isPrimitive() and self.upperBound = 1 and self.opositeProperty = null;
+	return not self.isPrimitive() and self.upperBound = 1 and self.opositeProperty = null and 
+	not self.owningClass.isNonleafTPCHierarchy() and not self.type.isNonleafTPCHierarchy();
 }
 
 /*
@@ -470,14 +479,16 @@ query APP::reduced::Property::isOneToManyUnidirectional():Boolean{
 */
 query APP::reduced::Property::isOneToManyBidirectional():Boolean{	
 	return not self.isPrimitive() and self.upperBound = -1 and self.opositeProperty.opositeProperty = self and
-	self.opositeProperty.upperBound = 1;
+	self.opositeProperty.upperBound = 1 and not self.owningClass.isNonleafTPCHierarchy() and 
+	not self.type.isNonleafTPCHierarchy();
 }
 
 /*
 	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu M-N
 */	
 query APP::reduced::Property::isManyToManyUnidirectional():Boolean{
-	return not self.isPrimitive() and self.upperBound = -1 and self.opositeProperty = null;
+	return not self.isPrimitive() and self.upperBound = -1 and self.opositeProperty = null and 
+	not self.owningClass.isNonleafTPCHierarchy() and not self.type.isNonleafTPCHierarchy();
 }
 
 /*
@@ -485,7 +496,21 @@ query APP::reduced::Property::isManyToManyUnidirectional():Boolean{
 */
 query APP::reduced::Property::isManyToManyBidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = -1 and self.opositeProperty.opositeProperty = self and
-	self.opositeProperty.upperBound = -1;
+	self.opositeProperty.upperBound = -1 and not self.owningClass.isNonleafTPCHierarchy() and 
+	not self.type.isNonleafTPCHierarchy();
+}
+
+/*
+	Toto query vraci true, pokud ma trida inheritanceType TablePerClass  a ma potomka, jinak false. 
+	Je pouzivane k odstraneni slozitych mapovani vazeb mezi nelistovymi Classy s inheritanceType
+	TablePerClass.
+*/
+query APP::reduced::Class::isNonleafTPCHierarchy():Boolean{
+	if(self.inheritanceType = APP::reduced::InheritanceType::tablePerClass and 
+	self.owningModel.classes->exists(cls | cls.parent = self))then{
+		return true;
+	}endif;
+	return false;
 }
 
 /*
@@ -494,11 +519,12 @@ query APP::reduced::Property::isManyToManyBidirectional():Boolean{
 mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 	init{
 		var resultTable : RDB::rdb::Table := self.opositeProperty.resolveone(RDB::rdb::Table);
-		if(not self.isManyToManyBidirectional() or  resultTable = null)then{		
+		if(not self.isManyToManyBidirectional() or  resultTable = null) then {		
 			var firstTable:RDB::rdb::Table := self.owningClass.resolveone(RDB::rdb::Table);
 			var secondTable:RDB::rdb::Table := self.type.resolveone(RDB::rdb::Table);
 			log("toAssociationTable " + firstTable.name + " " + secondTable.name);
-			
+			result := object RDB::rdb::Table{
+			};
 			var Col1 : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
 				name := firstTable.name;
 				type := firstTable.getPKColumn().type;
@@ -520,14 +546,29 @@ mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 				targetTable := secondTable;
 				constrainedColumn := Col2;
 			}; 
-	
-			var OC : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
-				name := "ordering_column";
-				type := "integer";
-			};
+			result.ownedColumns := Set{Col1, Col2};
+			
+			// predpoklada existenci integer tridy
+			if(self.isOrdered) then{
+				var OC : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
+					name := "ordering_column";
+					type := "integer";
+				};
+				result.ownedColumns += OC;
+			}endif;
 			result.name := firstTable.name + "_" + secondTable.name;
-			result.ownedColumns := Set{Col1, Col2, OC};
 			result.constraints := Set{FK1, FK2};
+			
+			if(self.isUnique)then{
+				var uniqueConstraint :RDB::rdb::UniqueIndex := object RDB::rdb::UniqueIndex{
+					name := "unique_constraint_" + result.name;
+					underlyingIndex := object RDB::rdb::Index{
+						columns := Set{Col1, Col2};
+						name := "index" + result.name;
+					}
+				} 
+			}endif;
+			log(" result name--------" + result.name);
 		}else{
 			result := resultTable;		
 		}endif;
@@ -542,18 +583,20 @@ mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::TableColumn{
 			var secondTable : RDB::rdb::Table := self.type.resolveone(RDB::rdb::Table);
 			
 			log("toAssociationColumn " + firstTable.name + " " + secondTable.name);
-	
-			var fk : RDB::rdb::ForeignKey := object RDB::rdb::ForeignKey{
-			constrainedColumn := result;
-			targetTable := secondTable;
-			name := "FK_association";
-			};
 			result := object RDB::rdb::TableColumn{
 				name := secondTable.name + "_association";
 				type := secondTable.getPKColumn().type;
 				_owningTable := firstTable;
 			};
 			
+			var fk : RDB::rdb::ForeignKey := object RDB::rdb::ForeignKey{
+				constrainedColumn := result;
+				targetTable := secondTable;
+				name := "FK_association_" + firstTable.name + "_" + secondTable.name;
+			};
+			
+			log(" constrained column name"  + fk.constrainedColumn.name);
+						
 			firstTable.ownedColumns += result;
 			firstTable.constraints += fk;
 			
@@ -563,6 +606,14 @@ mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::TableColumn{
 					name := "ordering_column";
 					type := "integer";
 				}
+			}endif;
+			
+			if(self.isUnique)then{
+				firstTable.constraints += object RDB::rdb::UniqueIndex{
+					name := "unique" + result.name;
+					underlyingIndex:= object RDB::rdb::Index{
+					}
+				}	
 			}endif;
 			log(result.name + " " + result.type)	
 		} else{

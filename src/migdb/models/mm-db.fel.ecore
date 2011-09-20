@@ -38,8 +38,7 @@
       <eOperations name="getColumns" ordered="false" upperBound="-1" eType="#//rdb/TableColumn"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
           eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/tables"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"
-          derived="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="ownedColumns" ordered="false"
           upperBound="-1" eType="#//rdb/TableColumn" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
@@ -94,6 +93,7 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Index">
       <eAnnotations source="OCL">
@@ -101,15 +101,12 @@
       </eAnnotations>
       <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
           lowerBound="1" upperBound="-1" eType="#//rdb/TableColumn"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="indexedTable" lowerBound="1"
-          eType="#//rdb/Table" changeable="false" volatile="true" transient="true"
-          derived="true">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
+          eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/indexes">
         <eAnnotations source="OCL">
           <details key="drv" value="self.columns->first()._owningTable"/>
         </eAnnotations>
       </eStructuralFeatures>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
-          eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/indexes"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>

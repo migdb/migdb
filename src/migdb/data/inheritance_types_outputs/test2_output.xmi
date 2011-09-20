@@ -23,4 +23,27 @@
     </DBgenerations>
   </mmrdb:ModelRoot>
   <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.2" name="pk_index"/>
+  <mmrdb:ModelRoot>
+    <DBgenerations>
+      <schemas>
+        <tables primaryKey="/2/@DBgenerations.0/@schemas.0/@tables.0/@constraints.0" name="root">
+          <ownedColumns type="Integer" name="id"/>
+          <ownedColumns type="String" name="name"/>
+          <ownedColumns type="String" name="color"/>
+          <ownedColumns type="Integer" name="count_child3"/>
+          <ownedColumns type="Integer" name="age_child3"/>
+          <ownedColumns type="Integer" name="price_child3"/>
+          <ownedColumns _owningTable="/2/@DBgenerations.0/@schemas.0/@tables.0" type="String" name="discriminator"/>
+          <ownedColumns type="Integer" name="count_child1"/>
+          <ownedColumns type="Integer" name="price_child1"/>
+          <ownedColumns type="Integer" name="age_child1"/>
+          <ownedColumns type="Integer" name="age_child2"/>
+          <ownedColumns type="Integer" name="price_child2"/>
+          <ownedColumns type="Integer" name="count_child2"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk_root" underlyingIndex="/3"/>
+        </tables>
+      </schemas>
+    </DBgenerations>
+  </mmrdb:ModelRoot>
+  <mmrdb:Index columns="/2/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.0" name="pk_index"/>
 </xmi:XMI>
