@@ -42,6 +42,8 @@ main() {
 		if (op.isValid(gen0)) then {
 			log("	operation is valid " + op.repr());
 			op.xmap apply(gen0);
+		} else {
+			log("	operation is invalid " + op.repr());
 		} endif;
 	};
 	
@@ -78,7 +80,7 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 	// hned pri vitvoreni tridy vytvorime sloupec ID
 	var c : APP::reduced::Class := gen.findClass(self.name);
 	c.properties += object APP::reduced::Property{
-		name := "ID";
+		name := "id";
 		isID := true;
 		// musime nastavit, ze typ je Integer
 	};
@@ -88,7 +90,7 @@ query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGe
 	return gen.isClassInGeneration(self.owningClassName)
 		   and not gen.isPropertyInClass(self.name, self.owningClassName)
 		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
-		   and gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
+		   and not gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound)); // otestujeme zda je hranice spravne nastavena
 }
 
@@ -227,43 +229,58 @@ mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced
 	p.name = self.newName;
 }
 
-/* ++++++++++ DELETE OPERATIONS ++++++++++++++++++++ */
+/* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
 
-query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return gen.isClassInGeneration(self.name) // testuji zda trida existuje
-		   and not gen.classes.properties->exists(type = self) // testuji, zda neni trida soucasti vazby
-		   and not gen.classes->exists(parent = self); // testuji, zda neni trida v hyerarchii
+query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+	// tøída existuje v dané generaci
+	return gen.isClassInGeneration(self.name)
+	// tøída neobsahuje žádné atributy
+	//	   and gen.findClass(self.name).properties->isEmpty()
+	// na tøídu se neodkazuje žádná jiná tøída
+		   and not gen.classes.properties->exists(type = self)
+	// tøída není v hierarchii
+		   and not gen.classes->exists(parent.name = self.name);
 }
 
-mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration){
+// odstraní tøídu z dané generace
+mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration) {
+	// odstranìní tøídy
 	gen.classes := gen.classes->excluding(gen.findClass(self.name));
 }
 
-query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+    // atribut existuje v dané tøídì
 	return gen.isPropertyInClass(self.name, self.owningClassName)
-		   and gen.findClass(self.owningClassName).findProperty(self.name).opositeProperty = null; // testujeme zda neni property soucasti asociace
+	// neexistuje asociace z jiné tøídy
+		   and gen.findClass(self.owningClassName).findProperty(self.name).opositeProperty = null;
 }
 
-mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
-	var c :  APP::reduced::Class := gen.findClass(self.owningClassName); // ulozime si hledanou tridu 
+// odstraní atribut z dané tøídy
+mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration) {
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	// odstranìní atributu
 	c.properties := c.properties->excluding(c.findProperty(self.name));
 }
 
-query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
-	return gen.classes->exists(name = self.firstClassName) // testujeme zda existuje trida  first
-		   and gen.classes->exists(name = self.secondClassName) // testujeme zda existuje trida second
-		   // TESTOVAT NULL U OPPOSITE
-		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty = self.secondPropertyName
-		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty = self.firstPropertyName
-		   and gen.findClass(self.firstClassName).properties->exists(name = self.firstPropertyName) // testujeme zda existuje property ve tride first
-		   and gen.findClass(self.secondClassName).properties->exists(name = self.secondPropertyName); // testujeme zda existuje property ve tride second
+query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+	// tøídy existují v dané generaci
+	return gen.isClassInGeneration(self.firstClassName)
+		   and gen.isClassInGeneration(self.secondClassName)
+    // atributy existují v daných tøídách
+		   and gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
+		   and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName)
+	// jedná se o oboustrannì navigabilní asociaci
+		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty.name = self.secondPropertyName
+		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty.name = self.firstPropertyName;
 }
 
-mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration){
-	var firstClass :  APP::reduced::Class := gen.findClass(self.firstClassName);
-	var secondClass :  APP::reduced::Class := gen.findClass(self.secondClassName);
-	firstClass.properties->excluding(firstClass.findProperty(self.firstPropertyName));
-	secondClass.properties->excluding(secondClass.findProperty(self.secondPropertyName));
+// odstraní oboustrannì navigabilní asociaci mezi tøídami a pøíslušné atributy
+mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration) {
+	var firstClass : APP::reduced::Class := gen.findClass(self.firstClassName);
+	var secondClass : APP::reduced::Class := gen.findClass(self.secondClassName);
+	// odstranìní atributù a tedy i požadované asociace
+	firstClass.properties := firstClass.properties->excluding(firstClass.findProperty(self.firstPropertyName));
+	secondClass.properties := secondClass.properties->excluding(secondClass.findProperty(self.secondPropertyName));
 }
 
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
