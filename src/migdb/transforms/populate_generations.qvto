@@ -63,6 +63,7 @@ abstract mapping APP::reduced::operations::ModelOperation::
 
 query APP::reduced::operations::AddClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return not gen.isClassInGeneration(self.name)
+		   and gen.isClassInGeneration(self.parent)
 		   and not (self.name = self.parent);
 }
 
@@ -77,13 +78,15 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 		inheritanceType := self.inheritanceType;
 	};
 	
-	// hned pri vitvoreni tridy vytvorime sloupec ID
-	var c : APP::reduced::Class := gen.findClass(self.name);
-	c.properties += object APP::reduced::Property{
-		name := "id";
-		isID := true;
-		// musime nastavit, ze typ je Integer
-	};
+	// vytvoøení id atributu
+	if (self.parent = null) then {
+		var c : APP::reduced::Class := gen.findClass(self.name);
+		c.properties += object APP::reduced::Property {
+			name := "id";
+			isID := true;
+			// [?] nutné nastavit typ atributu
+		};
+	} endif;
 }
 
 query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
@@ -117,7 +120,9 @@ mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::M
 
 query APP::reduced::operations::AddAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
-		   and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName);
+		   and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName)
+		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty = null
+		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty = null;
 }
 
 mapping APP::reduced::operations::AddAssociation::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -150,6 +155,7 @@ mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::M
 
 query APP::reduced::operations::SetParent::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.name)
+		   and gen.isClassInGeneration(self.parentName)
 	       and not gen.isSelfParent(self.parentName, self.name, true);
 }
 
@@ -214,7 +220,9 @@ query APP::reduced::operations::RenameClass::isValid(gen : APP::reduced::ModelGe
 
 mapping APP::reduced::operations::RenameClass::apply(inout gen : APP::reduced::ModelGeneration) {
 	var c : APP::reduced::Class := gen.findClass(self.name);
-	c.name = self.newName;
+	// pøejmenování tøídy
+	c.name := self.newName;
+	// [!] refactoring ukazatelù na danou tøídu s novým názvem není nutný
 }
 
 query APP::reduced::operations::RenameProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
@@ -226,7 +234,7 @@ query APP::reduced::operations::RenameProperty::isValid(gen : APP::reduced::Mode
 mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced::ModelGeneration) {
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
 	var p : APP::reduced::Property := c.findProperty(self.name);
-	p.name = self.newName;
+	p.name := self.newName;
 }
 
 /* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
@@ -234,8 +242,10 @@ mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced
 query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	// tøída existuje v dané generaci
 	return gen.isClassInGeneration(self.name)
-	// tøída neobsahuje žádné atributy
-	//	   and gen.findClass(self.name).properties->isEmpty()
+	// tøídá neobsahuje žádné atributy
+	       and (gen.findClass(self.name).properties->isEmpty()
+	// nebo obsahuje právì jeden s vlastností 'id'
+	       		or gen.findClass(self.name).properties->forAll(isID = true))
 	// na tøídu se neodkazuje žádná jiná tøída
 		   and not gen.classes.properties->exists(type = self)
 	// tøída není v hierarchii
@@ -251,6 +261,8 @@ mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::M
 query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
     // atribut existuje v dané tøídì
 	return gen.isPropertyInClass(self.name, self.owningClassName)
+	// atribut nemá vlastnost 'id'
+		   and gen.findClass(self.owningClassName).findProperty(self.name).isID = false
 	// neexistuje asociace z jiné tøídy
 		   and gen.findClass(self.owningClassName).findProperty(self.name).opositeProperty = null;
 }
