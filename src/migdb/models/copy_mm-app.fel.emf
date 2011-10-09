@@ -158,27 +158,6 @@ package reduced {
       attr String[1] secondPropertyName;
     }
 
-    class MoveProperty extends ModelOperation {
-      readonly attr String[1] owningClassName;
-      attr String[1] propertyName;
-      attr String[1] targetClassName;
-      attr boolean[1] endInOwerload;
-      attr boolean[1] addValueNull;
-    }
-
-    class CopyProperty extends ModelOperation {
-      readonly attr String[1] owningClassName;
-      attr String[1] propertyName;
-      attr String[1] targetClassName;
-      attr boolean[1] endInOwerload;
-      attr boolean[1] addValueNull;
-    }
-
-    class DeleteProperty extends ModelOperation {
-      attr String[1] owningClassName;
-      attr String[1] propertyName;
-    }
-
   }
 
 }

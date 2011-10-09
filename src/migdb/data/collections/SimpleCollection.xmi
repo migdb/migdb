@@ -3,8 +3,8 @@
   <modelGenerations>
     <classes name="Integer" isPrimitive="true"/>
     <classes name="A">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" columnName=""/>
-      <properties type="//@modelGenerations.0/@classes.0" upperBound="-1"/>
+      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" columnName="" columnNamePattern=""/>
+      <properties name="IntCollection" type="//@modelGenerations.0/@classes.0" upperBound="-1" columnName="" sequenceName=""/>
     </classes>
   </modelGenerations>
 </reduced:ModelRoot>
