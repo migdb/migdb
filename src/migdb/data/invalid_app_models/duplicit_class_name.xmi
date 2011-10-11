@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="ASCII"?>
+<reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/reduced-jam ../../models/mm-app.fel.ecore#//reduced">
+  <modelGenerations>
+    <classes name="Person">
+      <properties name="age" type="//@modelGenerations.0/@classes.1" isID="true"/>
+    </classes>
+    <classes name="Integer" isPrimitive="true"/>
+    <classes name="Person">
+      <properties name="id" type="//@modelGenerations.0/@classes.1" isID="true"/>
+    </classes>
+  </modelGenerations>
+</reduced:ModelRoot>

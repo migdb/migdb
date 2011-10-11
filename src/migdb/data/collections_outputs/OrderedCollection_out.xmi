@@ -11,11 +11,11 @@
     </DBgenerations>
   </mmrdb:ModelRoot>
   <mmrdb:Index columns="/0/@DBgenerations.0/@schemas.0/@tables.0/@ownedColumns.0" name="pk_index"/>
-  <mmrdb:Index columns="/3/@ownedColumns.1" name="index_IntCollection"/>
+  <mmrdb:Index columns="/3/@ownedColumns.0" name="index_IntCollection"/>
   <mmrdb:Table primaryKey="/3/@constraints.0" name="IntCollection">
-    <ownedColumns type="Integer" name="A"/>
     <ownedColumns type="Integer" name="IntCollection"/>
+    <ownedColumns type="Integer" name="A"/>
     <constraints xsi:type="mmrdb:PrimaryKey" name="PK_IntCollection" underlyingIndex="/2"/>
-    <constraints xsi:type="mmrdb:ForeignKey" name="FK_IntCollection" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.0" constrainedColumn="/3/@ownedColumns.0"/>
+    <constraints xsi:type="mmrdb:ForeignKey" name="FK_IntCollection" targetTable="/0/@DBgenerations.0/@schemas.0/@tables.0" constrainedColumn="/3/@ownedColumns.1"/>
   </mmrdb:Table>
 </xmi:XMI>

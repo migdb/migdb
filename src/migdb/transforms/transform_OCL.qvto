@@ -57,7 +57,7 @@ query APP::reduced::ModelRoot::isModelValid():Boolean{
 		log("Model invalid - ambigous class names in generation");
 		validity := false;
 	}endif;
-	if(not self.modelGenerations->classes->properties->forAll(hasUniqueName())) then {
+	if(not self.modelGenerations->classes->properties->forAll(hasUniqueNameInHierarchy())) then {
 		log("Model invalid - ambigous property names in class");
 		validity := false;
 	}endif;
@@ -81,13 +81,47 @@ query APP::reduced::ModelRoot::isModelValid():Boolean{
 		log("Model invalid - Embedded property in name collision");
 		validity := false;
 	}endif;
-	
+	if(not self.modelGenerations->classes->forAll(cls |cls.assertIDCondition()))then{
+		log("Model invalid - uncorrect ID count in classes");
+		validity := false;
+	}endif;
+	if(not self.modelGenerations->forAll(assertTPCCondition()))then{
+		log("Model invalid - contains TPC expansion");
+		validity := false;
+	}endif;
 	return validity;
+}
+
+query APP::reduced::ModelGeneration::assertTPCCondition():Boolean{
+	var validity : Boolean := true;
+	self.classes->forEach(cls |not (cls.isNonleafTPCHierarchy() or cls.properties->forAll(prop | prop.upperBound = 1 and 
+	(prop.lowerBound = 0 or prop.lowerBound = 1)))){
+		log(self.modelRoot.modelGenerations->indexOf(self).repr() + "generation contains TPC hierarchy causing table expansion");
+		validity := false;
+	};
+	return validity;
+}
+
+query APP::reduced::ModelGeneration::containsNonleafTPCAssociation():Boolean{
+	return self.classes->properties->exists( prop | not prop.isPrimitive() and prop.owningClass.isNonleafTPCHierarchy() and 
+	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
+}
+
+
+query APP::reduced::Class::assertIDCondition() : Boolean{
+	if(self.isPrimitive or self.isEmbedded or (self.properties->select(isID)->size() = 1 and self.parent = null)
+	 or (self.parent <> null and self.properties->select(isID)->size() = 0))then{
+		return true;
+	}endif;
+	log("class " + self.name + " has incorrect ID properties count:" + self.properties->select(isID)->size().repr());
+	return false;
 }
 
 query APP::reduced::ModelGeneration::areEmbeddedArritiesCorrectlySet():Boolean{
 	var validity : Boolean := true;
-	self.classes->properties -> forEach( prop | prop.type.isEmbedded and (prop.upperBound <> 1 or not(prop.lowerBound = 1 or prop.lowerBound = 0))){
+	self.classes->properties -> forEach( prop | prop.type.isEmbedded and (prop.upperBound <> 1 or 
+	not(prop.lowerBound = 1 or prop.lowerBound = 0))){
 		log("arrity of embedded property " + prop.name + " in generation " + self.repr() + " not correctly set");
 		validity = false;
 	};	
@@ -97,7 +131,7 @@ query APP::reduced::ModelGeneration::areEmbeddedArritiesCorrectlySet():Boolean{
 query APP::reduced::ModelGeneration::areEmbeddedPropertiesInNameCollision():Boolean{
 	var validity : Boolean := false;
 	self.classes->properties ->forEach(prop | prop.type.isEmbedded and prop.isInCollission()){
-		log("property " + prop.repr() + " name is in collision with owningClass propertyb");
+		log("property " + prop.name + " name is in collision with owningClass propertyb");
 		validity := true;
 	};
 	return validity;
@@ -112,32 +146,32 @@ query APP::reduced::Property::isCorrectlySet():Boolean{
 	self.opositeProperty.opositeProperty = self )then{
 		return true;
 	}endif;
-	log("property " + self.repr() + " not correctly set");
+	log("property " + self.name);
 	return false;
 }
 
 query APP::reduced::Class::hasUniqueName():Boolean{
 	var validity : Boolean := true;
 	self.owningModel->classes->forEach(cls | cls.name = self.name and cls <> self){
-		log("ambigous Class name " + cls.repr());
+		log("ambigous Class name " + cls.name);
 		validity := false;
 	};
 	return validity;
 }
 
-query APP::reduced::Property::hasUniqueName():Boolean{
-	var validity : Boolean := true;
-	self.owningClass->properties->forEach(prop | prop.name = self.name and prop <> self){
-		log("ambigous Property name " + prop.repr());
-		validity := false;
+/****/
+query APP::reduced::Property::hasUniqueNameInHierarchy():Boolean{
+	self.owningClass.getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
+		log("ambigous Property name " + prop.name);
+		return false;
 	};
-	return validity;	
+	return true;	
 }
 
-/* 
+/** 
 	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cykly v hierarchii dedicnosti. 
 	Inout parametr addedClasses 
-*/
+**/
 query APP::reduced::Class::containsCycle(inout addedClasses : Set(APP::reduced::Class)) :Boolean{
 	if(addedClasses->includes(self)) then {
 		return true;
@@ -150,9 +184,9 @@ query APP::reduced::Class::containsCycle(inout addedClasses : Set(APP::reduced::
 	return self.parent.containsCycle(addedClasses->including(self));
 }
 
-/* 
+/** 
 	Vraci false, pokud model neobsahuje cykly hierarchii dedicnosti, jinak true
-*/
+**/
 query APP::reduced::ModelGeneration::containsCycle():Boolean{
 		return not self.classes->forAll(cls | not cls.containsCycle(OrderedSet{}));
 	};
@@ -163,10 +197,10 @@ query APP::reduced::Class::hasId(): Boolean{
 
 ///////////////--------------------------------- Vlastni mapovani  --------------------------------///////////
 
-/*
+/**
 	Toto mapovani namapuje vsechny elementy ModelGeneration na database a prida je do kolekce 
 	DBgenerations
-*/
+**/
 mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot{
 	log("toRdbRoot section");
 	//namapuje vsechny generace aplikace na db generace
@@ -175,10 +209,10 @@ mapping APP::reduced::ModelRoot::toRdbRoot() : RDB::rdb::ModelRoot{
 	};
 }
 
-/* 
+/** 
 	Namapuje ModelGeneration na DBgeneration, ktera je prazdna, pokud ma atribut 
 	missing nastaven na true, jinak obsahuje schema vyplnene tabulkami namapovanych trid.
-*/
+**/
 mapping APP::reduced::ModelGeneration::toDBmodel() : RDB::rdb::Database {
 	log("toDBmodel section");
 	if(self.isMissing = false) then {
@@ -186,32 +220,28 @@ mapping APP::reduced::ModelGeneration::toDBmodel() : RDB::rdb::Database {
 	}endif;
 }
 
-/*
+/**
 	Vytvori DB schema, namapuje tridy na tabulky pomoci mapovani toTable
-*/
+**/
 mapping APP::reduced::ModelGeneration::toSchema() : RDB::rdb::Schema {
 	log("toSchema section");		
-
-//	if(self.containsCycle())then{
-//		assert(false)
-//		log("Inheritance hierarchy contains cycle")
-//	}else{
-		assert(not self.containsCycle());
 		self.classes->forEach(_class ){
 			result.tables += _class.xmap toTable(result);
 		};
 
 		// namapovani vazeb unidirectional 1-1, bidirectional 1-1, 1-M unidirectional, 1-M bidirectional
 		// v nynejsi verzi 1-1 unidirectional nikdy nenastane
-		self.classes->properties->forEach(prop | prop.isOneToOneUnidirectional() or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or prop.isOneToManyBidirectional()){
+		self.classes->properties->forEach(prop | not prop.type.isEmbedded and (prop.isOneToOneUnidirectional() 
+		or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+		prop.isOneToManyBidirectional())){
 				prop.map toAssociationColumn();
 		};
 	
 		//namapovani vazeb M-N unidirectional a M-N bidirectional
-		self.classes->properties->forEach(prop | prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()){
+		self.classes->properties->forEach(prop | not prop.type.isEmbedded and (prop.isManyToManyUnidirectional() 
+		or prop.isManyToManyBidirectional())){
 				result.tables += prop.map toAssociationTable();
 		};
-//	}endif;
 }
 
 /*
@@ -230,7 +260,10 @@ when {self.isSerializable() = true and self.parent = null}
 {
 	log("toSerializableRootTable section " + self.name);
 	name := self.name;
-	self->properties->select(prop | prop.isPrimitive())->asOrderedSet()->xmap toColumn(result);
+	self->properties->asOrderedSet()->xmap toColumns(result);
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};
 }
 
 /*
@@ -267,7 +300,7 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 	result.ownedColumns+= PKcol;	
 	var index : RDB::rdb::Index :=object RDB::rdb::Index{
 		columns += PKcol;
-		name := "pk_index";
+		name := "pk_index_"+self.name;
 	};			
 	schema.indexes += index;	
 	var pk : RDB::rdb::PrimaryKey := object RDB::rdb::PrimaryKey{
@@ -278,7 +311,10 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 	FK.constrainedColumn := PKcol;
 	result.primaryKey := pk;
 	result.name := self.name; 
-	self->properties->select(prop | prop.isPrimitive())->asOrderedSet()->xmap toColumn(result); 		
+	self->properties->asSet()->xmap toColumns(result);
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	}; 		
 }
 
 /*
@@ -296,9 +332,10 @@ when { self.hasTablePerClassInheritanceType() and self.isSerializable() and self
 
 	//tento statement namapuje vsechny property tridy a jejich predku	
 	//var pathProperties : Set(APP::reduced::Property) :=
-	 self.getPathToRoot()->properties ->forEach(prop){
-		prop.map toColumn(result);
-	}	
+	 self.getPathToRoot()->properties->asSet()->xmap toColumns(result);
+	 self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};	
 }
 
 /*
@@ -315,7 +352,7 @@ when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and
 		result := self.parent.xmap toTable(schema);
 	}
 	log("ST body " + self.name);	
-	self.properties->asOrderedSet()->xmap toColumn(result);	
+	self.properties->asSet()->xmap toColumns(result);	
 	if(result.containsDiscriminator() = false)then{
 			result.ownedColumns+=object RDB::rdb::TableColumn{
 				name := "discriminator";
@@ -323,20 +360,44 @@ when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and
 				_owningTable := result;
 			}
 	}endif;
+	
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};
 } 
 
 /*
-	Namapuje property na sloupec, zatim vyuziva jen mapovani na sloupce primitivnich typu, mapovani na kolekci je trochu ...
+	Namapuje property na sloupce, vyuziva mapovani na sloupce primitivnich typu a mapovani embedded trid
+	mapovani na kolekci je zatim mimo ...
 */
-mapping APP::reduced::Property::toColumn(inout table : RDB::rdb::Table) : RDB::rdb::TableColumn 
-disjuncts APP::reduced::Property::toPrimitive, APP::reduced::Property::toCollection, APP::reduced::Property::embeddedToColumns
-{
-
+mapping Set(APP::reduced::Property)::toColumns(inout table : RDB::rdb::Table):Set(RDB::rdb::TableColumn){
+	log("toColumns section");
+	self->forEach(prop){
+		result+= prop.xmap toPrimitive(table);
+	};
+	
+	self->forEach(prop){
+		result+= prop.xmap embeddedToColumns(table);
+	};
 }
 
-mapping APP::reduced::Property::embeddedToColumns(inout table : RDB::rdb::Table) : RDB::rdb::TableColumn
-when {false;}{
-	
+/**
+	Namapuje property embedded trid na sloupce reprezentantu property
+**/
+mapping APP::reduced::Property::embeddedToColumns(inout table : RDB::rdb::Table) : Set(RDB::rdb::TableColumn)
+when {self.type.isEmbedded and self.opositeProperty = null and self.upperBound = 1 and (self.lowerBound = 0 or self.lowerBound = 1)}
+{
+	log("toEmbeddedColumn section "+ self.name + " " + self.type.name);
+	self.type.properties ->forEach(prop){
+		log(prop.name);
+		var column := object RDB::rdb::TableColumn{
+			type := prop.type.name;
+			name := self.name + "_" + prop.name;			
+		};
+		result+= column;
+		table.ownedColumns += column;
+	};
+	log(result->size().repr());
 }
 
 /*
@@ -365,26 +426,24 @@ when {	self.isPrimitive()and self.upperBound = 1 and (self.lowerBound = 1 or sel
 	table.constraints += table.primaryKey;
 }
 
-mapping APP::reduced::Property::toCollection(inout table : RDB::rdb::Table ) : RDB::rdb::TableColumn
+mapping APP::reduced::Property::toCollection(inout table : RDB::rdb::Table)
 when{ self.isPrimitive() and self.upperBound > 1 or self.upperBound = -1}
 {
-	log("toCollection section");
-	var _name : String := self.name + "_collection";
+	log("toCollection section " + self.name);
+	var _name : String := self.name;
 	var ownerColumn : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
 		name := self.owningClass.name;
 		type := table.getPKColumn().type;
 	};
-	
-		result.name := self.name;
-		result.type := self.type.name;
-	
+	var idColumn := object RDB::rdb::TableColumn{	
+		name := self.name;
+		type := self.type.name;
+	};
 	var index : RDB::rdb::Index := object RDB::rdb::Index{
-			columns := Set{result};
+			columns := Set{idColumn};
 			name := "index_" + _name;
-		};
-		
-	table.owningSchema.indexes += index;
-		
+		};	
+	table.owningSchema.indexes += index;	
 	var pk : RDB::rdb::PrimaryKey := object RDB::rdb::PrimaryKey{
 		name := "PK_" + _name;
 		underlyingIndex := index;
@@ -396,11 +455,10 @@ when{ self.isPrimitive() and self.upperBound > 1 or self.upperBound = -1}
 	};
 	var collectionTable : RDB::rdb::Table := object RDB::rdb::Table{
 		name := _name;
-		ownedColumns := Set{ownerColumn, result};
+		ownedColumns := Set{ownerColumn, idColumn};
 		constraints := Set{pk,fk};
 		primaryKey := pk;
 	};
-	
 	table.owningSchema.tables+= collectionTable;	
 }
 
@@ -478,7 +536,6 @@ query APP::reduced::Class::hasJoinedInheritanceType():Boolean{
 */
 query APP::reduced::Class::hasChosenInheritanceType( chosenType:APP::reduced::InheritanceType):Boolean{
 	var temp:APP::reduced::Class = self;
-	
 	while(temp.parent <> null ){
 		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
 			return false;
@@ -516,12 +573,6 @@ query APP::reduced::Class::getPath(collection : OrderedSet(APP::reduced::Class))
 	return self.parent.getPath(collection->append(self));
 }
 	
-query APP::reduced::ModelGeneration::containsNonleafTPCAssociation():Boolean{
-	return self.classes->properties->exists( prop | not prop.isPrimitive() and prop.owningClass.isNonleafTPCHierarchy() and 
-	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
-	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
-}
-
 /*
 	Overuje, jestli tabulka obsahuje diskriminacni sloupec
 */
