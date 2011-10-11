@@ -1,0 +1,109 @@
+module cz.braiins.test.Workflow
+
+//import org.eclipse.emf.mwe.utils.*
+//import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.Reader
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+
+import eu.collectionspro.mwe.*
+
+var projectName = "tp-control"
+var genProjectName = "tp-control-gen"
+var modelProject = "../../apps/tp-control/emb/${projectName}"
+var modelDirectory = "${modelProject}"
+var genDirectory = "../../apps/tp-control/gen/${genProjectName}/src-gen"
+var transDirectory = "../../modeling/femto.workflow/src/model/postprocessing"
+
+Workflow {
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = "${modelProject}/.."
+		registerGeneratedEPackage = "cz.braiins.fmt.FmtPackage"
+	}
+
+	component = Reader {
+		path = "${modelDirectory}/"
+
+		loadResource = FixedResourceLoadingSlotEntry {
+			slot = "resources"
+		}
+		
+		register = femto.lang.EmbStandaloneSetup {
+		}
+
+		// Filter "entry point resources, not imported resoures thru "import" statement
+		uriFilter = NameBasedFilter {
+	//		regularExpression = "report"
+		}
+	}
+/** /
+	component = ModelInspector {
+		modelSlot = "resources"
+	}
+/**/
+
+//	component = ResourceSlotModelExtractor {
+	component = SimpleMultiResourceModelJoiner {
+		resourceSlot = "resources"
+		modelSlot = "model"
+	}
+/**/
+	component = DirectoryCleaner {
+		directory = "${genDirectory}/"
+	}
+	component = Writer {
+		cloneSlotContents = false
+		modelSlot = "model"
+		uri = "${genDirectory}/model/to-postprocess.xmi"
+		useSingleGlobalResourceSet = true
+	}
+/** /
+	component = Writer {
+		cloneSlotContents = false
+		modelSlot = "model"
+		uri = "${genDirectory}/model/to-postprocess-backup.xmi"
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${transDirectory}/postprocess_emb.qvto"
+		inOutSlot = "model"
+	}
+/**/
+	component = Writer {
+		cloneSlotContents = false
+		modelSlot = "model"
+		uri = "${genDirectory}/model/to-generate.xmi"
+		useSingleGlobalResourceSet = true
+	}
+/** /
+	component = ValidatorExecutor {
+		onlyExpressions = false
+		modelSlot = "model"
+	}
+/** /
+	component = ModelInspector {
+		modelSlot = "model"
+	}
+/**/
+	component = MTLExecutor {
+		slot = "model"
+		moreRoots = true
+		outputPath = "${genDirectory}/"
+		generatorClass = "femto.codegen.files.Generate"
+	}
+/**/
+	component = CommandLineExec {
+		command = "beautify-tree-silent ${genDirectory}/"
+	}
+/** /
+	component = CommandLineExec {
+		command = "/bin/sh src/build.sh"
+	}
+/**/
+}
