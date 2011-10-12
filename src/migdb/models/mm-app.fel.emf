@@ -38,11 +38,11 @@ package reduced {
     attr String[1] name;
     ref Class[1] type;
     attr String defaultValue;
-    ref Property opositeProperty;
+    ref Property oppositeProperty;
     attr int lowerBound = 0;
     attr int upperBound = 1;
-    attr boolean isUnique = false;
     attr boolean isOrdered = false;
+    attr boolean isUnique = false;
     attr boolean[1] isID = false;
     !unique attr String columnName;
     attr String columnNamePattern;
@@ -60,9 +60,18 @@ package reduced {
       attr String parent;
       attr boolean isAbstract;
       attr boolean isEmbedded;
-      attr boolean isPrimitive;
       attr String tableName;
       attr InheritanceType[1] inheritanceType;
+    }
+
+    class RenameClass extends ModelOperation {
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class SetParent extends ModelOperation {
+      attr String[1] name;
+      attr String[1] parentName;
     }
 
     class SetAbstract extends ModelOperation {
@@ -75,14 +84,8 @@ package reduced {
       attr boolean[1] isEmbedded;
     }
 
-    class SetParent extends ModelOperation {
+    class RemoveClass extends ModelOperation {
       attr String[1] name;
-      attr String[1] parentName;
-    }
-
-    class SetPrimitive extends ModelOperation {
-      attr String[1] name;
-      attr boolean[1] isPrimitive;
     }
 
     class AddProperty extends ModelOperation {
@@ -94,22 +97,36 @@ package reduced {
       attr int upperBound;
       attr boolean isOrdered;
       attr boolean isUnique;
-      attr boolean isID;
       attr String columnName;
       attr String columnNamePattern;
       attr String sequenceName;
     }
 
-    class SetID extends ModelOperation {
+    class RenameProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
-      attr boolean[1] isID;
+      attr String[1] newName;
     }
 
     class SetType extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr String[1] type;
+    }
+
+    class SetOpposite extends ModelOperation {
+      attr String[1] firstClassName;
+      attr String[1] firstPropertyName;
+      attr String[1] secondClassName;
+      attr String[1] secondPropertyName;
+      attr boolean[1] opposite;
+    }
+
+    class SetBoundries extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr int[1] lowerBound;
+      attr int[1] upperBound;
     }
 
     class SetOrdered extends ModelOperation {
@@ -124,46 +141,9 @@ package reduced {
       attr boolean[1] isUnique;
     }
 
-    class AddAssociation extends ModelOperation {
-      attr String[1] firstClassName;
-      attr String[1] firstPropertyName;
-      attr String[1] secondClassName;
-      attr String[1] secondPropertyName;
-    }
-
-    class RenameClass extends ModelOperation {
-      attr String[1] name;
-      attr String[1] newName;
-    }
-
-    class RenameProperty extends ModelOperation {
-      attr String[1] owningClassName;
-      attr String[1] name;
-      attr String[1] newName;
-    }
-
-    class RemoveClass extends ModelOperation {
-      attr String[1] name;
-    }
-
     class RemoveProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
-    }
-
-    class RemoveAssociation extends ModelOperation {
-      attr String[1] firstClassName;
-      attr String[1] firstPropertyName;
-      attr String[1] secondClassName;
-      attr String[1] secondPropertyName;
-    }
-
-    class MoveProperty extends ModelOperation {
-      readonly attr String[1] owningClassName;
-      attr String[1] propertyName;
-      attr String[1] targetClassName;
-      attr boolean[1] endInOwerload;
-      attr boolean[1] addValueNull;
     }
 
     class CopyProperty extends ModelOperation {
@@ -174,9 +154,12 @@ package reduced {
       attr boolean[1] addValueNull;
     }
 
-    class DeleteProperty extends ModelOperation {
-      attr String[1] owningClassName;
+    class MoveProperty extends ModelOperation {
+      readonly attr String[1] owningClassName;
       attr String[1] propertyName;
+      attr String[1] targetClassName;
+      attr boolean[1] endInOwerload;
+      attr boolean[1] addValueNull;
     }
 
   }
