@@ -5,16 +5,20 @@
     nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="mmrdb">
     <eClassifiers xsi:type="ecore:EClass" name="ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="DBgenerations" lowerBound="1"
-          upperBound="-1" eType="#//rdb/Database" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="composedoperations" upperBound="-1"
-          eType="#//rdb/operations/Operation" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="modelGenerations" lowerBound="1"
+          upperBound="-1" eType="#//rdb/ModelGeneration" containment="true" eOpposite="#//rdb/ModelGeneration/modelRoot"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
+          eType="#//rdb/operations/ModelOperation" containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Database">
+    <eClassifiers xsi:type="ecore:EClass" name="ModelGeneration">
       <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
           upperBound="-1" eType="#//rdb/Schema" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
+          eType="#//rdb/ModelRoot" eOpposite="#//rdb/ModelRoot/modelGenerations"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMissing" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Schema">
       <eStructuralFeatures xsi:type="ecore:EReference" name="tables" ordered="false"
@@ -124,13 +128,13 @@
     </eClassifiers>
     <eSubpackages name="operations" nsURI="http://www.collectionspro.eu/jam/mm/operations"
         nsPrefix="mmrdb-operations">
-      <eClassifiers xsi:type="ecore:EClass" name="Operation" abstract="true"/>
-      <eClassifiers xsi:type="ecore:EClass" name="ComposedTableOperation" eSuperTypes="#//rdb/operations/Operation">
+      <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ComposedTableOperation" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EReference" name="operations" lowerBound="1"
-            upperBound="-1" eType="#//rdb/operations/Operation" containment="true"/>
+            upperBound="-1" eType="#//rdb/operations/ModelOperation" containment="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="TableOperation" abstract="true"
-          eSuperTypes="#//rdb/operations/Operation">
+          eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
@@ -175,14 +179,14 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CreateSequence" eSuperTypes="#//rdb/operations/Operation">
+      <eClassifiers xsi:type="ecore:EClass" name="CreateSequence" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="minValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="maxValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="increment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="DropSequence" eSuperTypes="#//rdb/operations/Operation">
+      <eClassifiers xsi:type="ecore:EClass" name="DropSequence" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
