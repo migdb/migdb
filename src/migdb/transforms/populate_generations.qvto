@@ -73,7 +73,6 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 		parent := gen.findClass(self.parent);
 		isAbstract := self.isAbstract;
 		isEmbedded := self.isEmbedded;
-		isPrimitive := self.isPrimitive;
 		tableName := self.tableName;
 		inheritanceType := self.inheritanceType;
 	};
@@ -94,7 +93,9 @@ query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGe
 		   and not gen.isPropertyInClass(self.name, self.owningClassName)
 		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
 		   and not gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
-		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound)); // otestujeme zda je hranice spravne nastavena
+		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound)) // otestujeme zda je hranice spravne nastavena
+		   // v hierarchii neexistuje atribut se stejným názvem
+		   and not gen.isPropertyInHierarchy(self.owningClassName, self.name);
 }
 
 // Pri vytvoreni Property lze vytvorit jednostranne navigabilni asociaci
@@ -118,18 +119,40 @@ mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::M
 	};
 }
 
-query APP::reduced::operations::AddAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
-		   and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName)
-		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty = null
-		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty = null;
+query APP::reduced::operations::SetOpposite::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+	var pre : Boolean := 
+	// tøídy existují v dané generaci
+		gen.isClassInGeneration(self.firstClassName)
+		and gen.isClassInGeneration(self.secondClassName)
+    // atributy existují v daných tøídách
+		and gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
+		and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName);
+	if (self.isOpposite = true) then {
+		return pre
+		// nejedná se o oboustrannì navigabilní asociaci
+			and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).oppositeProperty = null
+			and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).oppositeProperty = null;
+	} else {
+		return pre
+		// jedná se o oboustrannì navigabilní asociaci
+			and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).oppositeProperty.name = self.secondPropertyName
+			and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).oppositeProperty.name = self.firstPropertyName;
+	} endif;
+	
+	// nedosažitelný stav
+	return null;
 }
 
-mapping APP::reduced::operations::AddAssociation::apply(inout gen : APP::reduced::ModelGeneration) {
+mapping APP::reduced::operations::SetOpposite::apply(inout gen : APP::reduced::ModelGeneration) {
 	var p1 : APP::reduced::Property := gen.findClass(self.firstClassName).findProperty(self.firstPropertyName);
 	var p2 : APP::reduced::Property := gen.findClass(self.secondClassName).findProperty(self.secondPropertyName);
-	p1.opositeProperty := p2;
-	p2.opositeProperty := p1;
+	if (self.isOpposite = true) then {
+		p1.oppositeProperty := p2;
+		p2.oppositeProperty := p1;
+	} else {
+		p1.oppositeProperty := null;
+		p2.oppositeProperty := null;
+	} endif;	
 }
 
 
@@ -164,16 +187,6 @@ mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::Mod
 	c.parent := gen.findClass(self.parentName);	
 }
 
-query APP::reduced::operations::SetPrimitive::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name);
-}
-
-mapping APP::reduced::operations::SetPrimitive::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findClass(self.name);
-	c.isPrimitive := self.isPrimitive;
-}
-
-
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 
 query APP::reduced::operations::SetType::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
@@ -186,6 +199,23 @@ mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::Model
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
 	var p : APP::reduced::Property := c.findProperty(self.name);
 	p.type := gen.findClass(self.type); // null
+}
+
+query APP::reduced::operations::SetBoundries::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+	return gen.isClassInGeneration(self.owningClassName)
+		   and gen.isPropertyInClass(self.name, self.owningClassName)
+		   // ovìøí, zda-li jsou hranice nastaveny smysluplnì
+		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
+}
+
+// nastaví hranice atributu
+mapping APP::reduced::operations::SetBoundries::apply(inout gen : APP::reduced::ModelGeneration) {
+	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
+	var p : APP::reduced::Property := c.findProperty(self.name);
+	// nastaví dolní hranici atributu
+	p.lowerBound := self.lowerBound;
+	// nastaví horní hranici atributu
+	p.upperBound := self.upperBound;
 }
 
 query APP::reduced::operations::SetOrdered::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
@@ -264,7 +294,7 @@ query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::Mode
 	// atribut nemá vlastnost 'id'
 		   and gen.findClass(self.owningClassName).findProperty(self.name).isID = false
 	// neexistuje asociace z jiné tøídy
-		   and gen.findClass(self.owningClassName).findProperty(self.name).opositeProperty = null;
+		   and gen.findClass(self.owningClassName).findProperty(self.name).oppositeProperty = null;
 }
 
 // odstraní atribut z dané tøídy
@@ -272,27 +302,6 @@ mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced
 	var c : APP::reduced::Class := gen.findClass(self.owningClassName);
 	// odstranìní atributu
 	c.properties := c.properties->excluding(c.findProperty(self.name));
-}
-
-query APP::reduced::operations::RemoveAssociation::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	// tøídy existují v dané generaci
-	return gen.isClassInGeneration(self.firstClassName)
-		   and gen.isClassInGeneration(self.secondClassName)
-    // atributy existují v daných tøídách
-		   and gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
-		   and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName)
-	// jedná se o oboustrannì navigabilní asociaci
-		   and gen.findClass(self.firstClassName).findProperty(self.firstPropertyName).opositeProperty.name = self.secondPropertyName
-		   and gen.findClass(self.secondClassName).findProperty(self.secondPropertyName).opositeProperty.name = self.firstPropertyName;
-}
-
-// odstraní oboustrannì navigabilní asociaci mezi tøídami a pøíslušné atributy
-mapping APP::reduced::operations::RemoveAssociation::apply(inout gen : APP::reduced::ModelGeneration) {
-	var firstClass : APP::reduced::Class := gen.findClass(self.firstClassName);
-	var secondClass : APP::reduced::Class := gen.findClass(self.secondClassName);
-	// odstranìní atributù a tedy i požadované asociace
-	firstClass.properties := firstClass.properties->excluding(firstClass.findProperty(self.firstPropertyName));
-	secondClass.properties := secondClass.properties->excluding(secondClass.findProperty(self.secondPropertyName));
 }
 
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
@@ -399,11 +408,23 @@ query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : St
 
 // overi, zda je socond parentem first
 // pocitame s tim, ze je hierarchyje sestavena spravne
-query APP::reduced::ModelGeneration::isInHierarchy(first : String, second : String) : Boolean{
+query APP::reduced::ModelGeneration::isInHierarchy(first : String, second : String) : Boolean {
 	var ourClass : APP::reduced::Class := self.findClass(first);
 	if(ourClass <> null) then {
 		if (ourClass.parent <> null and ourClass.parent = second) then { return true;}endif;
 		if (ourClass.parent <> null) then {return self.isInHierarchy(ourClass.parent.name, second);}endif;
 	}endif;
+	return false;
+}
+
+// ovìøí, zda-li v hierarchii existuje atribut se stejným názvem
+query APP::reduced::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
+	// pro každý atribut se stejným názvem...
+	self.classes.properties->forEach(p | p.name = pName) {
+		// ...ovìøíme, zda-li se tøídy, kterým tyto atributy náleží, nachází ve stejné hierarchii
+		if (self.isInHierarchy(cName, p.owningClass.name) = true or self.isInHierarchy(p.owningClass.name, cName) = true) then {
+			return true;
+		} endif;
+	};
 	return false;
 }

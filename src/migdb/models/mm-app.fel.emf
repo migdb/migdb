@@ -43,7 +43,7 @@ package reduced {
     attr int upperBound = 1;
     attr boolean isOrdered = false;
     attr boolean isUnique = false;
-    attr boolean[1] isID = false;
+    attr boolean isID = false;
     !unique attr String columnName;
     attr String columnNamePattern;
     attr String sequenceName;
@@ -119,7 +119,7 @@ package reduced {
       attr String[1] firstPropertyName;
       attr String[1] secondClassName;
       attr String[1] secondPropertyName;
-      attr boolean[1] opposite;
+      attr boolean[1] isOpposite;
     }
 
     class SetBoundries extends ModelOperation {
