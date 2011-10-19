@@ -54,7 +54,7 @@ main() {
 abstract query APP::reduced::operations::ModelOperation::
 	isValid(gen : APP::reduced::ModelGeneration) : Boolean;
 
-// namapovani dane operace
+// namapování dané operace
 abstract mapping APP::reduced::operations::ModelOperation::
 	apply(inout gen : APP::reduced::ModelGeneration);
 
@@ -62,11 +62,12 @@ abstract mapping APP::reduced::operations::ModelOperation::
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
 query APP::reduced::operations::AddClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return not gen.isClassInGeneration(self.name)
-		   and gen.isClassInGeneration(self.parent)
+	return not gen.isAbstractClassInGeneration(self.name)
+		   and gen.isAbstractClassInGeneration(self.parent)
 		   and not (self.name = self.parent);
 }
 
+// pøidání standardní tøídy do generace
 mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration) {
 	gen.classes += object APP::reduced::Class {
 		name := self.name;
@@ -88,13 +89,26 @@ mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::Mode
 	} endif;
 }
 
+query APP::reduced::operations::AddPrimitiveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+	return not gen.isAbstractClassInGeneration(self.name);
+}
+
+// pøidá primitivní tøídu do generace
+mapping APP::reduced::operations::AddPrimitiveClass::apply(inout gen : APP::reduced::ModelGeneration) {
+	gen.classes += object APP::reduced::PrimitiveClass {
+		name := self.name;
+		primitiveType := self.primitiveType;
+	};
+}
+
 query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and not gen.isPropertyInClass(self.name, self.owningClassName)
-		   and gen.isClassInGeneration(self.type) // otestujeme tridy typu
-		   and not gen.findClass(self.owningClassName).isPrimitive = true // otestujeme zda trida neni primitivni
-		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound)) // otestujeme zda je hranice spravne nastavena
-		   // v hierarchii neexistuje atribut se stejným názvem
+	// ovìøí, zda-li existuje tøída požadovaného typu atributu
+		   and gen.isAbstractClassInGeneration(self.type)
+	// ovìøí, zda-li jsou hranice nastaveny smysluplnì
+		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
+	// v hierarchii neexistuje atribut se stejným názvem
 		   and not gen.isPropertyInHierarchy(self.owningClassName, self.name);
 }
 
@@ -122,8 +136,8 @@ mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::M
 query APP::reduced::operations::SetOpposite::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	var pre : Boolean := 
 	// tøídy existují v dané generaci
-		gen.isClassInGeneration(self.firstClassName)
-		and gen.isClassInGeneration(self.secondClassName)
+		gen.isAbstractClassInGeneration(self.firstClassName)
+		and gen.isAbstractClassInGeneration(self.secondClassName)
     // atributy existují v daných tøídách
 		and gen.isPropertyInClass(self.firstPropertyName, self.firstClassName)
 		and gen.isPropertyInClass(self.secondPropertyName, self.secondClassName);
@@ -159,7 +173,7 @@ mapping APP::reduced::operations::SetOpposite::apply(inout gen : APP::reduced::M
 /* ++++++++++ SET OPERATIONS FOR CLASSES ++++++++++++++++++++ */
 
 query APP::reduced::operations::SetAbstract::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name);
+	return gen.isAbstractClassInGeneration(self.name);
 }
 
 mapping APP::reduced::operations::SetAbstract::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -168,7 +182,7 @@ mapping APP::reduced::operations::SetAbstract::apply(inout gen : APP::reduced::M
 }
 
 query APP::reduced::operations::SetEmbedded::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name);
+	return gen.isAbstractClassInGeneration(self.name);
 }
 
 mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -177,8 +191,8 @@ mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::M
 }
 
 query APP::reduced::operations::SetParent::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name)
-		   and gen.isClassInGeneration(self.parentName)
+	return gen.isAbstractClassInGeneration(self.name)
+		   and gen.isAbstractClassInGeneration(self.parentName)
 	       and not gen.isSelfParent(self.parentName, self.name, true);
 }
 
@@ -190,9 +204,9 @@ mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::Mod
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 
 query APP::reduced::operations::SetType::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInClass(self.name, self.owningClassName)
-		   and gen.isClassInGeneration(self.type);
+		   and gen.isAbstractClassInGeneration(self.type);
 }
 
 mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -202,7 +216,7 @@ mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::Model
 }
 
 query APP::reduced::operations::SetBoundries::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInClass(self.name, self.owningClassName)
 		   // ovìøí, zda-li jsou hranice nastaveny smysluplnì
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
@@ -219,7 +233,7 @@ mapping APP::reduced::operations::SetBoundries::apply(inout gen : APP::reduced::
 }
 
 query APP::reduced::operations::SetOrdered::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInClass(self.name, self.owningClassName);
 }
 
@@ -230,7 +244,7 @@ mapping APP::reduced::operations::SetOrdered::apply(inout gen : APP::reduced::Mo
 }
 
 query APP::reduced::operations::SetUnique::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInClass(self.name, self.owningClassName);
 }
 
@@ -244,8 +258,8 @@ mapping APP::reduced::operations::SetUnique::apply(inout gen : APP::reduced::Mod
 /* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
 query APP::reduced::operations::RenameClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name)
-		   and not gen.isClassInGeneration(self.newName);
+	return gen.isAbstractClassInGeneration(self.name)
+		   and not gen.isAbstractClassInGeneration(self.newName);
 }
 
 mapping APP::reduced::operations::RenameClass::apply(inout gen : APP::reduced::ModelGeneration) {
@@ -256,7 +270,7 @@ mapping APP::reduced::operations::RenameClass::apply(inout gen : APP::reduced::M
 }
 
 query APP::reduced::operations::RenameProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName)
+	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInClass(self.name, self.owningClassName)
 		   and not gen.isPropertyInClass(self.newName, self.owningClassName);
 }
@@ -271,7 +285,7 @@ mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced
 
 query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
 	// tøída existuje v dané generaci
-	return gen.isClassInGeneration(self.name)
+	return gen.isAbstractClassInGeneration(self.name)
 	// tøídá neobsahuje žádné atributy
 	       and (gen.findClass(self.name).properties->isEmpty()
 	// nebo obsahuje právì jeden s vlastností 'id'
@@ -376,27 +390,27 @@ mapping APP::reduced::operations::MoveProperty::apply(inout gen : APP::reduced::
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
-// vrati tridu daneho jmena
-query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {
-	return self.classes->selectOne(name = cName);
+// vrátí tøídu daného jména
+query APP::reduced::ModelGeneration::findClass(cName : String) : APP::reduced::Class {	 
+	 return self.classes->oclAsType(APP::reduced::Class)->selectOne(name = cName);
 }
 
-// overi, jestli v dane generaci existuje trida s danym jmenem
-query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.classes->exists(name = cName );
+// ovìøí, zda-li v generaci existuje tøída s daným jménem
+query APP::reduced::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
+	return self.classes->exists(name = cName);
 }
 
-// vrati property daneho jmena
+// vrátí atribut daného jména
 query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property {
 	return self.properties->selectOne(name = pName);
 }
 
-// overi, jestli v dane tride existuje property s danym jmenem
-query APP::reduced::ModelGeneration::isPropertyInClass(pName : String, cName : String) : Boolean {
-	return self.classes->select(name=cName).properties->exists(name=pName);
+// ovìøí, zda-li ve tøídì existuje atribut daného jména
+query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
+	return self.properties->exists(name = pName);
 }
 
-// overi, jestli je trida sama sobe rodicem
+// ovìøí, zda-li je tøída sama sobì rodièem
 query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : String, entry : Boolean) : Boolean {
 	var c : APP::reduced::Class := self.findClass(cName);
 	if (c <> null) then {
@@ -406,13 +420,12 @@ query APP::reduced::ModelGeneration::isSelfParent(cName : String, startName : St
 	return false;
 }
 
-// overi, zda je socond parentem first
-// pocitame s tim, ze je hierarchyje sestavena spravne
-query APP::reduced::ModelGeneration::isInHierarchy(first : String, second : String) : Boolean {
-	var ourClass : APP::reduced::Class := self.findClass(first);
+// ovìøí, zda-li je sClass rodièem fClass
+query APP::reduced::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
+	var ourClass : APP::reduced::Class := self.findClass(fClass);
 	if(ourClass <> null) then {
-		if (ourClass.parent <> null and ourClass.parent = second) then { return true;}endif;
-		if (ourClass.parent <> null) then {return self.isInHierarchy(ourClass.parent.name, second);}endif;
+		if (ourClass.parent <> null and ourClass.parent = sClass) then { return true; } endif;
+		if (ourClass.parent <> null) then {return self.isInHierarchy(ourClass.parent.name, sClass); } endif;
 	}endif;
 	return false;
 }
