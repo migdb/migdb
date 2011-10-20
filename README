@@ -1,0 +1,9 @@
+Migrace databáze
+
+"Byl jednou jeden projekt."
+
+Vizí našeho projektu je vytvořit takový systém, který bude schopen na základě změn struktury aplikačního modelu modifikovat databázový model bez ztráty dat v něm obsažených.
+
+Vývoj je postaven na architektuře řízené modelem. Existují dva modely. První, nazývá se aplikační, reprezentuje aplikaci jako takovou a definuje její vlastnosti a strukturu. Druhý, nazývá se databázový, reprezentuje databázi a samotná data. Oba dva modely pak obsahují definice operací, se kterými nad modely smíme pracovat. Pomocí těchto operací jsme schopni modely transformovat do zcela nových podob.
+
+Vykonání jedné operace nad aplikačním modelem vytvoří novou generaci tohoto modelu a vyvolá odpovídající operaci nad databázovým modelem.
