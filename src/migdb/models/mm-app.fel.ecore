@@ -93,12 +93,6 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
             eType="#//reduced/InheritanceType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="AddPrimitiveClass" eSuperTypes="#//reduced/operations/ModelOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
-            eType="#//reduced/PrimitiveType"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="RenameClass" eSuperTypes="#//reduced/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -229,6 +223,16 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="addValueNull" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="AddPrimitiveClass" eSuperTypes="#//reduced/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
+            eType="#//reduced/PrimitiveType"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RemovePrimitiveClass" eSuperTypes="#//reduced/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>
