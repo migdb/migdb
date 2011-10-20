@@ -59,6 +59,36 @@ abstract mapping DB::rdb::operations::ModelOperation::
 	apply(inout gen : DB::rdb::ModelGeneration);
 
 
-/* ++++++++++ OPERATIONS ++++++++++++++++++++ */
+/* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
+query DB::rdb::operations::AddTable::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// schéma existuje v generaci
+	return gen.isSchemaInGeneration(self.owningSchemaName)
+	// tabulka neexistuje ve schématu
+		   and not gen.findSchema(self.owningSchemaName).isTableInSchema(self.name);
+}
 
+// pøidá tabulku do schématu
+mapping DB::rdb::operations::AddTable::apply(inout gen : DB::rdb::ModelGeneration) {
+	var s : DB::rdb::Schema := gen.findSchema(self.owningSchemaName);
+	s.tables += object DB::rdb::Table {
+		name := self.name;
+	};
+}
+
+/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
+// ovìøí, zda-li existuje schéma v generaci
+query DB::rdb::ModelGeneration::isSchemaInGeneration(sName : String) : Boolean {
+	return self.schemas->exists(name = sName);
+}
+
+// vrátí schéma z generace
+query DB::rdb::ModelGeneration::findSchema(sName : String) : DB::rdb::Schema {
+	return self.schemas->selectOne(name = sName);
+}
+
+// ovìøí, zda-li existuje tabulka ve schématu
+query DB::rdb::Schema::isTableInSchema(tName : String) : Boolean {
+	return self.tables->exists(name = tName);
+}
