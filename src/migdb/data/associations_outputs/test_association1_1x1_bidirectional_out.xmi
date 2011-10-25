@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mmrdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb ../../models/mm-db.fel.ecore#//rdb">
+  <mmrdb:ModelRoot>
+    <modelGenerations>
+      <schemas>
+        <tables name="A" primaryKey="/0/@modelGenerations.0/@schemas.0/@tables.0/@constraints.0">
+          <ownedColumns name="B_prop" type="B"/>
+          <ownedColumns name="id" type="int"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk_A" underlyingIndex="/1"/>
+        </tables>
+        <tables name="B" primaryKey="/0/@modelGenerations.0/@schemas.0/@tables.1/@constraints.0">
+          <ownedColumns name="A_prop" type="A"/>
+          <ownedColumns name="id" type="int"/>
+          <constraints xsi:type="mmrdb:PrimaryKey" name="pk_B" underlyingIndex="/2"/>
+        </tables>
+      </schemas>
+    </modelGenerations>
+  </mmrdb:ModelRoot>
+  <mmrdb:Index name="pk_index" columns="/0/@modelGenerations.0/@schemas.0/@tables.0/@ownedColumns.1"/>
+  <mmrdb:Index name="pk_index" columns="/0/@modelGenerations.0/@schemas.0/@tables.1/@ownedColumns.1"/>
+</xmi:XMI>

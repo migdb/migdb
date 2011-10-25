@@ -1,6 +1,7 @@
 Program se pouziva k odstraneni elementu(d), odstraneni atributu v elementu(da), 
-prejmenovani elementu(r), prejmenovani atributu v elementu(ra), program pracuje rekurzivne,
- prepise vstupni soubory. Zatim jedine a dostacujici reseni je pres konzoli.
+prejmenovani elementu(r), prejmenovani atributu v elementu(ra), program modifikuje zadany input - 
+modifikuje zadany file(v pripade, ze je to file), v pripade directory se aplikuje REKURZIVNE na jeji obsah.
+ prepise vstupni soubory
 
 ---------------------------------------------------------------------------------------------------------------
 pouziti-mode delete element (d):
