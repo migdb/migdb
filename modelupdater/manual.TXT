@@ -1,0 +1,30 @@
+Program se pouziva k odstraneni elementu(d), odstraneni atributu v elementu(da), 
+prejmenovani elementu(r), prejmenovani atributu v elementu(ra), program pracuje rekurzivne,
+ prepise vstupni soubory. Zatim jedine a dostacujici reseni je pres konzoli.
+
+---------------------------------------------------------------------------------------------------------------
+pouziti-mode delete element (d):
+java -jar ModelUpdater.jar d <input> <element>
+
+
+---------------------------------------------------------------------------------------------------------------
+pouziti-mode rename element (r):
+java -jar ModelUpdater.jar r <input> <renamedElement> <newName>
+
+
+---------------------------------------------------------------------------------------------------------------
+pouziti-mode delete attribute(da)
+java -jar ModelUpdater.jar da <input> <ownerElement> <attribute>
+
+
+---------------------------------------------------------------------------------------------------------------
+pouziti mode rename attribute (ra):
+java -jar ModelUpdater.jar ra <input> <ownerElement> <renamedAttribute> <newName>
+
+
+---------------------------------------------------------------------------------------------------------------
+pouziti mode add attribute (a)
+java -jar ModelUpdater.jar a <input> <ownerElement> <atributeName> <attributeValue> <includeVal> <elementName>
+
+elementName urcuje name elementu (nyni kazdy element v modelu ma atribut name). Atribute includeVal nabyva 
+hodnot "t" nebo "f" a urcuje, jestli se ma elementum s name atribute pridat ci naopak vsem ostatnim.

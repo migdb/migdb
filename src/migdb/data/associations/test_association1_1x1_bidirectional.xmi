@@ -1,14 +1,19 @@
 <?xml version="1.0" encoding="ASCII"?>
 <reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/reduced-jam ../../models/mm-app.fel.ecore#//reduced">
   <modelGenerations>
-    <classes name="integer" isPrimitive="true"/>
-    <classes name="A">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" isID="true"/>
-      <properties name="B_prop" type="//@modelGenerations.0/@classes.2" opositeProperty="//@modelGenerations.0/@classes.2/@properties.1"/>
+    <classes name="int" xsi:type="reduced:PrimitiveClass">
     </classes>
-    <classes name="B">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" isID="true"/>
-      <properties name="A_prop" type="//@modelGenerations.0/@classes.1" opositeProperty="//@modelGenerations.0/@classes.1/@properties.1"/>
+    <classes name="A" xsi:type="reduced:Class">
+      <properties name="id" type="//@modelGenerations.0/@classes.0" isID="true">
+      </properties>
+      <properties name="B_prop" type="//@modelGenerations.0/@classes.2" oppositeProperty="//@modelGenerations.0/@classes.2/@properties.1">
+      </properties>
+    </classes>
+    <classes name="B" xsi:type="reduced:Class">
+      <properties name="id" type="//@modelGenerations.0/@classes.0" isID="true">
+      </properties>
+      <properties name="A_prop" type="//@modelGenerations.0/@classes.1" oppositeProperty="//@modelGenerations.0/@classes.1/@properties.1">
+      </properties>
     </classes>
   </modelGenerations>
 </reduced:ModelRoot>

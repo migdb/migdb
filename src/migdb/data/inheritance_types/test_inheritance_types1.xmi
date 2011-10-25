@@ -1,33 +1,43 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ASCII"?>
 <reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model-ops="http://www.collectionspro.eu/jam/mm/model-ops" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/model-ops ../../models/mm-app.fel.ecore#//reduced/operations http://www.collectionspro.eu/jam/mm/reduced-jam ../../models/mm-app.fel.ecore#//reduced">
   <modelGenerations>
-    <classes name="ST_Parent" isAbstract="true" inheritanceType="singleTable">
-      <properties name="ST_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true"/>
+    <classes name="ST_Parent" xsi:type="reduced:Class" isAbstract="true" inheritanceType="singleTable">
+      <properties name="ST_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true">
+      </properties>
     </classes>
-    <classes name="ST_Child" parent="//@modelGenerations.0/@classes.0" inheritanceType="singleTable">
-      <properties name="ST_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern=""/>
+    <classes name="ST_Child" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.0" inheritanceType="singleTable">
+      <properties name="ST_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern="">
+      </properties>
     </classes>
-    <classes name="ST_GrandChild" parent="//@modelGenerations.0/@classes.1" inheritanceType="singleTable">
-      <properties name="ST_grandchild_property" type="//@modelGenerations.0/@classes.9"/>
+    <classes name="ST_GrandChild" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.1" inheritanceType="singleTable">
+      <properties name="ST_grandchild_property" type="//@modelGenerations.0/@classes.9">
+      </properties>
     </classes>
-    <classes name="TPC_Parent" isAbstract="true" inheritanceType="tablePerClass">
-      <properties name="TPC_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true" sequenceName=""/>
+    <classes name="TPC_Parent" xsi:type="reduced:Class" isAbstract="true" inheritanceType="tablePerClass">
+      <properties name="TPC_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true" sequenceName="">
+      </properties>
     </classes>
-    <classes name="TPC_Child" parent="//@modelGenerations.0/@classes.3" inheritanceType="tablePerClass">
-      <properties name="TPC_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern=""/>
+    <classes name="TPC_Child" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.3" inheritanceType="tablePerClass">
+      <properties name="TPC_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern="">
+      </properties>
     </classes>
-    <classes name="TPC_GrandChild" parent="//@modelGenerations.0/@classes.4" inheritanceType="tablePerClass">
-      <properties name="TPC_grandchild_property" type="//@modelGenerations.0/@classes.9"/>
+    <classes name="TPC_GrandChild" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.4" inheritanceType="tablePerClass">
+      <properties name="TPC_grandchild_property" type="//@modelGenerations.0/@classes.9">
+      </properties>
     </classes>
-    <classes name="JOIN_Parent" isAbstract="true" inheritanceType="joined">
-      <properties name="JOIN_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true"/>
+    <classes name="JOIN_Parent" xsi:type="reduced:Class" isAbstract="true" inheritanceType="joined">
+      <properties name="JOIN_parent_ID" type="//@modelGenerations.0/@classes.9" lowerBound="1" isID="true">
+      </properties>
     </classes>
-    <classes name="JOIN_Child" parent="//@modelGenerations.0/@classes.6" inheritanceType="joined">
-      <properties name="JOIN_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern=""/>
+    <classes name="JOIN_Child" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.6" inheritanceType="joined">
+      <properties name="JOIN_child_property" type="//@modelGenerations.0/@classes.9" columnNamePattern="">
+      </properties>
     </classes>
-    <classes name="JOIN_GrandChild" parent="//@modelGenerations.0/@classes.7" inheritanceType="joined">
-      <properties name="JOIN_grandchild_property" type="//@modelGenerations.0/@classes.9"/>
+    <classes name="JOIN_GrandChild" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.7" inheritanceType="joined">
+      <properties name="JOIN_grandchild_property" type="//@modelGenerations.0/@classes.9">
+      </properties>
     </classes>
-    <classes name="Integer" isPrimitive="true"/>
+    <classes name="int" xsi:type="reduced:PrimitiveClass">
+    </classes>
   </modelGenerations>
 </reduced:ModelRoot>
