@@ -61,11 +61,48 @@ abstract mapping DB::rdb::operations::ModelOperation::
 
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
+query DB::rdb::operations::AddSchema::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// v dané generaci neexistuje schéma stejného názvu
+	return not gen.isSchemaInGeneration(self.name);
+}
+
+// pøidá schéma do generace
+mapping DB::rdb::operations::AddSchema::apply(inout gen : DB::rdb::ModelGeneration) {
+	gen.schemas += object DB::rdb::Schema {
+		name := self.name;
+	}
+}
+
+query DB::rdb::operations::AddSequence::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// v daném schématu neexistuje sekvence stejného názvu
+	return not gen.isSequenceInSchema(self.owningSchemaName, self.name);
+}
+
+// pøidá sekvenci do schématu
+mapping DB::rdb::operations::AddSequence::apply(inout gen : DB::rdb::ModelGeneration) {
+	var s : DB::rdb::Schema := gen.findSchema(self.owningSchemaName);
+	s.sequences += object DB::rdb::Sequence {
+		name := self.name;
+		cacheSize := self.cacheSize;
+	}
+}
+
+query DB::rdb::operations::AddIndex::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// v daném schématu neexistuje index stejného názvu
+	return not gen.isIndexInSchema(self.owningSchemaName, self.name);
+}
+
+// pøidá index do schématu
+mapping DB::rdb::operations::AddIndex::apply(inout gen : DB::rdb::ModelGeneration) {
+	var s : DB::rdb::Schema := gen.findSchema(self.owningSchemaName);
+	s.indexes += object DB::rdb::Index {
+		name := self.name;
+	}
+}
+
 query DB::rdb::operations::AddTable::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
-	// schéma existuje v generaci
-	return gen.isSchemaInGeneration(self.owningSchemaName)
-	// tabulka neexistuje ve schématu
-		   and not gen.findSchema(self.owningSchemaName).isTableInSchema(self.name);
+	// v daném schématu neexistuje tabulka stejného názvu
+	return not gen.isTableInSchema(self.owningSchemaName, self.name);
 }
 
 // pøidá tabulku do schématu
@@ -75,6 +112,57 @@ mapping DB::rdb::operations::AddTable::apply(inout gen : DB::rdb::ModelGeneratio
 		name := self.name;
 	};
 }
+
+query DB::rdb::operations::AddColumn::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// v dané tabulce neexistuje sloupec stejného názvu
+	return not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+// pøidá sloupec do tabulky
+mapping DB::rdb::operations::AddColumn::apply(inout gen : DB::rdb::ModelGeneration) {
+	var t : DB::rdb::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
+	t.columns += object DB::rdb::Column {
+		name := self.name;
+		type := self.type;
+		defaultValue := self.defaultValue;
+	}
+}
+
+query DB::rdb::operations::AddPrimaryKey::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	
+}
+
+// pøidá omezení 'PrimaryKey' pro tabulku
+mapping DB::rdb::operations::AddPrimaryKey::apply(inout gen : DB::rdb::ModelGeneration) {
+	
+}
+
+query DB::rdb::operations::AddForeignKey::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	
+}
+
+// pøidá omezení 'ForeignKey' pro tabulku
+mapping DB::rdb::operations::AddForeignKey::apply(inout gen : DB::rdb::ModelGeneration) {
+	
+}
+
+query DB::rdb::operations::AddNotNullConstraint::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// pro daný sloupec neexistuje omezení stejného názvu
+	return not gen.isConstrainForColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name);	   
+}
+
+// pøidá omezení 'NotNull' pro sloupec
+mapping DB::rdb::operations::AddNotNullConstraint::apply(inout gen : DB::rdb::ModelGeneration) {
+	var c : DB::rdb::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.constraints += object DB::rdb::NotNullConstraint {
+		name := self.name;
+	}
+}
+
+/* ++++++++++ SET OPERATIONS ++++++++++++++++++++ */
+
+
+
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
@@ -88,7 +176,37 @@ query DB::rdb::ModelGeneration::findSchema(sName : String) : DB::rdb::Schema {
 	return self.schemas->selectOne(name = sName);
 }
 
+// ovìøí, zda-li existuje sekvence ve schématu
+query DB::rdb::ModelGeneration::isSequenceInSchema(sName : String, qName : String) : Boolean {
+	return self.findSchema(sName).sequences->exists(name = qName);
+}
+
+// ovìøí, zda-li existuje index ve schématu
+query DB::rdb::ModelGeneration::isIndexInSchema(sName : String, iName : String) : Boolean {
+	return self.findSchema(sName).indexes->exists(name = iName);
+}
+
 // ovìøí, zda-li existuje tabulka ve schématu
-query DB::rdb::Schema::isTableInSchema(tName : String) : Boolean {
-	return self.tables->exists(name = tName);
+query DB::rdb::ModelGeneration::isTableInSchema(sName : String, tName : String) : Boolean {
+	return self.findSchema(sName).tables->exists(name = tName);
+}
+
+// vrátí tabulku ze schéma
+query DB::rdb::ModelGeneration::findTable(sName : String, tName : String) : DB::rdb::Table {
+	return self.findSchema(sName).tables->selectOne(name = tName);
+}
+
+// ovìøí, zda-li existuje sloupec v tabulce
+query DB::rdb::ModelGeneration::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
+	return self.findTable(sName, tName).columns->exists(name = cName);
+}
+
+// vrátí sloupec z tabulky
+query DB::rdb::ModelGeneration::findColumn(sName : String, tName : String, cName : String) : DB::rdb::Column {
+	return self.findTable(sName, tName).columns->selectOne(name = cName);
+}
+
+// ovìøí, zda-li existuje omezení pro sloupec 
+query DB::rdb::ModelGeneration::isConstrainForColumn(sName : String, tName : String, cName : String, rName : String) : Boolean {
+	return self.findColumn(sName, tName, cName).constraints->exists(name = rName);
 }
