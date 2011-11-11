@@ -11,14 +11,12 @@
           eType="#//rdb/operations/ModelOperation" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModelGeneration">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
-          upperBound="-1" eType="#//rdb/Schema" containment="true"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
           eType="#//rdb/ModelRoot" eOpposite="#//rdb/ModelRoot/modelGenerations"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMissing" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
+          upperBound="-1" eType="#//rdb/Schema" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Schema">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
@@ -89,6 +87,8 @@
           eType="#//rdb/Table"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constrainedColumn" lowerBound="1"
           eType="#//rdb/Column"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="targetColumns" ordered="false"
+          lowerBound="1" upperBound="-1" eType="#//rdb/Column"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ColumnConstraint" abstract="true"
         eSuperTypes="#//rdb/Constraint">
@@ -118,8 +118,12 @@
       <eClassifiers xsi:type="ecore:EClass" name="AddIndex" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnsNames" lowerBound="1"
+            upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddTable" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
@@ -138,8 +142,40 @@
             eType="#//rdb/PrimitiveType"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="AddPrimaryKey" eSuperTypes="#//rdb/operations/ModelOperation"/>
-      <eClassifiers xsi:type="ecore:EClass" name="AddForeignKey" eSuperTypes="#//rdb/operations/ModelOperation"/>
+      <eClassifiers xsi:type="ecore:EClass" name="AddUniqueIndex" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="underlyingIndexName"
+            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="AddPrimaryKey" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="underlyingIndexName"
+            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="AddForeignKey" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="constrainedColumnName"
+            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetColumnsNames"
+            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddNotNullConstraint" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

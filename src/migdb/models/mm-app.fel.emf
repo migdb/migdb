@@ -76,11 +76,6 @@ package reduced {
       attr InheritanceType[1] inheritanceType;
     }
 
-    class AddPrimitiveClass extends ModelOperation {
-      attr String[1] name;
-      attr PrimitiveType[1] primitiveType;
-    }
-
     class RenameClass extends ModelOperation {
       attr String[1] name;
       attr String[1] newName;
@@ -177,6 +172,15 @@ package reduced {
       attr String[1] targetClassName;
       attr boolean[1] endInOwerload;
       attr boolean[1] addValueNull;
+    }
+
+    class AddPrimitiveClass extends ModelOperation {
+      attr String[1] name;
+      attr PrimitiveType[1] primitiveType;
+    }
+
+    class RemovePrimitiveClass extends ModelOperation {
+      attr String[1] name;
     }
 
   }

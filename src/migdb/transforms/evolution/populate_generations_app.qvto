@@ -38,6 +38,8 @@ main() {
 	var gen0 : APP::reduced::ModelGeneration = root.modelGenerations->first();
 	
 	root.operations->forEach(op) {
+		log("gen0 " + gen0.repr());
+		log("root " + root.repr());
 		log("	iterating over operation " + op.repr());
 		if (op.isValid(gen0)) then {
 			log("	operation is valid " + op.repr());
@@ -62,9 +64,9 @@ abstract mapping APP::reduced::operations::ModelOperation::
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
 query APP::reduced::operations::AddClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	return not gen.isAbstractClassInGeneration(self.name)
-		   and gen.isAbstractClassInGeneration(self.parent)
-		   and not (self.name = self.parent);
+	var b : Boolean := true;
+	if (self.parent <> null) then { b := gen.isAbstractClassInGeneration(self.parent) and not (self.name = self.parent); } endif;
+	return not gen.isAbstractClassInGeneration(self.name) and b;
 }
 
 // pøidání standardní tøídy do generace
