@@ -8,13 +8,13 @@
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName1" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName2" value=""/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.featureName3" value=""/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/transform_OCL.qvto"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/association_test/test_association1_1x1_bidirectional.xmi"/>
-<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/association_test_outputs/test_association1.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.module" value="platform:/resource/migdb/transforms/orm/transform_OCL.qvto"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel1" value="platform:/resource/migdb/data/associations/test_association1_1x1_bidirectional.xmi"/>
+<stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel2" value="platform:/resource/migdb/data/associations_outputs/test_association1_1x1_bidirectional_out.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetModel3" value="platform:/resource/migdb/data/APP-AfterOperations.xmi"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType1" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType2" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.targetType3" value="NEW_MODEL"/>
 <stringAttribute key="org.eclipse.m2m.qvt.oml.interpreter.traceFile" value="platform:/resource/migdb/tracefile.txt"/>
-<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.useTraceFile" value="false"/>
+<booleanAttribute key="org.eclipse.m2m.qvt.oml.interpreter.useTraceFile" value="true"/>
 </launchConfiguration>

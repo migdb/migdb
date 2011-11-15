@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="ASCII"?>
 <sql:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sql="http://www.collectionspro.eu/jam/mm/sql" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/sql ../../models/SQL.ecore#//sql">
-  <statements sqlCode="CREATE TABLE root (&#xA;    name varchar(50), &#xA;    id int, &#xA;    color varchar(50),&#xA;    CONSTRAINT pk_root PRIMARY KEY (id)&#xA;);"/>
-  <statements sqlCode="CREATE TABLE child2 (&#xA;    id int, &#xA;    age_child2 int, &#xA;    count_child2 int, &#xA;    price_child2 int,&#xA;    CONSTRAINT FK_root_child2 FOREIGN KEY (id) REFERENCES root,&#xA;    CONSTRAINT pk_child2 PRIMARY KEY (id)&#xA;);"/>
-  <statements sqlCode="CREATE TABLE child1 (&#xA;    count_child1 int, &#xA;    age_child1 int, &#xA;    price_child1 int, &#xA;    id int,&#xA;    CONSTRAINT pk_child1 PRIMARY KEY (id),&#xA;    CONSTRAINT FK_root_child1 FOREIGN KEY (id) REFERENCES root&#xA;);"/>
-  <statements sqlCode="CREATE TABLE child3 (&#xA;    id int, &#xA;    age_child3 int, &#xA;    count_child3 int, &#xA;    price_child3 int,&#xA;    CONSTRAINT pk_child3 PRIMARY KEY (id),&#xA;    CONSTRAINT FK_root_child3 FOREIGN KEY (id) REFERENCES root&#xA;);"/>
+  <statements sqlCode="CREATE TABLE root (     name varchar(50),      id int,      color varchar(50),     CONSTRAINT pk_root PRIMARY KEY (id) );">
+  </statements>
+  <statements sqlCode="CREATE TABLE child2 (     id int,      age_child2 int,      count_child2 int,      price_child2 int,     CONSTRAINT FK_root_child2 FOREIGN KEY (id) REFERENCES root,     CONSTRAINT pk_child2 PRIMARY KEY (id) );">
+  </statements>
+  <statements sqlCode="CREATE TABLE child1 (     count_child1 int,      age_child1 int,      price_child1 int,      id int,     CONSTRAINT pk_child1 PRIMARY KEY (id),     CONSTRAINT FK_root_child1 FOREIGN KEY (id) REFERENCES root );">
+  </statements>
+  <statements sqlCode="CREATE TABLE child3 (     id int,      age_child3 int,      count_child3 int,      price_child3 int,     CONSTRAINT pk_child3 PRIMARY KEY (id),     CONSTRAINT FK_root_child3 FOREIGN KEY (id) REFERENCES root );">
+  </statements>
 </sql:ModelRoot>

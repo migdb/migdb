@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="ASCII"?>
 <reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/reduced-jam ../../models/mm-app.fel.ecore#//reduced">
   <modelGenerations>
-    <classes name="Integer" isPrimitive="true" tableName=""/>
-    <classes name="c1" parent="//@modelGenerations.0/@classes.2">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" defaultValue="" isID="true"/>
+    <classes name="int" xsi:type="reduced:PrimitiveClass">
     </classes>
-    <classes name="c2" parent="//@modelGenerations.0/@classes.1">
-      <properties name="pr1" type="//@modelGenerations.0/@classes.0"/>
+    <classes name="c1" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.2">
+      <properties name="id" type="//@modelGenerations.0/@classes.0" defaultValue="" isID="true">
+      </properties>
+    </classes>
+    <classes name="c2" xsi:type="reduced:Class" parent="//@modelGenerations.0/@classes.1">
+      <properties name="pr1" type="//@modelGenerations.0/@classes.0">
+      </properties>
     </classes>
   </modelGenerations>
 </reduced:ModelRoot>

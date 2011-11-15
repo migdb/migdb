@@ -4,44 +4,51 @@ package mm;
 @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="mmrdb")
 package rdb {
   class ModelRoot {
-    val Database[+] DBgenerations;
-    val operations.Operation[*]#owningModelRoot composedoperations;
+    val ModelGeneration[+]#modelRoot modelGenerations;
+    val operations.ModelOperation[*] operations;
   }
 
-  class Database {
+  class ModelGeneration {
+    ref ModelRoot[1]#modelGenerations modelRoot;
+    attr boolean[1] isMissing;
     !ordered val Schema[*] schemas;
-    attr String[1] name;
   }
 
   class Schema {
+    attr String[1] name;
     !ordered val Table[*]#owningSchema tables;
     !ordered val Sequence[*]#owningSchema sequences;
     !ordered val Index[*]#owningSchema indexes;
-    attr String[1] name;
-  }
-
-  @OCL(inv="self.primaryKey->notEmpty() implies in self.indexes->contains(self.primaryKey)")
-  class Table {
-  
-    @OCL(body="if self.primaryKey->isEmpty() then
-						null
-					else
-						self.primaryKey.underlyingIndex.columns->first()
-					endif
-					")
-    op TableColumn getPrimaryColumn();
-    !ordered op TableColumn[*] getColumns();
-    readonly derived ref Schema[1]#tables owningSchema;
-    ref PrimaryKey primaryKey;
-    !ordered val TableColumn[*] ownedColumns;
-    !ordered val TableConstraint[*]#owningTable constraints;
-    attr String[1] name;
   }
 
   class Sequence {
     readonly derived ref Schema[1]#sequences owningSchema;
-    attr int cacheSize;
     attr String[1] name;
+    attr int cacheSize;
+  }
+
+  class Index {
+
+    @OCL(drv="self.columns->first()._owningTable")
+    readonly derived ref Schema[1]#indexes owningSchema;
+    attr String[1] name;
+    !ordered ref Column[+] columns;
+  }
+
+  class Table {
+    readonly derived ref Schema[1]#tables owningSchema;
+    attr String[1] name;
+    ref PrimaryKey primaryKey;
+    !ordered val Column[*] columns;
+    !ordered val TableConstraint[*]#owningTable constraints;
+  }
+
+  class Column {
+    ref Table[1] owningTable;
+    attr String[1] name;
+    attr PrimitiveType[1] type;
+    attr String defaultValue;
+    !ordered val ColumnConstraint[*]#owningColumn constraints;
   }
 
   abstract class Constraint {
@@ -52,144 +59,98 @@ package rdb {
     readonly derived ref Table[1]#constraints owningTable;
   }
 
-  abstract class ColumnConstraint extends Constraint {
-    readonly derived ref TableColumn[1]#columnConstraints owningColumn;
-  }
-  
-  class NotNullConstraint extends ColumnConstraint{
-  }
-
-  @OCL(inv="self.constrainedColumn.owningTable = self.owningTable)")
-  @OCL(inv="self.targetTable.getPrimaryColumn()->notEmpty()")
-  class ForeignKey extends TableConstraint {
-    ref Table[1] targetTable;
-    ref TableColumn[1] constrainedColumn;
-  }
-
-  class TableColumn {
-
-    @OCL(body="self._owningTable")
-    op Table getOwningTable();
-    !ordered val ColumnConstraint[*]#owningColumn columnConstraints;
-    ref Table[1] _owningTable;
-    attr String[1] type;
-    attr String[1] name;
-    attr String [?] defaultValue;
-  }
-  
-  @OCL(inv="let first : TableColumn = self.columnsMap->first() in
-			  self.columns->forAll(col | col._owningTable = first._owningTable)")
-  class Index {
-    !ordered ref TableColumn[+] columns;
-
-    @OCL(drv="self.columns->first()._owningTable")
-    readonly derived ref Schema[1]#indexes owningSchema;
-    attr String[1] name;
-  }
-
-  @OCL(inv="self.owningTable = self.underlyingIndex.indexedTable")
   class UniqueIndex extends TableConstraint {
     ref Index[1] underlyingIndex;
   }
 
-  @OCL(inv="self.underlyingIndex.columns.size() = 1")
   class PrimaryKey extends UniqueIndex {
   }
 
-  
+  class ForeignKey extends TableConstraint {
+    ref Table[1] targetTable;
+    ref Column[1] constrainedColumn;
+    !ordered ref Column[+] targetColumns;
+  }
+
+  abstract class ColumnConstraint extends Constraint {
+    readonly derived ref Column[1]#constraints owningColumn;
+  }
+
+  class NotNullConstraint extends ColumnConstraint {
+  }
+
+  enum PrimitiveType {
+    boolean = 0;
+    char = 1;
+    int = 2;
+  }
+
   @namespace(uri="http://www.collectionspro.eu/jam/mm/operations", prefix="mmrdb-operations")
   package operations {
-    abstract class Operation {
-  	}
-  
-  	class ComposedTableOperation  extends Operation {
-    	ordered val operations.Operation[1..*] operations;
-  	}
-  
-    abstract class TableOperation extends Operation {
-      	attr String[1] tableName;
+    abstract class ModelOperation {
     }
 
-	abstract class CreateConstraintOperation extends TableOperation{
-		attr String[1] constraintName;		   
-	}
-	
-    class CreateTable extends TableOperation {
-      	attr String[+] columnName;
-      	attr String[+] columnType;
-	  	attr String[1] primaryKeyName;
-    }
-  
-    class RenameTable extends TableOperation {
-      	attr String[1] newName;
+    class AddSchema extends ModelOperation {
+      attr String[1] name;
     }
 
-    class DeleteTable extends TableOperation {
+    class AddSequence extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+      attr int cacheSize;
     }
 
-    class AddColumn extends TableOperation {
-      attr String[1] columnName;
-      attr String[1] columnType;
-		attr String[0..1] default;
+    class AddIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[+] columnsNames;
     }
 
-    class RenameColumn extends TableOperation {
-      attr String[1] columnName;
-      attr String[1] newName;
+    class AddTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
     }
 
-    class SetColumnType extends TableOperation {
-      attr String[1] columnName;
-      attr String[1] newType;
+    class AddColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr PrimitiveType[1] type;
+      attr String defaultValue;
     }
 
-    class DeleteColumn extends TableOperation {
-      attr String[1] columnName;
+    class AddUniqueIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] underlyingIndexName;
     }
-	
-	class CreateSequence extends Operation{
-		attr String [1] sequenceName;   
-		attr int [?] minValue;
-		attr int [?] maxValue;
-		attr int [?] increment;  		
-	}
-	
-	class DropSequence extends Operation{
-	   attr String [1] sequenceName;
-	}
-	
-	class CreateIndex extends CreateConstraintOperation {
-	   attr boolean [1] isUnique;
-	   attr String [+] columnNames;
-	}
-	
-	class CreateForeignKey extends CreateConstraintOperation{
-		attr String [1] columnName;
-		attr String [1] refColumnName;
-		attr String [1] refTableName;
-	}
-	
-	class CreatePrimaryKey extends CreateConstraintOperation{
-	   attr String [1] columnName;
-	}
-	
-	class SetDefaultValue extends TableOperation{
-		attr String [1] columnName;
-		attr String [1] value;	
-	}
-	
-	class SetNull extends CreateConstraintOperation{
-		attr String [1] columnName;
-		attr boolean[1] isNullable;   
-	}
-		
-	class DropConstraint extends TableOperation{
-	   attr String [1] constraintName;
-	}
-	
-	
+
+    class AddPrimaryKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] underlyingIndexName;
+    }
+
+    class AddForeignKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] targetTableName;
+      attr String[1] constrainedColumnName;
+      attr String[+] targetColumnsNames;
+    }
+
+    class AddNotNullConstraint extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+      attr String[1] name;
+    }
+
   }
-  
 
   @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-dml", prefix="mmrdb-dml")
   package dml {
@@ -199,10 +160,11 @@ package rdb {
       val ColumnReference[+] columnReferences;
     }
 
-    class ColumnReference extends TableColumn {
-      ref TableColumn[1] reference;
+    class ColumnReference extends Column {
+      ref Column[1] reference;
     }
 
   }
 
 }
+

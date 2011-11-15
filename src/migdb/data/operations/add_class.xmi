@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <reduced:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:model-ops="http://www.collectionspro.eu/jam/mm/model-ops" xmlns:reduced="http://www.collectionspro.eu/jam/mm/reduced-jam" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/model-ops ../../models/mm-app.fel.ecore#//reduced/operations http://www.collectionspro.eu/jam/mm/reduced-jam ../../models/mm-app.fel.ecore#//reduced">
-  <modelGenerations/>
-  <operations xsi:type="model-ops:AddClass" name="Integer" isPrimitive="true"/>
+  <modelGenerations>
+  </modelGenerations>
+  <operations xsi:type="model-ops:AddClass" name="Integer" isPrimitive="true">
+  </operations>
 </reduced:ModelRoot>
