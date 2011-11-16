@@ -164,17 +164,14 @@ mapping DB::rdb::operations::AddPrimaryKey::apply(inout gen : DB::rdb::ModelGene
 }
 
 query DB::rdb::operations::AddForeignKey::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
-
-	gen.findColumns(self.owningSchemaName, self.targetTableName, self.targetColumnsNames).owningTable.constraints.oclIsKindOf(DB::rdb::UniqueIndex)
-
 	// pro danou tabulku neexistuje omezení stejného názvu
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
 	// v daném schématu existuje cílová tabulka
 	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName)
-	// v cílové tabulce existuje daný sloupec
+	// v cílové tabulce existují dané sloupce
 	and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.constrainedColumnName)
-	// pro daný sloupec existuje omezení 'Unique'	
-	and 
+	// pro dané sloupce existuje omezení 'Unique'	
+	and gen.areColumnsUnique(self.owningSchemaName, self.targetTableName, self.targetColumnsNames);
 }
 
 // pøidá omezení 'ForeignKey' pro tabulku
@@ -200,9 +197,33 @@ mapping DB::rdb::operations::AddNotNullConstraint::apply(inout gen : DB::rdb::Mo
 	}
 }
 
-/* ++++++++++ SET OPERATIONS ++++++++++++++++++++ */
+/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
+query DB::rdb::operations::RenameTable::isValid( gen : DB::rdb::ModelGeneration) : Boolean {
+	// tabulka s názvem @name existuje ve schématu
+	return gen.isTableInSchema(self.owningSchemaName, self.name)
+	// tabulka s názvem @newName neexistuje ve schématu
+		   and not gen.isTableInSchema(self.owningSchemaName, self.newName);
+}
 
+mapping DB::rdb::operations::RenameTable::apply(inout gen : DB::rdb::ModelGeneration) {
+	var t : DB::rdb::Table := gen.findTable(self.owningSchemaName, self.name);
+	// zmìna hodnoty atributu name
+	t.name := self.newName;
+}
+
+query DB::rdb::operations::RenameColumn::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+	// sloupec s názvem @name existuje v tabulce
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
+	// sloupec s názvem @newName neexistuje v tabulce
+		   and not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.newName);
+}
+
+mapping DB::rdb::operations::RenameColumn::apply(inout gen : DB::rdb::ModelGeneration) {
+	var c : DB::rdb::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
+	// zmìna hodnoty atributu name
+	c.name := self.newName;
+}
 
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -280,16 +301,14 @@ query DB::rdb::ModelGeneration::isConstraintForColumn(sName : String, tName : St
 	return self.findColumn(sName, tName, cName).constraints->exists(name = rName);
 }
 
-// ovìøí, zda-li existuje pro sloupec tabulkové omezení 'Unique' 
-query DB::rdb::ModelGeneration::isUnique(sName : String, tName : String, cName : String) : Boolean {
-	var t : DB::rdb::Table := self.findTable(sName, tName);
-	
-	
-	
-	
-	
-	t.constraints->forEach(r) {
-		
-	}
-	return 
+// ovìøí, zda-li existuje pro sloupce tabulkové omezení 'Unique' 
+query DB::rdb::ModelGeneration::areColumnsUnique(sName : String, tName : String, cName : OrderedSet(String)) : Boolean {
+	var targetColumns : OrderedSet(DB::rdb::Column) = self.findColumns(sName, tName, cName);
+	// vybere omezení typu 'Unique'
+	self.findTable(sName, tName).constraints.oclAsType(DB::rdb::UniqueIndex)->forEach(r) {
+		if (r.underlyingIndex.columns = targetColumns) then {
+			return true;
+		} endif;
+	};
+	return false;
 }

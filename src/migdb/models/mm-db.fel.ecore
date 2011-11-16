@@ -186,6 +186,24 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RenameTable" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="newName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RenameColumn" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="newName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="dml" nsURI="http://www.collectionspro.eu/jam/mm/rdb-dml" nsPrefix="mmrdb-dml">
       <eClassifiers xsi:type="ecore:EClass" name="Query">
