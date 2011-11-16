@@ -169,9 +169,9 @@ query DB::rdb::operations::AddForeignKey::isValid(gen : DB::rdb::ModelGeneration
 	// v daném schématu existuje cílová tabulka
 	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName)
 	// v cílové tabulce existují dané sloupce
-	and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.constrainedColumnName)
+	and gen.areColumnsInTable(self.owningSchemaName, self.targetTableName, self.constrainedColumnNames)
 	// pro dané sloupce existuje omezení 'Unique'	
-	and gen.areColumnsUnique(self.owningSchemaName, self.targetTableName, self.targetColumnsNames);
+	and gen.isUnique(self.owningSchemaName, self.targetTableName, self.targetColumnsNames);
 }
 
 // pøidá omezení 'ForeignKey' pro tabulku
@@ -180,7 +180,7 @@ mapping DB::rdb::operations::AddForeignKey::apply(inout gen : DB::rdb::ModelGene
 	t.constraints += object DB::rdb::ForeignKey {
 		name := self.name;
 		targetTable := gen.findTable(self.owningSchemaName, self.targetTableName);
-		constrainedColumn := gen.findColumn(self.owningSchemaName, self.targetTableName, self.constrainedColumnName);
+		constrainedColumns := gen.findColumns(self.owningSchemaName, self.targetTableName, self.constrainedColumnNames);
 	}
 }
 
@@ -225,6 +225,67 @@ mapping DB::rdb::operations::RenameColumn::apply(inout gen : DB::rdb::ModelGener
 	c.name := self.newName;
 }
 
+
+/* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
+
+query DB::rdb::operations::RemoveTable::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+   
+}
+
+// odstraní tabulku z daného schématu
+mapping DB::rdb::operations::RemoveTable::apply(inout gen : DB::rdb::ModelGeneration) {
+	
+}
+
+query DB::rdb::operations::RemoveColumn::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+    // sloupec existuje v dané tabulce
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
+	// pro danı sloupec neexistuje omezení 'PrimaryKey' èi 'ForeignKey'
+		   and not gen.isKey(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+// odstraní atribut z dané tøídy
+mapping DB::rdb::operations::RemoveColumn::apply(inout gen : DB::rdb::ModelGeneration) {
+	var t : DB::rdb::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
+	// odstranìní sloupce
+	t.columns := t.columns->excluding(gen.findColumn(self.owningSchemaName, self.owningTableName, self.name));
+}
+
+query DB::rdb::operations::RemoveTableConstraint::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+    // omezení existuje pro danou tabulku
+	return gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+// odstraní omezení pro danou tabulku
+mapping DB::rdb::operations::RemoveTableConstraint::apply(inout gen : DB::rdb::ModelGeneration) {
+	var t : DB::rdb::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
+	// odstranìní omezení
+	t.constraints := t.constraints->excluding(gen.findTableConstraint(self.owningSchemaName, self.owningTableName, self.name));
+}
+
+query DB::rdb::operations::RemoveColumnConstraint::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+    // omezení existuje pro danı sloupec
+	return gen.isConstraintForColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name);
+}
+
+// odstraní omezení pro danı sloupec
+mapping DB::rdb::operations::RemoveColumnConstraint::apply(inout gen : DB::rdb::ModelGeneration) {
+	var c : DB::rdb::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	// odstranìní omezení
+	c.constraints := c.constraints->excluding(gen.findColumnConstraint(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name));
+}
+
+query DB::rdb::operations::RemoveIndex::isValid(gen : DB::rdb::ModelGeneration) : Boolean {
+    // index existuje v daném schématu
+	return gen.isIndexInSchema(self.owningSchemaName, self.name);
+}
+
+// odstraní index z daného schématu
+mapping DB::rdb::operations::RemoveIndex::apply(inout gen : DB::rdb::ModelGeneration) {
+	var s : DB::rdb::Schema := gen.findSchema(self.owningSchemaName);
+	// odstranìní index
+	s.indexes := s.indexes->excluding(gen.findIndex(self.owningSchemaName, self.name));
+}
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
@@ -301,14 +362,46 @@ query DB::rdb::ModelGeneration::isConstraintForColumn(sName : String, tName : St
 	return self.findColumn(sName, tName, cName).constraints->exists(name = rName);
 }
 
-// ovìøí, zda-li existuje pro sloupce tabulkové omezení 'Unique' 
-query DB::rdb::ModelGeneration::areColumnsUnique(sName : String, tName : String, cName : OrderedSet(String)) : Boolean {
-	var targetColumns : OrderedSet(DB::rdb::Column) = self.findColumns(sName, tName, cName);
+// vrátí omezení dané tabulky
+query DB::rdb::ModelGeneration::findTableConstraint(sName : String, tName : String, rName : String) : DB::rdb::TableConstraint {
+	return self.findTable(sName, tName).constraints->selectOne(name = rName);
+}
+
+// vrátí omezení daného sloupce
+query DB::rdb::ModelGeneration::findColumnConstraint(sName : String, tName : String, cName : String, rName : String) : DB::rdb::ColumnConstraint {
+	return self.findColumn(sName, tName, cName).constraints->selectOne(name = rName);
+}
+
+// ovìøí, zda-li existuje pro sloupce tabulkové omezení 'Unique' èi 'PrimaryKey' 
+query DB::rdb::ModelGeneration::isUnique(sName : String, tName : String, cName : OrderedSet(String)) : Boolean {
+	var target : OrderedSet(DB::rdb::Column) = self.findColumns(sName, tName, cName);
 	// vybere omezení typu 'Unique'
 	self.findTable(sName, tName).constraints.oclAsType(DB::rdb::UniqueIndex)->forEach(r) {
-		if (r.underlyingIndex.columns = targetColumns) then {
+		if (r.underlyingIndex.columns = target) then {
 			return true;
 		} endif;
+	};
+	return false;
+}
+
+// ovìøí, zda-li existuje pro sloupce tabulkové omezení 'PrimaryKey' èi 'ForeignKey' 
+query DB::rdb::ModelGeneration::isKey(sName : String, tName : String, cName : String) : Boolean {
+	var target : DB::rdb::Column = self.findColumn(sName, tName, cName);
+	// vybere omezení typu 'PrimaryKey'
+	self.findTable(sName, tName).constraints.oclAsType(DB::rdb::PrimaryKey)->forEach(r) {
+		r.underlyingIndex.columns->forEach(c) {
+			if (c = target) then {
+				return true;
+			} endif;
+		};
+	};
+	// vybere omezení typu 'ForeignKey'
+	self.findTable(sName, tName).constraints.oclAsType(DB::rdb::ForeignKey)->forEach(r) {
+		r.targetColumns->forEach(c) {
+			if (c = target) then {
+				return true;
+			} endif;
+		};
 	};
 	return false;
 }
