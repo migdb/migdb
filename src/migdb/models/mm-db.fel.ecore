@@ -16,9 +16,11 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMissing" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
-          upperBound="-1" eType="#//rdb/Schema" containment="true"/>
+          upperBound="-1" eType="#//rdb/Schema" containment="true" eOpposite="#//rdb/Schema/owningModel"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Schema">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
+          eType="#//rdb/ModelGeneration" derived="true" eOpposite="#//rdb/ModelGeneration/schemas"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="tables" ordered="false"
@@ -54,13 +56,13 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="primaryKey" eType="#//rdb/PrimaryKey"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
-          upperBound="-1" eType="#//rdb/Column" containment="true"/>
+          upperBound="-1" eType="#//rdb/Column" containment="true" eOpposite="#//rdb/Column/owningTable"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
           upperBound="-1" eType="#//rdb/TableConstraint" containment="true" eOpposite="#//rdb/TableConstraint/owningTable"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Column">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
-          eType="#//rdb/Table"/>
+          eType="#//rdb/Table" derived="true" eOpposite="#//rdb/Table/columns"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
