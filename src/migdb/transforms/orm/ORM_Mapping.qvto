@@ -147,11 +147,11 @@ when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) a
 	result.constraints+=FK;
 	var ancestorProperty : APP::reduced::Property := self.getRootClass().properties->selectOne(prop | prop.isID);
 	//vytvoreni sloupce id obsazeneho v tride predka
-	var PKcol : RDB::rdb::TableColumn:= object RDB::rdb::TableColumn{
+	var PKcol : RDB::rdb::Column:= object RDB::rdb::Column{
 		name := ancestorProperty.name;
 	};
-	PKcol.type := ancestorProperty.type.name;
-	result.ownedColumns+= PKcol;	
+	PKcol.type := getDBPrimitiveType(ancestorProperty.oclAsType(APP::reduced::PrimitiveClass).primitiveType);
+	result.columns+= PKcol;	
 	var index : RDB::rdb::Index :=object RDB::rdb::Index{
 		columns += PKcol;
 		name := "pk_index_"+self.name;
@@ -208,9 +208,9 @@ when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and
 	log("ST body " + self.name);	
 	self.properties->asSet()->xmap toColumns(result);	
 	if(result.containsDiscriminator() = false)then{
-			result.ownedColumns+=object RDB::rdb::TableColumn{
+			result.columns+=object RDB::rdb::Column{
 				name := "discriminator";
-				type := "String";
+				type := RDB::rdb::PrimitiveType::char;
 				_owningTable := result;
 			}
 	}endif;
@@ -224,7 +224,7 @@ when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and
 	Namapuje property na sloupce, vyuziva mapovani na sloupce primitivnich typu a mapovani embedded trid
 	mapovani na kolekci je zatim mimo ...
 **/
-mapping Set(APP::reduced::Property)::toColumns(inout table : RDB::rdb::Table):Set(RDB::rdb::TableColumn){
+mapping Set(APP::reduced::Property)::toColumns(inout table : RDB::rdb::Table):Set(RDB::rdb::Column){
 	log("toColumns section");
 	self->forEach(prop){
 		result+= prop.xmap toPrimitive(table);
@@ -238,18 +238,18 @@ mapping Set(APP::reduced::Property)::toColumns(inout table : RDB::rdb::Table):Se
 /**
 	Namapuje property embedded trid na sloupce reprezentantu property
 **/
-mapping APP::reduced::Property::embeddedToColumns(inout table : RDB::rdb::Table) : Set(RDB::rdb::TableColumn)
+mapping APP::reduced::Property::embeddedToColumns(inout table : RDB::rdb::Table) : Set(RDB::rdb::Column)
 when {self.type![APP::reduced::Class].isEmbedded and self.oppositeProperty = null and self.upperBound = 1 and (self.lowerBound = 0 or self.lowerBound = 1)}
 {
 	log("toEmbeddedColumn section "+ self.name + " " + self.type.name);
 	self.type![APP::reduced::Class].properties ->forEach(prop){
 		log(prop.name);
-		var column := object RDB::rdb::TableColumn{
-			type := prop.type.name;
+		var column := object RDB::rdb::Column{
+			type := getDBPrimitiveType(prop.oclAsType(APP::reduced::PrimitiveClass).primitiveType);
 			name := self.name + "_" + prop.name;			
 		};
 		result+= column;
-		table.ownedColumns += column;
+		table.columns += column;
 	};
 	log(result->size().repr());
 }
@@ -258,14 +258,14 @@ when {self.type![APP::reduced::Class].isEmbedded and self.oppositeProperty = nul
  	namapuje Property, ktera ma jako typ jednu z Primitivnich trid, na Tablecolumn s 
 	jmenem daneho primitivniho typu
 **/
-mapping APP::reduced::Property::toPrimitive( inout table : RDB::rdb::Table ) : RDB::rdb::TableColumn
+mapping APP::reduced::Property::toPrimitive( inout table : RDB::rdb::Table ) : RDB::rdb::Column
 when {	self.isPrimitive()and self.upperBound = 1 and (self.lowerBound = 1 or self.lowerBound = 0)}
 {
 	log("toPrimitive property section "  + self.name);
 	name := self.name;
-	type := self.type.name;
+	type := getDBPrimitiveType(self.oclAsType(APP::reduced::PrimitiveClass).primitiveType);
 	result.defaultValue := self.defaultValue;
-	table.ownedColumns += result;
+	table.columns += result;
 	if(self.isID = true )then{
 		var index : RDB::rdb::Index := object RDB::rdb::Index{
 			columns += result;
@@ -288,13 +288,13 @@ when{ self.isPrimitive() and self.upperBound > 1 or self.upperBound = -1}
 {
 	log("toCollection section " + self.name);
 	var _name : String := self.name;
-	var ownerColumn : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
+	var ownerColumn : RDB::rdb::Column := object RDB::rdb::Column{
 		name := self.owningClass.name;
 		type := table.getPKColumn().type;
 	};
-	var idColumn := object RDB::rdb::TableColumn{	
+	var idColumn := object RDB::rdb::Column{	
 		name := self.name;
-		type := self.type.name;
+		type := getDBPrimitiveType(self.oclAsType(APP::reduced::PrimitiveClass).primitiveType);
 	};
 	var index : RDB::rdb::Index := object RDB::rdb::Index{
 			columns := Set{idColumn};
@@ -312,7 +312,7 @@ when{ self.isPrimitive() and self.upperBound > 1 or self.upperBound = -1}
 	};
 	var collectionTable : RDB::rdb::Table := object RDB::rdb::Table{
 		name := _name;
-		ownedColumns := Set{ownerColumn, idColumn};
+		columns := Set{ownerColumn, idColumn};
 		constraints := Set{pk,fk};
 		primaryKey := pk;
 	};
@@ -331,7 +331,7 @@ mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 			log("toAssociationTable " + firstTable.name + " " + secondTable.name);
 			result := object RDB::rdb::Table{
 			};
-			var Col1 : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
+			var Col1 : RDB::rdb::Column := object RDB::rdb::Column{
 				name := firstTable.name;
 				type := firstTable.getPKColumn().type;
 			};
@@ -342,7 +342,7 @@ mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 				constrainedColumn := Col1;
 			}; 
 	
-			var Col2 : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
+			var Col2 : RDB::rdb::Column := object RDB::rdb::Column{
 				name := secondTable.name;
 				type := secondTable.getPKColumn().type;
 			};
@@ -352,15 +352,15 @@ mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 				targetTable := secondTable;
 				constrainedColumn := Col2;
 			}; 
-			result.ownedColumns := Set{Col1, Col2};
+			result.columns := Set{Col1, Col2};
 			
 			// predpoklada existenci integer tridy
 			if(self.isOrdered) then{
-				var OC : RDB::rdb::TableColumn := object RDB::rdb::TableColumn{
+				var OC : RDB::rdb::Column := object RDB::rdb::Column{
 					name := "ordering_column";
-					type := "integer";
+					type := RDB::rdb::PrimitiveType::int;
 				};
-				result.ownedColumns += OC;
+				result.columns += OC;
 			}endif;
 			result.name := firstTable.name + "_" + secondTable.name;
 			result.constraints := Set{FK1, FK2};
@@ -384,15 +384,15 @@ mapping APP::reduced::Property::toAssociationTable() : RDB::rdb::Table{
 /**
 	Namapuje property na sloupec
 **/
-mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::TableColumn{
+mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::Column{
 	init {
-		var resultColumn : RDB::rdb::TableColumn := self.oppositeProperty.resolveone(RDB::rdb::TableColumn);
+		var resultColumn : RDB::rdb::Column := self.oppositeProperty.resolveone(RDB::rdb::Column);
 		if(not self.isOneToOneBidirectional() or resultColumn = null) then{
 			var firstTable : RDB::rdb::Table := self.owningClass.resolveone(RDB::rdb::Table);
 			var secondTable : RDB::rdb::Table := self.type.resolveone(RDB::rdb::Table);
 			
 			log("toAssociationColumn " + firstTable.name + " " + secondTable.name);
-			result := object RDB::rdb::TableColumn{
+			result := object RDB::rdb::Column{
 				name := secondTable.name + "_association";
 				type := secondTable.getPKColumn().type;
 				_owningTable := firstTable;
@@ -406,14 +406,14 @@ mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::TableColumn{
 			
 			log(" constrained column name"  + fk.constrainedColumn.name);
 						
-			firstTable.ownedColumns += result;
+			firstTable.columns += result;
 			firstTable.constraints += fk;
 			
 			//vytvoreni ordering column typu integer
 			if(self.isOrdered)then{
-				firstTable.ownedColumns += object RDB::rdb::TableColumn{
+				firstTable.columns += object RDB::rdb::Column{
 					name := "ordering_column";
-					type := "integer";
+					type := RDB::rdb::PrimitiveType::int;
 				}
 			}endif;
 			
@@ -424,7 +424,7 @@ mapping APP::reduced::Property::toAssociationColumn() : RDB::rdb::TableColumn{
 					}
 				}	
 			}endif;
-			log(result.name + " " + result.type)	
+			log(result.name + " " + result.type.repr())	
 		} else{
 			result := resultColumn;
 		}endif;

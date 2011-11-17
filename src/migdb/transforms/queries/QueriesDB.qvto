@@ -26,7 +26,7 @@ library QueriesDB;
 
 modeltype RDB uses 'mm-db';	
 
-query RDB::rdb::Table::getPKColumn():RDB::rdb::TableColumn{
+query RDB::rdb::Table::getPKColumn():RDB::rdb::Column{
 	return self.constraints![RDB::rdb::PrimaryKey].underlyingIndex.columns->any(true);
 }
 
@@ -35,7 +35,7 @@ query RDB::rdb::Table::getPKColumn():RDB::rdb::TableColumn{
 	Overuje, jestli tabulka obsahuje diskriminacni sloupec
 */
 query RDB::rdb::Table::containsDiscriminator():Boolean{
-	return self.ownedColumns->select(col | col.name ="discriminator")->size()=1;
+	return self.columns->select(col | col.name ="discriminator")->size()=1;
 }
 
 query RDB::rdb::Schema::getFirstAvailableFKName(in firstName:String, in secondName:String):String{
