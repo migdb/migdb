@@ -25,6 +25,7 @@
 library APP_queries;
 
 modeltype APP uses 'mm-app';
+modeltype RDB uses 'mm-db';
 /**
  	query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen 
  	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
@@ -59,34 +60,34 @@ query APP::reduced::Class::hasOneIDProperty():Boolean{
 	zjisti, jestli ma trida implicitni InheritanceType
 **/
 query APP::reduced::Class::hasImplicitInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::__not_defined);	
+	return self.hasInheritanceType(APP::reduced::InheritanceType::__not_defined);	
 } 
 
 /**
 	zjisti, jestli ma trida InheritanceType SingleTable
 **/
 query APP::reduced::Class::hasSingleTableInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::singleTable);	
+	return self.hasInheritanceType(APP::reduced::InheritanceType::singleTable);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType TablePerClass
 **/
 query APP::reduced::Class::hasTablePerClassInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::tablePerClass);	
+	return self.hasInheritanceType(APP::reduced::InheritanceType::tablePerClass);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType Joined
 **/
 query APP::reduced::Class::hasJoinedInheritanceType():Boolean{
-	return self.hasChosenInheritanceType(APP::reduced::InheritanceType::joined);	
+	return self.hasInheritanceType(APP::reduced::InheritanceType::joined);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType z parametru
 **/
-query APP::reduced::Class::hasChosenInheritanceType( chosenType:APP::reduced::InheritanceType):Boolean{
+query APP::reduced::Class::hasInheritanceType( chosenType:APP::reduced::InheritanceType):Boolean{
 	var temp:APP::reduced::Class = self;
 	while(temp.parent <> null ){
 		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
@@ -214,4 +215,26 @@ query APP::reduced::Class::containsCycle(inout addedClasses : Set(APP::reduced::
 	}endif;
 
 	return self.parent.containsCycle(addedClasses->including(self));
+}
+
+query getPostgresqlType(type : APP::reduced::PrimitiveType):RDB::rdb::PrimitiveType{
+	
+	if( type = APP::reduced::PrimitiveType::boolean)then{
+		return RDB::rdb::PrimitiveType::boolean;
+	}endif;
+
+	if( type = APP::reduced::PrimitiveType::int)then{
+		return RDB::rdb::PrimitiveType::int;
+	}endif;
+	
+		if( type = APP::reduced::PrimitiveType::char)then{
+		return RDB::rdb::PrimitiveType::char;
+	}endif;
+	
+	return null;
+}
+
+
+query getDBPrimitiveType(type : APP::reduced::PrimitiveType):RDB::rdb::PrimitiveType{
+	return getPostgresqlType(type);
 }
