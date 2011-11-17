@@ -29,5 +29,42 @@ import queries.QueriesDB;
 modeltype RDB uses 'mm-db';
 
 query RDB::rdb::ModelRoot::isModelValid():Boolean{
-	return true;
+	var valid : Boolean := true;
+	self->modelGenerations->schemas->forEach(schema){
+		if(not schema.hasUniqueName())then{
+			log( "Model invalid - " + schema.repr() + " collision in schema names" );
+			valid := false;
+		}endif;	
+	};
+	self->modelGenerations->schemas->tables->forEach(table){
+		if(not table.hasUniqueName())then{
+			log("Model invalid - " + table.repr() + " duplicit table name");
+			valid := false;
+		}endif;
+		if(beginsWithDigit(table.name))then{
+			log("Model invalid - " + table.repr() + " begins with digit");
+		}endif;
+	};
+	
+	
+	
+	return valid;
 }
+
+query beginsWithDigit( name : String):Boolean{
+	var firstChar: String  := name.substring(0,1) ;
+	if(firstChar = "0" or firstChar = "1" or firstChar = "2" or firstChar = "3" or firstChar = "4"
+		or firstChar = "5" or firstChar = "6" or firstChar = "7" or firstChar = "8" or firstChar = "9")then{
+		return true;
+	}endif;
+	return false;
+}
+
+query RDB::rdb::Schema::hasUniqueName() : Boolean{
+	return self.owningModel->schemas->exist(schema | schema.name = self.name and schema <> self);
+}
+
+query RDB::rdb::Table::hasUniqueName() : Boolean{
+	return not self.owningSchema->tables->exists(table | table.name = self.name and table <> self);
+}
+
