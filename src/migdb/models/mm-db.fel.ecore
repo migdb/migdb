@@ -87,8 +87,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/TableConstraint">
       <eStructuralFeatures xsi:type="ecore:EReference" name="targetTable" lowerBound="1"
           eType="#//rdb/Table"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="constrainedColumns" lowerBound="1"
-          upperBound="-1" eType="#//rdb/Column"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constrainedColumn" eType="#//rdb/Column"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="targetColumns" ordered="false"
           lowerBound="1" upperBound="-1" eType="#//rdb/Column"/>
     </eClassifiers>

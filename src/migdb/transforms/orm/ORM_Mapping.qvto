@@ -23,7 +23,7 @@
  * 
  */
 import validators.ValidatorAPP;
-import validators.ValidatorDB;
+import validators.ValidatorPostgresql;
 
 modeltype APP uses 'mm-app';
 modeltype RDB uses 'mm-db';
