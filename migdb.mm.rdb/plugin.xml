@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.collectionspro.eu/jam/mm/rdb"
+            class="mm.rdb.RdbPackage"
+            genModel="models/mm-rdb.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.collectionspro.eu/jam/mm/rdb-ops"
+            class="mm.rdb.operations.OperationsPackage"
+            genModel="models/mm-rdb.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.collectionspro.eu/jam/mm/rdb-dml"
+            class="mm.rdb.dml.DmlPackage"
+            genModel="models/mm-rdb.genmodel"/>
+   </extension>
+
+</plugin>

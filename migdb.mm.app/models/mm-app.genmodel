@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/migdb.mm.app/src"
+    modelPluginID="migdb.mm.app" modelName="Mm-app" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>mm-app.ecore</foreignModel>
+  <genPackages prefix="Mm" disposableProviderFactory="true" ecorePackage="mm-app.ecore#/">
+    <nestedGenPackages prefix="App" disposableProviderFactory="true" ecorePackage="mm-app.ecore#//app">
+      <genEnums typeSafeEnumCompatible="false" ecoreEnum="mm-app.ecore#//app/InheritanceType">
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/InheritanceType/__not_defined"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/InheritanceType/singleTable"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/InheritanceType/tablePerClass"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/InheritanceType/joined"/>
+      </genEnums>
+      <genEnums typeSafeEnumCompatible="false" ecoreEnum="mm-app.ecore#//app/PrimitiveType">
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/PrimitiveType/boolean"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/PrimitiveType/char"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-app.ecore#//app/PrimitiveType/int"/>
+      </genEnums>
+      <genClasses ecoreClass="mm-app.ecore#//app/ModelRoot">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-app.ecore#//app/ModelRoot/modelGenerations"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-app.ecore#//app/ModelRoot/operations"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-app.ecore#//app/ModelGeneration">
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-app.ecore#//app/ModelGeneration/modelRoot"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/ModelGeneration/isMissing"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-app.ecore#//app/ModelGeneration/classes"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-app.ecore#//app/AbstractClass">
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-app.ecore#//app/AbstractClass/owningModel"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/AbstractClass/name"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-app.ecore#//app/PrimitiveClass">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/PrimitiveClass/primitiveType"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-app.ecore#//app/Class">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference mm-app.ecore#//app/Class/parent"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Class/isAbstract"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Class/isEmbedded"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Class/tableName"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Class/inheritanceType"/>
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-app.ecore#//app/Class/properties"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-app.ecore#//app/Property">
+        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-app.ecore#//app/Property/owningClass"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/name"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference mm-app.ecore#//app/Property/type"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/defaultValue"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference mm-app.ecore#//app/Property/oppositeProperty"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/lowerBound"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/upperBound"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/isOrdered"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/isUnique"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/isID"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/columnName"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/columnNamePattern"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/Property/sequenceName"/>
+      </genClasses>
+      <nestedGenPackages prefix="Operations" disposableProviderFactory="true" ecorePackage="mm-app.ecore#//app/operations">
+        <genClasses image="false" ecoreClass="mm-app.ecore#//app/operations/ModelOperation">
+          <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-app.ecore#//app/operations/ModelOperation/modelRoot"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/AddClass">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/parent"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/isAbstract"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/isEmbedded"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/tableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddClass/inheritanceType"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/RenameClass">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RenameClass/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RenameClass/newName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetParent">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetParent/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetParent/parentName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetAbstract">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetAbstract/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetAbstract/isAbstract"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetEmbedded">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetEmbedded/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetEmbedded/isEmbedded"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/RemoveClass">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RemoveClass/name"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/AddProperty">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/type"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/defaultValue"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/lowerBound"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/upperBound"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/isOrdered"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/isUnique"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/columnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/columnNamePattern"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddProperty/sequenceName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/RenameProperty">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RenameProperty/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RenameProperty/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RenameProperty/newName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetType">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetType/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetType/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetType/type"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetOpposite">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOpposite/firstClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOpposite/firstPropertyName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOpposite/secondClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOpposite/secondPropertyName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOpposite/isOpposite"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetBoundries">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetBoundries/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetBoundries/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetBoundries/lowerBound"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetBoundries/upperBound"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetOrdered">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOrdered/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOrdered/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetOrdered/isOrdered"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/SetUnique">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetUnique/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetUnique/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/SetUnique/isUnique"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/RemoveProperty">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RemoveProperty/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RemoveProperty/name"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/CopyProperty">
+          <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/CopyProperty/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/CopyProperty/propertyName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/CopyProperty/targetClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/CopyProperty/endInOwerload"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/CopyProperty/addValueNull"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/MoveProperty">
+          <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/MoveProperty/owningClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/MoveProperty/propertyName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/MoveProperty/targetClassName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/MoveProperty/endInOwerload"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/MoveProperty/addValueNull"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/AddPrimitiveClass">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddPrimitiveClass/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/AddPrimitiveClass/primitiveType"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-app.ecore#//app/operations/RemovePrimitiveClass">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-app.ecore#//app/operations/RemovePrimitiveClass/name"/>
+        </genClasses>
+      </nestedGenPackages>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

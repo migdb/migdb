@@ -1,0 +1,102 @@
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation build_model(inout inoutModel : APP);
+
+
+main() {
+
+	// Normalni vytvoreni tridy
+	// VYKONA SE
+	var class1 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "First";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };
+	// Snazime se vytvorit tridu stejneho jmena  
+	// NESMI SE VYKONAT
+	var class2 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "First";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };
+	// Snazime se vytvorit tridu se stejnym nazvem ale case-sensitive (FIRST)  
+	// VYKONA SE
+	var class3 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "FIRST";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };	
+	// Parent je samotna trida - je sama sobe potomkem
+	// NESMI SE VYKONAT
+	var class4 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "SelfChild";
+														parent := "SelfChild";
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };												  											  
+	// Parent tridy neexistuje
+	// NESMI SE VYKONAT
+	var class5 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "ErrorParent";
+														parent := "NonExistParen"; // neexistujici parent
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };
+	// Parent tridy exituje
+	// VYKONA SE
+	var class6 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "ErrorParent";
+														parent := "First";
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };
+	// Abstract class
+	// VYKONA SE
+	var class7 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "AbstractClass";
+														parent := null;
+														isAbstract := true;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };	
+	// Embedded class
+	// VYKONA SE
+	var class8 : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "EmbeddedClass";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := true;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };											  	
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+		};
+	 };
+	 model.operations += class1;
+	 model.operations += class2;
+	 model.operations += class3;
+	 model.operations += class4;
+	 model.operations += class5;
+	 model.operations += class6;
+	 model.operations += class7;
+	 model.operations += class8;
+}

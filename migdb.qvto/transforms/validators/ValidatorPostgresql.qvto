@@ -1,0 +1,538 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+library ValidatorDB;
+
+import queries.QueriesDB;
+
+modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
+
+query rdb::ModelRoot::isModelValid():Boolean{
+	var valid : Boolean := true;
+	//kontrola identifikatoru schematu
+	self->modelGenerations->schemas->forEach(schema){
+		if(not schema.hasUniqueName())then{
+			log( "Model invalid - " + schema.repr() + " collision in schema names" );
+			valid := false;
+		}endif;	
+		if(not isValidIdentifier(schema.name))then{
+			valid:= false;
+		}endif;
+	};
+	//kontrola identifikatoru tabulky
+	self->modelGenerations->schemas->tables->forEach(table){
+		if(not table.hasUniqueName())then{
+			log("Model invalid - " + "duplicit table name - " + table.repr() );
+			valid := false;
+		}endif;
+		if(not isValidIdentifier(table.name))then{
+			valid:= false;
+		}endif;
+	};
+	
+	//kontrola identifikatoru sloupce
+	self->modelGenerations->schemas->tables->columns->forEach(column){
+		if(not column.hasUniqueName())then{
+			log("Model invalid - " + "duplicit column name " + column.repr() );
+			valid := false;
+		}endif;
+		if(not isValidIdentifier(column.name))then{
+			valid:= false;
+		}endif;
+	};
+	
+	
+	
+	
+	return valid;
+}
+
+
+
+query isValidIdentifier(identifier : String):Boolean{
+	var valid : Boolean := true;
+	if(not beginsWithChar(identifier))then{
+			log("Model invalid - identifier " + identifier + " not begins with char");
+			valid := false;
+		}endif;
+		if(isKeyWord(identifier))then{
+			log("Model invalid - identifier " + identifier + " is Postgresql keyWord");
+			valid := false;
+		}endif;
+		if(not containsAllowedChars(identifier))then{
+			log("Model invalid - identifier " + identifier + " contains unallowed characters");		
+			valid := false;
+		}endif;
+		return valid;
+}
+
+query beginsWithChar(identifier : String ):Boolean{
+	var firstChar: String  := identifier.substring(0,1).toLower() ;
+	return isLatinCharacter(firstChar);
+}
+
+query isLatinCharacter(char : String):Boolean{
+	if(char = "a" or char = "b" or char = "c" or char = "d" or char = "e" or 
+		char = "f" or char = "g" or char = "h" or char = "i" or char = "j" or
+		 char = "k" or char = "l" or char = "m" or char = "n" or char = "o" or
+		 char = "p" or char = "q" or char = "r" or char = "s" or char = "t" or
+		  char = "u" or char = "v" or char = "w" or char = "x" or char = "y" or
+		   char = "z")then{
+		return true;
+	}endif;
+	return false;
+}
+
+query isDigit(char : String) : Boolean{
+	if(char = "0" or char = "1" or char = "2" or char = "3" or char = "4" or 
+		char = "5" or char = "6" or char = "7" or char = "8" or char = "9")then{
+		return true;
+	}endif;
+	return false;
+}
+
+query containsAllowedChars(identifier : String):Boolean{
+	var position:Integer := 0;
+	var lowerIdentifier := identifier.toLower();
+	while(position < lowerIdentifier.size()){
+		var char:String := lowerIdentifier.substring(position, position+1);
+		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
+			return false;
+		}endif;
+		position = position + 1;
+	};
+	return true;
+}
+
+query rdb::Schema::hasUniqueName() : Boolean{
+	return self.owningModel->schemas->exist(schema | schema.name.toLower() = self.name.toLower() and schema <> self);
+}
+
+query rdb::Table::hasUniqueName() : Boolean{
+	return not self.owningSchema->tables->exists(table | table.name.toLower() = self.name.toLower() and table <> self);
+}
+
+query rdb::Column::hasUniqueName() : Boolean{
+	return not self.owningTable->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self);
+}
+
+query isKeyWord(name: String ):Boolean{
+	var keyList:List(String) = List {"ABORT",
+"ABSOLUTE",
+"ACCESS",
+"ACTION",
+"ADD",
+"ADMIN",
+"AFTER",
+"AGGREGATE",
+"ALL",
+"ALSO",
+"ALTER",
+"ALWAYS",
+"ANALYSE",
+"ANALYZE",
+"AND",
+"ANY",
+"ARRAY",
+"AS",
+"ASC",
+"ASSERTION",
+"ASSIGNMENT",
+"ASYMMETRIC",
+"AT",
+"AUTHORIZATION",
+"BACKWARD",
+"BEFORE",
+"BEGIN",
+"BETWEEN",
+"BIGINT",
+"BINARY",
+"BIT",
+"BOOLEAN",
+"BOTH",
+"BY",
+"CACHE",
+"CALLED",
+"CASCADE",
+"CASCADED",
+"CASE",
+"CAST",
+"CATALOG",
+"CHAIN",
+"CHAR",
+"CHARACTER",
+"CHARACTERISTICS",
+"CHECK",
+"CHECKPOINT",
+"CLASS",
+"CLOSE",
+"CLUSTER",
+"COALESCE",
+"COLLATE",
+"COLUMN",
+"COMMENT",
+"COMMENTS",
+"COMMIT",
+"COMMITTED",
+"CONCURRENTLY",
+"CONFIGURATION",
+"CONNECTION",
+"CONSTRAINT",
+"CONSTRAINTS",
+"CONTENT",
+"CONTINUE",
+"CONVERSION",
+"COPY",
+"COST",
+"CREATE",
+"CREATEDB",
+"CREATEROLE",
+"CREATEUSER",
+"CROSS",
+"CSV",
+"CURRENT",
+"CURRENT_CATALOG",
+"CURRENT_DATE",
+"CURRENT_ROLE",
+"CURRENT_SCHEMA",
+"CURRENT_TIME",
+"CURRENT_TIMESTAMP",
+"CURRENT_USER",
+"CURSOR",
+"CYCLE",
+"DATA",
+"DATABASE",
+"DAY",
+"DEALLOCATE",
+"DEC",
+"DECIMAL",
+"DECLARE",
+"DEFAULT",
+"DEFAULTS",
+"DEFERRABLE",
+"DEFERRED",
+"DEFINER",
+"DELETE",
+"DELIMITER",
+"DELIMITERS",
+"DESC",
+"DICTIONARY",
+"DISABLE",
+"DISCARD",
+"DISTINCT",
+"DO",
+"DOCUMENT",
+"DOMAIN",
+"DOUBLE",
+"DROP",
+"EACH",
+"ELSE",
+"ENABLE",
+"ENCODING",
+"ENCRYPTED",
+"END",
+"ENUM",
+"ESCAPE",
+"EXCEPT",
+"EXCLUDE",
+"EXCLUDING",
+"EXCLUSIVE",
+"EXECUTE",
+"EXISTS",
+"EXPLAIN",
+"EXTERNAL",
+"EXTRACT",
+"FALSE",
+"FAMILY",
+"FETCH",
+"FIRST",
+"FLOAT",
+"FOLLOWING",
+"FOR",
+"FORCE",
+"FOREIGN",
+"FORWARD",
+"FREEZE",
+"FROM",
+"FULL",
+"FUNCTION",
+"FUNCTIONS",
+"GLOBAL",
+"GRANT",
+"GRANTED",
+"GREATEST",
+"GROUP",
+"HANDLER",
+"HAVING",
+"HEADER",
+"HOLD",
+"HOUR",
+"IDENTITY",
+"IF",
+"ILIKE",
+"IMMEDIATE",
+"IMMUTABLE",
+"IMPLICIT",
+"IN",
+"INCLUDING",
+"INCREMENT",
+"INDEX",
+"INDEXES",
+"INHERIT",
+"INHERITS",
+"INITIALLY",
+"INLINE",
+"INNER",
+"INOUT",
+"INPUT",
+"INSENSITIVE",
+"INSERT",
+"INSTEAD",
+"INT",
+"INTEGER",
+"INTERSECT",
+"INTERVAL",
+"INTO",
+"INVOKER",
+"IS",
+"ISNULL",
+"ISOLATION",
+"JOIN",
+"KEY",
+"LANGUAGE",
+"LARGE",
+"LAST",
+"LC_COLLATE",
+"LC_CTYPE",
+"LEADING",
+"LEAST",
+"LEFT",
+"LEVEL",
+"LIKE",
+"LIMIT",
+"LISTEN",
+"LOAD",
+"LOCAL",
+"LOCALTIME",
+"LOCALTIMESTAMP",
+"LOCATION",
+"LOCK",
+"LOGIN",
+"MAPPING",
+"MATCH",
+"MAXVALUE",
+"MINUTE",
+"MINVALUE",
+"MODE",
+"MONTH",
+"MOVE",
+"NAME",
+"NAMES",
+"NATIONAL",
+"NATURAL",
+"NCHAR",
+"NEXT",
+"NO",
+"NOCREATEDB",
+"NOCREATEROLE",
+"NOCREATEUSER",
+"NOINHERIT",
+"NOLOGIN",
+"NONE",
+"NOSUPERUSER",
+"NOT",
+"NOTHING",
+"NOTIFY",
+"NOTNULL",
+"NOWAIT",
+"NULL",
+"NULLIF",
+"NULLS",
+"NUMERIC",
+"OBJECT",
+"OF",
+"OFF",
+"OFFSET",
+"OIDS",
+"ON",
+"ONLY",
+"OPERATOR",
+"OPTION",
+"OPTIONS",
+"OR",
+"ORDER",
+"OUT",
+"OUTER",
+"OVER",
+"OVERLAPS",
+"OVERLAY",
+"OWNED",
+"OWNER",
+"PARSER",
+"PARTIAL",
+"PARTITION",
+"PASSWORD",
+"PLACING",
+"PLANS",
+"POSITION",
+"PRECEDING",
+"PRECISION",
+"PREPARE",
+"PREPARED",
+"PRESERVE",
+"PRIMARY",
+"PRIOR",
+"PRIVILEGES",
+"PROCEDURAL",
+"PROCEDURE",
+"QUOTE",
+"RANGE",
+"READ",
+"REAL",
+"REASSIGN",
+"RECHECK",
+"RECURSIVE",
+"REFERENCES",
+"REINDEX",
+"RELATIVE",
+"RELEASE",
+"RENAME",
+"REPEATABLE",
+"REPLACE",
+"REPLICA",
+"RESET",
+"RESTART",
+"RESTRICT",
+"RETURNING",
+"RETURNS",
+"REVOKE",
+"RIGHT",
+"ROLE",
+"ROLLBACK",
+"ROW",
+"ROWS",
+"RULE",
+"SAVEPOINT",
+"SCHEMA",
+"SCROLL",
+"SEARCH",
+"SECOND",
+"SECURITY",
+"SELECT",
+"SEQUENCE",
+"SEQUENCES",
+"SERIALIZABLE",
+"SERVER",
+"SESSION",
+"SESSION_USER",
+"SET",
+"SETOF",
+"SHARE",
+"SHOW",
+"SIMILAR",
+"SIMPLE",
+"SMALLINT",
+"SOME",
+"STABLE",
+"STANDALONE",
+"START",
+"STATEMENT",
+"STATISTICS",
+"STDIN",
+"STDOUT",
+"STORAGE",
+"STRICT",
+"STRIP",
+"SUBSTRING",
+"SUPERUSER",
+"SYMMETRIC",
+"SYSID",
+"SYSTEM",
+"TABLE",
+"TABLES",
+"TABLESPACE",
+"TEMP",
+"TEMPLATE",
+"TEMPORARY",
+"TEXT",
+"THEN",
+"TIME",
+"TIMESTAMP",
+"TO",
+"TRAILING",
+"TRANSACTION",
+"TREAT",
+"TRIGGER",
+"TRIM",
+"TRUE",
+"TRUNCATE",
+"TRUSTED",
+"TYPE",
+"UNBOUNDED",
+"UNCOMMITTED",
+"UNENCRYPTED",
+"UNION",
+"UNIQUE",
+"UNKNOWN",
+"UNLISTEN",
+"UNTIL",
+"UPDATE",
+"USER",
+"USING",
+"VACUUM",
+"VALID",
+"VALIDATOR",
+"VALUE",
+"VALUES",
+"VARCHAR",
+"VARIADIC",
+"VARYING",
+"VERBOSE",
+"VERSION",
+"VIEW",
+"VOLATILE",
+"WHEN",
+"WHERE",
+"WHITESPACE",
+"WINDOW",
+"WITH",
+"WITHOUT",
+"WORK",
+"WRAPPER",
+"WRITE",
+"XML",
+"XMLATTRIBUTES",
+"XMLCONCAT",
+"XMLELEMENT",
+"XMLFOREST",
+"XMLPARSE",
+"XMLPI",
+"XMLROOT",
+"XMLSERIALIZE",
+"YEAR",
+"YES",
+"ZONE"}; 
+	return keyList->exists(str | str = name);
+}
+

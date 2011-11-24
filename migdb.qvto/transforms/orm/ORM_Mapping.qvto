@@ -1,0 +1,432 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+import validators.ValidatorAPP;
+import validators.ValidatorPostgresql;
+
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
+
+
+transformation APP_To_Rdb(in appModel : APP, out rdb : RDB);
+/**
+	 Vstupni bod transformace, najde vsechny rootObjecty, pretypuje na ModelRoot 
+	a mapuje pomoci toRdbRoot na rdb::ModelRoot
+**/
+main() {
+	assert(appModel.rootObjects()->size() = 1);
+	assert(appModel.rootObjects()->forAll(oclIsKindOf(app::ModelRoot)));
+	
+	log("transformation started");
+	//validace	
+	if(appModel.rootObjects()[app::ModelRoot]->forAll(isModelValid()))then{
+		log("model is valid");
+		//mapovani appMoodelu na RDB model
+		appModel.rootObjects()[app::ModelRoot]->toRdbRoot();
+	}endif;
+	log("transformation ended");
+}
+
+
+///////////////--------------------------------- Vlastni mapovani  --------------------------------///////////
+
+/**
+	Toto mapovani namapuje vsechny elementy ModelGeneration na database a prida je do kolekce 
+	DBgenerations
+**/
+mapping app::ModelRoot::toRdbRoot() : rdb::ModelRoot{
+	log("toRdbRoot section");
+	//namapuje vsechny generace aplikace na db generace
+	self.modelGenerations->forEach(generation){
+		result.modelGenerations += generation.xmap toDBmodel();
+	};
+}
+
+/** 
+	Namapuje ModelGeneration na DBgeneration, ktera je prazdna, pokud ma atribut 
+	missing nastaven na true, jinak obsahuje schema vyplnene tabulkami namapovanych trid.
+**/
+mapping app::ModelGeneration::toDBmodel() : rdb::ModelGeneration {
+	log("toDBmodel section");
+	if(self.isMissing = false) then {
+		schemas += self.xmap toSchema();
+	}endif;
+}
+
+/**
+	Vytvori DB schema, namapuje tridy na tabulky pomoci mapovani toTable
+**/
+mapping app::ModelGeneration::toSchema() : rdb::Schema {
+	log("toSchema section");		
+		self.classes[app::Class]->forEach(_class ){
+			result.tables += _class.xmap toTable(result);
+		};
+
+		// namapovani vazeb unidirectional 1-1, bidirectional 1-1, 1-M unidirectional, 1-M bidirectional
+		// v nynejsi verzi 1-1 unidirectional nikdy nenastane
+		self.classes[app::Class]->properties->forEach(prop | not prop.type![app::Class].isEmbedded and (prop.isOneToOneUnidirectional() 
+		or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+		prop.isOneToManyBidirectional())){
+				prop.map toAssociationColumn();
+		};
+	
+		//namapovani vazeb M-N unidirectional a M-N bidirectional
+		self.classes[app::Class]->properties->forEach(prop | not prop.type![app::Class].isEmbedded and (prop.isManyToManyUnidirectional() 
+		or prop.isManyToManyBidirectional())){
+				result.tables += prop.map toAssociationTable();
+		};
+}
+
+/**
+	Toto mapovani je "rozcestnikem" pro dalsi 4 mapovani urceene konkretnim inheritanceType 
+**/
+mapping app::Class::toTable(inout schema : rdb::Schema):rdb::Table 
+disjuncts app::Class::toRootTable, app::Class::toJoinedTable,app::Class::toTablePerClass,
+ app::Class::toSingleTable{
+}
+
+/**
+	Namapuje tridu bez serializovatelneho potomka na tabulku
+**/	
+mapping app::Class::toRootTable(inout schema : rdb::Schema) : rdb::Table 
+when {self.isSerializable() = true and self.parent = null}
+{
+	log("toSerializableRootTable section " + self.name);
+	name := self.name;
+	self->properties->asOrderedSet()->xmap toColumns(result);
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};
+}
+
+/**
+	Namapuje tridu s inheritanceType Joined na tabulku, k mapovani je potreba obraz 
+	predka dane tridy, guard isGeneralClassSerializable zajistuje splneni obecnych 
+	podminek pro jakoukoliv serializovatelnou tridu, ostatni guardy zajistuji mapovani 
+	trd se spravnym typem + existenci predka, vytvori cizi klic referencujici na tabulku predka
+**/
+mapping app::Class::toJoinedTable(inout schema : rdb::Schema):rdb::Table 
+when{ ( self.hasJoinedInheritanceType() or self.hasImplicitInheritanceType() ) and 
+		self.isSerializable() and self.parent <> null }
+{
+	init{
+		log("join init" + self.name);
+		//obraz tridy predka
+		var precedessorTable : rdb::Table := self.parent.xmap toTable(schema);		
+		result := object rdb::Table{};
+	}
+	log("toJoined section "+self.name);
+		
+	//vytvoreni ciziho klice referencujiciho tabulku predka - precedessorTable
+	// getFirstAvailableFKName zaruci neduplicitu jmen FK
+	var FK : rdb::ForeignKey = object rdb::ForeignKey{
+		name := schema.getFirstAvailableFKName(self.name, precedessorTable.name);	
+		targetTable := precedessorTable;
+	};
+	result.constraints+=FK;
+	var ancestorProperty : app::Property := self.getRootClass().properties->selectOne(prop | prop.isID);
+	//vytvoreni sloupce id obsazeneho v tride predka
+	var PKcol : rdb::Column:= object rdb::Column{
+		name := ancestorProperty.name;
+	};
+	PKcol.type := getDBPrimitiveType(ancestorProperty.oclAsType(app::PrimitiveClass).primitiveType);
+	result.columns+= PKcol;	
+	var index : rdb::Index :=object rdb::Index{
+		columns += PKcol;
+		name := "pk_index_"+self.name;
+	};			
+	schema.indexes += index;	
+	var pk : rdb::PrimaryKey := object rdb::PrimaryKey{
+		name:= "pk_"+ self.name;
+		underlyingIndex := index;
+	};	
+	result.constraints += pk;
+	FK.constrainedColumn := PKcol;
+	result.primaryKey := pk;
+	result.name := self.name; 
+	self->properties->asSet()->xmap toColumns(result);
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	}; 		
+}
+
+/**
+	Namapuje tridu s inheritanceType TablePerClass na tabulku, guard isGeneralClassSerializable zajistuje splneni obecnych 
+	podminek pro jakoukoliv serializovatelnou tridu, ostatni guardy zajistuji mapovani tridd s spravnym typem + existenci 
+	predka. Mapovani sesbira atributy tridy plus jejich predku a namapuje je na sloupce
+**/
+mapping app::Class::toTablePerClass(inout schema : rdb::Schema):rdb::Table
+when { self.hasTablePerClassInheritanceType() and self.isSerializable() and self.parent <> null}	
+{
+	log("toTablePerClass section " + self.name);
+	name := self.name;
+
+	//log(self.getPathToRoot()->properties->select(prop | prop.isPrimitive())->size().repr());
+
+	//tento statement namapuje vsechny property tridy a jejich predku	
+	//var pathProperties : Set(app::Property) :=
+	 self.getPathToRoot()->properties->asSet()->xmap toColumns(result);
+	 self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};	
+}
+
+/**
+	Namapuje tridu s inheritanceType SingleTable na jiz vytvorenou tabulku, k mapovani je potreba obraz 
+	predka dane tridy, guard isGeneralClassSerializable zajistuje splneni obecnych 
+	podminek pro jakoukoliv serializovatelnou tridu, ostatni guardy zajistuji mapovani 
+	trid s spravnym typem + existenci predka, typ diskriminacniho sloupce je String
+**/
+mapping app::Class::toSingleTable(inout schema : rdb::Schema):rdb::Table
+when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and self.parent <> null}
+{	
+	init{
+		log("toSingleTable section "+self.name);
+		result := self.parent.xmap toTable(schema);
+	}
+	log("ST body " + self.name);	
+	self.properties->asSet()->xmap toColumns(result);	
+	if(result.containsDiscriminator() = false)then{
+			result.columns+=object rdb::Column{
+				name := "discriminator";
+				type := rdb::PrimitiveType::char;
+				_owningTable := result;
+			}
+	}endif;
+	
+	self.properties->forEach(prop | prop.isPrimitive() and (prop.upperBound > 1 or prop.upperBound = -1)){
+ 		prop.xmap toCollection(result);
+ 	};
+} 
+
+/**
+	Namapuje property na sloupce, vyuziva mapovani na sloupce primitivnich typu a mapovani embedded trid
+	mapovani na kolekci je zatim mimo ...
+**/
+mapping Set(app::Property)::toColumns(inout table : rdb::Table):Set(rdb::Column){
+	log("toColumns section");
+	self->forEach(prop){
+		result+= prop.xmap toPrimitive(table);
+	};
+	
+	self->forEach(prop){
+		result+= prop.xmap embeddedToColumns(table);
+	};
+}
+
+/**
+	Namapuje property embedded trid na sloupce reprezentantu property
+**/
+mapping app::Property::embeddedToColumns(inout table : rdb::Table) : Set(rdb::Column)
+when {self.type![app::Class].isEmbedded and self.oppositeProperty = null and self.upperBound = 1 and (self.lowerBound = 0 or self.lowerBound = 1)}
+{
+	log("toEmbeddedColumn section "+ self.name + " " + self.type.name);
+	self.type![app::Class].properties ->forEach(prop){
+		log(prop.name);
+		var column := object rdb::Column{
+			type := getDBPrimitiveType(prop.oclAsType(app::PrimitiveClass).primitiveType);
+			name := self.name + "_" + prop.name;			
+		};
+		result+= column;
+		table.columns += column;
+	};
+	log(result->size().repr());
+}
+
+/**
+ 	namapuje Property, ktera ma jako typ jednu z Primitivnich trid, na Tablecolumn s 
+	jmenem daneho primitivniho typu
+**/
+mapping app::Property::toPrimitive( inout table : rdb::Table ) : rdb::Column
+when {	self.isPrimitive()and self.upperBound = 1 and (self.lowerBound = 1 or self.lowerBound = 0)}
+{
+	log("toPrimitive property section "  + self.name);
+	name := self.name;
+	type := getDBPrimitiveType(self.oclAsType(app::PrimitiveClass).primitiveType);
+	result.defaultValue := self.defaultValue;
+	table.columns += result;
+	if(self.isID = true )then{
+		var index : rdb::Index := object rdb::Index{
+			columns += result;
+				name := "pk_index";
+		};				
+		table.owningSchema.indexes += index;										
+		table.primaryKey := object rdb::PrimaryKey{
+			name := "pk_" + table.name;
+		};
+		table.primaryKey.underlyingIndex := index;
+	}endif;					
+	table.constraints += table.primaryKey;
+}
+
+/**
+	Namapuje Kolekci primitivniho typu do databaze
+**/
+mapping app::Property::toCollection(inout table : rdb::Table)
+when{ self.isPrimitive() and self.upperBound > 1 or self.upperBound = -1}
+{
+	log("toCollection section " + self.name);
+	var _name : String := self.name;
+	var ownerColumn : rdb::Column := object rdb::Column{
+		name := self.owningClass.name;
+		type := table.getPKColumn().type;
+	};
+	var idColumn := object rdb::Column{	
+		name := self.name;
+		type := getDBPrimitiveType(self.oclAsType(app::PrimitiveClass).primitiveType);
+	};
+	var index : rdb::Index := object rdb::Index{
+			columns := Set{idColumn};
+			name := "index_" + _name;
+		};	
+	table.owningSchema.indexes += index;	
+	var pk : rdb::PrimaryKey := object rdb::PrimaryKey{
+		name := "PK_" + _name;
+		underlyingIndex := index;
+	};
+	var fk : rdb::ForeignKey := object rdb::ForeignKey{
+		name := "FK_"+_name;
+		targetTable := table;
+		constrainedColumn := ownerColumn;
+	};
+	var collectionTable : rdb::Table := object rdb::Table{
+		name := _name;
+		columns := Set{ownerColumn, idColumn};
+		constraints := Set{pk,fk};
+		primaryKey := pk;
+	};
+	table.owningSchema.tables+= collectionTable;	
+}
+
+/**
+	Toto mapovani namapuje Property na asociacni tabulku s cizimi klici na 
+**/	
+mapping app::Property::toAssociationTable() : rdb::Table{
+	init{
+		var resultTable : rdb::Table := self.oppositeProperty.resolveone(rdb::Table);
+		if(not self.isManyToManyBidirectional() or  resultTable = null) then {		
+			var firstTable:rdb::Table := self.owningClass.resolveone(rdb::Table);
+			var secondTable:rdb::Table := self.type.resolveone(rdb::Table);
+			log("toAssociationTable " + firstTable.name + " " + secondTable.name);
+			result := object rdb::Table{
+			};
+			var Col1 : rdb::Column := object rdb::Column{
+				name := firstTable.name;
+				type := firstTable.getPKColumn().type;
+			};
+			
+			var FK1 : rdb::ForeignKey := object rdb::ForeignKey{
+				name := "FK_" + firstTable.name;
+				targetTable := firstTable;
+				constrainedColumn := Col1;
+			}; 
+	
+			var Col2 : rdb::Column := object rdb::Column{
+				name := secondTable.name;
+				type := secondTable.getPKColumn().type;
+			};
+	
+			var FK2 : rdb::ForeignKey := object rdb::ForeignKey{
+				name := "FK_" + secondTable.name;
+				targetTable := secondTable;
+				constrainedColumn := Col2;
+			}; 
+			result.columns := Set{Col1, Col2};
+			
+			// predpoklada existenci integer tridy
+			if(self.isOrdered) then{
+				var OC : rdb::Column := object rdb::Column{
+					name := "ordering_column";
+					type := rdb::PrimitiveType::int;
+				};
+				result.columns += OC;
+			}endif;
+			result.name := firstTable.name + "_" + secondTable.name;
+			result.constraints := Set{FK1, FK2};
+			
+			if(self.isUnique)then{
+				var uniqueConstraint :rdb::UniqueIndex := object rdb::UniqueIndex{
+					name := "unique_constraint_" + result.name;
+					underlyingIndex := object rdb::Index{
+						columns := Set{Col1, Col2};
+						name := "index" + result.name;
+					}
+				} 
+			}endif;
+			log(" result name--------" + result.name);
+		}else{
+			result := resultTable;		
+		}endif;
+	}
+}
+
+/**
+	Namapuje property na sloupec
+**/
+mapping app::Property::toAssociationColumn() : rdb::Column{
+	init {
+		var resultColumn : rdb::Column := self.oppositeProperty.resolveone(rdb::Column);
+		if(not self.isOneToOneBidirectional() or resultColumn = null) then{
+			var firstTable : rdb::Table := self.owningClass.resolveone(rdb::Table);
+			var secondTable : rdb::Table := self.type.resolveone(rdb::Table);
+			
+			log("toAssociationColumn " + firstTable.name + " " + secondTable.name);
+			result := object rdb::Column{
+				name := secondTable.name + "_association";
+				type := secondTable.getPKColumn().type;
+				_owningTable := firstTable;
+			};
+			
+			var fk : rdb::ForeignKey := object rdb::ForeignKey{
+				constrainedColumn := result;
+				targetTable := secondTable;
+				name := "FK_association_" + firstTable.name + "_" + secondTable.name;
+			};
+			
+			log(" constrained column name"  + fk.constrainedColumn.name);
+						
+			firstTable.columns += result;
+			firstTable.constraints += fk;
+			
+			//vytvoreni ordering column typu integer
+			if(self.isOrdered)then{
+				firstTable.columns += object rdb::Column{
+					name := "ordering_column";
+					type := rdb::PrimitiveType::int;
+				}
+			}endif;
+			
+			if(self.isUnique)then{
+				firstTable.constraints += object rdb::UniqueIndex{
+					name := "unique" + result.name;
+					underlyingIndex:= object rdb::Index{
+					}
+				}	
+			}endif;
+			log(result.name + " " + result.type.repr())	
+		} else{
+			result := resultColumn;
+		}endif;
+	}
+}
