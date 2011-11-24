@@ -23,19 +23,19 @@
  * 
  */
 
-modeltype APP uses 'mm-app';
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/reduced-jam';
 
 transformation APP_To_Rdb(in inModel : APP, out outModel : APP);
 main() {
 	assert(inModel.rootObjects()->size() = 1);
-	assert(inModel.rootObjects()->forAll(oclIsKindOf(APP::reduced::ModelRoot)));
+	assert(inModel.rootObjects()->forAll(oclIsKindOf(reduced::ModelRoot)));
 	
 	log("transformation started...");
 	
 	inModel.rootObjects().deepclone();
 
-	var root : APP::reduced::ModelRoot = outModel.rootObjects()![APP::reduced::ModelRoot];
-	var gen0 : APP::reduced::ModelGeneration = root.modelGenerations->first();
+	var root : reduced::ModelRoot = outModel.rootObjects()![reduced::ModelRoot];
+	var gen0 : reduced::ModelGeneration = root.modelGenerations->first();
 	
 	root.operations->forEach(op) {
 		log("gen0 " + gen0.repr());
@@ -46,6 +46,7 @@ main() {
 			op.xmap apply(gen0);
 		} else {
 			log("	operation is invalid " + op.repr());
+			// break;
 		} endif;
 	};
 	
@@ -53,64 +54,64 @@ main() {
 }
 
 // kontrola validity operace
-abstract query APP::reduced::operations::ModelOperation::
-	isValid(gen : APP::reduced::ModelGeneration) : Boolean;
+abstract query reduced::operations::ModelOperation::
+	isValid(gen : reduced::ModelGeneration) : Boolean;
 
-// namapování dané operace
-abstract mapping APP::reduced::operations::ModelOperation::
-	apply(inout gen : APP::reduced::ModelGeneration);
+// namapovï¿½nï¿½ danï¿½ operace
+abstract mapping reduced::operations::ModelOperation::
+	apply(inout gen : reduced::ModelGeneration);
 
 
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
-query APP::reduced::operations::AddClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::AddClass::isValid(gen : reduced::ModelGeneration) : Boolean {
 	var b : Boolean := true;
 	if (self.parent <> null) then { b := gen.isAbstractClassInGeneration(self.parent) and not (self.name = self.parent); } endif;
 	return not gen.isAbstractClassInGeneration(self.name) and b;
 }
 
-// pøidání standardní tøídy do generace
-mapping APP::reduced::operations::AddClass::apply(inout gen : APP::reduced::ModelGeneration) {
-	gen.classes += object APP::reduced::Class {
+// pï¿½idï¿½nï¿½ standardnï¿½ tï¿½ï¿½dy do generace
+mapping reduced::operations::AddClass::apply(inout gen : reduced::ModelGeneration) {
+	gen.classes += object reduced::Class {
 		name := self.name;
-		parent := gen.findAbstractClass(self.parent).oclAsType(APP::reduced::Class);
+		parent := gen.findAbstractClass(self.parent).oclAsType(reduced::Class);
 		isAbstract := self.isAbstract;
 		isEmbedded := self.isEmbedded;
 		tableName := self.tableName;
 		inheritanceType := self.inheritanceType;
 	};
 	
-	// vytvoøení id atributu
+	// vytvoï¿½enï¿½ id atributu
 	if (self.parent = null) then {
-		var c : APP::reduced::Class := gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class);
-		c.properties += object APP::reduced::Property {
+		var c : reduced::Class := gen.findAbstractClass(self.name).oclAsType(reduced::Class);
+		c.properties += object reduced::Property {
 			name := "id";
 			isID := true;
-			// [?] nutné nastavit typ atributu
+			// [?] nutnï¿½ nastavit typ atributu
 		};
 	} endif;
 }
 
-query APP::reduced::operations::AddPrimitiveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::AddPrimitiveClass::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return not gen.isAbstractClassInGeneration(self.name);
 }
 
-// pøidá primitivní tøídu do generace
-mapping APP::reduced::operations::AddPrimitiveClass::apply(inout gen : APP::reduced::ModelGeneration) {
-	gen.classes += object APP::reduced::PrimitiveClass {
+// pï¿½idï¿½ primitivnï¿½ tï¿½ï¿½du do generace
+mapping reduced::operations::AddPrimitiveClass::apply(inout gen : reduced::ModelGeneration) {
+	gen.classes += object reduced::PrimitiveClass {
 		name := self.name;
 		primitiveType := self.primitiveType;
 	};
 }
 
-query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::AddProperty::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and not gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name)
-	// ovìøí, zda-li existuje tøída požadovaného typu atributu
+		   and not gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name)
+	// ovï¿½ï¿½ï¿½, zda-li existuje tï¿½ï¿½da poï¿½adovanï¿½ho typu atributu
 		   and gen.isAbstractClassInGeneration(self.type)
-	// ovìøí, zda-li jsou hranice nastaveny smysluplnì
+	// ovï¿½ï¿½ï¿½, zda-li jsou hranice nastaveny smysluplnï¿½
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
-	// v hierarchii neexistuje atribut se stejným názvem
+	// v hierarchii neexistuje atribut se stejnï¿½m nï¿½zvem
 		   and not gen.isPropertyInHierarchy(self.owningClassName, self.name);
 }
 
@@ -118,10 +119,10 @@ query APP::reduced::operations::AddProperty::isValid(gen : APP::reduced::ModelGe
 // lze nastavit i kolekci:
 //isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
 //isUnique := self.isUnique; // has to be a collection (upperBound == -1)
-mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
+mapping reduced::operations::AddProperty::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
 	
-	c.properties += object APP::reduced::Property {
+	c.properties += object reduced::Property {
 		name := self.name;
 		type := gen.findAbstractClass(self.type);
 		defaultValue := self.defaultValue; // a value type has to be equal with a type of property
@@ -135,33 +136,33 @@ mapping APP::reduced::operations::AddProperty::apply(inout gen : APP::reduced::M
 	};
 }
 
-query APP::reduced::operations::SetOpposite::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetOpposite::isValid(gen : reduced::ModelGeneration) : Boolean {
 	var pre : Boolean := 
-	// tøídy existují v dané generaci
+	// tï¿½ï¿½dy existujï¿½ v danï¿½ generaci
 		gen.isAbstractClassInGeneration(self.firstClassName)
 		and gen.isAbstractClassInGeneration(self.secondClassName)
-    // atributy existují v daných tøídách
-		and gen.findAbstractClass(self.firstClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.firstPropertyName)
-		and gen.findAbstractClass(self.secondClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.secondPropertyName);
+    // atributy existujï¿½ v danï¿½ch tï¿½ï¿½dï¿½ch
+		and gen.findAbstractClass(self.firstClassName).oclAsType(reduced::Class).isPropertyInClass(self.firstPropertyName)
+		and gen.findAbstractClass(self.secondClassName).oclAsType(reduced::Class).isPropertyInClass(self.secondPropertyName);
 	if (self.isOpposite = true) then {
 		return pre
-		// nejedná se o oboustrannì navigabilní asociaci
-			and gen.findAbstractClass(self.firstClassName).oclAsType(APP::reduced::Class).findProperty(self.firstPropertyName).oppositeProperty = null
-			and gen.findAbstractClass(self.secondClassName).oclAsType(APP::reduced::Class).findProperty(self.secondPropertyName).oppositeProperty = null;
+		// nejednï¿½ se o oboustrannï¿½ navigabilnï¿½ asociaci
+			and gen.findAbstractClass(self.firstClassName).oclAsType(reduced::Class).findProperty(self.firstPropertyName).oppositeProperty = null
+			and gen.findAbstractClass(self.secondClassName).oclAsType(reduced::Class).findProperty(self.secondPropertyName).oppositeProperty = null;
 	} else {
 		return pre
-		// jedná se o oboustrannì navigabilní asociaci
-			and gen.findAbstractClass(self.firstClassName).oclAsType(APP::reduced::Class).findProperty(self.firstPropertyName).oppositeProperty.name = self.secondPropertyName
-			and gen.findAbstractClass(self.secondClassName).oclAsType(APP::reduced::Class).findProperty(self.secondPropertyName).oppositeProperty.name = self.firstPropertyName;
+		// jednï¿½ se o oboustrannï¿½ navigabilnï¿½ asociaci
+			and gen.findAbstractClass(self.firstClassName).oclAsType(reduced::Class).findProperty(self.firstPropertyName).oppositeProperty.name = self.secondPropertyName
+			and gen.findAbstractClass(self.secondClassName).oclAsType(reduced::Class).findProperty(self.secondPropertyName).oppositeProperty.name = self.firstPropertyName;
 	} endif;
 	
-	// nedosažitelný stav
+	// nedosaï¿½itelnï¿½ stav
 	return null;
 }
 
-mapping APP::reduced::operations::SetOpposite::apply(inout gen : APP::reduced::ModelGeneration) {
-	var p1 : APP::reduced::Property := gen.findAbstractClass(self.firstClassName).oclAsType(APP::reduced::Class).findProperty(self.firstPropertyName);
-	var p2 : APP::reduced::Property := gen.findAbstractClass(self.secondClassName).oclAsType(APP::reduced::Class).findProperty(self.secondPropertyName);
+mapping reduced::operations::SetOpposite::apply(inout gen : reduced::ModelGeneration) {
+	var p1 : reduced::Property := gen.findAbstractClass(self.firstClassName).oclAsType(reduced::Class).findProperty(self.firstPropertyName);
+	var p2 : reduced::Property := gen.findAbstractClass(self.secondClassName).oclAsType(reduced::Class).findProperty(self.secondPropertyName);
 	if (self.isOpposite = true) then {
 		p1.oppositeProperty := p2;
 		p2.oppositeProperty := p1;
@@ -174,172 +175,172 @@ mapping APP::reduced::operations::SetOpposite::apply(inout gen : APP::reduced::M
 
 /* ++++++++++ SET OPERATIONS FOR CLASSES ++++++++++++++++++++ */
 
-query APP::reduced::operations::SetAbstract::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetAbstract::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.name);
 }
 
-mapping APP::reduced::operations::SetAbstract::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class);
+mapping reduced::operations::SetAbstract::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.name).oclAsType(reduced::Class);
 	c.isAbstract := self.isAbstract;
 }
 
-query APP::reduced::operations::SetEmbedded::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetEmbedded::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.name);
 }
 
-mapping APP::reduced::operations::SetEmbedded::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class);
+mapping reduced::operations::SetEmbedded::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.name).oclAsType(reduced::Class);
 	c.isEmbedded := self.isEmbedded;
 }
 
-query APP::reduced::operations::SetParent::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetParent::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.name)
 		   and gen.isAbstractClassInGeneration(self.parentName)
-		   and not gen.findAbstractClass(self.parentName).oclAsType(APP::reduced::Class).isDescendantOf(self.name);
+		   and not gen.findAbstractClass(self.parentName).oclAsType(reduced::Class).isDescendantOf(self.name);
 }
 
-mapping APP::reduced::operations::SetParent::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class);
-	c.parent := gen.findAbstractClass(self.parentName).oclAsType(APP::reduced::Class);	
+mapping reduced::operations::SetParent::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.name).oclAsType(reduced::Class);
+	c.parent := gen.findAbstractClass(self.parentName).oclAsType(reduced::Class);	
 }
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 
-query APP::reduced::operations::SetType::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetType::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name)
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name)
 		   and gen.isAbstractClassInGeneration(self.type);
 }
 
-mapping APP::reduced::operations::SetType::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := c.findProperty(self.name);
+mapping reduced::operations::SetType::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := c.findProperty(self.name);
 	p.type := gen.findAbstractClass(self.type); // null
 }
 
-query APP::reduced::operations::SetBoundries::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetBoundries::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name)
-		   // ovìøí, zda-li jsou hranice nastaveny smysluplnì
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name)
+		   // ovï¿½ï¿½ï¿½, zda-li jsou hranice nastaveny smysluplnï¿½
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
 }
 
-// nastaví hranice atributu
-mapping APP::reduced::operations::SetBoundries::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := c.findProperty(self.name);
-	// nastaví dolní hranici atributu
+// nastavï¿½ hranice atributu
+mapping reduced::operations::SetBoundries::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := c.findProperty(self.name);
+	// nastavï¿½ dolnï¿½ hranici atributu
 	p.lowerBound := self.lowerBound;
-	// nastaví horní hranici atributu
+	// nastavï¿½ hornï¿½ hranici atributu
 	p.upperBound := self.upperBound;
 }
 
-query APP::reduced::operations::SetOrdered::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetOrdered::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name);
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name);
 }
 
-mapping APP::reduced::operations::SetOrdered::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := c.findProperty(self.name);
+mapping reduced::operations::SetOrdered::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := c.findProperty(self.name);
 	p.isOrdered := self.isOrdered;
 }
 
-query APP::reduced::operations::SetUnique::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::SetUnique::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name);
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name);
 }
 
-mapping APP::reduced::operations::SetUnique::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := c.findProperty(self.name);
+mapping reduced::operations::SetUnique::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := c.findProperty(self.name);
 	p.isUnique := self.isUnique;
 }
 
 
 /* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
-query APP::reduced::operations::RenameClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	// tøída s názvem @name existuje v generaci
+query reduced::operations::RenameClass::isValid(gen : reduced::ModelGeneration) : Boolean {
+	// tï¿½ï¿½da s nï¿½zvem @name existuje v generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// tøída s názvem @newName neexistuje v generaci
+	// tï¿½ï¿½da s nï¿½zvem @newName neexistuje v generaci
 		   and not gen.isAbstractClassInGeneration(self.newName);
 }
 
-mapping APP::reduced::operations::RenameClass::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::AbstractClass := gen.findAbstractClass(self.name);
-	// zmìna hodnoty atributu name
+mapping reduced::operations::RenameClass::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::AbstractClass := gen.findAbstractClass(self.name);
+	// zmï¿½na hodnoty atributu name
 	c.name := self.newName;
 }
 
-query APP::reduced::operations::RenameProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
+query reduced::operations::RenameProperty::isValid(gen : reduced::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name)
-		   and not gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.newName);
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name)
+		   and not gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.newName);
 }
 
-mapping APP::reduced::operations::RenameProperty::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := c.findProperty(self.name);
+mapping reduced::operations::RenameProperty::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := c.findProperty(self.name);
 	p.name := self.newName;
 }
 
 /* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
 
-query APP::reduced::operations::RemoveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	// tøída existuje v dané generaci
+query reduced::operations::RemoveClass::isValid(gen : reduced::ModelGeneration) : Boolean {
+	// tï¿½ï¿½da existuje v danï¿½ generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// tøídá neobsahuje žádné atributy
-	       and (gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class).properties->isEmpty()
-	// nebo obsahuje právì jeden s vlastností 'id'
-	       		or gen.findAbstractClass(self.name).oclAsType(APP::reduced::Class).properties->forAll(isID = true))
-	// na tøídu se neodkazuje žádná jiná tøída
-		   and not gen.classes->oclAsType(APP::reduced::Class).properties->exists(type = self)
-	// tøída není v hierarchii
-		   and not gen.classes->oclAsType(APP::reduced::Class)->exists(parent.name = self.name);
+	// tï¿½ï¿½dï¿½ neobsahuje ï¿½ï¿½dnï¿½ atributy
+	       and (gen.findAbstractClass(self.name).oclAsType(reduced::Class).properties->isEmpty()
+	// nebo obsahuje prï¿½vï¿½ jeden s vlastnostï¿½ 'id'
+	       		or gen.findAbstractClass(self.name).oclAsType(reduced::Class).properties->forAll(isID = true))
+	// na tï¿½ï¿½du se neodkazuje ï¿½ï¿½dnï¿½ jinï¿½ tï¿½ï¿½da
+		   and not gen.classes->oclAsType(reduced::Class).properties->exists(type = self)
+	// tï¿½ï¿½da nenï¿½ v hierarchii
+		   and not gen.classes->oclAsType(reduced::Class)->exists(parent.name = self.name);
 }
 
-// odstraní tøídu z dané generace
-mapping APP::reduced::operations::RemoveClass::apply(inout gen : APP::reduced::ModelGeneration) {
-	// odstranìní tøídy
+// odstranï¿½ tï¿½ï¿½du z danï¿½ generace
+mapping reduced::operations::RemoveClass::apply(inout gen : reduced::ModelGeneration) {
+	// odstranï¿½nï¿½ tï¿½ï¿½dy
 	gen.classes := gen.classes->excluding(gen.findAbstractClass(self.name));
 }
 
-query APP::reduced::operations::RemoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-    // atribut existuje v dané tøídì
-	return gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).isPropertyInClass(self.name)
-	// atribut nemá vlastnost 'id'
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).findProperty(self.name).isID = false
-	// neexistuje asociace z jiné tøídy
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).findProperty(self.name).oppositeProperty = null;
+query reduced::operations::RemoveProperty::isValid(gen : reduced::ModelGeneration) : Boolean {
+    // atribut existuje v danï¿½ tï¿½ï¿½dï¿½
+	return gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).isPropertyInClass(self.name)
+	// atribut nemï¿½ vlastnost 'id'
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).findProperty(self.name).isID = false
+	// neexistuje asociace z jinï¿½ tï¿½ï¿½dy
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).findProperty(self.name).oppositeProperty = null;
 }
 
-// odstraní atribut z dané tøídy
-mapping APP::reduced::operations::RemoveProperty::apply(inout gen : APP::reduced::ModelGeneration) {
-	var c : APP::reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class);
-	// odstranìní atributu
+// odstranï¿½ atribut z danï¿½ tï¿½ï¿½dy
+mapping reduced::operations::RemoveProperty::apply(inout gen : reduced::ModelGeneration) {
+	var c : reduced::Class := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class);
+	// odstranï¿½nï¿½ atributu
 	c.properties := c.properties->excluding(c.findProperty(self.name));
 }
 
-query APP::reduced::operations::RemovePrimitiveClass::isValid(gen : APP::reduced::ModelGeneration) : Boolean {
-	// tøída existuje v dané generaci
+query reduced::operations::RemovePrimitiveClass::isValid(gen : reduced::ModelGeneration) : Boolean {
+	// tï¿½ï¿½da existuje v danï¿½ generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// na tøídu se neodkazuje žádná jiná tøída
-		   and not gen.classes->oclAsType(APP::reduced::Class).properties->exists(type = self);
+	// na tï¿½ï¿½du se neodkazuje ï¿½ï¿½dnï¿½ jinï¿½ tï¿½ï¿½da
+		   and not gen.classes->oclAsType(reduced::Class).properties->exists(type = self);
 }
 
-// odstraní primitivní tøídu z dané generace
-mapping APP::reduced::operations::RemovePrimitiveClass::apply(inout gen : APP::reduced::ModelGeneration) {
-	// odstranìní tøídy
+// odstranï¿½ primitivnï¿½ tï¿½ï¿½du z danï¿½ generace
+mapping reduced::operations::RemovePrimitiveClass::apply(inout gen : reduced::ModelGeneration) {
+	// odstranï¿½nï¿½ tï¿½ï¿½dy
 	gen.classes := gen.classes->excluding(gen.findAbstractClass(self.name));
 }
 
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
-query APP::reduced::operations::CopyProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+query reduced::operations::CopyProperty::isValid(gen : reduced::ModelGeneration) : Boolean{
 	return gen.classes->exists(name = self.owningClassName)
 		   and gen.classes->exists(name = self.targetClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).properties->exists(name = self.propertyName)
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).properties->exists(name = self.propertyName)
 		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
 		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
 		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
@@ -353,11 +354,11 @@ query APP::reduced::operations::CopyProperty::isValid(gen : APP::reduced::ModelG
 	 
 	 WARNING: property jeste nejsou nijak implementovane
 */
-mapping APP::reduced::operations::CopyProperty::apply(inout gen : APP::reduced::ModelGeneration){
-	var c : APP::reduced::Class := gen.findAbstractClass(self.targetClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).findProperty(self.propertyName);
+mapping reduced::operations::CopyProperty::apply(inout gen : reduced::ModelGeneration){
+	var c : reduced::Class := gen.findAbstractClass(self.targetClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).findProperty(self.propertyName);
 	
-	c.properties += object APP::reduced::Property {
+	c.properties += object reduced::Property {
 		name := p.name;
 		type := p.type;
 		defaultValue := p.defaultValue;
@@ -371,10 +372,10 @@ mapping APP::reduced::operations::CopyProperty::apply(inout gen : APP::reduced::
 	};
 }
 
-query APP::reduced::operations::MoveProperty::isValid(gen : APP::reduced::ModelGeneration) : Boolean{
+query reduced::operations::MoveProperty::isValid(gen : reduced::ModelGeneration) : Boolean{
 	return gen.classes->exists(name = self.owningClassName)
 		   and gen.classes->exists(name = self.targetClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).properties->exists(name = self.propertyName)
+		   and gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).properties->exists(name = self.propertyName)
 		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
 		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
 		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
@@ -382,11 +383,11 @@ query APP::reduced::operations::MoveProperty::isValid(gen : APP::reduced::ModelG
 		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName) or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-mapping APP::reduced::operations::MoveProperty::apply(inout gen : APP::reduced::ModelGeneration){
-	var c : APP::reduced::Class := gen.findAbstractClass(self.targetClassName).oclAsType(APP::reduced::Class);
-	var p : APP::reduced::Property := gen.findAbstractClass(self.owningClassName).oclAsType(APP::reduced::Class).findProperty(self.propertyName);
+mapping reduced::operations::MoveProperty::apply(inout gen : reduced::ModelGeneration){
+	var c : reduced::Class := gen.findAbstractClass(self.targetClassName).oclAsType(reduced::Class);
+	var p : reduced::Property := gen.findAbstractClass(self.owningClassName).oclAsType(reduced::Class).findProperty(self.propertyName);
 	
-	c.properties += object APP::reduced::Property {
+	c.properties += object reduced::Property {
 		name := p.name;
 		type := p.type;
 		defaultValue := p.defaultValue;
@@ -406,43 +407,43 @@ mapping APP::reduced::operations::MoveProperty::apply(inout gen : APP::reduced::
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
-// ovìøí, zda-li v generaci existuje jakákoliv tøída s daným jménem
-query APP::reduced::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
+// ovï¿½ï¿½ï¿½, zda-li v generaci existuje jakï¿½koliv tï¿½ï¿½da s danï¿½m jmï¿½nem
+query reduced::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
 	return self.classes->exists(name = cName);
 }
 
-// ovìøí, zda-li v generaci existuje standardní tøída s daným jménem
-query APP::reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.classes.oclAsType(APP::reduced::Class)->exists(name = cName);
+// ovï¿½ï¿½ï¿½, zda-li v generaci existuje standardnï¿½ tï¿½ï¿½da s danï¿½m jmï¿½nem
+query reduced::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
+	return self.classes.oclAsType(reduced::Class)->exists(name = cName);
 }
 
-// vrátí standardní tøídu daného jména
-query APP::reduced::ModelGeneration::findAbstractClass(cName : String) : APP::reduced::AbstractClass {
+// vrï¿½tï¿½ standardnï¿½ tï¿½ï¿½du danï¿½ho jmï¿½na
+query reduced::ModelGeneration::findAbstractClass(cName : String) : reduced::AbstractClass {
 	 return self.classes->selectOne(name = cName);
 }
 
 
-// ovìøí, zda-li ve tøídì existuje atribut daného jména
-query APP::reduced::Class::isPropertyInClass(pName : String) : Boolean {
+// ovï¿½ï¿½ï¿½, zda-li ve tï¿½ï¿½dï¿½ existuje atribut danï¿½ho jmï¿½na
+query reduced::Class::isPropertyInClass(pName : String) : Boolean {
 	return self.properties->exists(name = pName);
 }
 
-// vrátí atribut daného jména
-query APP::reduced::Class::findProperty(pName : String) : APP::reduced::Property {
+// vrï¿½tï¿½ atribut danï¿½ho jmï¿½na
+query reduced::Class::findProperty(pName : String) : reduced::Property {
 	return self.properties->selectOne(name = pName);
 }
 
 
-// ovìøí, zda-li je tøída potomkem tøídy cName
-query APP::reduced::Class::isDescendantOf(cName : String) : Boolean {
+// ovï¿½ï¿½ï¿½, zda-li je tï¿½ï¿½da potomkem tï¿½ï¿½dy cName
+query reduced::Class::isDescendantOf(cName : String) : Boolean {
 	if (self.parent <> null and self.parent.name = cName) then return true
 	else return self.parent.isDescendantOf(cName) endif;
 	return false;
 }
 
-// ovìøí, zda-li je tøída sClass rodièem tøídy fClass
-query APP::reduced::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
-	var ourClass : APP::reduced::Class := self.findAbstractClass(fClass).oclAsType(APP::reduced::Class);
+// ovï¿½ï¿½ï¿½, zda-li je tï¿½ï¿½da sClass rodiï¿½em tï¿½ï¿½dy fClass
+query reduced::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
+	var ourClass : reduced::Class := self.findAbstractClass(fClass).oclAsType(reduced::Class);
 	if(ourClass <> null) then {
 		if (ourClass.parent <> null and ourClass.parent = sClass) then {
 			return true;
@@ -454,11 +455,11 @@ query APP::reduced::ModelGeneration::isInHierarchy(fClass : String, sClass : Str
 	return false;
 }
 
-// ovìøí, zda-li v hierarchii existuje atribut se stejným názvem
-query APP::reduced::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
-	// pro každý atribut se stejným názvem...
-	self.classes->oclAsType(APP::reduced::Class).properties->forEach(p | p.name = pName) {
-		// ...ovìøíme, zda-li se tøídy, kterým tyto atributy náleží, nachází ve stejné hierarchii
+// ovï¿½ï¿½ï¿½, zda-li v hierarchii existuje atribut se stejnï¿½m nï¿½zvem
+query reduced::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
+	// pro kaï¿½dï¿½ atribut se stejnï¿½m nï¿½zvem...
+	self.classes->oclAsType(reduced::Class).properties->forEach(p | p.name = pName) {
+		// ...ovï¿½ï¿½ï¿½me, zda-li se tï¿½ï¿½dy, kterï¿½m tyto atributy nï¿½leï¿½ï¿½, nachï¿½zï¿½ ve stejnï¿½ hierarchii
 		if (self.isInHierarchy(cName, p.owningClass.name) = true or self.isInHierarchy(p.owningClass.name, cName) = true) then {
 			return true;
 		} endif;
