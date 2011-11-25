@@ -47,16 +47,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class ColumnImpl extends EObjectImpl implements Column {
 	/**
-	 * The cached value of the '{@link #getOwningTable() <em>Owning Table</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOwningTable()
-	 * @generated
-	 * @ordered
-	 */
-	protected Table owningTable;
-
-	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -151,36 +141,8 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	 * @generated
 	 */
 	public Table getOwningTable() {
-		if (owningTable != null && owningTable.eIsProxy()) {
-			InternalEObject oldOwningTable = (InternalEObject)owningTable;
-			owningTable = (Table)eResolveProxy(oldOwningTable);
-			if (owningTable != oldOwningTable) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RdbPackage.COLUMN__OWNING_TABLE, oldOwningTable, owningTable));
-			}
-		}
-		return owningTable;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Table basicGetOwningTable() {
-		return owningTable;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setOwningTable(Table newOwningTable) {
-		Table oldOwningTable = owningTable;
-		owningTable = newOwningTable;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.COLUMN__OWNING_TABLE, oldOwningTable, owningTable));
+		if (eContainerFeatureID() != RdbPackage.COLUMN__OWNING_TABLE) return null;
+		return (Table)eContainer();
 	}
 
 	/**
@@ -267,6 +229,10 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RdbPackage.COLUMN__OWNING_TABLE:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return eBasicSetContainer(otherEnd, RdbPackage.COLUMN__OWNING_TABLE, msgs);
 			case RdbPackage.COLUMN__CONSTRAINTS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getConstraints()).basicAdd(otherEnd, msgs);
 		}
@@ -281,6 +247,8 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RdbPackage.COLUMN__OWNING_TABLE:
+				return eBasicSetContainer(null, RdbPackage.COLUMN__OWNING_TABLE, msgs);
 			case RdbPackage.COLUMN__CONSTRAINTS:
 				return ((InternalEList<?>)getConstraints()).basicRemove(otherEnd, msgs);
 		}
@@ -293,11 +261,24 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case RdbPackage.COLUMN__OWNING_TABLE:
+				return eInternalContainer().eInverseRemove(this, RdbPackage.TABLE__COLUMNS, Table.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case RdbPackage.COLUMN__OWNING_TABLE:
-				if (resolve) return getOwningTable();
-				return basicGetOwningTable();
+				return getOwningTable();
 			case RdbPackage.COLUMN__NAME:
 				return getName();
 			case RdbPackage.COLUMN__TYPE:
@@ -319,9 +300,6 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case RdbPackage.COLUMN__OWNING_TABLE:
-				setOwningTable((Table)newValue);
-				return;
 			case RdbPackage.COLUMN__NAME:
 				setName((String)newValue);
 				return;
@@ -347,9 +325,6 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case RdbPackage.COLUMN__OWNING_TABLE:
-				setOwningTable((Table)null);
-				return;
 			case RdbPackage.COLUMN__NAME:
 				setName(NAME_EDEFAULT);
 				return;
@@ -375,7 +350,7 @@ public class ColumnImpl extends EObjectImpl implements Column {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case RdbPackage.COLUMN__OWNING_TABLE:
-				return owningTable != null;
+				return getOwningTable() != null;
 			case RdbPackage.COLUMN__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RdbPackage.COLUMN__TYPE:

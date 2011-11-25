@@ -6,8 +6,6 @@
  */
 package mm.rdb.dml;
 
-import mm.rdb.RdbPackage;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -99,58 +97,13 @@ public interface DmlPackage extends EPackage {
 	int COLUMN_REFERENCE = 1;
 
 	/**
-	 * The feature id for the '<em><b>Owning Table</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COLUMN_REFERENCE__OWNING_TABLE = RdbPackage.COLUMN__OWNING_TABLE;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COLUMN_REFERENCE__NAME = RdbPackage.COLUMN__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COLUMN_REFERENCE__TYPE = RdbPackage.COLUMN__TYPE;
-
-	/**
-	 * The feature id for the '<em><b>Default Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COLUMN_REFERENCE__DEFAULT_VALUE = RdbPackage.COLUMN__DEFAULT_VALUE;
-
-	/**
-	 * The feature id for the '<em><b>Constraints</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COLUMN_REFERENCE__CONSTRAINTS = RdbPackage.COLUMN__CONSTRAINTS;
-
-	/**
 	 * The feature id for the '<em><b>Reference</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COLUMN_REFERENCE__REFERENCE = RdbPackage.COLUMN_FEATURE_COUNT + 0;
+	int COLUMN_REFERENCE__REFERENCE = 0;
 
 	/**
 	 * The number of structural features of the '<em>Column Reference</em>' class.
@@ -159,7 +112,7 @@ public interface DmlPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COLUMN_REFERENCE_FEATURE_COUNT = RdbPackage.COLUMN_FEATURE_COUNT + 1;
+	int COLUMN_REFERENCE_FEATURE_COUNT = 1;
 
 
 	/**

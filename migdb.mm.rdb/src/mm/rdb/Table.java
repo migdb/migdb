@@ -103,6 +103,7 @@ public interface Table extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Columns</b></em>' containment reference list.
 	 * The list contents are of type {@link mm.rdb.Column}.
+	 * It is bidirectional and its opposite is '{@link mm.rdb.Column#getOwningTable <em>Owning Table</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Columns</em>' containment reference list isn't clear,
@@ -111,7 +112,8 @@ public interface Table extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Columns</em>' containment reference list.
 	 * @see mm.rdb.RdbPackage#getTable_Columns()
-	 * @model containment="true" ordered="false"
+	 * @see mm.rdb.Column#getOwningTable
+	 * @model opposite="owningTable" containment="true" ordered="false"
 	 * @generated
 	 */
 	EList<Column> getColumns();

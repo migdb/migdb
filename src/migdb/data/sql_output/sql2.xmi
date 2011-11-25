@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="ASCII"?>
-<sql:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:sql="http://www.collectionspro.eu/jam/mm/sql" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/sql ../../models/SQL.ecore#//sql">
-  <statements sqlCode="CREATE TABLE root (     count_child3 int,      age_child3 int,      price_child3 int,      name varchar(50),      age_child2 int,      age_child1 int,      count_child1 int,      id int,      color varchar(50),      price_child2 int,      price_child1 int,      discriminator varchar(50),      count_child2 int,     CONSTRAINT pk_root PRIMARY KEY (id) );">
-  </statements>
-</sql:ModelRoot>

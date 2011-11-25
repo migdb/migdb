@@ -64,11 +64,18 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.ADD_SEQUENCE: return createAddSequence();
 			case OperationsPackage.ADD_INDEX: return createAddIndex();
 			case OperationsPackage.ADD_TABLE: return createAddTable();
+			case OperationsPackage.RENAME_TABLE: return createRenameTable();
+			case OperationsPackage.REMOVE_TABLE: return createRemoveTable();
 			case OperationsPackage.ADD_COLUMN: return createAddColumn();
+			case OperationsPackage.RENAME_COLUMN: return createRenameColumn();
+			case OperationsPackage.REMOVE_COLUMN: return createRemoveColumn();
 			case OperationsPackage.ADD_UNIQUE_INDEX: return createAddUniqueIndex();
 			case OperationsPackage.ADD_PRIMARY_KEY: return createAddPrimaryKey();
 			case OperationsPackage.ADD_FOREIGN_KEY: return createAddForeignKey();
 			case OperationsPackage.ADD_NOT_NULL_CONSTRAINT: return createAddNotNullConstraint();
+			case OperationsPackage.REMOVE_TABLE_CONSTRAINT: return createRemoveTableConstraint();
+			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT: return createRemoveColumnConstraint();
+			case OperationsPackage.REMOVE_INDEX: return createRemoveIndex();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -119,9 +126,49 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public RenameTable createRenameTable() {
+		RenameTableImpl renameTable = new RenameTableImpl();
+		return renameTable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveTable createRemoveTable() {
+		RemoveTableImpl removeTable = new RemoveTableImpl();
+		return removeTable;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public AddColumn createAddColumn() {
 		AddColumnImpl addColumn = new AddColumnImpl();
 		return addColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RenameColumn createRenameColumn() {
+		RenameColumnImpl renameColumn = new RenameColumnImpl();
+		return renameColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveColumn createRemoveColumn() {
+		RemoveColumnImpl removeColumn = new RemoveColumnImpl();
+		return removeColumn;
 	}
 
 	/**
@@ -162,6 +209,36 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public AddNotNullConstraint createAddNotNullConstraint() {
 		AddNotNullConstraintImpl addNotNullConstraint = new AddNotNullConstraintImpl();
 		return addNotNullConstraint;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveTableConstraint createRemoveTableConstraint() {
+		RemoveTableConstraintImpl removeTableConstraint = new RemoveTableConstraintImpl();
+		return removeTableConstraint;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveColumnConstraint createRemoveColumnConstraint() {
+		RemoveColumnConstraintImpl removeColumnConstraint = new RemoveColumnConstraintImpl();
+		return removeColumnConstraint;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveIndex createRemoveIndex() {
+		RemoveIndexImpl removeIndex = new RemoveIndexImpl();
+		return removeIndex;
 	}
 
 	/**

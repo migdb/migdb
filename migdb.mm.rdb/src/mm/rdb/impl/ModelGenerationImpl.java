@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -162,7 +162,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 */
 	public EList<Schema> getSchemas() {
 		if (schemas == null) {
-			schemas = new EObjectContainmentEList<Schema>(Schema.class, this, RdbPackage.MODEL_GENERATION__SCHEMAS);
+			schemas = new EObjectContainmentWithInverseEList<Schema>(Schema.class, this, RdbPackage.MODEL_GENERATION__SCHEMAS, RdbPackage.SCHEMA__OWNING_MODEL);
 		}
 		return schemas;
 	}
@@ -172,6 +172,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -179,6 +180,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetModelRoot((ModelRoot)otherEnd, msgs);
+			case RdbPackage.MODEL_GENERATION__SCHEMAS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getSchemas()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}

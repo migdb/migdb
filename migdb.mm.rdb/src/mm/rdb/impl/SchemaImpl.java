@@ -9,6 +9,7 @@ package mm.rdb.impl;
 import java.util.Collection;
 
 import mm.rdb.Index;
+import mm.rdb.ModelGeneration;
 import mm.rdb.RdbPackage;
 import mm.rdb.Schema;
 import mm.rdb.Sequence;
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -35,6 +37,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link mm.rdb.impl.SchemaImpl#getOwningModel <em>Owning Model</em>}</li>
  *   <li>{@link mm.rdb.impl.SchemaImpl#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.impl.SchemaImpl#getTables <em>Tables</em>}</li>
  *   <li>{@link mm.rdb.impl.SchemaImpl#getSequences <em>Sequences</em>}</li>
@@ -119,6 +122,47 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ModelGeneration getOwningModel() {
+		if (eContainerFeatureID() != RdbPackage.SCHEMA__OWNING_MODEL) return null;
+		return (ModelGeneration)eContainer();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetOwningModel(ModelGeneration newOwningModel, NotificationChain msgs) {
+		msgs = eBasicSetContainer((InternalEObject)newOwningModel, RdbPackage.SCHEMA__OWNING_MODEL, msgs);
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOwningModel(ModelGeneration newOwningModel) {
+		if (newOwningModel != eInternalContainer() || (eContainerFeatureID() != RdbPackage.SCHEMA__OWNING_MODEL && newOwningModel != null)) {
+			if (EcoreUtil.isAncestor(this, newOwningModel))
+				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+			NotificationChain msgs = null;
+			if (eInternalContainer() != null)
+				msgs = eBasicRemoveFromContainer(msgs);
+			if (newOwningModel != null)
+				msgs = ((InternalEObject)newOwningModel).eInverseAdd(this, RdbPackage.MODEL_GENERATION__SCHEMAS, ModelGeneration.class, msgs);
+			msgs = basicSetOwningModel(newOwningModel, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.SCHEMA__OWNING_MODEL, newOwningModel, newOwningModel));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getName() {
 		return name;
 	}
@@ -180,6 +224,10 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return basicSetOwningModel((ModelGeneration)otherEnd, msgs);
 			case RdbPackage.SCHEMA__TABLES:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getTables()).basicAdd(otherEnd, msgs);
 			case RdbPackage.SCHEMA__SEQUENCES:
@@ -198,6 +246,8 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				return basicSetOwningModel(null, msgs);
 			case RdbPackage.SCHEMA__TABLES:
 				return ((InternalEList<?>)getTables()).basicRemove(otherEnd, msgs);
 			case RdbPackage.SCHEMA__SEQUENCES:
@@ -214,8 +264,24 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				return eInternalContainer().eInverseRemove(this, RdbPackage.MODEL_GENERATION__SCHEMAS, ModelGeneration.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				return getOwningModel();
 			case RdbPackage.SCHEMA__NAME:
 				return getName();
 			case RdbPackage.SCHEMA__TABLES:
@@ -237,6 +303,9 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				setOwningModel((ModelGeneration)newValue);
+				return;
 			case RdbPackage.SCHEMA__NAME:
 				setName((String)newValue);
 				return;
@@ -264,6 +333,9 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				setOwningModel((ModelGeneration)null);
+				return;
 			case RdbPackage.SCHEMA__NAME:
 				setName(NAME_EDEFAULT);
 				return;
@@ -288,6 +360,8 @@ public class SchemaImpl extends EObjectImpl implements Schema {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
+			case RdbPackage.SCHEMA__OWNING_MODEL:
+				return getOwningModel() != null;
 			case RdbPackage.SCHEMA__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RdbPackage.SCHEMA__TABLES:

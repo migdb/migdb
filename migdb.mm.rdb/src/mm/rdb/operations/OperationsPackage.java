@@ -244,6 +244,89 @@ public interface OperationsPackage extends EPackage {
 	int ADD_TABLE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RenameTableImpl <em>Rename Table</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RenameTableImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRenameTable()
+	 * @generated
+	 */
+	int RENAME_TABLE = 5;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_TABLE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_TABLE__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>New Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_TABLE__NEW_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Rename Table</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_TABLE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveTableImpl <em>Remove Table</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveTableImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveTable()
+	 * @generated
+	 */
+	int REMOVE_TABLE = 6;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Remove Table</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddColumnImpl <em>Add Column</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -251,7 +334,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddColumn()
 	 * @generated
 	 */
-	int ADD_COLUMN = 5;
+	int ADD_COLUMN = 7;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -308,6 +391,107 @@ public interface OperationsPackage extends EPackage {
 	int ADD_COLUMN_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RenameColumnImpl <em>Rename Column</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RenameColumnImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRenameColumn()
+	 * @generated
+	 */
+	int RENAME_COLUMN = 8;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_COLUMN__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_COLUMN__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_COLUMN__NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>New Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_COLUMN__NEW_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Rename Column</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RENAME_COLUMN_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveColumnImpl <em>Remove Column</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveColumnImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveColumn()
+	 * @generated
+	 */
+	int REMOVE_COLUMN = 9;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN__NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Remove Column</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddUniqueIndexImpl <em>Add Unique Index</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -315,7 +499,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddUniqueIndex()
 	 * @generated
 	 */
-	int ADD_UNIQUE_INDEX = 6;
+	int ADD_UNIQUE_INDEX = 10;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -370,7 +554,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddPrimaryKey()
 	 * @generated
 	 */
-	int ADD_PRIMARY_KEY = 7;
+	int ADD_PRIMARY_KEY = 11;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -425,7 +609,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddForeignKey()
 	 * @generated
 	 */
-	int ADD_FOREIGN_KEY = 8;
+	int ADD_FOREIGN_KEY = 12;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -473,22 +657,13 @@ public interface OperationsPackage extends EPackage {
 	int ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Target Columns Names</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES = MODEL_OPERATION_FEATURE_COUNT + 5;
-
-	/**
 	 * The number of structural features of the '<em>Add Foreign Key</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_FOREIGN_KEY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 6;
+	int ADD_FOREIGN_KEY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddNotNullConstraintImpl <em>Add Not Null Constraint</em>}' class.
@@ -498,7 +673,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddNotNullConstraint()
 	 * @generated
 	 */
-	int ADD_NOT_NULL_CONSTRAINT = 9;
+	int ADD_NOT_NULL_CONSTRAINT = 13;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -544,6 +719,144 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ADD_NOT_NULL_CONSTRAINT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveTableConstraintImpl <em>Remove Table Constraint</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveTableConstraintImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveTableConstraint()
+	 * @generated
+	 */
+	int REMOVE_TABLE_CONSTRAINT = 14;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE_CONSTRAINT__NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Remove Table Constraint</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_TABLE_CONSTRAINT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl <em>Remove Column Constraint</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveColumnConstraintImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveColumnConstraint()
+	 * @generated
+	 */
+	int REMOVE_COLUMN_CONSTRAINT = 15;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_CONSTRAINT__NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Remove Column Constraint</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_COLUMN_CONSTRAINT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveIndexImpl <em>Remove Index</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveIndexImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveIndex()
+	 * @generated
+	 */
+	int REMOVE_INDEX = 16;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_INDEX__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_INDEX__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Remove Index</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_INDEX_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 
 	/**
@@ -707,6 +1020,81 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddTable_Name();
 
 	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RenameTable <em>Rename Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Rename Table</em>'.
+	 * @see mm.rdb.operations.RenameTable
+	 * @generated
+	 */
+	EClass getRenameTable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameTable#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RenameTable#getOwningSchemaName()
+	 * @see #getRenameTable()
+	 * @generated
+	 */
+	EAttribute getRenameTable_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameTable#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RenameTable#getName()
+	 * @see #getRenameTable()
+	 * @generated
+	 */
+	EAttribute getRenameTable_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameTable#getNewName <em>New Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>New Name</em>'.
+	 * @see mm.rdb.operations.RenameTable#getNewName()
+	 * @see #getRenameTable()
+	 * @generated
+	 */
+	EAttribute getRenameTable_NewName();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveTable <em>Remove Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Table</em>'.
+	 * @see mm.rdb.operations.RemoveTable
+	 * @generated
+	 */
+	EClass getRemoveTable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveTable#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveTable#getOwningSchemaName()
+	 * @see #getRemoveTable()
+	 * @generated
+	 */
+	EAttribute getRemoveTable_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveTable#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RemoveTable#getName()
+	 * @see #getRemoveTable()
+	 * @generated
+	 */
+	EAttribute getRemoveTable_Name();
+
+	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddColumn <em>Add Column</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -770,6 +1158,103 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAddColumn_DefaultValue();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RenameColumn <em>Rename Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Rename Column</em>'.
+	 * @see mm.rdb.operations.RenameColumn
+	 * @generated
+	 */
+	EClass getRenameColumn();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameColumn#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RenameColumn#getOwningSchemaName()
+	 * @see #getRenameColumn()
+	 * @generated
+	 */
+	EAttribute getRenameColumn_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameColumn#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.RenameColumn#getOwningTableName()
+	 * @see #getRenameColumn()
+	 * @generated
+	 */
+	EAttribute getRenameColumn_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameColumn#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RenameColumn#getName()
+	 * @see #getRenameColumn()
+	 * @generated
+	 */
+	EAttribute getRenameColumn_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RenameColumn#getNewName <em>New Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>New Name</em>'.
+	 * @see mm.rdb.operations.RenameColumn#getNewName()
+	 * @see #getRenameColumn()
+	 * @generated
+	 */
+	EAttribute getRenameColumn_NewName();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveColumn <em>Remove Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Column</em>'.
+	 * @see mm.rdb.operations.RemoveColumn
+	 * @generated
+	 */
+	EClass getRemoveColumn();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumn#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumn#getOwningSchemaName()
+	 * @see #getRemoveColumn()
+	 * @generated
+	 */
+	EAttribute getRemoveColumn_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumn#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumn#getOwningTableName()
+	 * @see #getRemoveColumn()
+	 * @generated
+	 */
+	EAttribute getRemoveColumn_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumn#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumn#getName()
+	 * @see #getRemoveColumn()
+	 * @generated
+	 */
+	EAttribute getRemoveColumn_Name();
 
 	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddUniqueIndex <em>Add Unique Index</em>}'.
@@ -945,17 +1430,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddForeignKey_ConstrainedColumnName();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link mm.rdb.operations.AddForeignKey#getTargetColumnsNames <em>Target Columns Names</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Target Columns Names</em>'.
-	 * @see mm.rdb.operations.AddForeignKey#getTargetColumnsNames()
-	 * @see #getAddForeignKey()
-	 * @generated
-	 */
-	EAttribute getAddForeignKey_TargetColumnsNames();
-
-	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddNotNullConstraint <em>Add Not Null Constraint</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1008,6 +1482,135 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAddNotNullConstraint_Name();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveTableConstraint <em>Remove Table Constraint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Table Constraint</em>'.
+	 * @see mm.rdb.operations.RemoveTableConstraint
+	 * @generated
+	 */
+	EClass getRemoveTableConstraint();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveTableConstraint#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveTableConstraint#getOwningSchemaName()
+	 * @see #getRemoveTableConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveTableConstraint_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveTableConstraint#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.RemoveTableConstraint#getOwningTableName()
+	 * @see #getRemoveTableConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveTableConstraint_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveTableConstraint#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RemoveTableConstraint#getName()
+	 * @see #getRemoveTableConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveTableConstraint_Name();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveColumnConstraint <em>Remove Column Constraint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Column Constraint</em>'.
+	 * @see mm.rdb.operations.RemoveColumnConstraint
+	 * @generated
+	 */
+	EClass getRemoveColumnConstraint();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumnConstraint#getOwningSchemaName()
+	 * @see #getRemoveColumnConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveColumnConstraint_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumnConstraint#getOwningTableName()
+	 * @see #getRemoveColumnConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveColumnConstraint_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningColumnName <em>Owning Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumnConstraint#getOwningColumnName()
+	 * @see #getRemoveColumnConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveColumnConstraint_OwningColumnName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveColumnConstraint#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RemoveColumnConstraint#getName()
+	 * @see #getRemoveColumnConstraint()
+	 * @generated
+	 */
+	EAttribute getRemoveColumnConstraint_Name();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveIndex <em>Remove Index</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Index</em>'.
+	 * @see mm.rdb.operations.RemoveIndex
+	 * @generated
+	 */
+	EClass getRemoveIndex();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveIndex#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveIndex#getOwningSchemaName()
+	 * @see #getRemoveIndex()
+	 * @generated
+	 */
+	EAttribute getRemoveIndex_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveIndex#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.RemoveIndex#getName()
+	 * @see #getRemoveIndex()
+	 * @generated
+	 */
+	EAttribute getRemoveIndex_Name();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1162,6 +1765,66 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_TABLE__NAME = eINSTANCE.getAddTable_Name();
 
 		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RenameTableImpl <em>Rename Table</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RenameTableImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRenameTable()
+		 * @generated
+		 */
+		EClass RENAME_TABLE = eINSTANCE.getRenameTable();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_TABLE__OWNING_SCHEMA_NAME = eINSTANCE.getRenameTable_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_TABLE__NAME = eINSTANCE.getRenameTable_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>New Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_TABLE__NEW_NAME = eINSTANCE.getRenameTable_NewName();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveTableImpl <em>Remove Table</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveTableImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveTable()
+		 * @generated
+		 */
+		EClass REMOVE_TABLE = eINSTANCE.getRemoveTable();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_TABLE__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveTable_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_TABLE__NAME = eINSTANCE.getRemoveTable_Name();
+
+		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddColumnImpl <em>Add Column</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1210,6 +1873,82 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ADD_COLUMN__DEFAULT_VALUE = eINSTANCE.getAddColumn_DefaultValue();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RenameColumnImpl <em>Rename Column</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RenameColumnImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRenameColumn()
+		 * @generated
+		 */
+		EClass RENAME_COLUMN = eINSTANCE.getRenameColumn();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_COLUMN__OWNING_SCHEMA_NAME = eINSTANCE.getRenameColumn_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_COLUMN__OWNING_TABLE_NAME = eINSTANCE.getRenameColumn_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_COLUMN__NAME = eINSTANCE.getRenameColumn_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>New Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute RENAME_COLUMN__NEW_NAME = eINSTANCE.getRenameColumn_NewName();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveColumnImpl <em>Remove Column</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveColumnImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveColumn()
+		 * @generated
+		 */
+		EClass REMOVE_COLUMN = eINSTANCE.getRemoveColumn();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveColumn_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN__OWNING_TABLE_NAME = eINSTANCE.getRemoveColumn_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN__NAME = eINSTANCE.getRemoveColumn_Name();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddUniqueIndexImpl <em>Add Unique Index</em>}' class.
@@ -1346,14 +2085,6 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME = eINSTANCE.getAddForeignKey_ConstrainedColumnName();
 
 		/**
-		 * The meta object literal for the '<em><b>Target Columns Names</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES = eINSTANCE.getAddForeignKey_TargetColumnsNames();
-
-		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddNotNullConstraintImpl <em>Add Not Null Constraint</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1394,6 +2125,108 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ADD_NOT_NULL_CONSTRAINT__NAME = eINSTANCE.getAddNotNullConstraint_Name();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveTableConstraintImpl <em>Remove Table Constraint</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveTableConstraintImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveTableConstraint()
+		 * @generated
+		 */
+		EClass REMOVE_TABLE_CONSTRAINT = eINSTANCE.getRemoveTableConstraint();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveTableConstraint_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME = eINSTANCE.getRemoveTableConstraint_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_TABLE_CONSTRAINT__NAME = eINSTANCE.getRemoveTableConstraint_Name();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl <em>Remove Column Constraint</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveColumnConstraintImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveColumnConstraint()
+		 * @generated
+		 */
+		EClass REMOVE_COLUMN_CONSTRAINT = eINSTANCE.getRemoveColumnConstraint();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveColumnConstraint_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME = eINSTANCE.getRemoveColumnConstraint_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME = eINSTANCE.getRemoveColumnConstraint_OwningColumnName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_COLUMN_CONSTRAINT__NAME = eINSTANCE.getRemoveColumnConstraint_Name();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveIndexImpl <em>Remove Index</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveIndexImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveIndex()
+		 * @generated
+		 */
+		EClass REMOVE_INDEX = eINSTANCE.getRemoveIndex();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_INDEX__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveIndex_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_INDEX__NAME = eINSTANCE.getRemoveIndex_Name();
 
 	}
 

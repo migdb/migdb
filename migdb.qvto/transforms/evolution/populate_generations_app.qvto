@@ -23,7 +23,7 @@
  * 
  */
 
-modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 
 transformation APP_To_Rdb(in inModel : APP, out outModel : APP);
 main() {
@@ -46,7 +46,6 @@ main() {
 			op.xmap apply(gen0);
 		} else {
 			log("	operation is invalid " + op.repr());
-			// break;
 		} endif;
 	};
 	
@@ -57,7 +56,7 @@ main() {
 abstract query APP::operations::ModelOperation::
 	isValid(gen : APP::ModelGeneration) : Boolean;
 
-// namapovï¿½nï¿½ danï¿½ operace
+// namapování dané operace
 abstract mapping APP::operations::ModelOperation::
 	apply(inout gen : APP::ModelGeneration);
 
@@ -70,7 +69,7 @@ query APP::operations::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
 	return not gen.isAbstractClassInGeneration(self.name) and b;
 }
 
-// pï¿½idï¿½nï¿½ standardnï¿½ tï¿½ï¿½dy do generace
+// pøidání standardní tøídy do generace
 mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {
 	gen.classes += object APP::Class {
 		name := self.name;
@@ -81,13 +80,13 @@ mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {
 		inheritanceType := self.inheritanceType;
 	};
 	
-	// vytvoï¿½enï¿½ id atributu
+	// vytvoøení id atributu
 	if (self.parent = null) then {
 		var c : APP::Class := gen.findAbstractClass(self.name).oclAsType(APP::Class);
 		c.properties += object APP::Property {
 			name := "id";
 			isID := true;
-			// [?] nutnï¿½ nastavit typ atributu
+			// [?] nutné nastavit typ atributu
 		};
 	} endif;
 }
@@ -96,7 +95,7 @@ query APP::operations::AddPrimitiveClass::isValid(gen : APP::ModelGeneration) : 
 	return not gen.isAbstractClassInGeneration(self.name);
 }
 
-// pï¿½idï¿½ primitivnï¿½ tï¿½ï¿½du do generace
+// pøidá primitivní tøídu do generace
 mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGeneration) {
 	gen.classes += object APP::PrimitiveClass {
 		name := self.name;
@@ -107,11 +106,11 @@ mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGenerati
 query APP::operations::AddProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and not gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).isPropertyInClass(self.name)
-	// ovï¿½ï¿½ï¿½, zda-li existuje tï¿½ï¿½da poï¿½adovanï¿½ho typu atributu
+	// ovìøí, zda-li existuje tøída požadovaného typu atributu
 		   and gen.isAbstractClassInGeneration(self.type)
-	// ovï¿½ï¿½ï¿½, zda-li jsou hranice nastaveny smysluplnï¿½
+	// ovìøí, zda-li jsou hranice nastaveny smysluplnì
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
-	// v hierarchii neexistuje atribut se stejnï¿½m nï¿½zvem
+	// v hierarchii neexistuje atribut se stejným názvem
 		   and not gen.isPropertyInHierarchy(self.owningClassName, self.name);
 }
 
@@ -138,25 +137,25 @@ mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
 
 query APP::operations::SetOpposite::isValid(gen : APP::ModelGeneration) : Boolean {
 	var pre : Boolean := 
-	// tï¿½ï¿½dy existujï¿½ v danï¿½ generaci
+	// tøídy existují v dané generaci
 		gen.isAbstractClassInGeneration(self.firstClassName)
 		and gen.isAbstractClassInGeneration(self.secondClassName)
-    // atributy existujï¿½ v danï¿½ch tï¿½ï¿½dï¿½ch
+    // atributy existují v daných tøídách
 		and gen.findAbstractClass(self.firstClassName).oclAsType(APP::Class).isPropertyInClass(self.firstPropertyName)
 		and gen.findAbstractClass(self.secondClassName).oclAsType(APP::Class).isPropertyInClass(self.secondPropertyName);
 	if (self.isOpposite = true) then {
 		return pre
-		// nejednï¿½ se o oboustrannï¿½ navigabilnï¿½ asociaci
+		// nejedná se o oboustrannì navigabilní asociaci
 			and gen.findAbstractClass(self.firstClassName).oclAsType(APP::Class).findProperty(self.firstPropertyName).oppositeProperty = null
 			and gen.findAbstractClass(self.secondClassName).oclAsType(APP::Class).findProperty(self.secondPropertyName).oppositeProperty = null;
 	} else {
 		return pre
-		// jednï¿½ se o oboustrannï¿½ navigabilnï¿½ asociaci
+		// jedná se o oboustrannì navigabilní asociaci
 			and gen.findAbstractClass(self.firstClassName).oclAsType(APP::Class).findProperty(self.firstPropertyName).oppositeProperty.name = self.secondPropertyName
 			and gen.findAbstractClass(self.secondClassName).oclAsType(APP::Class).findProperty(self.secondPropertyName).oppositeProperty.name = self.firstPropertyName;
 	} endif;
 	
-	// nedosaï¿½itelnï¿½ stav
+	// nedosažitelný stav
 	return null;
 }
 
@@ -221,17 +220,17 @@ mapping APP::operations::SetType::apply(inout gen : APP::ModelGeneration) {
 query APP::operations::SetBoundries::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).isPropertyInClass(self.name)
-		   // ovï¿½ï¿½ï¿½, zda-li jsou hranice nastaveny smysluplnï¿½
+		   // ovìøí, zda-li jsou hranice nastaveny smysluplnì
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
 }
 
-// nastavï¿½ hranice atributu
+// nastaví hranice atributu
 mapping APP::operations::SetBoundries::apply(inout gen : APP::ModelGeneration) {
 	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
 	var p : APP::Property := c.findProperty(self.name);
-	// nastavï¿½ dolnï¿½ hranici atributu
+	// nastaví dolní hranici atributu
 	p.lowerBound := self.lowerBound;
-	// nastavï¿½ hornï¿½ hranici atributu
+	// nastaví horní hranici atributu
 	p.upperBound := self.upperBound;
 }
 
@@ -261,15 +260,15 @@ mapping APP::operations::SetUnique::apply(inout gen : APP::ModelGeneration) {
 /* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
 query APP::operations::RenameClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	// tï¿½ï¿½da s nï¿½zvem @name existuje v generaci
+	// tøída s názvem @name existuje v generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// tï¿½ï¿½da s nï¿½zvem @newName neexistuje v generaci
+	// tøída s názvem @newName neexistuje v generaci
 		   and not gen.isAbstractClassInGeneration(self.newName);
 }
 
 mapping APP::operations::RenameClass::apply(inout gen : APP::ModelGeneration) {
 	var c : APP::AbstractClass := gen.findAbstractClass(self.name);
-	// zmï¿½na hodnoty atributu name
+	// zmìna hodnoty atributu name
 	c.name := self.newName;
 }
 
@@ -288,50 +287,50 @@ mapping APP::operations::RenameProperty::apply(inout gen : APP::ModelGeneration)
 /* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
 
 query APP::operations::RemoveClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	// tï¿½ï¿½da existuje v danï¿½ generaci
+	// tøída existuje v dané generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// tï¿½ï¿½dï¿½ neobsahuje ï¿½ï¿½dnï¿½ atributy
+	// tøídá neobsahuje žádné atributy
 	       and (gen.findAbstractClass(self.name).oclAsType(APP::Class).properties->isEmpty()
-	// nebo obsahuje prï¿½vï¿½ jeden s vlastnostï¿½ 'id'
+	// nebo obsahuje právì jeden s vlastností 'id'
 	       		or gen.findAbstractClass(self.name).oclAsType(APP::Class).properties->forAll(isID = true))
-	// na tï¿½ï¿½du se neodkazuje ï¿½ï¿½dnï¿½ jinï¿½ tï¿½ï¿½da
+	// na tøídu se neodkazuje žádná jiná tøída
 		   and not gen.classes->oclAsType(APP::Class).properties->exists(type = self)
-	// tï¿½ï¿½da nenï¿½ v hierarchii
+	// tøída není v hierarchii
 		   and not gen.classes->oclAsType(APP::Class)->exists(parent.name = self.name);
 }
 
-// odstranï¿½ tï¿½ï¿½du z danï¿½ generace
+// odstraní tøídu z dané generace
 mapping APP::operations::RemoveClass::apply(inout gen : APP::ModelGeneration) {
-	// odstranï¿½nï¿½ tï¿½ï¿½dy
+	// odstranìní tøídy
 	gen.classes := gen.classes->excluding(gen.findAbstractClass(self.name));
 }
 
 query APP::operations::RemoveProperty::isValid(gen : APP::ModelGeneration) : Boolean {
-    // atribut existuje v danï¿½ tï¿½ï¿½dï¿½
+    // atribut existuje v dané tøídì
 	return gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).isPropertyInClass(self.name)
-	// atribut nemï¿½ vlastnost 'id'
+	// atribut nemá vlastnost 'id'
 		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).findProperty(self.name).isID = false
-	// neexistuje asociace z jinï¿½ tï¿½ï¿½dy
+	// neexistuje asociace z jiné tøídy
 		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).findProperty(self.name).oppositeProperty = null;
 }
 
-// odstranï¿½ atribut z danï¿½ tï¿½ï¿½dy
+// odstraní atribut z dané tøídy
 mapping APP::operations::RemoveProperty::apply(inout gen : APP::ModelGeneration) {
 	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
-	// odstranï¿½nï¿½ atributu
+	// odstranìní atributu
 	c.properties := c.properties->excluding(c.findProperty(self.name));
 }
 
 query APP::operations::RemovePrimitiveClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	// tï¿½ï¿½da existuje v danï¿½ generaci
+	// tøída existuje v dané generaci
 	return gen.isAbstractClassInGeneration(self.name)
-	// na tï¿½ï¿½du se neodkazuje ï¿½ï¿½dnï¿½ jinï¿½ tï¿½ï¿½da
+	// na tøídu se neodkazuje žádná jiná tøída
 		   and not gen.classes->oclAsType(APP::Class).properties->exists(type = self);
 }
 
-// odstranï¿½ primitivnï¿½ tï¿½ï¿½du z danï¿½ generace
+// odstraní primitivní tøídu z dané generace
 mapping APP::operations::RemovePrimitiveClass::apply(inout gen : APP::ModelGeneration) {
-	// odstranï¿½nï¿½ tï¿½ï¿½dy
+	// odstranìní tøídy
 	gen.classes := gen.classes->excluding(gen.findAbstractClass(self.name));
 }
 
@@ -407,41 +406,41 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
-// ovï¿½ï¿½ï¿½, zda-li v generaci existuje jakï¿½koliv tï¿½ï¿½da s danï¿½m jmï¿½nem
+// ovìøí, zda-li v generaci existuje jakákoliv tøída s daným jménem
 query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
 	return self.classes->exists(name = cName);
 }
 
-// ovï¿½ï¿½ï¿½, zda-li v generaci existuje standardnï¿½ tï¿½ï¿½da s danï¿½m jmï¿½nem
+// ovìøí, zda-li v generaci existuje standardní tøída s daným jménem
 query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
 	return self.classes.oclAsType(APP::Class)->exists(name = cName);
 }
 
-// vrï¿½tï¿½ standardnï¿½ tï¿½ï¿½du danï¿½ho jmï¿½na
+// vrátí standardní tøídu daného jména
 query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
 	 return self.classes->selectOne(name = cName);
 }
 
 
-// ovï¿½ï¿½ï¿½, zda-li ve tï¿½ï¿½dï¿½ existuje atribut danï¿½ho jmï¿½na
+// ovìøí, zda-li ve tøídì existuje atribut daného jména
 query APP::Class::isPropertyInClass(pName : String) : Boolean {
 	return self.properties->exists(name = pName);
 }
 
-// vrï¿½tï¿½ atribut danï¿½ho jmï¿½na
+// vrátí atribut daného jména
 query APP::Class::findProperty(pName : String) : APP::Property {
 	return self.properties->selectOne(name = pName);
 }
 
 
-// ovï¿½ï¿½ï¿½, zda-li je tï¿½ï¿½da potomkem tï¿½ï¿½dy cName
+// ovìøí, zda-li je tøída potomkem tøídy cName
 query APP::Class::isDescendantOf(cName : String) : Boolean {
 	if (self.parent <> null and self.parent.name = cName) then return true
 	else return self.parent.isDescendantOf(cName) endif;
 	return false;
 }
 
-// ovï¿½ï¿½ï¿½, zda-li je tï¿½ï¿½da sClass rodiï¿½em tï¿½ï¿½dy fClass
+// ovìøí, zda-li je tøída sClass rodièem tøídy fClass
 query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
 	var ourClass : APP::Class := self.findAbstractClass(fClass).oclAsType(APP::Class);
 	if(ourClass <> null) then {
@@ -455,11 +454,11 @@ query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Bo
 	return false;
 }
 
-// ovï¿½ï¿½ï¿½, zda-li v hierarchii existuje atribut se stejnï¿½m nï¿½zvem
+// ovìøí, zda-li v hierarchii existuje atribut se stejným názvem
 query APP::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
-	// pro kaï¿½dï¿½ atribut se stejnï¿½m nï¿½zvem...
+	// pro každý atribut se stejným názvem...
 	self.classes->oclAsType(APP::Class).properties->forEach(p | p.name = pName) {
-		// ...ovï¿½ï¿½ï¿½me, zda-li se tï¿½ï¿½dy, kterï¿½m tyto atributy nï¿½leï¿½ï¿½, nachï¿½zï¿½ ve stejnï¿½ hierarchii
+		// ...ovìøíme, zda-li se tøídy, kterým tyto atributy náleží, nachází ve stejné hierarchii
 		if (self.isInHierarchy(cName, p.owningClass.name) = true or self.isInHierarchy(p.owningClass.name, cName) = true) then {
 			return true;
 		} endif;

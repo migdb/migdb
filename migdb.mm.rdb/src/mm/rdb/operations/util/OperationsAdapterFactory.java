@@ -92,8 +92,24 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createAddTableAdapter();
 			}
 			@Override
+			public Adapter caseRenameTable(RenameTable object) {
+				return createRenameTableAdapter();
+			}
+			@Override
+			public Adapter caseRemoveTable(RemoveTable object) {
+				return createRemoveTableAdapter();
+			}
+			@Override
 			public Adapter caseAddColumn(AddColumn object) {
 				return createAddColumnAdapter();
+			}
+			@Override
+			public Adapter caseRenameColumn(RenameColumn object) {
+				return createRenameColumnAdapter();
+			}
+			@Override
+			public Adapter caseRemoveColumn(RemoveColumn object) {
+				return createRemoveColumnAdapter();
 			}
 			@Override
 			public Adapter caseAddUniqueIndex(AddUniqueIndex object) {
@@ -110,6 +126,18 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseAddNotNullConstraint(AddNotNullConstraint object) {
 				return createAddNotNullConstraintAdapter();
+			}
+			@Override
+			public Adapter caseRemoveTableConstraint(RemoveTableConstraint object) {
+				return createRemoveTableConstraintAdapter();
+			}
+			@Override
+			public Adapter caseRemoveColumnConstraint(RemoveColumnConstraint object) {
+				return createRemoveColumnConstraintAdapter();
+			}
+			@Override
+			public Adapter caseRemoveIndex(RemoveIndex object) {
+				return createRemoveIndexAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -202,6 +230,34 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RenameTable <em>Rename Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RenameTable
+	 * @generated
+	 */
+	public Adapter createRenameTableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveTable <em>Remove Table</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveTable
+	 * @generated
+	 */
+	public Adapter createRemoveTableAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.AddColumn <em>Add Column</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -212,6 +268,34 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddColumnAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RenameColumn <em>Rename Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RenameColumn
+	 * @generated
+	 */
+	public Adapter createRenameColumnAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveColumn <em>Remove Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveColumn
+	 * @generated
+	 */
+	public Adapter createRemoveColumnAdapter() {
 		return null;
 	}
 
@@ -268,6 +352,48 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddNotNullConstraintAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveTableConstraint <em>Remove Table Constraint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveTableConstraint
+	 * @generated
+	 */
+	public Adapter createRemoveTableConstraintAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveColumnConstraint <em>Remove Column Constraint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveColumnConstraint
+	 * @generated
+	 */
+	public Adapter createRemoveColumnConstraintAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveIndex <em>Remove Index</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveIndex
+	 * @generated
+	 */
+	public Adapter createRemoveIndexAdapter() {
 		return null;
 	}
 

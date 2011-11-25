@@ -8,6 +8,8 @@ package mm.rdb.dml;
 
 import mm.rdb.Column;
 
+import org.eclipse.emf.ecore.EObject;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Column Reference</b></em>'.
@@ -24,7 +26,7 @@ import mm.rdb.Column;
  * @model
  * @generated
  */
-public interface ColumnReference extends Column {
+public interface ColumnReference extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Reference</b></em>' reference.
 	 * <!-- begin-user-doc -->

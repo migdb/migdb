@@ -6,8 +6,6 @@
  */
 package mm.rdb.impl;
 
-import java.util.Collection;
-
 import mm.rdb.Column;
 import mm.rdb.ForeignKey;
 import mm.rdb.RdbPackage;
@@ -15,14 +13,10 @@ import mm.rdb.Table;
 
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,7 +27,6 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <ul>
  *   <li>{@link mm.rdb.impl.ForeignKeyImpl#getTargetTable <em>Target Table</em>}</li>
  *   <li>{@link mm.rdb.impl.ForeignKeyImpl#getConstrainedColumn <em>Constrained Column</em>}</li>
- *   <li>{@link mm.rdb.impl.ForeignKeyImpl#getTargetColumns <em>Target Columns</em>}</li>
  * </ul>
  * </p>
  *
@@ -59,16 +52,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 	 * @ordered
 	 */
 	protected Column constrainedColumn;
-
-	/**
-	 * The cached value of the '{@link #getTargetColumns() <em>Target Columns</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTargetColumns()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Column> targetColumns;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -170,18 +153,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Column> getTargetColumns() {
-		if (targetColumns == null) {
-			targetColumns = new EObjectResolvingEList<Column>(Column.class, this, RdbPackage.FOREIGN_KEY__TARGET_COLUMNS);
-		}
-		return targetColumns;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -191,8 +162,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 			case RdbPackage.FOREIGN_KEY__CONSTRAINED_COLUMN:
 				if (resolve) return getConstrainedColumn();
 				return basicGetConstrainedColumn();
-			case RdbPackage.FOREIGN_KEY__TARGET_COLUMNS:
-				return getTargetColumns();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -202,7 +171,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -211,10 +179,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 				return;
 			case RdbPackage.FOREIGN_KEY__CONSTRAINED_COLUMN:
 				setConstrainedColumn((Column)newValue);
-				return;
-			case RdbPackage.FOREIGN_KEY__TARGET_COLUMNS:
-				getTargetColumns().clear();
-				getTargetColumns().addAll((Collection<? extends Column>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -234,9 +198,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 			case RdbPackage.FOREIGN_KEY__CONSTRAINED_COLUMN:
 				setConstrainedColumn((Column)null);
 				return;
-			case RdbPackage.FOREIGN_KEY__TARGET_COLUMNS:
-				getTargetColumns().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -253,8 +214,6 @@ public class ForeignKeyImpl extends TableConstraintImpl implements ForeignKey {
 				return targetTable != null;
 			case RdbPackage.FOREIGN_KEY__CONSTRAINED_COLUMN:
 				return constrainedColumn != null;
-			case RdbPackage.FOREIGN_KEY__TARGET_COLUMNS:
-				return targetColumns != null && !targetColumns.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

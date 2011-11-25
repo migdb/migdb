@@ -32,30 +32,21 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Column extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Owning Table</b></em>' reference.
+	 * Returns the value of the '<em><b>Owning Table</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link mm.rdb.Table#getColumns <em>Columns</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owning Table</em>' reference isn't clear,
+	 * If the meaning of the '<em>Owning Table</em>' container reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owning Table</em>' reference.
-	 * @see #setOwningTable(Table)
+	 * @return the value of the '<em>Owning Table</em>' container reference.
 	 * @see mm.rdb.RdbPackage#getColumn_OwningTable()
-	 * @model required="true"
+	 * @see mm.rdb.Table#getColumns
+	 * @model opposite="columns" required="true" transient="false" changeable="false" derived="true"
 	 * @generated
 	 */
 	Table getOwningTable();
-
-	/**
-	 * Sets the value of the '{@link mm.rdb.Column#getOwningTable <em>Owning Table</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Owning Table</em>' reference.
-	 * @see #getOwningTable()
-	 * @generated
-	 */
-	void setOwningTable(Table value);
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.

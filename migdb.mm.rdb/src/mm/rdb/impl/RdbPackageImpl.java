@@ -298,8 +298,17 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getSchema_OwningModel() {
+		return (EReference)schemaEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getSchema_Name() {
-		return (EAttribute)schemaEClass.getEStructuralFeatures().get(0);
+		return (EAttribute)schemaEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -308,15 +317,6 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 	 * @generated
 	 */
 	public EReference getSchema_Tables() {
-		return (EReference)schemaEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getSchema_Sequences() {
 		return (EReference)schemaEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -325,8 +325,17 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchema_Indexes() {
+	public EReference getSchema_Sequences() {
 		return (EReference)schemaEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSchema_Indexes() {
+		return (EReference)schemaEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -604,15 +613,6 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getForeignKey_TargetColumns() {
-		return (EReference)foreignKeyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getColumnConstraint() {
 		return columnConstraintEClass;
 	}
@@ -682,6 +682,7 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		createEReference(modelGenerationEClass, MODEL_GENERATION__SCHEMAS);
 
 		schemaEClass = createEClass(SCHEMA);
+		createEReference(schemaEClass, SCHEMA__OWNING_MODEL);
 		createEAttribute(schemaEClass, SCHEMA__NAME);
 		createEReference(schemaEClass, SCHEMA__TABLES);
 		createEReference(schemaEClass, SCHEMA__SEQUENCES);
@@ -725,7 +726,6 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		foreignKeyEClass = createEClass(FOREIGN_KEY);
 		createEReference(foreignKeyEClass, FOREIGN_KEY__TARGET_TABLE);
 		createEReference(foreignKeyEClass, FOREIGN_KEY__CONSTRAINED_COLUMN);
-		createEReference(foreignKeyEClass, FOREIGN_KEY__TARGET_COLUMNS);
 
 		columnConstraintEClass = createEClass(COLUMN_CONSTRAINT);
 		createEReference(columnConstraintEClass, COLUMN_CONSTRAINT__OWNING_COLUMN);
@@ -787,9 +787,10 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		initEClass(modelGenerationEClass, ModelGeneration.class, "ModelGeneration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getModelGeneration_ModelRoot(), this.getModelRoot(), this.getModelRoot_ModelGenerations(), "modelRoot", null, 1, 1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getModelGeneration_IsMissing(), ecorePackage.getEBoolean(), "isMissing", null, 1, 1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelGeneration_Schemas(), this.getSchema(), null, "schemas", null, 0, -1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getModelGeneration_Schemas(), this.getSchema(), this.getSchema_OwningModel(), "schemas", null, 0, -1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(schemaEClass, Schema.class, "Schema", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getSchema_OwningModel(), this.getModelGeneration(), this.getModelGeneration_Schemas(), "owningModel", null, 1, 1, Schema.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSchema_Name(), ecorePackage.getEString(), "name", null, 1, 1, Schema.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSchema_Tables(), this.getTable(), this.getTable_OwningSchema(), "tables", null, 0, -1, Schema.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 		initEReference(getSchema_Sequences(), this.getSequence(), this.getSequence_OwningSchema(), "sequences", null, 0, -1, Schema.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
@@ -809,11 +810,11 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		initEReference(getTable_OwningSchema(), this.getSchema(), this.getSchema_Tables(), "owningSchema", null, 1, 1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getTable_Name(), ecorePackage.getEString(), "name", null, 1, 1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getTable_PrimaryKey(), this.getPrimaryKey(), null, "primaryKey", null, 0, 1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getTable_Columns(), this.getColumn(), null, "columns", null, 0, -1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getTable_Columns(), this.getColumn(), this.getColumn_OwningTable(), "columns", null, 0, -1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 		initEReference(getTable_Constraints(), this.getTableConstraint(), this.getTableConstraint_OwningTable(), "constraints", null, 0, -1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(columnEClass, Column.class, "Column", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getColumn_OwningTable(), this.getTable(), null, "owningTable", null, 1, 1, Column.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getColumn_OwningTable(), this.getTable(), this.getTable_Columns(), "owningTable", null, 1, 1, Column.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getColumn_Name(), ecorePackage.getEString(), "name", null, 1, 1, Column.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getColumn_Type(), this.getPrimitiveType(), "type", null, 1, 1, Column.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getColumn_DefaultValue(), ecorePackage.getEString(), "defaultValue", null, 0, 1, Column.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -832,8 +833,7 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 
 		initEClass(foreignKeyEClass, ForeignKey.class, "ForeignKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getForeignKey_TargetTable(), this.getTable(), null, "targetTable", null, 1, 1, ForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getForeignKey_ConstrainedColumn(), this.getColumn(), null, "constrainedColumn", null, 1, 1, ForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getForeignKey_TargetColumns(), this.getColumn(), null, "targetColumns", null, 1, -1, ForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getForeignKey_ConstrainedColumn(), this.getColumn(), null, "constrainedColumn", null, 0, 1, ForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(columnConstraintEClass, ColumnConstraint.class, "ColumnConstraint", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getColumnConstraint_OwningColumn(), this.getColumn(), this.getColumn_Constraints(), "owningColumn", null, 1, 1, ColumnConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
@@ -848,26 +848,6 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 
 		// Create resource
 		createResource(eNS_URI);
-
-		// Create annotations
-		// OCL
-		createOCLAnnotations();
-	}
-
-	/**
-	 * Initializes the annotations for <b>OCL</b>.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void createOCLAnnotations() {
-		String source = "OCL";		
-		addAnnotation
-		  (getIndex_OwningSchema(), 
-		   source, 
-		   new String[] {
-			 "drv", "self.columns->first()._owningTable"
-		   });
 	}
 
 } //RdbPackageImpl

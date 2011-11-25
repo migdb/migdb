@@ -62,6 +62,24 @@ public interface OperationsFactory extends EFactory {
 	AddTable createAddTable();
 
 	/**
+	 * Returns a new object of class '<em>Rename Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Rename Table</em>'.
+	 * @generated
+	 */
+	RenameTable createRenameTable();
+
+	/**
+	 * Returns a new object of class '<em>Remove Table</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Table</em>'.
+	 * @generated
+	 */
+	RemoveTable createRemoveTable();
+
+	/**
 	 * Returns a new object of class '<em>Add Column</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -69,6 +87,24 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	AddColumn createAddColumn();
+
+	/**
+	 * Returns a new object of class '<em>Rename Column</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Rename Column</em>'.
+	 * @generated
+	 */
+	RenameColumn createRenameColumn();
+
+	/**
+	 * Returns a new object of class '<em>Remove Column</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Column</em>'.
+	 * @generated
+	 */
+	RemoveColumn createRemoveColumn();
 
 	/**
 	 * Returns a new object of class '<em>Add Unique Index</em>'.
@@ -105,6 +141,33 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	AddNotNullConstraint createAddNotNullConstraint();
+
+	/**
+	 * Returns a new object of class '<em>Remove Table Constraint</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Table Constraint</em>'.
+	 * @generated
+	 */
+	RemoveTableConstraint createRemoveTableConstraint();
+
+	/**
+	 * Returns a new object of class '<em>Remove Column Constraint</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Column Constraint</em>'.
+	 * @generated
+	 */
+	RemoveColumnConstraint createRemoveColumnConstraint();
+
+	/**
+	 * Returns a new object of class '<em>Remove Index</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Index</em>'.
+	 * @generated
+	 */
+	RemoveIndex createRemoveIndex();
 
 	/**
 	 * Returns the package supported by this factory.

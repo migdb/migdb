@@ -6,8 +6,6 @@
  */
 package mm.rdb.dml.util;
 
-import mm.rdb.Column;
-
 import mm.rdb.dml.*;
 
 import org.eclipse.emf.common.notify.Adapter;
@@ -82,10 +80,6 @@ public class DmlAdapterFactory extends AdapterFactoryImpl {
 				return createColumnReferenceAdapter();
 			}
 			@Override
-			public Adapter caseColumn(Column object) {
-				return createColumnAdapter();
-			}
-			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -130,20 +124,6 @@ public class DmlAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createColumnReferenceAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.rdb.Column <em>Column</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.rdb.Column
-	 * @generated
-	 */
-	public Adapter createColumnAdapter() {
 		return null;
 	}
 

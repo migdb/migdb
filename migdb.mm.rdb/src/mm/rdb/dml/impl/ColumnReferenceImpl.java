@@ -11,14 +11,13 @@ import mm.rdb.Column;
 import mm.rdb.dml.ColumnReference;
 import mm.rdb.dml.DmlPackage;
 
-import mm.rdb.impl.ColumnImpl;
-
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,7 +32,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class ColumnReferenceImpl extends ColumnImpl implements ColumnReference {
+public class ColumnReferenceImpl extends EObjectImpl implements ColumnReference {
 	/**
 	 * The cached value of the '{@link #getReference() <em>Reference</em>}' reference.
 	 * <!-- begin-user-doc -->

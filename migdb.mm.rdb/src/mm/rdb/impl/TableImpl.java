@@ -26,7 +26,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -193,7 +192,7 @@ public class TableImpl extends EObjectImpl implements Table {
 	 */
 	public EList<Column> getColumns() {
 		if (columns == null) {
-			columns = new EObjectContainmentEList<Column>(Column.class, this, RdbPackage.TABLE__COLUMNS);
+			columns = new EObjectContainmentWithInverseEList<Column>(Column.class, this, RdbPackage.TABLE__COLUMNS, RdbPackage.COLUMN__OWNING_TABLE);
 		}
 		return columns;
 	}
@@ -223,6 +222,8 @@ public class TableImpl extends EObjectImpl implements Table {
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return eBasicSetContainer(otherEnd, RdbPackage.TABLE__OWNING_SCHEMA, msgs);
+			case RdbPackage.TABLE__COLUMNS:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getColumns()).basicAdd(otherEnd, msgs);
 			case RdbPackage.TABLE__CONSTRAINTS:
 				return ((InternalEList<InternalEObject>)(InternalEList<?>)getConstraints()).basicAdd(otherEnd, msgs);
 		}

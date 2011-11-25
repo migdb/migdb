@@ -86,6 +86,7 @@ public interface ModelGeneration extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Schemas</b></em>' containment reference list.
 	 * The list contents are of type {@link mm.rdb.Schema}.
+	 * It is bidirectional and its opposite is '{@link mm.rdb.Schema#getOwningModel <em>Owning Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Schemas</em>' containment reference list isn't clear,
@@ -94,7 +95,8 @@ public interface ModelGeneration extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Schemas</em>' containment reference list.
 	 * @see mm.rdb.RdbPackage#getModelGeneration_Schemas()
-	 * @model containment="true" ordered="false"
+	 * @see mm.rdb.Schema#getOwningModel
+	 * @model opposite="owningModel" containment="true" ordered="false"
 	 * @generated
 	 */
 	EList<Schema> getSchemas();

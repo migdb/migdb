@@ -6,7 +6,6 @@
  */
 package mm.rdb;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -18,7 +17,6 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link mm.rdb.ForeignKey#getTargetTable <em>Target Table</em>}</li>
  *   <li>{@link mm.rdb.ForeignKey#getConstrainedColumn <em>Constrained Column</em>}</li>
- *   <li>{@link mm.rdb.ForeignKey#getTargetColumns <em>Target Columns</em>}</li>
  * </ul>
  * </p>
  *
@@ -64,7 +62,7 @@ public interface ForeignKey extends TableConstraint {
 	 * @return the value of the '<em>Constrained Column</em>' reference.
 	 * @see #setConstrainedColumn(Column)
 	 * @see mm.rdb.RdbPackage#getForeignKey_ConstrainedColumn()
-	 * @model required="true"
+	 * @model
 	 * @generated
 	 */
 	Column getConstrainedColumn();
@@ -78,21 +76,5 @@ public interface ForeignKey extends TableConstraint {
 	 * @generated
 	 */
 	void setConstrainedColumn(Column value);
-
-	/**
-	 * Returns the value of the '<em><b>Target Columns</b></em>' reference list.
-	 * The list contents are of type {@link mm.rdb.Column}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Target Columns</em>' reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Target Columns</em>' reference list.
-	 * @see mm.rdb.RdbPackage#getForeignKey_TargetColumns()
-	 * @model required="true" ordered="false"
-	 * @generated
-	 */
-	EList<Column> getTargetColumns();
 
 } // ForeignKey

@@ -7,15 +7,6 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: mm.rdb,
- mm.rdb.dml,
- mm.rdb.dml.impl,
- mm.rdb.dml.util,
- mm.rdb.impl,
- mm.rdb.operations,
- mm.rdb.operations.impl,
- mm.rdb.operations.util,
- mm.rdb.util
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy

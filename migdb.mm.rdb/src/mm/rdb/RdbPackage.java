@@ -154,13 +154,22 @@ public interface RdbPackage extends EPackage {
 	int SCHEMA = 2;
 
 	/**
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCHEMA__OWNING_MODEL = 0;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEMA__NAME = 0;
+	int SCHEMA__NAME = 1;
 
 	/**
 	 * The feature id for the '<em><b>Tables</b></em>' containment reference list.
@@ -169,7 +178,7 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEMA__TABLES = 1;
+	int SCHEMA__TABLES = 2;
 
 	/**
 	 * The feature id for the '<em><b>Sequences</b></em>' containment reference list.
@@ -178,7 +187,7 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEMA__SEQUENCES = 2;
+	int SCHEMA__SEQUENCES = 3;
 
 	/**
 	 * The feature id for the '<em><b>Indexes</b></em>' containment reference list.
@@ -187,7 +196,7 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEMA__INDEXES = 3;
+	int SCHEMA__INDEXES = 4;
 
 	/**
 	 * The number of structural features of the '<em>Schema</em>' class.
@@ -196,7 +205,7 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEMA_FEATURE_COUNT = 4;
+	int SCHEMA_FEATURE_COUNT = 5;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.impl.SequenceImpl <em>Sequence</em>}' class.
@@ -365,7 +374,7 @@ public interface RdbPackage extends EPackage {
 	int COLUMN = 6;
 
 	/**
-	 * The feature id for the '<em><b>Owning Table</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Table</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -622,22 +631,13 @@ public interface RdbPackage extends EPackage {
 	int FOREIGN_KEY__CONSTRAINED_COLUMN = TABLE_CONSTRAINT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Target Columns</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int FOREIGN_KEY__TARGET_COLUMNS = TABLE_CONSTRAINT_FEATURE_COUNT + 2;
-
-	/**
 	 * The number of structural features of the '<em>Foreign Key</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FOREIGN_KEY_FEATURE_COUNT = TABLE_CONSTRAINT_FEATURE_COUNT + 3;
+	int FOREIGN_KEY_FEATURE_COUNT = TABLE_CONSTRAINT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.impl.ColumnConstraintImpl <em>Column Constraint</em>}' class.
@@ -808,6 +808,17 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getSchema();
+
+	/**
+	 * Returns the meta object for the container reference '{@link mm.rdb.Schema#getOwningModel <em>Owning Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Owning Model</em>'.
+	 * @see mm.rdb.Schema#getOwningModel()
+	 * @see #getSchema()
+	 * @generated
+	 */
+	EReference getSchema_OwningModel();
 
 	/**
 	 * Returns the meta object for the attribute '{@link mm.rdb.Schema#getName <em>Name</em>}'.
@@ -1015,10 +1026,10 @@ public interface RdbPackage extends EPackage {
 	EClass getColumn();
 
 	/**
-	 * Returns the meta object for the reference '{@link mm.rdb.Column#getOwningTable <em>Owning Table</em>}'.
+	 * Returns the meta object for the container reference '{@link mm.rdb.Column#getOwningTable <em>Owning Table</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Owning Table</em>'.
+	 * @return the meta object for the container reference '<em>Owning Table</em>'.
 	 * @see mm.rdb.Column#getOwningTable()
 	 * @see #getColumn()
 	 * @generated
@@ -1175,17 +1186,6 @@ public interface RdbPackage extends EPackage {
 	EReference getForeignKey_ConstrainedColumn();
 
 	/**
-	 * Returns the meta object for the reference list '{@link mm.rdb.ForeignKey#getTargetColumns <em>Target Columns</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Target Columns</em>'.
-	 * @see mm.rdb.ForeignKey#getTargetColumns()
-	 * @see #getForeignKey()
-	 * @generated
-	 */
-	EReference getForeignKey_TargetColumns();
-
-	/**
 	 * Returns the meta object for class '{@link mm.rdb.ColumnConstraint <em>Column Constraint</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1317,6 +1317,14 @@ public interface RdbPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SCHEMA = eINSTANCE.getSchema();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Model</b></em>' container reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SCHEMA__OWNING_MODEL = eINSTANCE.getSchema_OwningModel();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -1479,7 +1487,7 @@ public interface RdbPackage extends EPackage {
 		EClass COLUMN = eINSTANCE.getColumn();
 
 		/**
-		 * The meta object literal for the '<em><b>Owning Table</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Owning Table</b></em>' container reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -1607,14 +1615,6 @@ public interface RdbPackage extends EPackage {
 		 * @generated
 		 */
 		EReference FOREIGN_KEY__CONSTRAINED_COLUMN = eINSTANCE.getForeignKey_ConstrainedColumn();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Columns</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference FOREIGN_KEY__TARGET_COLUMNS = eINSTANCE.getForeignKey_TargetColumns();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.impl.ColumnConstraintImpl <em>Column Constraint</em>}' class.

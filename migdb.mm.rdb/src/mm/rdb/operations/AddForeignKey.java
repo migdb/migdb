@@ -6,7 +6,6 @@
  */
 package mm.rdb.operations;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,7 +20,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link mm.rdb.operations.AddForeignKey#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddForeignKey#getTargetTableName <em>Target Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddForeignKey#getConstrainedColumnName <em>Constrained Column Name</em>}</li>
- *   <li>{@link mm.rdb.operations.AddForeignKey#getTargetColumnsNames <em>Target Columns Names</em>}</li>
  * </ul>
  * </p>
  *
@@ -159,21 +157,5 @@ public interface AddForeignKey extends ModelOperation {
 	 * @generated
 	 */
 	void setConstrainedColumnName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Target Columns Names</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Target Columns Names</em>' attribute list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Target Columns Names</em>' attribute list.
-	 * @see mm.rdb.operations.OperationsPackage#getAddForeignKey_TargetColumnsNames()
-	 * @model required="true"
-	 * @generated
-	 */
-	EList<String> getTargetColumnsNames();
 
 } // AddForeignKey

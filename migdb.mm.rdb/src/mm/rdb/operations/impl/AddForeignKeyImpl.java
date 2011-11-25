@@ -6,20 +6,14 @@
  */
 package mm.rdb.operations.impl;
 
-import java.util.Collection;
-
 import mm.rdb.operations.AddForeignKey;
 import mm.rdb.operations.OperationsPackage;
 
 import org.eclipse.emf.common.notify.Notification;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -33,7 +27,6 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  *   <li>{@link mm.rdb.operations.impl.AddForeignKeyImpl#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddForeignKeyImpl#getTargetTableName <em>Target Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddForeignKeyImpl#getConstrainedColumnName <em>Constrained Column Name</em>}</li>
- *   <li>{@link mm.rdb.operations.impl.AddForeignKeyImpl#getTargetColumnsNames <em>Target Columns Names</em>}</li>
  * </ul>
  * </p>
  *
@@ -139,16 +132,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 	 * @ordered
 	 */
 	protected String constrainedColumnName = CONSTRAINED_COLUMN_NAME_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getTargetColumnsNames() <em>Target Columns Names</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTargetColumnsNames()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> targetColumnsNames;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -279,18 +262,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getTargetColumnsNames() {
-		if (targetColumnsNames == null) {
-			targetColumnsNames = new EDataTypeUniqueEList<String>(String.class, this, OperationsPackage.ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES);
-		}
-		return targetColumnsNames;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -304,8 +275,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 				return getTargetTableName();
 			case OperationsPackage.ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME:
 				return getConstrainedColumnName();
-			case OperationsPackage.ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES:
-				return getTargetColumnsNames();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -315,7 +284,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -333,10 +301,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 				return;
 			case OperationsPackage.ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME:
 				setConstrainedColumnName((String)newValue);
-				return;
-			case OperationsPackage.ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES:
-				getTargetColumnsNames().clear();
-				getTargetColumnsNames().addAll((Collection<? extends String>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -365,9 +329,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 			case OperationsPackage.ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME:
 				setConstrainedColumnName(CONSTRAINED_COLUMN_NAME_EDEFAULT);
 				return;
-			case OperationsPackage.ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES:
-				getTargetColumnsNames().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -390,8 +351,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 				return TARGET_TABLE_NAME_EDEFAULT == null ? targetTableName != null : !TARGET_TABLE_NAME_EDEFAULT.equals(targetTableName);
 			case OperationsPackage.ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME:
 				return CONSTRAINED_COLUMN_NAME_EDEFAULT == null ? constrainedColumnName != null : !CONSTRAINED_COLUMN_NAME_EDEFAULT.equals(constrainedColumnName);
-			case OperationsPackage.ADD_FOREIGN_KEY__TARGET_COLUMNS_NAMES:
-				return targetColumnsNames != null && !targetColumnsNames.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -416,8 +375,6 @@ public class AddForeignKeyImpl extends ModelOperationImpl implements AddForeignK
 		result.append(targetTableName);
 		result.append(", constrainedColumnName: ");
 		result.append(constrainedColumnName);
-		result.append(", targetColumnsNames: ");
-		result.append(targetColumnsNames);
 		result.append(')');
 		return result.toString();
 	}

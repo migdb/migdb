@@ -217,7 +217,6 @@ public class DmlPackageImpl extends EPackageImpl implements DmlPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		columnReferenceEClass.getESuperTypes().add(theRdbPackage.getColumn());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(queryEClass, Query.class, "Query", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

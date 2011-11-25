@@ -42,7 +42,6 @@ public interface Index extends EObject {
 	 * @see mm.rdb.RdbPackage#getIndex_OwningSchema()
 	 * @see mm.rdb.Schema#getIndexes
 	 * @model opposite="indexes" required="true" transient="false" changeable="false" derived="true"
-	 *        annotation="OCL drv='self.columns->first()._owningTable'"
 	 * @generated
 	 */
 	Schema getOwningSchema();
