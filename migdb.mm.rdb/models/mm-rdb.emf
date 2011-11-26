@@ -1,0 +1,209 @@
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+package mm;
+
+@namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="rdb")
+package rdb {
+  class ModelRoot {
+    val ModelGeneration[+]#modelRoot modelGenerations;
+    val operations.ModelOperation[*] operations;
+  }
+
+  class ModelGeneration {
+    ref ModelRoot[1]#modelGenerations modelRoot;
+    attr boolean[1] isMissing;
+    !ordered val Schema[*]#owningModel schemas;
+  }
+
+  class Schema {
+    derived ref ModelGeneration[1]#schemas owningModel;
+    attr String[1] name;
+    !ordered val Table[*]#owningSchema tables;
+    !ordered val Sequence[*]#owningSchema sequences;
+    !ordered val Index[*]#owningSchema indexes;
+  }
+
+  class Sequence {
+    readonly derived ref Schema[1]#sequences owningSchema;
+    attr String[1] name;
+    attr int cacheSize;
+  }
+
+  class Index {
+    readonly derived ref Schema[1]#indexes owningSchema;
+    attr String[1] name;
+    !ordered ref Column[+] columns;
+  }
+
+  class Table {
+    readonly derived ref Schema[1]#tables owningSchema;
+    attr String[1] name;
+    ref PrimaryKey primaryKey;
+    !ordered val Column[*]#owningTable columns;
+    !ordered val TableConstraint[*]#owningTable constraints;
+  }
+
+  class Column {
+    readonly derived ref Table[1]#columns owningTable;
+    attr String[1] name;
+    attr PrimitiveType[1] type;
+    attr String defaultValue;
+    !ordered val ColumnConstraint[*]#owningColumn constraints;
+  }
+
+  abstract class Constraint {
+    attr String[1] name;
+  }
+
+  abstract class TableConstraint extends Constraint {
+    readonly derived ref Table[1]#constraints owningTable;
+  }
+
+  class UniqueIndex extends TableConstraint {
+    ref Index[1] underlyingIndex;
+  }
+
+  class PrimaryKey extends UniqueIndex {
+  }
+
+  class ForeignKey extends TableConstraint {
+    ref Table[1] targetTable;
+    ref Column constrainedColumn;
+  }
+
+  abstract class ColumnConstraint extends Constraint {
+    readonly derived ref Column[1]#constraints owningColumn;
+  }
+
+  class NotNullConstraint extends ColumnConstraint {
+  }
+
+  enum PrimitiveType {
+    boolean = 0;
+    char = 1;
+    int = 2;
+  }
+
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-ops", prefix="rdb-ops")
+  package operations {
+    abstract class ModelOperation {
+    }
+
+    class AddSchema extends ModelOperation {
+      attr String[1] name;
+    }
+
+    class AddSequence extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+      attr int cacheSize;
+    }
+
+    class AddIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[+] columnsNames;
+    }
+
+    class AddTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class RenameTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class RemoveTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class AddColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr PrimitiveType[1] type;
+      attr String defaultValue;
+    }
+
+    class RenameColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class RemoveColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+    }
+
+    class AddUniqueIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] underlyingIndexName;
+    }
+
+    class AddPrimaryKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] underlyingIndexName;
+    }
+
+    class AddForeignKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] targetTableName;
+      attr String[1] constrainedColumnName;
+    }
+
+    class AddNotNullConstraint extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+      attr String[1] name;
+    }
+
+    class RemoveTableConstraint extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+    }
+
+    class RemoveColumnConstraint extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+      attr String[1] name;
+    }
+
+    class RemoveIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+  }
+
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-dml", prefix="rdb-dml")
+  package dml {
+    class Query {
+
+      @DVU(subsets="self.columns")
+      val ColumnReference[+] columnReferences;
+    }
+
+    class ColumnReference {
+      ref Column[1] reference;
+    }
+
+  }
+
+}
+
