@@ -22,8 +22,8 @@
  * THE SOFTWARE.
  * 
  */
-import validators.ValidatorAPP;
-import validators.ValidatorPostgresql;
+import validators.validator_app;
+import validators.validator_postgresql;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
@@ -211,7 +211,7 @@ when { self.hasSingleTableInheritanceType() = true and self.isSerializable() and
 			result.columns+=object rdb::Column{
 				name := "discriminator";
 				type := rdb::PrimitiveType::char;
-				_owningTable := result;
+				//_owningTable := result;
 			}
 	}endif;
 	
@@ -395,7 +395,7 @@ mapping app::Property::toAssociationColumn() : rdb::Column{
 			result := object rdb::Column{
 				name := secondTable.name + "_association";
 				type := secondTable.getPKColumn().type;
-				_owningTable := firstTable;
+				//_owningTable := firstTable;
 			};
 			
 			var fk : rdb::ForeignKey := object rdb::ForeignKey{

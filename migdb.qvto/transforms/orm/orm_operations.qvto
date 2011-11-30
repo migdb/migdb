@@ -26,7 +26,7 @@
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
 
-transformation app_to_rdb(in inApp : APP, out inRdb : RDB);
+transformation app_to_rdb(in inApp : APP, inout inRdb : RDB);
 
 main() {
 	assert(inApp.rootObjects()->size() = 1);
@@ -44,7 +44,7 @@ main() {
 	
 }
 
-// mapování dané operace
+// mapovï¿½nï¿½ danï¿½ operace
 abstract mapping APP::operations::ModelOperation::
 	toRdb(inout rdbRoot : RDB::ModelRoot);
 
