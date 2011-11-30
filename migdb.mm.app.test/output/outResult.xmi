@@ -1,26 +1,18 @@
 <?xml version="1.0" encoding="ASCII"?>
-<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
-  <modelGenerations>
-    <classes xsi:type="app:Class" name="First">
-      <properties name="id" isID="true"/>
-    </classes>
-    <classes xsi:type="app:Class" name="FIRST">
-      <properties name="id" isID="true"/>
-    </classes>
-    <classes xsi:type="app:Class" name="ErrorParent" parent="//@modelGenerations.0/@classes.0"/>
-    <classes xsi:type="app:Class" name="AbstractClass" isAbstract="true">
-      <properties name="id" isID="true"/>
-    </classes>
-    <classes xsi:type="app:Class" name="EmbeddedClass" isEmbedded="true">
-      <properties name="id" isID="true"/>
-    </classes>
-  </modelGenerations>
-  <operations xsi:type="app-ops:AddClass" name="First"/>
-  <operations xsi:type="app-ops:AddClass" name="First"/>
-  <operations xsi:type="app-ops:AddClass" name="FIRST"/>
-  <operations xsi:type="app-ops:AddClass" name="SelfChild" parent="SelfChild"/>
-  <operations xsi:type="app-ops:AddClass" name="ErrorParent" parent="NonExistParen"/>
-  <operations xsi:type="app-ops:AddClass" name="ErrorParent" parent="First"/>
-  <operations xsi:type="app-ops:AddClass" name="AbstractClass" isAbstract="true"/>
-  <operations xsi:type="app-ops:AddClass" name="EmbeddedClass" isEmbedded="true"/>
-</app:ModelRoot>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
+  <app:ModelRoot>
+    <modelGenerations>
+      <classes xsi:type="app:Class" name="Parent" isEmbedded="true">
+        <properties name="id" isID="true"/>
+      </classes>
+      <classes xsi:type="app:Class" name="Child" parent="/0/@modelGenerations.0/@classes.0" isEmbedded="true"/>
+    </modelGenerations>
+    <operations xsi:type="app-ops:AddClass" name="Parent" isEmbedded="true"/>
+    <operations xsi:type="app-ops:AddClass" name="Child" isEmbedded="true"/>
+    <operations xsi:type="app-ops:SetParent" name="Child" parentName="Parent"/>
+    <operations xsi:type="app-ops:AddProperty" owningClassName="Child" name="Pokus" type="Parent" lowerBound="1" upperBound="1"/>
+    <operations xsi:type="app-ops:RemoveProperty" owningClassName="Child" name="Pokus"/>
+  </app:ModelRoot>
+  <app:Property name="id" isID="true"/>
+  <app:Property name="Pokus" type="/0/@modelGenerations.0/@classes.0" lowerBound="1"/>
+</xmi:XMI>
