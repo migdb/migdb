@@ -1,0 +1,30 @@
+module eu.collectionspro.mwe.generate
+
+import java.util.Map
+
+
+Workflow {
+
+	component = CodeGenComponent {
+		withoutModel = true
+		//slot = "modelSlot"
+
+		// Optional arguments (key-value pairs) passed to the generator
+		argument = Argument {
+			key = "key 1"
+			value = "arg value 1"
+		}
+		argument = Argument {
+			key = "key 2"
+			value = "arg value 2"
+		}
+		
+		// Particular generator instance
+		generator = SimpleGenerator {}
+	
+		// Root folder for generated files
+		outputPath = "/tmp/"
+	}
+
+	
+}
