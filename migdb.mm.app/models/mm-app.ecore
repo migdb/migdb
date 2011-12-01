@@ -17,29 +17,32 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="classes" ordered="false"
-          upperBound="-1" eType="#//app/AbstractClass" containment="true" eOpposite="#//app/AbstractClass/owningModel"/>
+          upperBound="-1" eType="#//app/Entity" containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="AbstractClass">
+    <eClassifiers xsi:type="ecore:EClass" name="Entity">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
-          eType="#//app/ModelGeneration" changeable="false" derived="true" eOpposite="#//app/ModelGeneration/classes"/>
+          eType="#//app/ModelGeneration" changeable="false" derived="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="PrimitiveClass" eSuperTypes="#//app/AbstractClass">
+    <eClassifiers xsi:type="ecore:EClass" name="AbstractClass" eSuperTypes="#//app/Entity"/>
+    <eClassifiers xsi:type="ecore:EClass" name="PrimitiveClass" eSuperTypes="#//app/Entity">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
           eType="#//app/PrimitiveType"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="EmbeddedClass" eSuperTypes="#//app/AbstractClass">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
+          upperBound="-1" eType="#//app/Property" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Class" eSuperTypes="#//app/AbstractClass">
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//app/Class"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isAbstract" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEmbedded" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-          defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
           eType="#//app/InheritanceType"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
-          upperBound="-1" eType="#//app/Property" containment="true" eOpposite="#//app/Property/owningClass"/>
+          upperBound="-1" eType="#//app/Property" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EEnum" name="InheritanceType">
       <eLiterals name="__not_defined"/>
@@ -54,11 +57,11 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Property">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningClass" lowerBound="1"
-          eType="#//app/Class" changeable="false" derived="true" eOpposite="#//app/Class/properties"/>
+          eType="#//app/AbstractClass" changeable="false" derived="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
-          eType="#//app/AbstractClass"/>
+          eType="#//app/Entity"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="oppositeProperty" eType="#//app/Property"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
@@ -110,13 +113,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="isAbstract" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SetEmbedded" eSuperTypes="#//app/operations/ModelOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="isEmbedded" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RemoveClass" eSuperTypes="#//app/operations/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="RemoveEntity" eSuperTypes="#//app/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
@@ -229,7 +226,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
             eType="#//app/PrimitiveType"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="RemovePrimitiveClass" eSuperTypes="#//app/operations/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="AddEmbeddedClass" eSuperTypes="#//app/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>

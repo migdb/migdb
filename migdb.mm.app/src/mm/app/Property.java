@@ -38,21 +38,19 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Property extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Owning Class</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link mm.app.Class#getProperties <em>Properties</em>}'.
+	 * Returns the value of the '<em><b>Owning Class</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owning Class</em>' container reference isn't clear,
+	 * If the meaning of the '<em>Owning Class</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owning Class</em>' container reference.
+	 * @return the value of the '<em>Owning Class</em>' reference.
 	 * @see mm.app.AppPackage#getProperty_OwningClass()
-	 * @see mm.app.Class#getProperties
-	 * @model opposite="properties" required="true" transient="false" changeable="false" derived="true"
+	 * @model required="true" changeable="false" derived="true"
 	 * @generated
 	 */
-	mm.app.Class getOwningClass();
+	AbstractClass getOwningClass();
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -89,12 +87,12 @@ public interface Property extends EObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Type</em>' reference.
-	 * @see #setType(AbstractClass)
+	 * @see #setType(Entity)
 	 * @see mm.app.AppPackage#getProperty_Type()
 	 * @model required="true"
 	 * @generated
 	 */
-	AbstractClass getType();
+	Entity getType();
 
 	/**
 	 * Sets the value of the '{@link mm.app.Property#getType <em>Type</em>}' reference.
@@ -104,7 +102,7 @@ public interface Property extends EObject {
 	 * @see #getType()
 	 * @generated
 	 */
-	void setType(AbstractClass value);
+	void setType(Entity value);
 
 	/**
 	 * Returns the value of the '<em><b>Default Value</b></em>' attribute.

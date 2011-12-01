@@ -62,22 +62,13 @@ public interface OperationsFactory extends EFactory {
 	SetAbstract createSetAbstract();
 
 	/**
-	 * Returns a new object of class '<em>Set Embedded</em>'.
+	 * Returns a new object of class '<em>Remove Entity</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Set Embedded</em>'.
+	 * @return a new object of class '<em>Remove Entity</em>'.
 	 * @generated
 	 */
-	SetEmbedded createSetEmbedded();
-
-	/**
-	 * Returns a new object of class '<em>Remove Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Remove Class</em>'.
-	 * @generated
-	 */
-	RemoveClass createRemoveClass();
+	RemoveEntity createRemoveEntity();
 
 	/**
 	 * Returns a new object of class '<em>Add Property</em>'.
@@ -179,13 +170,13 @@ public interface OperationsFactory extends EFactory {
 	AddPrimitiveClass createAddPrimitiveClass();
 
 	/**
-	 * Returns a new object of class '<em>Remove Primitive Class</em>'.
+	 * Returns a new object of class '<em>Add Embedded Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Remove Primitive Class</em>'.
+	 * @return a new object of class '<em>Add Embedded Class</em>'.
 	 * @generated
 	 */
-	RemovePrimitiveClass createRemovePrimitiveClass();
+	AddEmbeddedClass createAddEmbeddedClass();
 
 	/**
 	 * Returns the package supported by this factory.

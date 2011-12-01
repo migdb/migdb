@@ -92,12 +92,8 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createSetAbstractAdapter();
 			}
 			@Override
-			public Adapter caseSetEmbedded(SetEmbedded object) {
-				return createSetEmbeddedAdapter();
-			}
-			@Override
-			public Adapter caseRemoveClass(RemoveClass object) {
-				return createRemoveClassAdapter();
+			public Adapter caseRemoveEntity(RemoveEntity object) {
+				return createRemoveEntityAdapter();
 			}
 			@Override
 			public Adapter caseAddProperty(AddProperty object) {
@@ -144,8 +140,8 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createAddPrimitiveClassAdapter();
 			}
 			@Override
-			public Adapter caseRemovePrimitiveClass(RemovePrimitiveClass object) {
-				return createRemovePrimitiveClassAdapter();
+			public Adapter caseAddEmbeddedClass(AddEmbeddedClass object) {
+				return createAddEmbeddedClassAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -238,30 +234,16 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.SetEmbedded <em>Set Embedded</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.RemoveEntity <em>Remove Entity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.operations.SetEmbedded
+	 * @see mm.app.operations.RemoveEntity
 	 * @generated
 	 */
-	public Adapter createSetEmbeddedAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.RemoveClass <em>Remove Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.RemoveClass
-	 * @generated
-	 */
-	public Adapter createRemoveClassAdapter() {
+	public Adapter createRemoveEntityAdapter() {
 		return null;
 	}
 
@@ -420,16 +402,16 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.RemovePrimitiveClass <em>Remove Primitive Class</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.operations.RemovePrimitiveClass
+	 * @see mm.app.operations.AddEmbeddedClass
 	 * @generated
 	 */
-	public Adapter createRemovePrimitiveClassAdapter() {
+	public Adapter createAddEmbeddedClassAdapter() {
 		return null;
 	}
 

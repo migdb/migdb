@@ -8,8 +8,8 @@ package mm.app.impl;
 
 import java.util.Collection;
 
-import mm.app.AbstractClass;
 import mm.app.AppPackage;
+import mm.app.Entity;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 
@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -71,7 +71,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<AbstractClass> classes;
+	protected EList<Entity> classes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -128,9 +128,9 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<AbstractClass> getClasses() {
+	public EList<Entity> getClasses() {
 		if (classes == null) {
-			classes = new EObjectContainmentWithInverseEList<AbstractClass>(AbstractClass.class, this, AppPackage.MODEL_GENERATION__CLASSES, AppPackage.ABSTRACT_CLASS__OWNING_MODEL);
+			classes = new EObjectContainmentEList<Entity>(Entity.class, this, AppPackage.MODEL_GENERATION__CLASSES);
 		}
 		return classes;
 	}
@@ -140,7 +140,6 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -148,8 +147,6 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return eBasicSetContainer(otherEnd, AppPackage.MODEL_GENERATION__MODEL_ROOT, msgs);
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getClasses()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -216,7 +213,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				return;
 			case AppPackage.MODEL_GENERATION__CLASSES:
 				getClasses().clear();
-				getClasses().addAll((Collection<? extends AbstractClass>)newValue);
+				getClasses().addAll((Collection<? extends Entity>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);

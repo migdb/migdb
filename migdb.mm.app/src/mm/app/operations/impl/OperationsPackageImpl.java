@@ -11,6 +11,7 @@ import mm.app.AppPackage;
 import mm.app.impl.AppPackageImpl;
 
 import mm.app.operations.AddClass;
+import mm.app.operations.AddEmbeddedClass;
 import mm.app.operations.AddPrimitiveClass;
 import mm.app.operations.AddProperty;
 import mm.app.operations.CopyProperty;
@@ -18,14 +19,12 @@ import mm.app.operations.ModelOperation;
 import mm.app.operations.MoveProperty;
 import mm.app.operations.OperationsFactory;
 import mm.app.operations.OperationsPackage;
-import mm.app.operations.RemoveClass;
-import mm.app.operations.RemovePrimitiveClass;
+import mm.app.operations.RemoveEntity;
 import mm.app.operations.RemoveProperty;
 import mm.app.operations.RenameClass;
 import mm.app.operations.RenameProperty;
 import mm.app.operations.SetAbstract;
 import mm.app.operations.SetBoundries;
-import mm.app.operations.SetEmbedded;
 import mm.app.operations.SetOpposite;
 import mm.app.operations.SetOrdered;
 import mm.app.operations.SetParent;
@@ -86,14 +85,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass setEmbeddedEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass removeClassEClass = null;
+	private EClass removeEntityEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -177,7 +169,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass removePrimitiveClassEClass = null;
+	private EClass addEmbeddedClassEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -412,8 +404,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getSetEmbedded() {
-		return setEmbeddedEClass;
+	public EClass getRemoveEntity() {
+		return removeEntityEClass;
 	}
 
 	/**
@@ -421,35 +413,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getSetEmbedded_Name() {
-		return (EAttribute)setEmbeddedEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSetEmbedded_IsEmbedded() {
-		return (EAttribute)setEmbeddedEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getRemoveClass() {
-		return removeClassEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRemoveClass_Name() {
-		return (EAttribute)removeClassEClass.getEStructuralFeatures().get(0);
+	public EAttribute getRemoveEntity_Name() {
+		return (EAttribute)removeEntityEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -970,8 +935,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getRemovePrimitiveClass() {
-		return removePrimitiveClassEClass;
+	public EClass getAddEmbeddedClass() {
+		return addEmbeddedClassEClass;
 	}
 
 	/**
@@ -979,8 +944,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getRemovePrimitiveClass_Name() {
-		return (EAttribute)removePrimitiveClassEClass.getEStructuralFeatures().get(0);
+	public EAttribute getAddEmbeddedClass_Name() {
+		return (EAttribute)addEmbeddedClassEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1034,12 +999,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(setAbstractEClass, SET_ABSTRACT__NAME);
 		createEAttribute(setAbstractEClass, SET_ABSTRACT__IS_ABSTRACT);
 
-		setEmbeddedEClass = createEClass(SET_EMBEDDED);
-		createEAttribute(setEmbeddedEClass, SET_EMBEDDED__NAME);
-		createEAttribute(setEmbeddedEClass, SET_EMBEDDED__IS_EMBEDDED);
-
-		removeClassEClass = createEClass(REMOVE_CLASS);
-		createEAttribute(removeClassEClass, REMOVE_CLASS__NAME);
+		removeEntityEClass = createEClass(REMOVE_ENTITY);
+		createEAttribute(removeEntityEClass, REMOVE_ENTITY__NAME);
 
 		addPropertyEClass = createEClass(ADD_PROPERTY);
 		createEAttribute(addPropertyEClass, ADD_PROPERTY__OWNING_CLASS_NAME);
@@ -1109,8 +1070,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(addPrimitiveClassEClass, ADD_PRIMITIVE_CLASS__NAME);
 		createEAttribute(addPrimitiveClassEClass, ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE);
 
-		removePrimitiveClassEClass = createEClass(REMOVE_PRIMITIVE_CLASS);
-		createEAttribute(removePrimitiveClassEClass, REMOVE_PRIMITIVE_CLASS__NAME);
+		addEmbeddedClassEClass = createEClass(ADD_EMBEDDED_CLASS);
+		createEAttribute(addEmbeddedClassEClass, ADD_EMBEDDED_CLASS__NAME);
 	}
 
 	/**
@@ -1148,8 +1109,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		renameClassEClass.getESuperTypes().add(this.getModelOperation());
 		setParentEClass.getESuperTypes().add(this.getModelOperation());
 		setAbstractEClass.getESuperTypes().add(this.getModelOperation());
-		setEmbeddedEClass.getESuperTypes().add(this.getModelOperation());
-		removeClassEClass.getESuperTypes().add(this.getModelOperation());
+		removeEntityEClass.getESuperTypes().add(this.getModelOperation());
 		addPropertyEClass.getESuperTypes().add(this.getModelOperation());
 		renamePropertyEClass.getESuperTypes().add(this.getModelOperation());
 		setTypeEClass.getESuperTypes().add(this.getModelOperation());
@@ -1161,7 +1121,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		copyPropertyEClass.getESuperTypes().add(this.getModelOperation());
 		movePropertyEClass.getESuperTypes().add(this.getModelOperation());
 		addPrimitiveClassEClass.getESuperTypes().add(this.getModelOperation());
-		removePrimitiveClassEClass.getESuperTypes().add(this.getModelOperation());
+		addEmbeddedClassEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1187,12 +1147,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getSetAbstract_Name(), ecorePackage.getEString(), "name", null, 1, 1, SetAbstract.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSetAbstract_IsAbstract(), ecorePackage.getEBoolean(), "isAbstract", null, 1, 1, SetAbstract.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(setEmbeddedEClass, SetEmbedded.class, "SetEmbedded", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getSetEmbedded_Name(), ecorePackage.getEString(), "name", null, 1, 1, SetEmbedded.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSetEmbedded_IsEmbedded(), ecorePackage.getEBoolean(), "isEmbedded", null, 1, 1, SetEmbedded.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(removeClassEClass, RemoveClass.class, "RemoveClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRemoveClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(removeEntityEClass, RemoveEntity.class, "RemoveEntity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getRemoveEntity_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveEntity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addPropertyEClass, AddProperty.class, "AddProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, AddProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1262,8 +1218,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getAddPrimitiveClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddPrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddPrimitiveClass_PrimitiveType(), theAppPackage.getPrimitiveType(), "primitiveType", null, 1, 1, AddPrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(removePrimitiveClassEClass, RemovePrimitiveClass.class, "RemovePrimitiveClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRemovePrimitiveClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemovePrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(addEmbeddedClassEClass, AddEmbeddedClass.class, "AddEmbeddedClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getAddEmbeddedClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddEmbeddedClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 	}
 
 } //OperationsPackageImpl

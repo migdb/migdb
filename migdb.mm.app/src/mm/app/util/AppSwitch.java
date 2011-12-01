@@ -8,6 +8,8 @@ package mm.app.util;
 
 import mm.app.AbstractClass;
 import mm.app.AppPackage;
+import mm.app.EmbeddedClass;
+import mm.app.Entity;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 import mm.app.PrimitiveClass;
@@ -87,16 +89,31 @@ public class AppSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case AppPackage.ENTITY: {
+				Entity entity = (Entity)theEObject;
+				T result = caseEntity(entity);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case AppPackage.ABSTRACT_CLASS: {
 				AbstractClass abstractClass = (AbstractClass)theEObject;
 				T result = caseAbstractClass(abstractClass);
+				if (result == null) result = caseEntity(abstractClass);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case AppPackage.PRIMITIVE_CLASS: {
 				PrimitiveClass primitiveClass = (PrimitiveClass)theEObject;
 				T result = casePrimitiveClass(primitiveClass);
-				if (result == null) result = caseAbstractClass(primitiveClass);
+				if (result == null) result = caseEntity(primitiveClass);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case AppPackage.EMBEDDED_CLASS: {
+				EmbeddedClass embeddedClass = (EmbeddedClass)theEObject;
+				T result = caseEmbeddedClass(embeddedClass);
+				if (result == null) result = caseAbstractClass(embeddedClass);
+				if (result == null) result = caseEntity(embeddedClass);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -104,6 +121,7 @@ public class AppSwitch<T> extends Switch<T> {
 				mm.app.Class class_ = (mm.app.Class)theEObject;
 				T result = caseClass(class_);
 				if (result == null) result = caseAbstractClass(class_);
+				if (result == null) result = caseEntity(class_);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -148,6 +166,21 @@ public class AppSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Entity</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Entity</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEntity(Entity object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Abstract Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -174,6 +207,21 @@ public class AppSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T casePrimitiveClass(PrimitiveClass object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Embedded Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Embedded Class</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseEmbeddedClass(EmbeddedClass object) {
 		return null;
 	}
 

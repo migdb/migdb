@@ -144,23 +144,23 @@ public interface AppPackage extends EPackage {
 	int MODEL_GENERATION_FEATURE_COUNT = 3;
 
 	/**
-	 * The meta object id for the '{@link mm.app.impl.AbstractClassImpl <em>Abstract Class</em>}' class.
+	 * The meta object id for the '{@link mm.app.impl.EntityImpl <em>Entity</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see mm.app.impl.AbstractClassImpl
-	 * @see mm.app.impl.AppPackageImpl#getAbstractClass()
+	 * @see mm.app.impl.EntityImpl
+	 * @see mm.app.impl.AppPackageImpl#getEntity()
 	 * @generated
 	 */
-	int ABSTRACT_CLASS = 2;
+	int ENTITY = 2;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_CLASS__OWNING_MODEL = 0;
+	int ENTITY__OWNING_MODEL = 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -169,7 +169,44 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_CLASS__NAME = 1;
+	int ENTITY__NAME = 1;
+
+	/**
+	 * The number of structural features of the '<em>Entity</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ENTITY_FEATURE_COUNT = 2;
+
+	/**
+	 * The meta object id for the '{@link mm.app.impl.AbstractClassImpl <em>Abstract Class</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.impl.AbstractClassImpl
+	 * @see mm.app.impl.AppPackageImpl#getAbstractClass()
+	 * @generated
+	 */
+	int ABSTRACT_CLASS = 3;
+
+	/**
+	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_CLASS__OWNING_MODEL = ENTITY__OWNING_MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_CLASS__NAME = ENTITY__NAME;
 
 	/**
 	 * The number of structural features of the '<em>Abstract Class</em>' class.
@@ -178,7 +215,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_CLASS_FEATURE_COUNT = 2;
+	int ABSTRACT_CLASS_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.PrimitiveClassImpl <em>Primitive Class</em>}' class.
@@ -188,16 +225,16 @@ public interface AppPackage extends EPackage {
 	 * @see mm.app.impl.AppPackageImpl#getPrimitiveClass()
 	 * @generated
 	 */
-	int PRIMITIVE_CLASS = 3;
+	int PRIMITIVE_CLASS = 4;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PRIMITIVE_CLASS__OWNING_MODEL = ABSTRACT_CLASS__OWNING_MODEL;
+	int PRIMITIVE_CLASS__OWNING_MODEL = ENTITY__OWNING_MODEL;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -206,7 +243,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRIMITIVE_CLASS__NAME = ABSTRACT_CLASS__NAME;
+	int PRIMITIVE_CLASS__NAME = ENTITY__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Primitive Type</b></em>' attribute.
@@ -215,7 +252,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRIMITIVE_CLASS__PRIMITIVE_TYPE = ABSTRACT_CLASS_FEATURE_COUNT + 0;
+	int PRIMITIVE_CLASS__PRIMITIVE_TYPE = ENTITY_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Primitive Class</em>' class.
@@ -224,7 +261,53 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRIMITIVE_CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 1;
+	int PRIMITIVE_CLASS_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link mm.app.impl.EmbeddedClassImpl <em>Embedded Class</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.impl.EmbeddedClassImpl
+	 * @see mm.app.impl.AppPackageImpl#getEmbeddedClass()
+	 * @generated
+	 */
+	int EMBEDDED_CLASS = 5;
+
+	/**
+	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMBEDDED_CLASS__OWNING_MODEL = ABSTRACT_CLASS__OWNING_MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMBEDDED_CLASS__NAME = ABSTRACT_CLASS__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMBEDDED_CLASS__PROPERTIES = ABSTRACT_CLASS_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Embedded Class</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EMBEDDED_CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.ClassImpl <em>Class</em>}' class.
@@ -234,10 +317,10 @@ public interface AppPackage extends EPackage {
 	 * @see mm.app.impl.AppPackageImpl#getClass_()
 	 * @generated
 	 */
-	int CLASS = 4;
+	int CLASS = 6;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -273,22 +356,13 @@ public interface AppPackage extends EPackage {
 	int CLASS__IS_ABSTRACT = ABSTRACT_CLASS_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Is Embedded</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS__IS_EMBEDDED = ABSTRACT_CLASS_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Table Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS__TABLE_NAME = ABSTRACT_CLASS_FEATURE_COUNT + 3;
+	int CLASS__TABLE_NAME = ABSTRACT_CLASS_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Inheritance Type</b></em>' attribute.
@@ -297,7 +371,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS__INHERITANCE_TYPE = ABSTRACT_CLASS_FEATURE_COUNT + 4;
+	int CLASS__INHERITANCE_TYPE = ABSTRACT_CLASS_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
@@ -306,7 +380,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS__PROPERTIES = ABSTRACT_CLASS_FEATURE_COUNT + 5;
+	int CLASS__PROPERTIES = ABSTRACT_CLASS_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Class</em>' class.
@@ -315,7 +389,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 6;
+	int CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.PropertyImpl <em>Property</em>}' class.
@@ -325,10 +399,10 @@ public interface AppPackage extends EPackage {
 	 * @see mm.app.impl.AppPackageImpl#getProperty()
 	 * @generated
 	 */
-	int PROPERTY = 5;
+	int PROPERTY = 7;
 
 	/**
-	 * The feature id for the '<em><b>Owning Class</b></em>' container reference.
+	 * The feature id for the '<em><b>Owning Class</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -461,7 +535,7 @@ public interface AppPackage extends EPackage {
 	 * @see mm.app.impl.AppPackageImpl#getInheritanceType()
 	 * @generated
 	 */
-	int INHERITANCE_TYPE = 6;
+	int INHERITANCE_TYPE = 8;
 
 	/**
 	 * The meta object id for the '{@link mm.app.PrimitiveType <em>Primitive Type</em>}' enum.
@@ -471,7 +545,7 @@ public interface AppPackage extends EPackage {
 	 * @see mm.app.impl.AppPackageImpl#getPrimitiveType()
 	 * @generated
 	 */
-	int PRIMITIVE_TYPE = 7;
+	int PRIMITIVE_TYPE = 9;
 
 
 	/**
@@ -550,6 +624,38 @@ public interface AppPackage extends EPackage {
 	EReference getModelGeneration_Classes();
 
 	/**
+	 * Returns the meta object for class '{@link mm.app.Entity <em>Entity</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Entity</em>'.
+	 * @see mm.app.Entity
+	 * @generated
+	 */
+	EClass getEntity();
+
+	/**
+	 * Returns the meta object for the reference '{@link mm.app.Entity#getOwningModel <em>Owning Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Owning Model</em>'.
+	 * @see mm.app.Entity#getOwningModel()
+	 * @see #getEntity()
+	 * @generated
+	 */
+	EReference getEntity_OwningModel();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.Entity#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.Entity#getName()
+	 * @see #getEntity()
+	 * @generated
+	 */
+	EAttribute getEntity_Name();
+
+	/**
 	 * Returns the meta object for class '{@link mm.app.AbstractClass <em>Abstract Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -558,28 +664,6 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getAbstractClass();
-
-	/**
-	 * Returns the meta object for the container reference '{@link mm.app.AbstractClass#getOwningModel <em>Owning Model</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Owning Model</em>'.
-	 * @see mm.app.AbstractClass#getOwningModel()
-	 * @see #getAbstractClass()
-	 * @generated
-	 */
-	EReference getAbstractClass_OwningModel();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.AbstractClass#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.AbstractClass#getName()
-	 * @see #getAbstractClass()
-	 * @generated
-	 */
-	EAttribute getAbstractClass_Name();
 
 	/**
 	 * Returns the meta object for class '{@link mm.app.PrimitiveClass <em>Primitive Class</em>}'.
@@ -601,6 +685,27 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPrimitiveClass_PrimitiveType();
+
+	/**
+	 * Returns the meta object for class '{@link mm.app.EmbeddedClass <em>Embedded Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Embedded Class</em>'.
+	 * @see mm.app.EmbeddedClass
+	 * @generated
+	 */
+	EClass getEmbeddedClass();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link mm.app.EmbeddedClass#getProperties <em>Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Properties</em>'.
+	 * @see mm.app.EmbeddedClass#getProperties()
+	 * @see #getEmbeddedClass()
+	 * @generated
+	 */
+	EReference getEmbeddedClass_Properties();
 
 	/**
 	 * Returns the meta object for class '{@link mm.app.Class <em>Class</em>}'.
@@ -633,17 +738,6 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getClass_IsAbstract();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.Class#isIsEmbedded <em>Is Embedded</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Embedded</em>'.
-	 * @see mm.app.Class#isIsEmbedded()
-	 * @see #getClass_()
-	 * @generated
-	 */
-	EAttribute getClass_IsEmbedded();
 
 	/**
 	 * Returns the meta object for the attribute '{@link mm.app.Class#getTableName <em>Table Name</em>}'.
@@ -689,10 +783,10 @@ public interface AppPackage extends EPackage {
 	EClass getProperty();
 
 	/**
-	 * Returns the meta object for the container reference '{@link mm.app.Property#getOwningClass <em>Owning Class</em>}'.
+	 * Returns the meta object for the reference '{@link mm.app.Property#getOwningClass <em>Owning Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Owning Class</em>'.
+	 * @return the meta object for the reference '<em>Owning Class</em>'.
 	 * @see mm.app.Property#getOwningClass()
 	 * @see #getProperty()
 	 * @generated
@@ -934,6 +1028,32 @@ public interface AppPackage extends EPackage {
 		EReference MODEL_GENERATION__CLASSES = eINSTANCE.getModelGeneration_Classes();
 
 		/**
+		 * The meta object literal for the '{@link mm.app.impl.EntityImpl <em>Entity</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.impl.EntityImpl
+		 * @see mm.app.impl.AppPackageImpl#getEntity()
+		 * @generated
+		 */
+		EClass ENTITY = eINSTANCE.getEntity();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Model</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ENTITY__OWNING_MODEL = eINSTANCE.getEntity_OwningModel();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ENTITY__NAME = eINSTANCE.getEntity_Name();
+
+		/**
 		 * The meta object literal for the '{@link mm.app.impl.AbstractClassImpl <em>Abstract Class</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -942,22 +1062,6 @@ public interface AppPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ABSTRACT_CLASS = eINSTANCE.getAbstractClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Model</b></em>' container reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ABSTRACT_CLASS__OWNING_MODEL = eINSTANCE.getAbstractClass_OwningModel();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ABSTRACT_CLASS__NAME = eINSTANCE.getAbstractClass_Name();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.impl.PrimitiveClassImpl <em>Primitive Class</em>}' class.
@@ -976,6 +1080,24 @@ public interface AppPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PRIMITIVE_CLASS__PRIMITIVE_TYPE = eINSTANCE.getPrimitiveClass_PrimitiveType();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.impl.EmbeddedClassImpl <em>Embedded Class</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.impl.EmbeddedClassImpl
+		 * @see mm.app.impl.AppPackageImpl#getEmbeddedClass()
+		 * @generated
+		 */
+		EClass EMBEDDED_CLASS = eINSTANCE.getEmbeddedClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EMBEDDED_CLASS__PROPERTIES = eINSTANCE.getEmbeddedClass_Properties();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.impl.ClassImpl <em>Class</em>}' class.
@@ -1002,14 +1124,6 @@ public interface AppPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CLASS__IS_ABSTRACT = eINSTANCE.getClass_IsAbstract();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Embedded</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute CLASS__IS_EMBEDDED = eINSTANCE.getClass_IsEmbedded();
 
 		/**
 		 * The meta object literal for the '<em><b>Table Name</b></em>' attribute feature.
@@ -1046,7 +1160,7 @@ public interface AppPackage extends EPackage {
 		EClass PROPERTY = eINSTANCE.getProperty();
 
 		/**
-		 * The meta object literal for the '<em><b>Owning Class</b></em>' container reference feature.
+		 * The meta object literal for the '<em><b>Owning Class</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

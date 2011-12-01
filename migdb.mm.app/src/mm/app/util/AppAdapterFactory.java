@@ -8,6 +8,8 @@ package mm.app.util;
 
 import mm.app.AbstractClass;
 import mm.app.AppPackage;
+import mm.app.EmbeddedClass;
+import mm.app.Entity;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 import mm.app.PrimitiveClass;
@@ -85,12 +87,20 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 				return createModelGenerationAdapter();
 			}
 			@Override
+			public Adapter caseEntity(Entity object) {
+				return createEntityAdapter();
+			}
+			@Override
 			public Adapter caseAbstractClass(AbstractClass object) {
 				return createAbstractClassAdapter();
 			}
 			@Override
 			public Adapter casePrimitiveClass(PrimitiveClass object) {
 				return createPrimitiveClassAdapter();
+			}
+			@Override
+			public Adapter caseEmbeddedClass(EmbeddedClass object) {
+				return createEmbeddedClassAdapter();
 			}
 			@Override
 			public Adapter caseClass(mm.app.Class object) {
@@ -149,6 +159,20 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.Entity <em>Entity</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.Entity
+	 * @generated
+	 */
+	public Adapter createEntityAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.app.AbstractClass <em>Abstract Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -173,6 +197,20 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPrimitiveClassAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.EmbeddedClass <em>Embedded Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.EmbeddedClass
+	 * @generated
+	 */
+	public Adapter createEmbeddedClassAdapter() {
 		return null;
 	}
 

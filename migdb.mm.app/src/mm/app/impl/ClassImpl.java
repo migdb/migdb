@@ -22,7 +22,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -34,7 +34,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link mm.app.impl.ClassImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link mm.app.impl.ClassImpl#isIsAbstract <em>Is Abstract</em>}</li>
- *   <li>{@link mm.app.impl.ClassImpl#isIsEmbedded <em>Is Embedded</em>}</li>
  *   <li>{@link mm.app.impl.ClassImpl#getTableName <em>Table Name</em>}</li>
  *   <li>{@link mm.app.impl.ClassImpl#getInheritanceType <em>Inheritance Type</em>}</li>
  *   <li>{@link mm.app.impl.ClassImpl#getProperties <em>Properties</em>}</li>
@@ -73,26 +72,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 	 * @ordered
 	 */
 	protected boolean isAbstract = IS_ABSTRACT_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isIsEmbedded() <em>Is Embedded</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isIsEmbedded()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean IS_EMBEDDED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isIsEmbedded() <em>Is Embedded</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isIsEmbedded()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean isEmbedded = IS_EMBEDDED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getTableName() <em>Table Name</em>}' attribute.
@@ -227,27 +206,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isIsEmbedded() {
-		return isEmbedded;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIsEmbedded(boolean newIsEmbedded) {
-		boolean oldIsEmbedded = isEmbedded;
-		isEmbedded = newIsEmbedded;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AppPackage.CLASS__IS_EMBEDDED, oldIsEmbedded, isEmbedded));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getTableName() {
 		return tableName;
 	}
@@ -292,24 +250,9 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 	 */
 	public EList<Property> getProperties() {
 		if (properties == null) {
-			properties = new EObjectContainmentWithInverseEList<Property>(Property.class, this, AppPackage.CLASS__PROPERTIES, AppPackage.PROPERTY__OWNING_CLASS);
+			properties = new EObjectContainmentEList<Property>(Property.class, this, AppPackage.CLASS__PROPERTIES);
 		}
 		return properties;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case AppPackage.CLASS__PROPERTIES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getProperties()).basicAdd(otherEnd, msgs);
-		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -339,8 +282,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 				return basicGetParent();
 			case AppPackage.CLASS__IS_ABSTRACT:
 				return isIsAbstract();
-			case AppPackage.CLASS__IS_EMBEDDED:
-				return isIsEmbedded();
 			case AppPackage.CLASS__TABLE_NAME:
 				return getTableName();
 			case AppPackage.CLASS__INHERITANCE_TYPE:
@@ -365,9 +306,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 				return;
 			case AppPackage.CLASS__IS_ABSTRACT:
 				setIsAbstract((Boolean)newValue);
-				return;
-			case AppPackage.CLASS__IS_EMBEDDED:
-				setIsEmbedded((Boolean)newValue);
 				return;
 			case AppPackage.CLASS__TABLE_NAME:
 				setTableName((String)newValue);
@@ -397,9 +335,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 			case AppPackage.CLASS__IS_ABSTRACT:
 				setIsAbstract(IS_ABSTRACT_EDEFAULT);
 				return;
-			case AppPackage.CLASS__IS_EMBEDDED:
-				setIsEmbedded(IS_EMBEDDED_EDEFAULT);
-				return;
 			case AppPackage.CLASS__TABLE_NAME:
 				setTableName(TABLE_NAME_EDEFAULT);
 				return;
@@ -425,8 +360,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 				return parent != null;
 			case AppPackage.CLASS__IS_ABSTRACT:
 				return isAbstract != IS_ABSTRACT_EDEFAULT;
-			case AppPackage.CLASS__IS_EMBEDDED:
-				return isEmbedded != IS_EMBEDDED_EDEFAULT;
 			case AppPackage.CLASS__TABLE_NAME:
 				return TABLE_NAME_EDEFAULT == null ? tableName != null : !TABLE_NAME_EDEFAULT.equals(tableName);
 			case AppPackage.CLASS__INHERITANCE_TYPE:
@@ -449,8 +382,6 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (isAbstract: ");
 		result.append(isAbstract);
-		result.append(", isEmbedded: ");
-		result.append(isEmbedded);
 		result.append(", tableName: ");
 		result.append(tableName);
 		result.append(", inheritanceType: ");

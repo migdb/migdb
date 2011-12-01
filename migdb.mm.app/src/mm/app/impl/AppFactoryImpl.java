@@ -9,6 +9,8 @@ package mm.app.impl;
 import mm.app.AbstractClass;
 import mm.app.AppFactory;
 import mm.app.AppPackage;
+import mm.app.EmbeddedClass;
+import mm.app.Entity;
 import mm.app.InheritanceType;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
@@ -71,8 +73,10 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 		switch (eClass.getClassifierID()) {
 			case AppPackage.MODEL_ROOT: return createModelRoot();
 			case AppPackage.MODEL_GENERATION: return createModelGeneration();
+			case AppPackage.ENTITY: return createEntity();
 			case AppPackage.ABSTRACT_CLASS: return createAbstractClass();
 			case AppPackage.PRIMITIVE_CLASS: return createPrimitiveClass();
+			case AppPackage.EMBEDDED_CLASS: return createEmbeddedClass();
 			case AppPackage.CLASS: return createClass();
 			case AppPackage.PROPERTY: return createProperty();
 			default:
@@ -139,6 +143,16 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Entity createEntity() {
+		EntityImpl entity = new EntityImpl();
+		return entity;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public AbstractClass createAbstractClass() {
 		AbstractClassImpl abstractClass = new AbstractClassImpl();
 		return abstractClass;
@@ -152,6 +166,16 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 	public PrimitiveClass createPrimitiveClass() {
 		PrimitiveClassImpl primitiveClass = new PrimitiveClassImpl();
 		return primitiveClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EmbeddedClass createEmbeddedClass() {
+		EmbeddedClassImpl embeddedClass = new EmbeddedClassImpl();
+		return embeddedClass;
 	}
 
 	/**

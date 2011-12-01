@@ -308,14 +308,14 @@ public interface OperationsPackage extends EPackage {
 	int SET_ABSTRACT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.SetEmbeddedImpl <em>Set Embedded</em>}' class.
+	 * The meta object id for the '{@link mm.app.operations.impl.RemoveEntityImpl <em>Remove Entity</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.SetEmbeddedImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetEmbedded()
+	 * @see mm.app.operations.impl.RemoveEntityImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveEntity()
 	 * @generated
 	 */
-	int SET_EMBEDDED = 5;
+	int REMOVE_ENTITY = 5;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -324,7 +324,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SET_EMBEDDED__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+	int REMOVE_ENTITY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -333,62 +333,16 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SET_EMBEDDED__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+	int REMOVE_ENTITY__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Is Embedded</b></em>' attribute.
+	 * The number of structural features of the '<em>Remove Entity</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SET_EMBEDDED__IS_EMBEDDED = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Set Embedded</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_EMBEDDED_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.RemoveClassImpl <em>Remove Class</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.RemoveClassImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveClass()
-	 * @generated
-	 */
-	int REMOVE_CLASS = 6;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Remove Class</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
+	int REMOVE_ENTITY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.AddPropertyImpl <em>Add Property</em>}' class.
@@ -398,7 +352,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddProperty()
 	 * @generated
 	 */
-	int ADD_PROPERTY = 7;
+	int ADD_PROPERTY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -525,7 +479,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameProperty()
 	 * @generated
 	 */
-	int RENAME_PROPERTY = 8;
+	int RENAME_PROPERTY = 7;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -580,7 +534,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetType()
 	 * @generated
 	 */
-	int SET_TYPE = 9;
+	int SET_TYPE = 8;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -635,7 +589,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetOpposite()
 	 * @generated
 	 */
-	int SET_OPPOSITE = 10;
+	int SET_OPPOSITE = 9;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -708,7 +662,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetBoundries()
 	 * @generated
 	 */
-	int SET_BOUNDRIES = 11;
+	int SET_BOUNDRIES = 10;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -772,7 +726,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetOrdered()
 	 * @generated
 	 */
-	int SET_ORDERED = 12;
+	int SET_ORDERED = 11;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -827,7 +781,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetUnique()
 	 * @generated
 	 */
-	int SET_UNIQUE = 13;
+	int SET_UNIQUE = 12;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -882,7 +836,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveProperty()
 	 * @generated
 	 */
-	int REMOVE_PROPERTY = 14;
+	int REMOVE_PROPERTY = 13;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -928,7 +882,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getCopyProperty()
 	 * @generated
 	 */
-	int COPY_PROPERTY = 15;
+	int COPY_PROPERTY = 14;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1001,7 +955,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getMoveProperty()
 	 * @generated
 	 */
-	int MOVE_PROPERTY = 16;
+	int MOVE_PROPERTY = 15;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1074,7 +1028,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
 	 * @generated
 	 */
-	int ADD_PRIMITIVE_CLASS = 17;
+	int ADD_PRIMITIVE_CLASS = 16;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1113,14 +1067,14 @@ public interface OperationsPackage extends EPackage {
 	int ADD_PRIMITIVE_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.RemovePrimitiveClassImpl <em>Remove Primitive Class</em>}' class.
+	 * The meta object id for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.RemovePrimitiveClassImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemovePrimitiveClass()
+	 * @see mm.app.operations.impl.AddEmbeddedClassImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
 	 * @generated
 	 */
-	int REMOVE_PRIMITIVE_CLASS = 18;
+	int ADD_EMBEDDED_CLASS = 17;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1129,7 +1083,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REMOVE_PRIMITIVE_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+	int ADD_EMBEDDED_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1138,16 +1092,16 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int REMOVE_PRIMITIVE_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+	int ADD_EMBEDDED_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Remove Primitive Class</em>' class.
+	 * The number of structural features of the '<em>Add Embedded Class</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REMOVE_PRIMITIVE_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
+	int ADD_EMBEDDED_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 
 	/**
@@ -1344,57 +1298,25 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetAbstract_IsAbstract();
 
 	/**
-	 * Returns the meta object for class '{@link mm.app.operations.SetEmbedded <em>Set Embedded</em>}'.
+	 * Returns the meta object for class '{@link mm.app.operations.RemoveEntity <em>Remove Entity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Set Embedded</em>'.
-	 * @see mm.app.operations.SetEmbedded
+	 * @return the meta object for class '<em>Remove Entity</em>'.
+	 * @see mm.app.operations.RemoveEntity
 	 * @generated
 	 */
-	EClass getSetEmbedded();
+	EClass getRemoveEntity();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.SetEmbedded#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveEntity#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.SetEmbedded#getName()
-	 * @see #getSetEmbedded()
+	 * @see mm.app.operations.RemoveEntity#getName()
+	 * @see #getRemoveEntity()
 	 * @generated
 	 */
-	EAttribute getSetEmbedded_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.SetEmbedded#isIsEmbedded <em>Is Embedded</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Embedded</em>'.
-	 * @see mm.app.operations.SetEmbedded#isIsEmbedded()
-	 * @see #getSetEmbedded()
-	 * @generated
-	 */
-	EAttribute getSetEmbedded_IsEmbedded();
-
-	/**
-	 * Returns the meta object for class '{@link mm.app.operations.RemoveClass <em>Remove Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Remove Class</em>'.
-	 * @see mm.app.operations.RemoveClass
-	 * @generated
-	 */
-	EClass getRemoveClass();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveClass#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.RemoveClass#getName()
-	 * @see #getRemoveClass()
-	 * @generated
-	 */
-	EAttribute getRemoveClass_Name();
+	EAttribute getRemoveEntity_Name();
 
 	/**
 	 * Returns the meta object for class '{@link mm.app.operations.AddProperty <em>Add Property</em>}'.
@@ -2013,25 +1935,25 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddPrimitiveClass_PrimitiveType();
 
 	/**
-	 * Returns the meta object for class '{@link mm.app.operations.RemovePrimitiveClass <em>Remove Primitive Class</em>}'.
+	 * Returns the meta object for class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Remove Primitive Class</em>'.
-	 * @see mm.app.operations.RemovePrimitiveClass
+	 * @return the meta object for class '<em>Add Embedded Class</em>'.
+	 * @see mm.app.operations.AddEmbeddedClass
 	 * @generated
 	 */
-	EClass getRemovePrimitiveClass();
+	EClass getAddEmbeddedClass();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RemovePrimitiveClass#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.app.operations.AddEmbeddedClass#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.RemovePrimitiveClass#getName()
-	 * @see #getRemovePrimitiveClass()
+	 * @see mm.app.operations.AddEmbeddedClass#getName()
+	 * @see #getAddEmbeddedClass()
 	 * @generated
 	 */
-	EAttribute getRemovePrimitiveClass_Name();
+	EAttribute getAddEmbeddedClass_Name();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2210,14 +2132,14 @@ public interface OperationsPackage extends EPackage {
 		EAttribute SET_ABSTRACT__IS_ABSTRACT = eINSTANCE.getSetAbstract_IsAbstract();
 
 		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.SetEmbeddedImpl <em>Set Embedded</em>}' class.
+		 * The meta object literal for the '{@link mm.app.operations.impl.RemoveEntityImpl <em>Remove Entity</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.SetEmbeddedImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getSetEmbedded()
+		 * @see mm.app.operations.impl.RemoveEntityImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveEntity()
 		 * @generated
 		 */
-		EClass SET_EMBEDDED = eINSTANCE.getSetEmbedded();
+		EClass REMOVE_ENTITY = eINSTANCE.getRemoveEntity();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -2225,33 +2147,7 @@ public interface OperationsPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SET_EMBEDDED__NAME = eINSTANCE.getSetEmbedded_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Embedded</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_EMBEDDED__IS_EMBEDDED = eINSTANCE.getSetEmbedded_IsEmbedded();
-
-		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.RemoveClassImpl <em>Remove Class</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.RemoveClassImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveClass()
-		 * @generated
-		 */
-		EClass REMOVE_CLASS = eINSTANCE.getRemoveClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute REMOVE_CLASS__NAME = eINSTANCE.getRemoveClass_Name();
+		EAttribute REMOVE_ENTITY__NAME = eINSTANCE.getRemoveEntity_Name();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.AddPropertyImpl <em>Add Property</em>}' class.
@@ -2732,14 +2628,14 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE = eINSTANCE.getAddPrimitiveClass_PrimitiveType();
 
 		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.RemovePrimitiveClassImpl <em>Remove Primitive Class</em>}' class.
+		 * The meta object literal for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.RemovePrimitiveClassImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getRemovePrimitiveClass()
+		 * @see mm.app.operations.impl.AddEmbeddedClassImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
 		 * @generated
 		 */
-		EClass REMOVE_PRIMITIVE_CLASS = eINSTANCE.getRemovePrimitiveClass();
+		EClass ADD_EMBEDDED_CLASS = eINSTANCE.getAddEmbeddedClass();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -2747,7 +2643,7 @@ public interface OperationsPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute REMOVE_PRIMITIVE_CLASS__NAME = eINSTANCE.getRemovePrimitiveClass_Name();
+		EAttribute ADD_EMBEDDED_CLASS__NAME = eINSTANCE.getAddEmbeddedClass_Name();
 
 	}
 

@@ -104,17 +104,10 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.SET_EMBEDDED: {
-				SetEmbedded setEmbedded = (SetEmbedded)theEObject;
-				T result = caseSetEmbedded(setEmbedded);
-				if (result == null) result = caseModelOperation(setEmbedded);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.REMOVE_CLASS: {
-				RemoveClass removeClass = (RemoveClass)theEObject;
-				T result = caseRemoveClass(removeClass);
-				if (result == null) result = caseModelOperation(removeClass);
+			case OperationsPackage.REMOVE_ENTITY: {
+				RemoveEntity removeEntity = (RemoveEntity)theEObject;
+				T result = caseRemoveEntity(removeEntity);
+				if (result == null) result = caseModelOperation(removeEntity);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -195,10 +188,10 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.REMOVE_PRIMITIVE_CLASS: {
-				RemovePrimitiveClass removePrimitiveClass = (RemovePrimitiveClass)theEObject;
-				T result = caseRemovePrimitiveClass(removePrimitiveClass);
-				if (result == null) result = caseModelOperation(removePrimitiveClass);
+			case OperationsPackage.ADD_EMBEDDED_CLASS: {
+				AddEmbeddedClass addEmbeddedClass = (AddEmbeddedClass)theEObject;
+				T result = caseAddEmbeddedClass(addEmbeddedClass);
+				if (result == null) result = caseModelOperation(addEmbeddedClass);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -282,32 +275,17 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Set Embedded</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Remove Entity</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Set Embedded</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Remove Entity</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseSetEmbedded(SetEmbedded object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Remove Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Remove Class</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseRemoveClass(RemoveClass object) {
+	public T caseRemoveEntity(RemoveEntity object) {
 		return null;
 	}
 
@@ -477,17 +455,17 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Remove Primitive Class</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Remove Primitive Class</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseRemovePrimitiveClass(RemovePrimitiveClass object) {
+	public T caseAddEmbeddedClass(AddEmbeddedClass object) {
 		return null;
 	}
 
