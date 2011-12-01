@@ -38,25 +38,58 @@ main() {
 	var rdbRoot : RDB::ModelRoot = inRdb.rootObjects()![RDB::ModelRoot];
 	
 	appRoot.operations->forEach(op) {
-		log("op " + op.repr());
-		op.xmap toRdb(rdbRoot);
-	};	
-	
-}
-
-// mapov�n� dan� operace
-abstract mapping APP::operations::ModelOperation::
-	toRdb(inout rdbRoot : RDB::ModelRoot);
-
-
-mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
-	rdbRoot.operations += object RDB::operations::AddTable {
-		owningSchemaName := "zero";
-		name := self.name;
+		log("	iterating over operation " + op.repr());
+		if (op.isValid(rdbRoot)) then {
+			log("	operation is valid " + op.repr());
+			op.xmap toRdb(rdbRoot);
+		} else {
+			log("	operation is invalid " + op.repr());
+		} endif;
 	};
 }
 
+// a mapping of a given operation
+abstract mapping APP::operations::ModelOperation::
+	toRdb(inout rdbRoot : RDB::ModelRoot);
+	
+// is a mapping valid
+abstract query APP::operations::ModelOperation::
+	isValid(inout rdbRoot : RDB::ModelRoot) : Boolean;
 
 
+query APP::operations::AddClass::isValid(inout rdbRoot : RDB::ModelRoot): Boolean {
+	return self.isAbstract = false;
+}
 
-
+mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
+	// addition of a table to the schema
+	rdbRoot.operations += object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := self.name;
+	};
+	
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.name;
+		name := "id";
+		type := RDB::PrimitiveType::int;
+		// defaultValue := "0";
+	};
+	
+	// addition of an index to the schema
+	rdbRoot.operations += object RDB::operations::AddIndex {
+		owningSchemaName := "pubic";
+		owningTableName := self.name;
+		name := "public." + self.name.toLower() + ".id";
+		columnsNames := OrderedSet {"id"};
+	};
+	
+	// addition of a primary key to the table
+	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := self.name;
+		name := "public." + self.name.toLower() + ".id.pk";
+		underlyingIndexName := "public." + self.name.toLower() + ".id";
+	};
+}
