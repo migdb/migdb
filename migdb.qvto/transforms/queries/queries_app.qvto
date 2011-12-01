@@ -31,7 +31,7 @@ modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
  	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
 **/
 query app::Class::isSerializable():Boolean{
-	if(not self.hasOneIDProperty() or self.isEmbedded) then {
+	if(not self.hasOneIDProperty()) then {
 		//log(self.name + " prim:" + self.isPrimitive.repr() + " ID:" + self.hasOneIDProperty().repr() + " Emb:" + self.isEmbedded.repr());
 		return false;
 	}endif;
@@ -193,10 +193,12 @@ query app::Property::isManyToManyBidirectional():Boolean{
 	Je pouzivane k odstraneni slozitych mapovani vazeb mezi nelistovymi Classy s inheritanceType
 	TablePerClass.
 **/
-query app::Class::isNonleafTPCHierarchy():Boolean{
-	if(self.inheritanceType = app::InheritanceType::tablePerClass and 
-	self.owningModel.classes->exists(cls | cls![app::Class].parent = self))then{
-		return true;
+query app::AbstractClass::isNonleafTPCHierarchy():Boolean{
+	if(self.oclIsKindOf(app::Class)) then {
+		if(self![app::Class].inheritanceType = app::InheritanceType::tablePerClass and 
+		self.owningModel.classes->exists(cls | cls![app::Class].parent = self))then{
+			return true;
+		}endif;
 	}endif;
 	return false;
 }

@@ -64,8 +64,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.RENAME_CLASS: return createRenameClass();
 			case OperationsPackage.SET_PARENT: return createSetParent();
 			case OperationsPackage.SET_ABSTRACT: return createSetAbstract();
-			case OperationsPackage.SET_EMBEDDED: return createSetEmbedded();
-			case OperationsPackage.REMOVE_CLASS: return createRemoveClass();
+			case OperationsPackage.REMOVE_ENTITY: return createRemoveEntity();
 			case OperationsPackage.ADD_PROPERTY: return createAddProperty();
 			case OperationsPackage.RENAME_PROPERTY: return createRenameProperty();
 			case OperationsPackage.SET_TYPE: return createSetType();
@@ -77,7 +76,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.COPY_PROPERTY: return createCopyProperty();
 			case OperationsPackage.MOVE_PROPERTY: return createMoveProperty();
 			case OperationsPackage.ADD_PRIMITIVE_CLASS: return createAddPrimitiveClass();
-			case OperationsPackage.REMOVE_PRIMITIVE_CLASS: return createRemovePrimitiveClass();
+			case OperationsPackage.ADD_EMBEDDED_CLASS: return createAddEmbeddedClass();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -128,19 +127,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SetEmbedded createSetEmbedded() {
-		SetEmbeddedImpl setEmbedded = new SetEmbeddedImpl();
-		return setEmbedded;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public RemoveClass createRemoveClass() {
-		RemoveClassImpl removeClass = new RemoveClassImpl();
-		return removeClass;
+	public RemoveEntity createRemoveEntity() {
+		RemoveEntityImpl removeEntity = new RemoveEntityImpl();
+		return removeEntity;
 	}
 
 	/**
@@ -258,9 +247,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RemovePrimitiveClass createRemovePrimitiveClass() {
-		RemovePrimitiveClassImpl removePrimitiveClass = new RemovePrimitiveClassImpl();
-		return removePrimitiveClass;
+	public AddEmbeddedClass createAddEmbeddedClass() {
+		AddEmbeddedClassImpl addEmbeddedClass = new AddEmbeddedClassImpl();
+		return addEmbeddedClass;
 	}
 
 	/**

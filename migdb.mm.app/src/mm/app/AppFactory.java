@@ -44,6 +44,15 @@ public interface AppFactory extends EFactory {
 	ModelGeneration createModelGeneration();
 
 	/**
+	 * Returns a new object of class '<em>Entity</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Entity</em>'.
+	 * @generated
+	 */
+	Entity createEntity();
+
+	/**
 	 * Returns a new object of class '<em>Abstract Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -60,6 +69,15 @@ public interface AppFactory extends EFactory {
 	 * @generated
 	 */
 	PrimitiveClass createPrimitiveClass();
+
+	/**
+	 * Returns a new object of class '<em>Embedded Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Embedded Class</em>'.
+	 * @generated
+	 */
+	EmbeddedClass createEmbeddedClass();
 
 	/**
 	 * Returns a new object of class '<em>Class</em>'.

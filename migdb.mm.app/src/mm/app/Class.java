@@ -18,7 +18,6 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link mm.app.Class#getParent <em>Parent</em>}</li>
  *   <li>{@link mm.app.Class#isIsAbstract <em>Is Abstract</em>}</li>
- *   <li>{@link mm.app.Class#isIsEmbedded <em>Is Embedded</em>}</li>
  *   <li>{@link mm.app.Class#getTableName <em>Table Name</em>}</li>
  *   <li>{@link mm.app.Class#getInheritanceType <em>Inheritance Type</em>}</li>
  *   <li>{@link mm.app.Class#getProperties <em>Properties</em>}</li>
@@ -84,33 +83,6 @@ public interface Class extends AbstractClass {
 	void setIsAbstract(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Is Embedded</b></em>' attribute.
-	 * The default value is <code>"false"</code>.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Is Embedded</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Embedded</em>' attribute.
-	 * @see #setIsEmbedded(boolean)
-	 * @see mm.app.AppPackage#getClass_IsEmbedded()
-	 * @model default="false"
-	 * @generated
-	 */
-	boolean isIsEmbedded();
-
-	/**
-	 * Sets the value of the '{@link mm.app.Class#isIsEmbedded <em>Is Embedded</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Is Embedded</em>' attribute.
-	 * @see #isIsEmbedded()
-	 * @generated
-	 */
-	void setIsEmbedded(boolean value);
-
-	/**
 	 * Returns the value of the '<em><b>Table Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -168,7 +140,6 @@ public interface Class extends AbstractClass {
 	/**
 	 * Returns the value of the '<em><b>Properties</b></em>' containment reference list.
 	 * The list contents are of type {@link mm.app.Property}.
-	 * It is bidirectional and its opposite is '{@link mm.app.Property#getOwningClass <em>Owning Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Properties</em>' containment reference list isn't clear,
@@ -177,8 +148,7 @@ public interface Class extends AbstractClass {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Properties</em>' containment reference list.
 	 * @see mm.app.AppPackage#getClass_Properties()
-	 * @see mm.app.Property#getOwningClass
-	 * @model opposite="owningClass" containment="true" ordered="false"
+	 * @model containment="true" ordered="false"
 	 * @generated
 	 */
 	EList<Property> getProperties();
