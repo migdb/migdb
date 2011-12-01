@@ -17,11 +17,11 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="classes" ordered="false"
-          upperBound="-1" eType="#//app/Entity" containment="true"/>
+          upperBound="-1" eType="#//app/Entity" containment="true" eOpposite="#//app/Entity/owningModel"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Entity">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
-          eType="#//app/ModelGeneration" changeable="false" derived="true"/>
+          eType="#//app/ModelGeneration" changeable="false" derived="true" eOpposite="#//app/ModelGeneration/classes"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>

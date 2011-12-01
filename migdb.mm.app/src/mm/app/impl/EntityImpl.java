@@ -11,6 +11,7 @@ import mm.app.Entity;
 import mm.app.ModelGeneration;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -33,16 +34,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * @generated
  */
 public class EntityImpl extends EObjectImpl implements Entity {
-	/**
-	 * The cached value of the '{@link #getOwningModel() <em>Owning Model</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOwningModel()
-	 * @generated
-	 * @ordered
-	 */
-	protected ModelGeneration owningModel;
-
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -88,24 +79,8 @@ public class EntityImpl extends EObjectImpl implements Entity {
 	 * @generated
 	 */
 	public ModelGeneration getOwningModel() {
-		if (owningModel != null && owningModel.eIsProxy()) {
-			InternalEObject oldOwningModel = (InternalEObject)owningModel;
-			owningModel = (ModelGeneration)eResolveProxy(oldOwningModel);
-			if (owningModel != oldOwningModel) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AppPackage.ENTITY__OWNING_MODEL, oldOwningModel, owningModel));
-			}
-		}
-		return owningModel;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ModelGeneration basicGetOwningModel() {
-		return owningModel;
+		if (eContainerFeatureID() != AppPackage.ENTITY__OWNING_MODEL) return null;
+		return (ModelGeneration)eContainer();
 	}
 
 	/**
@@ -135,11 +110,54 @@ public class EntityImpl extends EObjectImpl implements Entity {
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case AppPackage.ENTITY__OWNING_MODEL:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return eBasicSetContainer(otherEnd, AppPackage.ENTITY__OWNING_MODEL, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case AppPackage.ENTITY__OWNING_MODEL:
+				return eBasicSetContainer(null, AppPackage.ENTITY__OWNING_MODEL, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case AppPackage.ENTITY__OWNING_MODEL:
+				return eInternalContainer().eInverseRemove(this, AppPackage.MODEL_GENERATION__CLASSES, ModelGeneration.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case AppPackage.ENTITY__OWNING_MODEL:
-				if (resolve) return getOwningModel();
-				return basicGetOwningModel();
+				return getOwningModel();
 			case AppPackage.ENTITY__NAME:
 				return getName();
 		}
@@ -185,7 +203,7 @@ public class EntityImpl extends EObjectImpl implements Entity {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case AppPackage.ENTITY__OWNING_MODEL:
-				return owningModel != null;
+				return getOwningModel() != null;
 			case AppPackage.ENTITY__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 		}

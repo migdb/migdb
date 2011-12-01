@@ -27,16 +27,18 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Entity extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Owning Model</b></em>' reference.
+	 * Returns the value of the '<em><b>Owning Model</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link mm.app.ModelGeneration#getClasses <em>Classes</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owning Model</em>' reference isn't clear,
+	 * If the meaning of the '<em>Owning Model</em>' container reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owning Model</em>' reference.
+	 * @return the value of the '<em>Owning Model</em>' container reference.
 	 * @see mm.app.AppPackage#getEntity_OwningModel()
-	 * @model required="true" changeable="false" derived="true"
+	 * @see mm.app.ModelGeneration#getClasses
+	 * @model opposite="classes" required="true" transient="false" changeable="false" derived="true"
 	 * @generated
 	 */
 	ModelGeneration getOwningModel();

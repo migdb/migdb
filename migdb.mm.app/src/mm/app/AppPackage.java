@@ -154,7 +154,7 @@ public interface AppPackage extends EPackage {
 	int ENTITY = 2;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -191,7 +191,7 @@ public interface AppPackage extends EPackage {
 	int ABSTRACT_CLASS = 3;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -228,7 +228,7 @@ public interface AppPackage extends EPackage {
 	int PRIMITIVE_CLASS = 4;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -274,7 +274,7 @@ public interface AppPackage extends EPackage {
 	int EMBEDDED_CLASS = 5;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -320,7 +320,7 @@ public interface AppPackage extends EPackage {
 	int CLASS = 6;
 
 	/**
-	 * The feature id for the '<em><b>Owning Model</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Model</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -634,10 +634,10 @@ public interface AppPackage extends EPackage {
 	EClass getEntity();
 
 	/**
-	 * Returns the meta object for the reference '{@link mm.app.Entity#getOwningModel <em>Owning Model</em>}'.
+	 * Returns the meta object for the container reference '{@link mm.app.Entity#getOwningModel <em>Owning Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Owning Model</em>'.
+	 * @return the meta object for the container reference '<em>Owning Model</em>'.
 	 * @see mm.app.Entity#getOwningModel()
 	 * @see #getEntity()
 	 * @generated
@@ -1038,7 +1038,7 @@ public interface AppPackage extends EPackage {
 		EClass ENTITY = eINSTANCE.getEntity();
 
 		/**
-		 * The meta object literal for the '<em><b>Owning Model</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Owning Model</b></em>' container reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
