@@ -1,1 +1,5 @@
-src/migdb/data/*_outputs/*
+migdb.mm.app/src/*
+migdb.mm.app/data/*
+migdb.mm.rdb/src/*
+migdb.mm.rdb/data/*
+

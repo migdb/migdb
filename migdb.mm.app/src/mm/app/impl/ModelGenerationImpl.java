@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
@@ -130,7 +130,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 */
 	public EList<Entity> getClasses() {
 		if (classes == null) {
-			classes = new EObjectContainmentEList<Entity>(Entity.class, this, AppPackage.MODEL_GENERATION__CLASSES);
+			classes = new EObjectContainmentWithInverseEList<Entity>(Entity.class, this, AppPackage.MODEL_GENERATION__CLASSES, AppPackage.ENTITY__OWNING_MODEL);
 		}
 		return classes;
 	}
@@ -140,6 +140,7 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -147,6 +148,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return eBasicSetContainer(otherEnd, AppPackage.MODEL_GENERATION__MODEL_ROOT, msgs);
+			case AppPackage.MODEL_GENERATION__CLASSES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getClasses()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}

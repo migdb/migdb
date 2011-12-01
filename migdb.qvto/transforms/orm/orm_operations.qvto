@@ -79,7 +79,7 @@ mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
 	
 	// addition of an index to the schema
 	rdbRoot.operations += object RDB::operations::AddIndex {
-		owningSchemaName := "pubic";
+		owningSchemaName := "public";
 		owningTableName := self.name;
 		name := "public." + self.name.toLower() + ".id";
 		columnsNames := OrderedSet {"id"};
@@ -91,5 +91,20 @@ mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
 		owningTableName := self.name;
 		name := "public." + self.name.toLower() + ".id.pk";
 		underlyingIndexName := "public." + self.name.toLower() + ".id";
+	};
+}
+
+query APP::operations::AddProperty::isValid(inout rdbRoot : RDB::ModelRoot): Boolean {
+	return true;
+}
+
+mapping APP::operations::AddProperty::toRdb(inout rdbRoot : RDB::ModelRoot) {
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName;
+		name := self.name;
+		type := RDB::PrimitiveType::int;
+		// defaultValue := self.defaultValue;
 	};
 }

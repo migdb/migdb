@@ -76,6 +76,7 @@ public interface ModelGeneration extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Classes</b></em>' containment reference list.
 	 * The list contents are of type {@link mm.app.Entity}.
+	 * It is bidirectional and its opposite is '{@link mm.app.Entity#getOwningModel <em>Owning Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Classes</em>' containment reference list isn't clear,
@@ -84,7 +85,8 @@ public interface ModelGeneration extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Classes</em>' containment reference list.
 	 * @see mm.app.AppPackage#getModelGeneration_Classes()
-	 * @model containment="true" ordered="false"
+	 * @see mm.app.Entity#getOwningModel
+	 * @model opposite="owningModel" containment="true" ordered="false"
 	 * @generated
 	 */
 	EList<Entity> getClasses();

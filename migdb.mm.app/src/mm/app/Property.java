@@ -38,18 +38,16 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Property extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Owning Class</b></em>' container reference.
-	 * It is bidirectional and its opposite is '{@link mm.app.AbstractClass#getProperties <em>Properties</em>}'.
+	 * Returns the value of the '<em><b>Owning Class</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owning Class</em>' container reference isn't clear,
+	 * If the meaning of the '<em>Owning Class</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owning Class</em>' container reference.
+	 * @return the value of the '<em>Owning Class</em>' reference.
 	 * @see mm.app.AppPackage#getProperty_OwningClass()
-	 * @see mm.app.AbstractClass#getProperties
-	 * @model opposite="properties" required="true" transient="false" changeable="false" derived="true"
+	 * @model required="true" changeable="false" derived="true"
 	 * @generated
 	 */
 	AbstractClass getOwningClass();

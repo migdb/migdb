@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * 
  */
-library ValidatorAPP;
+library validator_app;
 
 import queries.queries_app;
 	
