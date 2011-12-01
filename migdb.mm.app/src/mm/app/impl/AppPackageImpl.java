@@ -277,6 +277,15 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getAbstractClass_Properties() {
+		return (EReference)abstractClassEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPrimitiveClass() {
 		return primitiveClassEClass;
 	}
@@ -297,15 +306,6 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 */
 	public EClass getEmbeddedClass() {
 		return embeddedClassEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getEmbeddedClass_Properties() {
-		return (EReference)embeddedClassEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -351,15 +351,6 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 */
 	public EAttribute getClass_InheritanceType() {
 		return (EAttribute)classEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getClass_Properties() {
-		return (EReference)classEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -548,19 +539,18 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 		createEAttribute(entityEClass, ENTITY__NAME);
 
 		abstractClassEClass = createEClass(ABSTRACT_CLASS);
+		createEReference(abstractClassEClass, ABSTRACT_CLASS__PROPERTIES);
 
 		primitiveClassEClass = createEClass(PRIMITIVE_CLASS);
 		createEAttribute(primitiveClassEClass, PRIMITIVE_CLASS__PRIMITIVE_TYPE);
 
 		embeddedClassEClass = createEClass(EMBEDDED_CLASS);
-		createEReference(embeddedClassEClass, EMBEDDED_CLASS__PROPERTIES);
 
 		classEClass = createEClass(CLASS);
 		createEReference(classEClass, CLASS__PARENT);
 		createEAttribute(classEClass, CLASS__IS_ABSTRACT);
 		createEAttribute(classEClass, CLASS__TABLE_NAME);
 		createEAttribute(classEClass, CLASS__INHERITANCE_TYPE);
-		createEReference(classEClass, CLASS__PROPERTIES);
 
 		propertyEClass = createEClass(PROPERTY);
 		createEReference(propertyEClass, PROPERTY__OWNING_CLASS);
@@ -636,22 +626,21 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 		initEAttribute(getEntity_Name(), ecorePackage.getEString(), "name", null, 1, 1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(abstractClassEClass, AbstractClass.class, "AbstractClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getAbstractClass_Properties(), this.getProperty(), this.getProperty_OwningClass(), "properties", null, 0, -1, AbstractClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(primitiveClassEClass, PrimitiveClass.class, "PrimitiveClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPrimitiveClass_PrimitiveType(), this.getPrimitiveType(), "primitiveType", null, 1, 1, PrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(embeddedClassEClass, EmbeddedClass.class, "EmbeddedClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getEmbeddedClass_Properties(), this.getProperty(), null, "properties", null, 0, -1, EmbeddedClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(classEClass, mm.app.Class.class, "Class", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getClass_Parent(), this.getClass_(), null, "parent", null, 0, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClass_IsAbstract(), ecorePackage.getEBoolean(), "isAbstract", "false", 0, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClass_TableName(), ecorePackage.getEString(), "tableName", null, 0, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getClass_InheritanceType(), this.getInheritanceType(), "inheritanceType", null, 1, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getClass_Properties(), this.getProperty(), null, "properties", null, 0, -1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getProperty_OwningClass(), this.getAbstractClass(), null, "owningClass", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getProperty_OwningClass(), this.getAbstractClass(), this.getAbstractClass_Properties(), "owningClass", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProperty_Type(), this.getEntity(), null, "type", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProperty_DefaultValue(), ecorePackage.getEString(), "defaultValue", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

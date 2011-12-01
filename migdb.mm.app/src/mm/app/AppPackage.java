@@ -209,13 +209,22 @@ public interface AppPackage extends EPackage {
 	int ABSTRACT_CLASS__NAME = ENTITY__NAME;
 
 	/**
+	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_CLASS__PROPERTIES = ENTITY_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Abstract Class</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_CLASS_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 0;
+	int ABSTRACT_CLASS_FEATURE_COUNT = ENTITY_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.PrimitiveClassImpl <em>Primitive Class</em>}' class.
@@ -298,7 +307,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EMBEDDED_CLASS__PROPERTIES = ABSTRACT_CLASS_FEATURE_COUNT + 0;
+	int EMBEDDED_CLASS__PROPERTIES = ABSTRACT_CLASS__PROPERTIES;
 
 	/**
 	 * The number of structural features of the '<em>Embedded Class</em>' class.
@@ -307,7 +316,7 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EMBEDDED_CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 1;
+	int EMBEDDED_CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.ClassImpl <em>Class</em>}' class.
@@ -336,6 +345,15 @@ public interface AppPackage extends EPackage {
 	 * @ordered
 	 */
 	int CLASS__NAME = ABSTRACT_CLASS__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CLASS__PROPERTIES = ABSTRACT_CLASS__PROPERTIES;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' reference.
@@ -374,22 +392,13 @@ public interface AppPackage extends EPackage {
 	int CLASS__INHERITANCE_TYPE = ABSTRACT_CLASS_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int CLASS__PROPERTIES = ABSTRACT_CLASS_FEATURE_COUNT + 4;
-
-	/**
 	 * The number of structural features of the '<em>Class</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 5;
+	int CLASS_FEATURE_COUNT = ABSTRACT_CLASS_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link mm.app.impl.PropertyImpl <em>Property</em>}' class.
@@ -402,7 +411,7 @@ public interface AppPackage extends EPackage {
 	int PROPERTY = 7;
 
 	/**
-	 * The feature id for the '<em><b>Owning Class</b></em>' reference.
+	 * The feature id for the '<em><b>Owning Class</b></em>' container reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -666,6 +675,17 @@ public interface AppPackage extends EPackage {
 	EClass getAbstractClass();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link mm.app.AbstractClass#getProperties <em>Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Properties</em>'.
+	 * @see mm.app.AbstractClass#getProperties()
+	 * @see #getAbstractClass()
+	 * @generated
+	 */
+	EReference getAbstractClass_Properties();
+
+	/**
 	 * Returns the meta object for class '{@link mm.app.PrimitiveClass <em>Primitive Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -695,17 +715,6 @@ public interface AppPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEmbeddedClass();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link mm.app.EmbeddedClass#getProperties <em>Properties</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Properties</em>'.
-	 * @see mm.app.EmbeddedClass#getProperties()
-	 * @see #getEmbeddedClass()
-	 * @generated
-	 */
-	EReference getEmbeddedClass_Properties();
 
 	/**
 	 * Returns the meta object for class '{@link mm.app.Class <em>Class</em>}'.
@@ -762,17 +771,6 @@ public interface AppPackage extends EPackage {
 	EAttribute getClass_InheritanceType();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link mm.app.Class#getProperties <em>Properties</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Properties</em>'.
-	 * @see mm.app.Class#getProperties()
-	 * @see #getClass_()
-	 * @generated
-	 */
-	EReference getClass_Properties();
-
-	/**
 	 * Returns the meta object for class '{@link mm.app.Property <em>Property</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -783,10 +781,10 @@ public interface AppPackage extends EPackage {
 	EClass getProperty();
 
 	/**
-	 * Returns the meta object for the reference '{@link mm.app.Property#getOwningClass <em>Owning Class</em>}'.
+	 * Returns the meta object for the container reference '{@link mm.app.Property#getOwningClass <em>Owning Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Owning Class</em>'.
+	 * @return the meta object for the container reference '<em>Owning Class</em>'.
 	 * @see mm.app.Property#getOwningClass()
 	 * @see #getProperty()
 	 * @generated
@@ -1064,6 +1062,14 @@ public interface AppPackage extends EPackage {
 		EClass ABSTRACT_CLASS = eINSTANCE.getAbstractClass();
 
 		/**
+		 * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ABSTRACT_CLASS__PROPERTIES = eINSTANCE.getAbstractClass_Properties();
+
+		/**
 		 * The meta object literal for the '{@link mm.app.impl.PrimitiveClassImpl <em>Primitive Class</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1090,14 +1096,6 @@ public interface AppPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EMBEDDED_CLASS = eINSTANCE.getEmbeddedClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference EMBEDDED_CLASS__PROPERTIES = eINSTANCE.getEmbeddedClass_Properties();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.impl.ClassImpl <em>Class</em>}' class.
@@ -1142,14 +1140,6 @@ public interface AppPackage extends EPackage {
 		EAttribute CLASS__INHERITANCE_TYPE = eINSTANCE.getClass_InheritanceType();
 
 		/**
-		 * The meta object literal for the '<em><b>Properties</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference CLASS__PROPERTIES = eINSTANCE.getClass_Properties();
-
-		/**
 		 * The meta object literal for the '{@link mm.app.impl.PropertyImpl <em>Property</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1160,7 +1150,7 @@ public interface AppPackage extends EPackage {
 		EClass PROPERTY = eINSTANCE.getProperty();
 
 		/**
-		 * The meta object literal for the '<em><b>Owning Class</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Owning Class</b></em>' container reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
