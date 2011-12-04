@@ -3,7 +3,7 @@ package eu.collectionspro.mwe;
 import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.List;
-import java.util.Set;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.xtext.xtend2.lib.StringConcatenation;
@@ -16,20 +16,13 @@ public class SimpleGenerator extends BaseCodeGenerator {
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("Argument list:");
       _builder.newLine();
+      _builder.append(model, "");
+      _builder.newLineIfNotEmpty();
       {
-        Set<String> _keySet = this.arguments.keySet();
-        for(final String arg : _keySet) {
-          _builder.append(arg, "");
-          _builder.append(" = ");
-          Object _get = this.arguments.get(arg);
-          String _string = _get.toString();
-          _builder.append(_string, "");
-          _builder.append(":");
-          _builder.newLineIfNotEmpty();
+        EList<EObject> _eContents = model.eContents();
+        for(final Object arg : _eContents) {
           _builder.append("\t");
-          StringConcatenation _printArg = this.printArg(arg);
-          _builder.append(_printArg, "	");
-          _builder.newLineIfNotEmpty();
+          _builder.newLine();
         }
       }
       StringConcatenation fileContent = _builder;

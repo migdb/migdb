@@ -29,10 +29,6 @@ Workflow {
 		transformationFile = "qvto/build-test-model.qvto"
 		outputSlot = "myModel"
 	}
-/**/	
-	component = ModelInspector {
-		modelSlot = "myModel"
-	}
 /**/
 	component = QVTOExecutor {
 		inputSlot = "myModel"
@@ -46,8 +42,15 @@ Workflow {
 		
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
+	}
+/**/	
+	component = CodeGenComponent {
+		withoutModel = false
+		slot = "myModel"
+		generator = SimpleGenerator {}
+		outputPath = "output/"
 	}		
-/** /	
+/**	
 	component = org.eclipse.emf.mwe.utils.Reader {
 		modelSlot = "xxx"
 		uri = "fdsafa"

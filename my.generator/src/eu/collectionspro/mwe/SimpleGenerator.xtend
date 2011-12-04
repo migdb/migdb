@@ -10,9 +10,9 @@ class SimpleGenerator extends BaseCodeGenerator {
 	override doGenerate(EObject model) {
 		var fileContent = '''
 			Argument list:
-			«FOR String arg : arguments.keySet()»
-				«arg» = «arguments.get(arg).toString»:
-					«arg.printArg»
+			«model»
+			«FOR Object arg : model.eContents»
+				
 			«ENDFOR»
 		''';
 		this.generateFile("test.txt",fileContent);
