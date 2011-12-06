@@ -35,13 +35,14 @@ main() {
 	log("transformation started...");
 	
 	var appRoot : APP::ModelRoot = inApp.rootObjects()![APP::ModelRoot];
+	var appGen : APP::ModelGeneration = appRoot.modelGenerations->first();
 	var rdbRoot : RDB::ModelRoot = inRdb.rootObjects()![RDB::ModelRoot];
 	
 	appRoot.operations->forEach(op) {
 		log("	iterating over operation " + op.repr());
-		if (op.isValid(rdbRoot)) then {
+		if (op.isValid(appGen, rdbRoot)) then {
 			log("	operation is valid " + op.repr());
-			op.xmap toRdb(rdbRoot);
+			op.xmap toRdb(appGen, rdbRoot);
 		} else {
 			log("	operation is invalid " + op.repr());
 		} endif;
@@ -50,18 +51,20 @@ main() {
 
 // a mapping of a given operation
 abstract mapping APP::operations::ModelOperation::
-	toRdb(inout rdbRoot : RDB::ModelRoot);
+	toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot);
 	
 // is a mapping valid
 abstract query APP::operations::ModelOperation::
-	isValid(inout rdbRoot : RDB::ModelRoot) : Boolean;
+	isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) : Boolean;
 
 
-query APP::operations::AddClass::isValid(inout rdbRoot : RDB::ModelRoot): Boolean {
+/* ++++++++++ OPERATIONS ++++++++++++++++++++ */
+
+query APP::operations::AddClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return self.isAbstract = false;
 }
 
-mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
+mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	// addition of a table to the schema
 	rdbRoot.operations += object RDB::operations::AddTable {
 		owningSchemaName := "public";
@@ -94,17 +97,82 @@ mapping APP::operations::AddClass::toRdb(inout rdbRoot : RDB::ModelRoot) {
 	};
 }
 
-query APP::operations::AddProperty::isValid(inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::operations::AddProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::AddProperty::toRdb(inout rdbRoot : RDB::ModelRoot) {
+mapping APP::operations::AddProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+disjuncts APP::operations::AddProperty::primitivePropertyToRdb,
+		  APP::operations::AddProperty::embeddedPropertyToRdb,
+		  APP::operations::AddProperty::complexPropertyToRdb { 
+}
+
+mapping APP::operations::AddProperty::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.findEntity(self.type).oclIsTypeOf(APP::PrimitiveClass); }
+{
 	// addition of a column to the table
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName;
-		name := self.name;
+		name := self.name.toLower();
+		type := appGen.findPrimitiveTypeInRdb(self.type);
+		// defaultValue := self.defaultValue;
+	};
+}
+
+mapping APP::operations::AddProperty::embeddedPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.findEntity(self.type).oclIsTypeOf(APP::EmbeddedClass); }
+{
+	appGen.findEntity(self.type).oclAsType(APP::EmbeddedClass).properties->forEach(p) {
+		// addition of a column to the table
+		rdbRoot.operations += object RDB::operations::AddColumn {
+			owningSchemaName := "public";
+			owningTableName := p.owningClass.name;
+			name := p.name.toLower();
+			type := appGen.findPrimitiveTypeInRdb(p.type.name);
+			// defaultValue := self.defaultValue;
+		};
+	
+	};
+}
+
+mapping APP::operations::AddProperty::complexPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
+{
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName;
+		name := "id_ref_" + self.type.toLower();
 		type := RDB::PrimitiveType::int;
 		// defaultValue := self.defaultValue;
 	};
+	
+	// addition of a foreign key to the table
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName;
+		name := "public." + self.owningClassName.toLower() + ".id.fk";
+		targetTableName := self.type.toLower();
+		constrainedColumnName := "id_ref_" + self.type.toLower();		
+	};
+}
+
+/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
+query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
+	return self.classes->selectOne(name = eName);
+}
+
+query APP::ModelGeneration::findPrimitiveTypeInApp(pName : String) : APP::PrimitiveType {
+	return self.findEntity(pName).oclAsType(APP::PrimitiveClass).primitiveType;
+}
+
+query APP::ModelGeneration::findPrimitiveTypeInRdb(pName : String) : RDB::PrimitiveType {
+	switch {
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::boolean) return RDB::PrimitiveType::boolean;
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::char) return RDB::PrimitiveType::char;
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::int) return RDB::PrimitiveType::int;
+	};
+	return null;
 }
