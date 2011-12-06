@@ -21,7 +21,6 @@ public class SimpleGenerator extends BaseCodeGenerator {
       {
         EList<EObject> _eContents = model.eContents();
         for(final Object arg : _eContents) {
-          _builder.append("\t");
           _builder.newLine();
         }
       }

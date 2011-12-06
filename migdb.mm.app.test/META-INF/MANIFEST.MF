@@ -15,7 +15,7 @@ Require-Bundle: org.eclipse.emf.mwe2.launch;bundle-version="2.0.1",
  org.junit;bundle-version="4.8.2",
  migdb.mm.app;bundle-version="1.0.0",
  eu.collectionspro.mwe;bundle-version="1.0.0",
- my.generator;bundle-version="1.0.0"
+ migdb.generator;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.ui.plugin

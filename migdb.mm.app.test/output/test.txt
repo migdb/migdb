@@ -1,1 +1,7 @@
 Argument list:
+mm.app.impl.ModelGenerationImpl@1dacecf3 (isMissing: false)
+mm.app.operations.impl.AddClassImpl@43f854bd (name: Parent, parent: null, isAbstract: false, isEmbedded: true, tableName: null, inheritanceType: __not_defined)
+mm.app.operations.impl.AddClassImpl@64836727 (name: Child, parent: null, isAbstract: false, isEmbedded: true, tableName: null, inheritanceType: __not_defined)
+mm.app.operations.impl.SetParentImpl@6ee964fe (name: Child, parentName: Parent)
+mm.app.operations.impl.AddPropertyImpl@1ce59895 (owningClassName: Child, name: Pokus, type: Parent, defaultValue: null, lowerBound: 1, upperBound: 1, isOrdered: false, isUnique: false, columnName: null, columnNamePattern: null, sequenceName: null)
+mm.app.operations.impl.RemovePropertyImpl@25846d05 (owningClassName: Child, name: Pokus)

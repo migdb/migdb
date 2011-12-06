@@ -13,6 +13,7 @@ import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.emf.mwe.utils.Reader
 
 import eu.collectionspro.mwe.*
+import migdb.generator.*
 
 Workflow {
 /**/
@@ -43,11 +44,11 @@ Workflow {
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
-/**/	
+/**	
 	component = CodeGenComponent {
 		withoutModel = false
 		slot = "myModel"
-		generator = SimpleGenerator {}
+		generator = Generator {}
 		outputPath = "output/"
 	}		
 /**	
