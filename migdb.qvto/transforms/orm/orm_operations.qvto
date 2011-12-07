@@ -68,13 +68,13 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 	// addition of a table to the schema
 	rdbRoot.operations += object RDB::operations::AddTable {
 		owningSchemaName := "public";
-		name := self.name;
+		name := self.name.toLower();
 	};
 	
 	// addition of a column to the table
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
-		owningTableName := self.name;
+		owningTableName := self.name.toLower();
 		name := "id";
 		type := RDB::PrimitiveType::int;
 		// defaultValue := "0";
@@ -83,17 +83,17 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 	// addition of an index to the schema
 	rdbRoot.operations += object RDB::operations::AddIndex {
 		owningSchemaName := "public";
-		owningTableName := self.name;
-		name := "public." + self.name.toLower() + ".id";
+		owningTableName := self.name.toLower();
+		name := "IX_" + self.name.toLower() + "_id";
 		columnsNames := OrderedSet {"id"};
 	};
 	
 	// addition of a primary key to the table
 	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
 		owningSchemaName := "public";
-		owningTableName := self.name;
-		name := "public." + self.name.toLower() + ".id.pk";
-		underlyingIndexName := "public." + self.name.toLower() + ".id";
+		owningTableName := self.name.toLower();
+		name := "PK_" + self.name.toLower();
+		underlyingIndexName := "IX_" + self.name.toLower() + "_id";
 	};
 }
 
@@ -114,7 +114,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::PrimitiveClass); }
 	// addition of a column to the table
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName;
+		owningTableName := self.owningClassName.toLower();
 		name := self.name.toLower();
 		type := appGen.findPrimitiveTypeInRdb(self.type);
 		defaultValue := self.defaultValue;
@@ -128,7 +128,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::EmbeddedClass); }
 		// addition of a column to the table
 		rdbRoot.operations += object RDB::operations::AddColumn {
 			owningSchemaName := "public";
-			owningTableName := p.owningClass.name;
+			owningTableName := p.owningClass.name.toLower();
 			name := p.name.toLower();
 			type := appGen.findPrimitiveTypeInRdb(p.type.name);
 			defaultValue := self.defaultValue;
@@ -143,7 +143,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
 	// addition of a column to the table
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName;
+		owningTableName := self.owningClassName.toLower();
 		name := "id_ref_" + self.type.toLower();
 		type := RDB::PrimitiveType::int;
 		defaultValue := self.defaultValue;
@@ -152,10 +152,10 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
 	// addition of a foreign key to the table
 	rdbRoot.operations += object RDB::operations::AddForeignKey {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName;
-		name := "public." + self.owningClassName.toLower() + ".id.fk";
+		owningTableName := self.owningClassName.toLower();
+		name := "FK_" + self.owningClassName.toLower() + "_" + self.type.toLower();
 		targetTableName := self.type.toLower();
-		constrainedColumnName := "id_ref_" + self.type.toLower();		
+		constrainedColumnName := self.type.toLower() + "_id";
 	};
 }
 
@@ -167,7 +167,7 @@ when { self.lowerBound = 1 }
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName;
 		owningColumnName := self.name;
-		name := "public." + self.owningClassName.toLower() + "." + self.name.toLower() + ".nn";
+		name := "NN_" + self.name.toLower();
 	};
 }
 
