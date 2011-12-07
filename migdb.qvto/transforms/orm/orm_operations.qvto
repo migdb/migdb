@@ -104,7 +104,8 @@ query APP::operations::AddProperty::isValid(appGen : APP::ModelGeneration, inout
 mapping APP::operations::AddProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 disjuncts APP::operations::AddProperty::primitivePropertyToRdb,
 		  APP::operations::AddProperty::embeddedPropertyToRdb,
-		  APP::operations::AddProperty::complexPropertyToRdb { 
+		  APP::operations::AddProperty::complexPropertyToRdb,
+		  APP::operations::AddProperty::notNullToRdb { 
 }
 
 mapping APP::operations::AddProperty::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
@@ -116,7 +117,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::PrimitiveClass); }
 		owningTableName := self.owningClassName;
 		name := self.name.toLower();
 		type := appGen.findPrimitiveTypeInRdb(self.type);
-		// defaultValue := self.defaultValue;
+		defaultValue := self.defaultValue;
 	};
 }
 
@@ -130,7 +131,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::EmbeddedClass); }
 			owningTableName := p.owningClass.name;
 			name := p.name.toLower();
 			type := appGen.findPrimitiveTypeInRdb(p.type.name);
-			// defaultValue := self.defaultValue;
+			defaultValue := self.defaultValue;
 		};
 	
 	};
@@ -145,7 +146,7 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
 		owningTableName := self.owningClassName;
 		name := "id_ref_" + self.type.toLower();
 		type := RDB::PrimitiveType::int;
-		// defaultValue := self.defaultValue;
+		defaultValue := self.defaultValue;
 	};
 	
 	// addition of a foreign key to the table
@@ -157,6 +158,19 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
 		constrainedColumnName := "id_ref_" + self.type.toLower();		
 	};
 }
+
+mapping APP::operations::AddProperty::notNullToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { self.lowerBound = 1 }
+{
+	// addition of a notNull constraint to the column
+	rdbRoot.operations += object RDB::operations::AddNotNullConstraint {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName;
+		owningColumnName := self.name;
+		name := "public." + self.owningClassName.toLower() + "." + self.name.toLower() + ".nn";
+	};
+}
+
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
