@@ -10,3 +10,9 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy
+Export-Package: mm.app,
+ mm.app.impl,
+ mm.app.operations,
+ mm.app.operations.impl,
+ mm.app.operations.util,
+ mm.app.util

@@ -1,0 +1,58 @@
+module migdb.generator.run
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import java.util.Map
+
+import eu.collectionspro.mwe.*
+
+
+Workflow {
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "tmp"
+	}	
+/**/
+	component = QVTOExecutor {
+		transformationFile = "qvto/build-test-model.qvto"
+		outputSlot = "myModel"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "myModel"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "outModel"
+	}
+/**/	
+	component = Writer {
+		modelSlot = "outModel"
+		uri = "tmp/outResult.xmi"
+		
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+/**/	
+	component = CodeGenComponent {
+		withoutModel = true
+		slot = "modelSlot"
+		generator = Generator {}
+		outputPath = "tmp/"
+	}
+/**/
+	
+}

@@ -10,3 +10,12 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport
 Bundle-ActivationPolicy: lazy
+Export-Package: mm.rdb,
+ mm.rdb.dml,
+ mm.rdb.dml.impl,
+ mm.rdb.dml.util,
+ mm.rdb.impl,
+ mm.rdb.operations,
+ mm.rdb.operations.impl,
+ mm.rdb.operations.util,
+ mm.rdb.util

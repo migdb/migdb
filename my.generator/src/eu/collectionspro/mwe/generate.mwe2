@@ -2,7 +2,7 @@ module eu.collectionspro.mwe.generate
 
 import java.util.Map
 
-import eu.collection.mwe.*
+import eu.collectionspro.mwe.*
 
 
 Workflow {

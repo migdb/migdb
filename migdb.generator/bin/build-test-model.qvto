@@ -1,0 +1,23 @@
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation build_model(inout inoutModel : RDB);
+
+
+main() {		
+			
+	var schema : RDB::operations::AddSchema	:= object RDB::operations::AddSchema {
+		name = "public";
+	};
+	
+	var table : RDB::operations::AddTable := object RDB::operations::AddTable {
+	
+		name := "first";
+	};	  									  												  												  									  	
+
+	var model : RDB::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+		};
+	 };
+
+}

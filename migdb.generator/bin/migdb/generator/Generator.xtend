@@ -20,7 +20,6 @@ class Generator extends BaseCodeGenerator {
 		this.toplevelGenerator(operations);
 	}
 	
-	
 	def toplevelGenerator(List<ModelOperation> operations) {
 		for (op : operations)
 			op.generateOperationFile
@@ -34,13 +33,12 @@ class Generator extends BaseCodeGenerator {
 		return "some file name derived from operation"
 	}
 	
-
 	def dispatch genOperation(AddColumn operation) '''
 		Add Column
 	'''
 	
-	def dispatch genOperation(AddForeignKey operation) '''
-		Add ForeignKey
+	def dispatch genOperation(AddTable operation) '''
+		Add Table
 	'''
 	
 	def dispatch genOperation(AddIndex operation) '''

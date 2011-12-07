@@ -5,8 +5,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import mm.rdb.operations.AddColumn;
-import mm.rdb.operations.AddForeignKey;
 import mm.rdb.operations.AddIndex;
+import mm.rdb.operations.AddTable;
 import mm.rdb.operations.ModelOperation;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -53,9 +53,9 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
-  protected StringConcatenation _genOperation(final AddForeignKey operation) {
+  protected StringConcatenation _genOperation(final AddTable operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("Add ForeignKey");
+    _builder.append("Add Table");
     _builder.newLine();
     return _builder;
   }
@@ -70,10 +70,10 @@ public class Generator extends BaseCodeGenerator {
   public StringConcatenation genOperation(final ModelOperation operation) {
     if ((operation instanceof AddColumn)) {
       return _genOperation((AddColumn)operation);
-    } else if ((operation instanceof AddForeignKey)) {
-      return _genOperation((AddForeignKey)operation);
     } else if ((operation instanceof AddIndex)) {
       return _genOperation((AddIndex)operation);
+    } else if ((operation instanceof AddTable)) {
+      return _genOperation((AddTable)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         java.util.Arrays.<Object>asList(operation).toString());
