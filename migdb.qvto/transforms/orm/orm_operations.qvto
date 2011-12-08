@@ -141,13 +141,13 @@ when { appGen.findEntity(self.type).oclIsTypeOf(APP::EmbeddedClass); }
 }
 
 mapping APP::operations::AddProperty::complexPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
-when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class); }
+when { appGen.findEntity(self.type).oclIsTypeOf(APP::Class) and self.upperBound <> -1; }
 {
 	// addition of a column to the table
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
-		name := "id_ref_" + self.type.toLower();
+		name := self.type.toLower() + "_id";
 		type := RDB::PrimitiveType::int;
 		defaultValue := self.defaultValue;
 	};
@@ -189,7 +189,7 @@ when { true; }
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
-		name := "id_ref_" + self.owningClassName.toLower();
+		name := self.owningClassName.toLower() + "_id";
 		type := RDB::PrimitiveType::int;
 	};
 	
@@ -238,7 +238,7 @@ when { self.isOrdered }
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
-	return self.classes->selectOne(name = eName);
+	return self.classes![name = eName];
 }
 
 query APP::ModelGeneration::findPrimitiveTypeInApp(pName : String) : APP::PrimitiveType {
