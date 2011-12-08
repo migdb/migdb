@@ -105,7 +105,10 @@ mapping APP::operations::AddProperty::toRdb(appGen : APP::ModelGeneration, inout
 	self.xmap primitivePropertyToRdb(appGen, rdbRoot);
 	self.xmap embeddedPropertyToRdb(appGen, rdbRoot);
 	self.xmap complexPropertyToRdb(appGen, rdbRoot);
-	self.xmap notNullToRdb(appGen, rdbRoot);		  
+	
+	self.xmap notNullToRdb(appGen, rdbRoot);
+	
+	self.xmap collectionToRdb(appGen, rdbRoot);
 }
 
 mapping APP::operations::AddProperty::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
@@ -170,6 +173,66 @@ when { self.lowerBound = 1 }
 		name := "NN_" + self.name.toLower();
 	};
 }
+
+mapping APP::operations::AddProperty::collectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { self.upperBound = -1 }
+{
+	self.xmap generalCollectionToRdb(appGen, rdbRoot);
+	self.xmap orderedCollectionToRdb(appGen, rdbRoot);
+}
+
+// 0..1 * {unique?}
+mapping APP::operations::AddProperty::generalCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { true; }
+{
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.type.toLower();
+		name := "id_ref_" + self.owningClassName.toLower();
+		type := RDB::PrimitiveType::int;
+	};
+	
+	// addition of a foreign key to the table
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.type.toLower();
+		name := "FK_" + self.type.toLower() + "_" + self.owningClassName.toLower();
+		targetTableName := self.owningClassName.toLower();
+		constrainedColumnName := self.owningClassName.toLower() + "_id";
+	};
+}
+
+// 0..1 * {ordered, unique?}
+mapping APP::operations::AddProperty::orderedCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { self.isOrdered }
+{
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.type.toLower();
+		name := "ord_" + self.owningClassName.toLower();
+		type := RDB::PrimitiveType::int;
+	};
+	
+	// addition of an index to the schema
+	rdbRoot.operations += object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := self.type.toLower();
+		name := "UX_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
+		columnsNames := OrderedSet {"ord_" + self.owningClassName.toLower()};
+	};
+	
+	// addition of an unique constraint to the table
+	rdbRoot.operations += object RDB::operations::AddUniqueIndex {
+		owningSchemaName := "public";
+		owningTableName := self.type.toLower();
+		name := "UK_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
+		underlyingIndexName := "UX_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
+	};
+}
+
+// unique collection
 
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
