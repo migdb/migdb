@@ -10,8 +10,22 @@ main() {
 	};
 	
 	var table : RDB::operations::AddTable := object RDB::operations::AddTable {
-	
+		owningSchemaName := "public";
 		name := "first";
+	};
+	
+	var column : RDB::operations::AddColumn := object RDB::operations::AddColumn{
+		owningSchemaName := "public";
+		owningTableName := "first";
+		name := "Name";
+		type := RDB::PrimitiveType::char;
+	};
+	
+	var index : RDB::operations::AddIndex := object RDB::operations::AddIndex{
+		owningSchemaName := "public";
+		owningTableName := "first";
+		name := "prvniIndex";
+		columnsNames := OrderedSet{"Name"};
 	};	  									  												  												  									  	
 
 	var model : RDB::ModelRoot := object ModelRoot {
@@ -19,5 +33,10 @@ main() {
 			isMissing := false;
 		};
 	 };
+	 
+	 model.operations += schema;
+	 model.operations += table;
+	 model.operations += column;
+	 model.operations += index;
 
 }
