@@ -355,9 +355,11 @@ mapping APP::operations::RemoveProperty::apply(inout gen : APP::ModelGeneration)
 
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
-query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boolean{
-	return gen.classes->exists(name = self.owningClassName)
-		   and gen.classes->exists(name = self.targetClassName)
+query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boolean {
+	return gen.isClassInGeneration(self.owningClassName) 
+		   and gen.isClassInGeneration(self.targetClassName)
+		   and 
+		   
 		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).properties->exists(name = self.propertyName)
 		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
 		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
@@ -424,6 +426,34 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+
+query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
+	return self.classes->exists(name = eName);
+}
+
+query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
+	return self.classes![name = eName];
+}
+
+query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
+	return self.isEntityInGeneration(cName).oclIsTypeOf(APP::AbstractClass);
+}
+
+query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
+	return self.findEntity(cName).oclAsType(APP::AbstractClass);
+}
+
+query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
+	return self.findAbstractClass(cName).properties->exists(name = pName);
+}
+
+query APP::ModelGeneration::findPropertyInAbstractClass(cName : String, pName : String) : APP::Property {
+	return self.findAbstractClass(cName).properties![name = pName];
+}
+
+
+
+
 
 // overi, zda-li v generaci existuje jakakoliv trida s danam jmenem
 query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
