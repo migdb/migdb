@@ -235,10 +235,40 @@ when { self.isOrdered }
 // unique collection
 
 
+mapping APP::operations::SetParent::inheritanceToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+	self.xmap joined(appGen, rdbRoot);
+}
+
+// inheritanceType = joined
+mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.findClass(self.parentName).inheritanceType = APP::InheritanceType::joined; }
+{
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.name.toLower();
+		name := self.parentName.toLower() + "_id";
+		type := RDB::PrimitiveType::int;
+	};
+	
+	// addition of a foreign key to the table
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.name.toLower();
+		name := "FK_" + self.name.toLower() + "_" + self.parentName.toLower();
+		targetTableName := self.parentName.toLower();
+		constrainedColumnName := self.name.toLower() + "_id";
+	};
+}
+
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
 	return self.classes![name = eName];
+}
+
+query APP::ModelGeneration::findClass(cName : String) : APP::Class {
+	return self.findEntity(cName).oclAsType(APP::Class);
 }
 
 query APP::ModelGeneration::findPrimitiveTypeInApp(pName : String) : APP::PrimitiveType {
