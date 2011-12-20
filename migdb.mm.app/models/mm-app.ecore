@@ -27,7 +27,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="AbstractClass" eSuperTypes="#//app/Entity">
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
-          upperBound="-1" eType="#//app/Property" containment="true"/>
+          upperBound="-1" eType="#//app/Property" containment="true" eOpposite="#//app/Property/owningClass"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="PrimitiveClass" eSuperTypes="#//app/Entity">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
@@ -38,7 +38,6 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//app/Class"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isAbstract" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
           eType="#//app/InheritanceType"/>
     </eClassifiers>
@@ -55,7 +54,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Property">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningClass" lowerBound="1"
-          eType="#//app/AbstractClass" changeable="false" derived="true"/>
+          eType="#//app/AbstractClass" changeable="false" derived="true" eOpposite="#//app/AbstractClass/properties"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
@@ -72,9 +71,6 @@
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnName" unique="false"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnNamePattern" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eSubpackages name="operations" nsURI="http://www.collectionspro.eu/jam/mm/app-ops"
