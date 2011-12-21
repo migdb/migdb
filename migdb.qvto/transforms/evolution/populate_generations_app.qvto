@@ -75,7 +75,6 @@ mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {
 		name := self.name;
 		parent := gen.findAbstractClass(self.parent).oclAsType(APP::Class);
 		isAbstract := self.isAbstract;
-		tableName := self.tableName;
 		inheritanceType := self.inheritanceType;
 	};
 	
@@ -145,8 +144,6 @@ mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
 		upperBound := self.upperBound;
 		isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
 		isUnique := self.isUnique; // has to be a collection (upperBound == -1)
-		columnName := self.columnName;
-		columnNamePattern := self.columnNamePattern;
 		sequenceName := self.sequenceName;
 	};
 }
@@ -356,27 +353,17 @@ mapping APP::operations::RemoveProperty::apply(inout gen : APP::ModelGeneration)
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
 query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.owningClassName) 
+	return gen.isPropertyInAbstractClass(self.owningClassName, self.name) 
 		   and gen.isClassInGeneration(self.targetClassName)
-		   and 
-		   
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).properties->exists(name = self.propertyName)
-		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
-		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
-		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
-		   // OR pouzima proto, ze nejprve testuji zda je target class parentem a jednou childem (je jedno jak hluboko v hierarchii)
-		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName) or gen.isInHierarchy(self.targetClassName, self.owningClassName));
+		   and not gen.isPropertyInAbstractClass(self.targetClassName, self.name)
+		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName)
+		   		or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-/* Operace ma jeste dve property:
-	 andInOwerload (true - zkonceni pri preteceni)
-	 addValueNull (true - pokud bude mene instanci nez v cilove tride, doplnime hodnoty na NULL; false - hodnoty se dopni na default)
-	 
-	 WARNING: property jeste nejsou nijak implementovane
-*/
+// [!] uvádí model do nekonzistentního stavu
 mapping APP::operations::CopyProperty::apply(inout gen : APP::ModelGeneration){
-	var c : APP::Class := gen.findAbstractClass(self.targetClassName).oclAsType(APP::Class);
-	var p : APP::Property := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).findProperty(self.propertyName);
+	var c : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
+	var p : APP::Property := gen.findPropertyInAbstractClass(self.owningClassName, self.name);
 	
 	c.properties += object APP::Property {
 		name := p.name;
@@ -386,26 +373,21 @@ mapping APP::operations::CopyProperty::apply(inout gen : APP::ModelGeneration){
 		upperBound := p.upperBound;
 		isOrdered := p.isOrdered;
 		isUnique := p.isUnique;
-		columnName := p.columnName;
-		columnNamePattern := p.columnNamePattern;
-		sequenceName := p.sequenceName;
 	};
 }
 
 query APP::operations::MoveProperty::isValid(gen : APP::ModelGeneration) : Boolean{
-	return gen.classes->exists(name = self.owningClassName)
-		   and gen.classes->exists(name = self.targetClassName)
-		   and gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).properties->exists(name = self.propertyName)
-		   and self.endInOwerload != null // testujeme, zda je nejak nastaveno chovani pri preteceni
-		   and self.addValueNull != null // testujeme zda je nejak nastaveno chovani pri mensim poctu instanci
-		   // musime jeste otestovat, zda jsou obe tridy v hierarchii
-		   // OR pouzima proto, ze nejprve testuji zda je target class parentem a jednou childem (je jedno jak hluboko v hierarchii)
-		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName) or gen.isInHierarchy(self.targetClassName, self.owningClassName));
+	return gen.isPropertyInAbstractClass(self.owningClassName, self.name) 
+		   and gen.isClassInGeneration(self.targetClassName)
+		   and not gen.isPropertyInAbstractClass(self.targetClassName, self.name)
+		   and (gen.isInHierarchy(self.owningClassName, self.targetClassName)
+		   		or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
+// [!] duplikuje činnost CopyProeprty
 mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
-	var c : APP::Class := gen.findAbstractClass(self.targetClassName).oclAsType(APP::Class);
-	var p : APP::Property := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).findProperty(self.propertyName);
+	var c : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
+	var p : APP::Property := gen.findPropertyInAbstractClass(self.owningClassName, self.name);
 	
 	c.properties += object APP::Property {
 		name := p.name;
@@ -415,14 +397,9 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 		upperBound := p.upperBound;
 		isOrdered := p.isOrdered;
 		isUnique := p.isUnique;
-		columnName := p.columnName;
-		columnNamePattern := p.columnNamePattern;
-		sequenceName := p.sequenceName;
 	};
 	
-	// smazeme property ze tridy c
-	c.properties := c.properties->excluding(c.findProperty(self.propertyName));
-	
+	c.properties := c.properties->excluding(p);	
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -455,20 +432,14 @@ query APP::ModelGeneration::findPropertyInAbstractClass(cName : String, pName : 
 
 
 
-// overi, zda-li v generaci existuje jakakoliv trida s danam jmenem
-query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
-	return self.classes->exists(name = cName);
-}
+
 
 // overi, zda-li v generaci existuje standardni trida s danym jmenem
 query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
 	return self.classes.oclAsType(APP::Class)->exists(name = cName);
 }
 
-// vrati standardni tridu daneho jmena
-query APP::ModelGeneration::findAbstractClass(cName : String) : APP::Entity {
-	 return self.classes->selectOne(name = cName);
-}
+
 
 
 // overi, zda-li ve tride existuje atribut daneho jmena
