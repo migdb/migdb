@@ -8,6 +8,7 @@ package mm.rdb.operations;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 /**
@@ -858,6 +859,80 @@ public interface OperationsPackage extends EPackage {
 	 */
 	int REMOVE_INDEX_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.MoveColumnImpl <em>Move Column</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.MoveColumnImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMoveColumn()
+	 * @generated
+	 */
+	int MOVE_COLUMN = 17;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN__NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Target Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN__TARGET_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN__TYPE = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>Move Column</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_COLUMN_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.MergeType
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
+	 * @generated
+	 */
+	int MERGE_TYPE = 18;
+
 
 	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.ModelOperation <em>Model Operation</em>}'.
@@ -1613,6 +1688,81 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getRemoveIndex_Name();
 
 	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.MoveColumn <em>Move Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Move Column</em>'.
+	 * @see mm.rdb.operations.MoveColumn
+	 * @generated
+	 */
+	EClass getMoveColumn();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.MoveColumn#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.MoveColumn#getOwningSchemaName()
+	 * @see #getMoveColumn()
+	 * @generated
+	 */
+	EAttribute getMoveColumn_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.MoveColumn#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.MoveColumn#getOwningTableName()
+	 * @see #getMoveColumn()
+	 * @generated
+	 */
+	EAttribute getMoveColumn_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.MoveColumn#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.rdb.operations.MoveColumn#getName()
+	 * @see #getMoveColumn()
+	 * @generated
+	 */
+	EAttribute getMoveColumn_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.MoveColumn#getTargetTableName <em>Target Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Target Table Name</em>'.
+	 * @see mm.rdb.operations.MoveColumn#getTargetTableName()
+	 * @see #getMoveColumn()
+	 * @generated
+	 */
+	EAttribute getMoveColumn_TargetTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.MoveColumn#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see mm.rdb.operations.MoveColumn#getType()
+	 * @see #getMoveColumn()
+	 * @generated
+	 */
+	EAttribute getMoveColumn_Type();
+
+	/**
+	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Merge Type</em>'.
+	 * @see mm.rdb.operations.MergeType
+	 * @generated
+	 */
+	EEnum getMergeType();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2227,6 +2377,66 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute REMOVE_INDEX__NAME = eINSTANCE.getRemoveIndex_Name();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.MoveColumnImpl <em>Move Column</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.MoveColumnImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMoveColumn()
+		 * @generated
+		 */
+		EClass MOVE_COLUMN = eINSTANCE.getMoveColumn();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_COLUMN__OWNING_SCHEMA_NAME = eINSTANCE.getMoveColumn_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_COLUMN__OWNING_TABLE_NAME = eINSTANCE.getMoveColumn_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_COLUMN__NAME = eINSTANCE.getMoveColumn_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_COLUMN__TARGET_TABLE_NAME = eINSTANCE.getMoveColumn_TargetTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_COLUMN__TYPE = eINSTANCE.getMoveColumn_Type();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.MergeType
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
+		 * @generated
+		 */
+		EEnum MERGE_TYPE = eINSTANCE.getMergeType();
 
 	}
 

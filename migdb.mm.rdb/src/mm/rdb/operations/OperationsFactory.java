@@ -170,6 +170,15 @@ public interface OperationsFactory extends EFactory {
 	RemoveIndex createRemoveIndex();
 
 	/**
+	 * Returns a new object of class '<em>Move Column</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Move Column</em>'.
+	 * @generated
+	 */
+	MoveColumn createMoveColumn();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -9,6 +9,7 @@ package mm.rdb.operations.impl;
 import mm.rdb.operations.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -76,8 +77,39 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.REMOVE_TABLE_CONSTRAINT: return createRemoveTableConstraint();
 			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT: return createRemoveColumnConstraint();
 			case OperationsPackage.REMOVE_INDEX: return createRemoveIndex();
+			case OperationsPackage.MOVE_COLUMN: return createMoveColumn();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case OperationsPackage.MERGE_TYPE:
+				return createMergeTypeFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case OperationsPackage.MERGE_TYPE:
+				return convertMergeTypeToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -239,6 +271,36 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public RemoveIndex createRemoveIndex() {
 		RemoveIndexImpl removeIndex = new RemoveIndexImpl();
 		return removeIndex;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MoveColumn createMoveColumn() {
+		MoveColumnImpl moveColumn = new MoveColumnImpl();
+		return moveColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MergeType createMergeTypeFromString(EDataType eDataType, String initialValue) {
+		MergeType result = MergeType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertMergeTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

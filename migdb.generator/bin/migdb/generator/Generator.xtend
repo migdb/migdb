@@ -11,8 +11,26 @@ import com.sun.org.apache.xalan.internal.xsltc.compiler.ForEach
 
 class Generator extends BaseCodeGenerator {
 	
+	/*****************************************************************
+	 * 							ATRIBUDES    						 *
+ 	 *****************************************************************/
+ 	 
+	int counter // Counter for name of files
+	
+	/*****************************************************************
+	 * 				    	STRUCTURE METHODS				     	 *
+ 	 *****************************************************************/	
+ 	 
+ 	 /**
+ 	  * Main method for generating SQL from model
+ 	  * Model in param include all operations which we want to create 
+ 	  * and ModelGeneration
+ 	  * @param EObject model : model of our application
+ 	  */
 	override doGenerate(EObject model) {
 		var operations = new ArrayList<ModelOperationImpl>();
+		this.counter = 0; // set counter to default value
+		
 		for (Object arg : model.eContents) {			
 			if(arg instanceof ModelOperationImpl){
 				operations.add(arg as ModelOperationImpl);
@@ -21,24 +39,31 @@ class Generator extends BaseCodeGenerator {
 		this.toplevelGenerator(operations);
 	}
 	
-	
+	/**
+	 * Method for start generating SQL from each operation.
+	 * @param ArrayList<ModelOperationImpl> operations : list of operations in model
+	 */
 	def toplevelGenerator(ArrayList<ModelOperationImpl> operations) {
 		for (op : operations)
 			op.generateOperationFile
 	}
 	
+	/**
+	 * Method calls the method from the superclass
+	 * Superclass method need filename and SQL text
+	 * @param ModelOperationImpl operation : method do not need specific type of operation
+	 */
 	def generateOperationFile(ModelOperationImpl operation) {
 		generateFile(operation.fileName, operation.genOperation)
 	}
 		
+	/**
+	 * Method define name of file
+	 * @param ModelOperationImpl operation : method do not need specific type of operation
+	 */
 	def String getFileName(ModelOperationImpl operation) {
-		return "operace"+operation.^class+".sql"
-	}
-	
-	def int generateNumber(){
-		
-		
-		return 1
+		this.counter = counter + 1;
+		return ""+this.counter+".sql";
 	}
 
 	/*****************************************************************
@@ -46,13 +71,36 @@ class Generator extends BaseCodeGenerator {
  	 *****************************************************************/
 
 	/**
-	 * CREATE COLUMN
-	 * Get name of table, name and type from addColumn operation.
-	 * @param AddColumnImpl operation : operation of type AddColumnImpl
+	 * CREATE FOREIGNKEY
+	 * If we want to create foreign key, we mas create column first.
+	 * Then we add constraint on column and define foreig key.
+	 * @param AddForeignKeyImpl operation : operation of type AddForeignKeyImpl
+	 */
+	def dispatch genOperation(AddForeignKeyImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
+			ADD CONSTRAINT «operation.name»
+			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» ("id")
+	'''		
+
+	/**
+	 * CREATE UNIQUE INDEX
+	 * Unique index can use only on column with index.
+	 * Get name, schema and table from addUniqueIndex operation
+	 * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
+	 */
+	def dispatch genOperation(AddUniqueIndexImpl operation) '''
+		CREATE UNIQUE INDEX «operation.name»
+			ON «operation.owningSchemaName».«operation.owningTableName» («operation.underlyingIndexName»)
+	'''	
+	
+	/**
+	 * CREATE INDEX
+	 * Get name of table, name and names of column from addColumn operation.
+	 * @param AddIndexImpl operation : operation of type AddIndexImpl
 	 */
 	def dispatch genOperation(AddIndexImpl operation) '''
 		CREATE INDEX «operation.name»
-			ON «operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»)
+			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»"«col»"«ENDFOR»)
 	'''
 	
 	/**
@@ -61,7 +109,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddColumnImpl operation : operation of type AddColumnImpl
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
-		ALTER TABLE «operation.owningTableName»
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD «operation.name» «operation.type»
 	'''
 	
@@ -72,11 +120,9 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddTableImpl operation : operation of type AddTableImpl
 	 */
 	def dispatch genOperation(AddTableImpl operation) '''
-		CREATE TABLE «operation.name» (
-			  `id` int NOT NULL AUTO_INCREMENT,
-			  PRIMARY KEY (`id`),
-			  UNIQUE KEY `ID_UNIQUE` (`id`)
-		);
+		CREATE TABLE «operation.owningSchemaName».«operation.name» (
+			  id integer PRIMARY KEY
+		)
 	'''
 	
 	/**
@@ -85,6 +131,6 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddSchemaImpl operation : operation of type AddSchemaImpl
 	 */
 	def dispatch genOperation(AddSchemaImpl operation) '''
-		CREATE DATABASE «operation.name»	
+		CREATE SCHEMA «operation.name»
 	'''
 }

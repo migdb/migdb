@@ -23,7 +23,9 @@ import mm.rdb.operations.AddSchema;
 import mm.rdb.operations.AddSequence;
 import mm.rdb.operations.AddTable;
 import mm.rdb.operations.AddUniqueIndex;
+import mm.rdb.operations.MergeType;
 import mm.rdb.operations.ModelOperation;
+import mm.rdb.operations.MoveColumn;
 import mm.rdb.operations.OperationsFactory;
 import mm.rdb.operations.OperationsPackage;
 import mm.rdb.operations.RemoveColumn;
@@ -36,6 +38,7 @@ import mm.rdb.operations.RenameTable;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -165,6 +168,20 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass removeIndexEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass moveColumnEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum mergeTypeEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -870,6 +887,69 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMoveColumn() {
+		return moveColumnEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveColumn_OwningSchemaName() {
+		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveColumn_OwningTableName() {
+		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveColumn_Name() {
+		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveColumn_TargetTableName() {
+		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveColumn_Type() {
+		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getMergeType() {
+		return mergeTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public OperationsFactory getOperationsFactory() {
 		return (OperationsFactory)getEFactoryInstance();
 	}
@@ -979,6 +1059,16 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeIndexEClass = createEClass(REMOVE_INDEX);
 		createEAttribute(removeIndexEClass, REMOVE_INDEX__OWNING_SCHEMA_NAME);
 		createEAttribute(removeIndexEClass, REMOVE_INDEX__NAME);
+
+		moveColumnEClass = createEClass(MOVE_COLUMN);
+		createEAttribute(moveColumnEClass, MOVE_COLUMN__OWNING_SCHEMA_NAME);
+		createEAttribute(moveColumnEClass, MOVE_COLUMN__OWNING_TABLE_NAME);
+		createEAttribute(moveColumnEClass, MOVE_COLUMN__NAME);
+		createEAttribute(moveColumnEClass, MOVE_COLUMN__TARGET_TABLE_NAME);
+		createEAttribute(moveColumnEClass, MOVE_COLUMN__TYPE);
+
+		// Create enums
+		mergeTypeEEnum = createEEnum(MERGE_TYPE);
 	}
 
 	/**
@@ -1028,6 +1118,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeTableConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeColumnConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeIndexEClass.getESuperTypes().add(this.getModelOperation());
+		moveColumnEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1116,6 +1207,19 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(removeIndexEClass, RemoveIndex.class, "RemoveIndex", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveIndex_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveIndex_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(moveColumnEClass, MoveColumn.class, "MoveColumn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMoveColumn_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveColumn_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveColumn_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveColumn_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveColumn_Type(), this.getMergeType(), "type", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");
+		addEEnumLiteral(mergeTypeEEnum, MergeType.STRICT);
+		addEEnumLiteral(mergeTypeEEnum, MergeType.FORCE);
+		addEEnumLiteral(mergeTypeEEnum, MergeType.TOLERANT);
 	}
 
 } //OperationsPackageImpl
