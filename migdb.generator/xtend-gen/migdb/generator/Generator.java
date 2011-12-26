@@ -7,10 +7,18 @@ import mm.rdb.PrimitiveType;
 import mm.rdb.operations.impl.AddColumnImpl;
 import mm.rdb.operations.impl.AddForeignKeyImpl;
 import mm.rdb.operations.impl.AddIndexImpl;
+import mm.rdb.operations.impl.AddNotNullConstraintImpl;
 import mm.rdb.operations.impl.AddSchemaImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
 import mm.rdb.operations.impl.ModelOperationImpl;
+import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
+import mm.rdb.operations.impl.RemoveColumnImpl;
+import mm.rdb.operations.impl.RemoveIndexImpl;
+import mm.rdb.operations.impl.RemoveTableConstraintImpl;
+import mm.rdb.operations.impl.RemoveTableImpl;
+import mm.rdb.operations.impl.RenameColumnImpl;
+import mm.rdb.operations.impl.RenameTableImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
@@ -58,6 +66,24 @@ public class Generator extends BaseCodeGenerator {
       String _operator_plus_2 = StringExtensions.operator_plus(_operator_plus_1, ".sql");
       return _operator_plus_2;
     }
+  }
+  
+  protected StringConcatenation _genOperation(final AddNotNullConstraintImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ALTER COLUMN ");
+    String _owningColumnName = operation.getOwningColumnName();
+    _builder.append(_owningColumnName, "	");
+    _builder.append(" SET NOT NULL");
+    _builder.newLineIfNotEmpty();
+    return _builder;
   }
   
   protected StringConcatenation _genOperation(final AddForeignKeyImpl operation) {
@@ -153,7 +179,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_owningTableName, "");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("ADD ");
+    _builder.append("ADD COLUMN ");
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(" ");
@@ -173,7 +199,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_name, "");
     _builder.append(" (");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t  ");
+    _builder.append("\t");
     _builder.append("id integer PRIMARY KEY");
     _builder.newLine();
     _builder.append(")");
@@ -190,6 +216,121 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
+  protected StringConcatenation _genOperation(final RemoveTableImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("DROP TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _name = operation.getName();
+    _builder.append(_name, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RemoveColumnImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("DROP COLUMN ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RemoveIndexImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("DROP INDEX ");
+    String _name = operation.getName();
+    _builder.append(_name, "");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RemoveTableConstraintImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("DROP CONSTRAINT ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RemoveColumnConstraintImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ALTER COLUMN ");
+    String _owningColumnName = operation.getOwningColumnName();
+    _builder.append(_owningColumnName, "	");
+    _builder.append(" DROP NOT NULL");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RenameTableImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _name = operation.getName();
+    _builder.append(_name, "");
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("RENAME TO ");
+    String _newName = operation.getNewName();
+    _builder.append(_newName, "	");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected StringConcatenation _genOperation(final RenameColumnImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.append(" ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("RENAME COLUMN ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.append(" TO ");
+    String _newName = operation.getNewName();
+    _builder.append(_newName, "	");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
   public StringConcatenation genOperation(final ModelOperationImpl operation) {
     if ((operation instanceof AddColumnImpl)) {
       return _genOperation((AddColumnImpl)operation);
@@ -197,12 +338,28 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddForeignKeyImpl)operation);
     } else if ((operation instanceof AddIndexImpl)) {
       return _genOperation((AddIndexImpl)operation);
+    } else if ((operation instanceof AddNotNullConstraintImpl)) {
+      return _genOperation((AddNotNullConstraintImpl)operation);
     } else if ((operation instanceof AddSchemaImpl)) {
       return _genOperation((AddSchemaImpl)operation);
     } else if ((operation instanceof AddTableImpl)) {
       return _genOperation((AddTableImpl)operation);
     } else if ((operation instanceof AddUniqueIndexImpl)) {
       return _genOperation((AddUniqueIndexImpl)operation);
+    } else if ((operation instanceof RemoveColumnConstraintImpl)) {
+      return _genOperation((RemoveColumnConstraintImpl)operation);
+    } else if ((operation instanceof RemoveColumnImpl)) {
+      return _genOperation((RemoveColumnImpl)operation);
+    } else if ((operation instanceof RemoveIndexImpl)) {
+      return _genOperation((RemoveIndexImpl)operation);
+    } else if ((operation instanceof RemoveTableConstraintImpl)) {
+      return _genOperation((RemoveTableConstraintImpl)operation);
+    } else if ((operation instanceof RemoveTableImpl)) {
+      return _genOperation((RemoveTableImpl)operation);
+    } else if ((operation instanceof RenameColumnImpl)) {
+      return _genOperation((RenameColumnImpl)operation);
+    } else if ((operation instanceof RenameTableImpl)) {
+      return _genOperation((RenameTableImpl)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         java.util.Arrays.<Object>asList(operation).toString());

@@ -70,9 +70,29 @@ class Generator extends BaseCodeGenerator {
 	 * 							OPERATIONS							 *
  	 *****************************************************************/
 
+	/**		CREATE OPERATIONS		**/
+
 	/**
-	 * CREATE FOREIGNKEY
-	 * If we want to create foreign key, we mas create column first.
+	 * CREATE NOT NULL CONSTRAINT
+	 * To add a constraint, the table constraint syntax is used. For example:
+ 	 * >> ALTER TABLE products ADD CONSTRAINT some_name  NOT NULL (product_group_id); <<
+ 	 * To add a not-null constraint, which cannot be written as a table constraint, use this syntax:
+ 	 * >> ALTER TABLE products ALTER COLUMN product_no SET NOT NULL; <<
+ 	 * I choose version without wtiting as table constraint because NotNullConstraint is descendant of ColumnConstraint
+	 * If we want to create not null constraint, we must create column first.
+	 * Then we add not null constraint.
+	 * @param AddNotNullConstraintImpl operation : operation of type AddNotNullConstraintImpl
+	 */
+	def dispatch genOperation(AddNotNullConstraintImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
+			ALTER COLUMN «operation.owningColumnName» SET NOT NULL
+	'''	
+
+	/**
+	 * CREATE FOREIGN KEY
+	 * To add a constraint, the table constraint syntax is used. For example:
+ 	 * >> ALTER TABLE products ADD CONSTRAINT some_name  FOREIGN KEY (product_group_id) REFERENCES product_groups; <<
+	 * If we want to create foreign key, we must create column first.
 	 * Then we add constraint on column and define foreig key.
 	 * @param AddForeignKeyImpl operation : operation of type AddForeignKeyImpl
 	 */
@@ -84,8 +104,9 @@ class Generator extends BaseCodeGenerator {
 
 	/**
 	 * CREATE UNIQUE INDEX
+	 * To create a B-tree index on the column title in the table films:
+	 * >> CREATE UNIQUE INDEX title_idx ON films (title); <<
 	 * Unique index can use only on column with index.
-	 * Get name, schema and table from addUniqueIndex operation
 	 * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
 	 */
 	def dispatch genOperation(AddUniqueIndexImpl operation) '''
@@ -95,7 +116,8 @@ class Generator extends BaseCodeGenerator {
 	
 	/**
 	 * CREATE INDEX
-	 * Get name of table, name and names of column from addColumn operation.
+	 * To create a B-tree index on the column title in the table films:
+	 * >> CREATE INDEX title_idx ON films (title); <<
 	 * @param AddIndexImpl operation : operation of type AddIndexImpl
 	 */
 	def dispatch genOperation(AddIndexImpl operation) '''
@@ -105,32 +127,152 @@ class Generator extends BaseCodeGenerator {
 	
 	/**
 	 * CREATE COLUMN
-	 * Get name of table, name and type from addColumn operation.
+	 * To add a column, use a command like:
+	 * >> ALTER TABLE products ADD COLUMN description text; <<
 	 * @param AddColumnImpl operation : operation of type AddColumnImpl
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD «operation.name» «operation.type»
+			ADD COLUMN «operation.name» «operation.type»
 	'''
 	
+	// WARNING !! We do not have rule for create ID with new table.
 	/**
 	 * CREATE TABLE
-	 * Get name from addTable operation.
+	 * So to create a table in the new schema, use:
+	 * >> CREATE TABLE myschema.mytable (...); <<
 	 * Also create column ID
 	 * @param AddTableImpl operation : operation of type AddTableImpl
 	 */
 	def dispatch genOperation(AddTableImpl operation) '''
 		CREATE TABLE «operation.owningSchemaName».«operation.name» (
-			  id integer PRIMARY KEY
+			id integer PRIMARY KEY
 		)
 	'''
 	
 	/**
-	 * CREATE SCHEMA (DATABASE)
-	 * Get name from addSchema operation.
+	 * CREATE SCHEMA
+	 * To create a schema, use the CREATE SCHEMA command. Give the schema a name of your choice. For example:
+	 * >> CREATE SCHEMA myschema; <<
 	 * @param AddSchemaImpl operation : operation of type AddSchemaImpl
 	 */
 	def dispatch genOperation(AddSchemaImpl operation) '''
 		CREATE SCHEMA «operation.name»
 	'''
+	
+	/**		REMOVE OPERATIONS		**/
+	
+	/**
+	 * REMOVE TABLE
+	 * If you no longer need a table, you can remove it using the DROP TABLE command. For example:
+	 * >> DROP TABLE products; <<
+	 * @param RemoveTableImpl operation : operation of type RemoveTableImpl
+	 */
+	def dispatch genOperation(RemoveTableImpl operation) '''
+		DROP TABLE «operation.owningSchemaName».«operation.name»
+	'''
+	
+	/**
+	 * REMOVE COLUMN
+	 * To remove a column, use a command like:
+	 * >> ALTER TABLE products DROP COLUMN description; <<
+	 * @param RemoveColumnImpl operation : operation of type RemoveColumnImpl
+	 */
+	def dispatch genOperation(RemoveColumnImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			DROP COLUMN «operation.name»
+	'''	
+	
+	// WARNING !! This operation has a lot of useless information.
+	/**
+	 * REMOVE INDEX
+	 * This command will remove the index title_idx:
+	 * >> DROP INDEX title_idx; <<
+	 * @param RemoveIndexImpl operation : operation of type RemoveIndexImpl
+	 */
+	def dispatch genOperation(RemoveIndexImpl operation) '''
+		DROP INDEX «operation.name»
+	'''		
+	
+	/**
+	 * REMOVE TABLE CONSTRAINT
+	 * To remove a constraint you need to know its name. If you gave it a name then that's easy:
+	 * >> ALTER TABLE products DROP CONSTRAINT some_name; <<
+	 * @param RemoveTableConstraintImpl operation : operation of type TableConstraintImpl
+	 */
+	def dispatch genOperation(RemoveTableConstraintImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			DROP CONSTRAINT «operation.name»
+	'''		
+		
+	// WARNING !! Name of this operation may be RemoveNotNullConstraint.
+	/**
+	 * REMOVE COLUMN CONSTRAINT
+	 * This works the same for all constraint types except not-null constraints. To drop a not null constraint use:
+	 * >> ALTER TABLE products ALTER COLUMN product_no DROP NOT NULL; <<
+	 * @param RemoveColumnConstraintImpl operation : operation of type RemoveColumnConstraintImpl
+	 */
+	def dispatch genOperation(RemoveColumnConstraintImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			ALTER COLUMN «operation.owningColumnName» DROP NOT NULL
+	'''			
+	
+	/**		RENAME OPERATIONS		**/	
+		
+	/**
+	 * RENAME TABLE
+	 * To rename table:
+	 * >> ALTER TABLE products RENAME TO items; <<
+	 * @param RenameTableImpl operation : operation of type RenameTableImpl
+	 */
+	def dispatch genOperation(RenameTableImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.name» 
+			RENAME TO «operation.newName»
+	'''				
+
+	/**
+	 * RENAME COLUMN
+	 * To rename a column:
+	 * >> ALTER TABLE products RENAME COLUMN product_no TO product_number; <<
+	 * @param RenameColumnImpl operation : operation of type RenameColumnImpl
+	 */
+	def dispatch genOperation(RenameColumnImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			RENAME COLUMN «operation.name» TO «operation.newName»
+	'''	
+	
+	/**		NEEDED OPERATIONS		**/		
+	
+	// 1) Changing a Column's Data Type
+	// To convert a column to a different data type, use a command like:
+	// >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
+	
+	// 2) Changing a Column's Default Value
+	// To set a new default for a column, use a command like:
+	// >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
+	// Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
+
+	// 3) Remove Default value
+	// To remove any default value, use:
+	// >> ALTER TABLE products ALTER COLUMN price DROP DEFAULT; <<
+	
+	/**		NEEDED TO CHANGE OPERATIONS		**/	
+	
+	// 1) Add primary key to an existing Table
+	// a) Add a column with type integer to your table
+	// b) Create a sequence
+	// c) Update the column table with sequence values
+	// d) Set the necessary column properties (e.g. default, not null, etc.
+
+	// ALTER TABLE "public"."foo"   ADD COLUMN "id" INTEGER;
+	// CREATE SEQUENCE "public"."foo_id_seq";
+	// UPDATE foo SET id = nextval('"public"."foo_id_seq"');
+	// ALTER TABLE "public"."foo" ALTER COLUMN "id" SET DEFAULT nextval('"public"."foo_id_seq"');
+	// ALTER TABLE "public"."foo" ALTER COLUMN "id" SET NOT NULL;
+	// ALTER TABLE "public"."foo" ADD UNIQUE ("id");
+	// ALTER TABLE "public"."foo" DROP CONSTRAINT "foo_id_key" RESTRICT;
+	// ALTER TABLE "public"."foo" ADD PRIMARY KEY ("id");
+	// OR ONLY
+	// ALTER TABLE product ADD PRIMARY KEY (col); // column must be NOT NULL and UNIQUE
+	
 }
