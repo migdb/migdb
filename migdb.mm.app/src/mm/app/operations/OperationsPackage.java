@@ -8,6 +8,7 @@ package mm.app.operations;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -875,152 +876,6 @@ public interface OperationsPackage extends EPackage {
 	int REMOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.CopyPropertyImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getCopyProperty()
-	 * @generated
-	 */
-	int COPY_PROPERTY = 14;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Property Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__PROPERTY_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Target Class Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__TARGET_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>End In Owerload</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__END_IN_OWERLOAD = MODEL_OPERATION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Add Value Null</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY__ADD_VALUE_NULL = MODEL_OPERATION_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of structural features of the '<em>Copy Property</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COPY_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
-
-	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.MovePropertyImpl <em>Move Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.MovePropertyImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getMoveProperty()
-	 * @generated
-	 */
-	int MOVE_PROPERTY = 15;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Property Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__PROPERTY_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Target Class Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__TARGET_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>End In Owerload</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__END_IN_OWERLOAD = MODEL_OPERATION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Add Value Null</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY__ADD_VALUE_NULL = MODEL_OPERATION_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of structural features of the '<em>Move Property</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
-
-	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1028,7 +883,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
 	 * @generated
 	 */
-	int ADD_PRIMITIVE_CLASS = 16;
+	int ADD_PRIMITIVE_CLASS = 14;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1074,7 +929,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
 	 * @generated
 	 */
-	int ADD_EMBEDDED_CLASS = 17;
+	int ADD_EMBEDDED_CLASS = 15;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -1102,6 +957,144 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int ADD_EMBEDDED_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.CopyPropertyImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getCopyProperty()
+	 * @generated
+	 */
+	int COPY_PROPERTY = 16;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Target Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY__TARGET_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY__TYPE = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Copy Property</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COPY_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.MovePropertyImpl <em>Move Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.MovePropertyImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getMoveProperty()
+	 * @generated
+	 */
+	int MOVE_PROPERTY = 17;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Target Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY__TARGET_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY__TYPE = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Move Property</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.app.operations.MergeType <em>Merge Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.MergeType
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getMergeType()
+	 * @generated
+	 */
+	int MERGE_TYPE = 18;
 
 
 	/**
@@ -1773,136 +1766,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getRemoveProperty_Name();
 
 	/**
-	 * Returns the meta object for class '{@link mm.app.operations.CopyProperty <em>Copy Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Copy Property</em>'.
-	 * @see mm.app.operations.CopyProperty
-	 * @generated
-	 */
-	EClass getCopyProperty();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getOwningClassName <em>Owning Class Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
-	 * @see mm.app.operations.CopyProperty#getOwningClassName()
-	 * @see #getCopyProperty()
-	 * @generated
-	 */
-	EAttribute getCopyProperty_OwningClassName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getPropertyName <em>Property Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Property Name</em>'.
-	 * @see mm.app.operations.CopyProperty#getPropertyName()
-	 * @see #getCopyProperty()
-	 * @generated
-	 */
-	EAttribute getCopyProperty_PropertyName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getTargetClassName <em>Target Class Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Target Class Name</em>'.
-	 * @see mm.app.operations.CopyProperty#getTargetClassName()
-	 * @see #getCopyProperty()
-	 * @generated
-	 */
-	EAttribute getCopyProperty_TargetClassName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#isEndInOwerload <em>End In Owerload</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>End In Owerload</em>'.
-	 * @see mm.app.operations.CopyProperty#isEndInOwerload()
-	 * @see #getCopyProperty()
-	 * @generated
-	 */
-	EAttribute getCopyProperty_EndInOwerload();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#isAddValueNull <em>Add Value Null</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Add Value Null</em>'.
-	 * @see mm.app.operations.CopyProperty#isAddValueNull()
-	 * @see #getCopyProperty()
-	 * @generated
-	 */
-	EAttribute getCopyProperty_AddValueNull();
-
-	/**
-	 * Returns the meta object for class '{@link mm.app.operations.MoveProperty <em>Move Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Move Property</em>'.
-	 * @see mm.app.operations.MoveProperty
-	 * @generated
-	 */
-	EClass getMoveProperty();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getOwningClassName <em>Owning Class Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
-	 * @see mm.app.operations.MoveProperty#getOwningClassName()
-	 * @see #getMoveProperty()
-	 * @generated
-	 */
-	EAttribute getMoveProperty_OwningClassName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getPropertyName <em>Property Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Property Name</em>'.
-	 * @see mm.app.operations.MoveProperty#getPropertyName()
-	 * @see #getMoveProperty()
-	 * @generated
-	 */
-	EAttribute getMoveProperty_PropertyName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getTargetClassName <em>Target Class Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Target Class Name</em>'.
-	 * @see mm.app.operations.MoveProperty#getTargetClassName()
-	 * @see #getMoveProperty()
-	 * @generated
-	 */
-	EAttribute getMoveProperty_TargetClassName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#isEndInOwerload <em>End In Owerload</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>End In Owerload</em>'.
-	 * @see mm.app.operations.MoveProperty#isEndInOwerload()
-	 * @see #getMoveProperty()
-	 * @generated
-	 */
-	EAttribute getMoveProperty_EndInOwerload();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#isAddValueNull <em>Add Value Null</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Add Value Null</em>'.
-	 * @see mm.app.operations.MoveProperty#isAddValueNull()
-	 * @see #getMoveProperty()
-	 * @generated
-	 */
-	EAttribute getMoveProperty_AddValueNull();
-
-	/**
 	 * Returns the meta object for class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1954,6 +1817,124 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAddEmbeddedClass_Name();
+
+	/**
+	 * Returns the meta object for class '{@link mm.app.operations.CopyProperty <em>Copy Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Copy Property</em>'.
+	 * @see mm.app.operations.CopyProperty
+	 * @generated
+	 */
+	EClass getCopyProperty();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getOwningClassName <em>Owning Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
+	 * @see mm.app.operations.CopyProperty#getOwningClassName()
+	 * @see #getCopyProperty()
+	 * @generated
+	 */
+	EAttribute getCopyProperty_OwningClassName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.operations.CopyProperty#getName()
+	 * @see #getCopyProperty()
+	 * @generated
+	 */
+	EAttribute getCopyProperty_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getTargetClassName <em>Target Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Target Class Name</em>'.
+	 * @see mm.app.operations.CopyProperty#getTargetClassName()
+	 * @see #getCopyProperty()
+	 * @generated
+	 */
+	EAttribute getCopyProperty_TargetClassName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.CopyProperty#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see mm.app.operations.CopyProperty#getType()
+	 * @see #getCopyProperty()
+	 * @generated
+	 */
+	EAttribute getCopyProperty_Type();
+
+	/**
+	 * Returns the meta object for class '{@link mm.app.operations.MoveProperty <em>Move Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Move Property</em>'.
+	 * @see mm.app.operations.MoveProperty
+	 * @generated
+	 */
+	EClass getMoveProperty();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getOwningClassName <em>Owning Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
+	 * @see mm.app.operations.MoveProperty#getOwningClassName()
+	 * @see #getMoveProperty()
+	 * @generated
+	 */
+	EAttribute getMoveProperty_OwningClassName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.operations.MoveProperty#getName()
+	 * @see #getMoveProperty()
+	 * @generated
+	 */
+	EAttribute getMoveProperty_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getTargetClassName <em>Target Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Target Class Name</em>'.
+	 * @see mm.app.operations.MoveProperty#getTargetClassName()
+	 * @see #getMoveProperty()
+	 * @generated
+	 */
+	EAttribute getMoveProperty_TargetClassName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.MoveProperty#getType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see mm.app.operations.MoveProperty#getType()
+	 * @see #getMoveProperty()
+	 * @generated
+	 */
+	EAttribute getMoveProperty_Type();
+
+	/**
+	 * Returns the meta object for enum '{@link mm.app.operations.MergeType <em>Merge Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Merge Type</em>'.
+	 * @see mm.app.operations.MergeType
+	 * @generated
+	 */
+	EEnum getMergeType();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2502,106 +2483,6 @@ public interface OperationsPackage extends EPackage {
 		EAttribute REMOVE_PROPERTY__NAME = eINSTANCE.getRemoveProperty_Name();
 
 		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.CopyPropertyImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getCopyProperty()
-		 * @generated
-		 */
-		EClass COPY_PROPERTY = eINSTANCE.getCopyProperty();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COPY_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getCopyProperty_OwningClassName();
-
-		/**
-		 * The meta object literal for the '<em><b>Property Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COPY_PROPERTY__PROPERTY_NAME = eINSTANCE.getCopyProperty_PropertyName();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Class Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COPY_PROPERTY__TARGET_CLASS_NAME = eINSTANCE.getCopyProperty_TargetClassName();
-
-		/**
-		 * The meta object literal for the '<em><b>End In Owerload</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COPY_PROPERTY__END_IN_OWERLOAD = eINSTANCE.getCopyProperty_EndInOwerload();
-
-		/**
-		 * The meta object literal for the '<em><b>Add Value Null</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COPY_PROPERTY__ADD_VALUE_NULL = eINSTANCE.getCopyProperty_AddValueNull();
-
-		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.MovePropertyImpl <em>Move Property</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.MovePropertyImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getMoveProperty()
-		 * @generated
-		 */
-		EClass MOVE_PROPERTY = eINSTANCE.getMoveProperty();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MOVE_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getMoveProperty_OwningClassName();
-
-		/**
-		 * The meta object literal for the '<em><b>Property Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MOVE_PROPERTY__PROPERTY_NAME = eINSTANCE.getMoveProperty_PropertyName();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Class Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MOVE_PROPERTY__TARGET_CLASS_NAME = eINSTANCE.getMoveProperty_TargetClassName();
-
-		/**
-		 * The meta object literal for the '<em><b>End In Owerload</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MOVE_PROPERTY__END_IN_OWERLOAD = eINSTANCE.getMoveProperty_EndInOwerload();
-
-		/**
-		 * The meta object literal for the '<em><b>Add Value Null</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MOVE_PROPERTY__ADD_VALUE_NULL = eINSTANCE.getMoveProperty_AddValueNull();
-
-		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2644,6 +2525,100 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ADD_EMBEDDED_CLASS__NAME = eINSTANCE.getAddEmbeddedClass_Name();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.CopyPropertyImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getCopyProperty()
+		 * @generated
+		 */
+		EClass COPY_PROPERTY = eINSTANCE.getCopyProperty();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COPY_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getCopyProperty_OwningClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COPY_PROPERTY__NAME = eINSTANCE.getCopyProperty_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COPY_PROPERTY__TARGET_CLASS_NAME = eINSTANCE.getCopyProperty_TargetClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COPY_PROPERTY__TYPE = eINSTANCE.getCopyProperty_Type();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.MovePropertyImpl <em>Move Property</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.MovePropertyImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getMoveProperty()
+		 * @generated
+		 */
+		EClass MOVE_PROPERTY = eINSTANCE.getMoveProperty();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getMoveProperty_OwningClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_PROPERTY__NAME = eINSTANCE.getMoveProperty_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_PROPERTY__TARGET_CLASS_NAME = eINSTANCE.getMoveProperty_TargetClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MOVE_PROPERTY__TYPE = eINSTANCE.getMoveProperty_Type();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.operations.MergeType <em>Merge Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.MergeType
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getMergeType()
+		 * @generated
+		 */
+		EEnum MERGE_TYPE = eINSTANCE.getMergeType();
 
 	}
 

@@ -16,10 +16,9 @@ package mm.app.operations;
  * The following features are supported:
  * <ul>
  *   <li>{@link mm.app.operations.MoveProperty#getOwningClassName <em>Owning Class Name</em>}</li>
- *   <li>{@link mm.app.operations.MoveProperty#getPropertyName <em>Property Name</em>}</li>
+ *   <li>{@link mm.app.operations.MoveProperty#getName <em>Name</em>}</li>
  *   <li>{@link mm.app.operations.MoveProperty#getTargetClassName <em>Target Class Name</em>}</li>
- *   <li>{@link mm.app.operations.MoveProperty#isEndInOwerload <em>End In Owerload</em>}</li>
- *   <li>{@link mm.app.operations.MoveProperty#isAddValueNull <em>Add Value Null</em>}</li>
+ *   <li>{@link mm.app.operations.MoveProperty#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -44,30 +43,30 @@ public interface MoveProperty extends ModelOperation {
 	String getOwningClassName();
 
 	/**
-	 * Returns the value of the '<em><b>Property Name</b></em>' attribute.
+	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Property Name</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Property Name</em>' attribute.
-	 * @see #setPropertyName(String)
-	 * @see mm.app.operations.OperationsPackage#getMoveProperty_PropertyName()
+	 * @return the value of the '<em>Name</em>' attribute.
+	 * @see #setName(String)
+	 * @see mm.app.operations.OperationsPackage#getMoveProperty_Name()
 	 * @model required="true"
 	 * @generated
 	 */
-	String getPropertyName();
+	String getName();
 
 	/**
-	 * Sets the value of the '{@link mm.app.operations.MoveProperty#getPropertyName <em>Property Name</em>}' attribute.
+	 * Sets the value of the '{@link mm.app.operations.MoveProperty#getName <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Property Name</em>' attribute.
-	 * @see #getPropertyName()
+	 * @param value the new value of the '<em>Name</em>' attribute.
+	 * @see #getName()
 	 * @generated
 	 */
-	void setPropertyName(String value);
+	void setName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Target Class Name</b></em>' attribute.
@@ -96,55 +95,32 @@ public interface MoveProperty extends ModelOperation {
 	void setTargetClassName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>End In Owerload</b></em>' attribute.
+	 * Returns the value of the '<em><b>Type</b></em>' attribute.
+	 * The literals are from the enumeration {@link mm.app.operations.MergeType}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>End In Owerload</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>End In Owerload</em>' attribute.
-	 * @see #setEndInOwerload(boolean)
-	 * @see mm.app.operations.OperationsPackage#getMoveProperty_EndInOwerload()
+	 * @return the value of the '<em>Type</em>' attribute.
+	 * @see mm.app.operations.MergeType
+	 * @see #setType(MergeType)
+	 * @see mm.app.operations.OperationsPackage#getMoveProperty_Type()
 	 * @model required="true"
 	 * @generated
 	 */
-	boolean isEndInOwerload();
+	MergeType getType();
 
 	/**
-	 * Sets the value of the '{@link mm.app.operations.MoveProperty#isEndInOwerload <em>End In Owerload</em>}' attribute.
+	 * Sets the value of the '{@link mm.app.operations.MoveProperty#getType <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>End In Owerload</em>' attribute.
-	 * @see #isEndInOwerload()
+	 * @param value the new value of the '<em>Type</em>' attribute.
+	 * @see mm.app.operations.MergeType
+	 * @see #getType()
 	 * @generated
 	 */
-	void setEndInOwerload(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Add Value Null</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Add Value Null</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Add Value Null</em>' attribute.
-	 * @see #setAddValueNull(boolean)
-	 * @see mm.app.operations.OperationsPackage#getMoveProperty_AddValueNull()
-	 * @model required="true"
-	 * @generated
-	 */
-	boolean isAddValueNull();
-
-	/**
-	 * Sets the value of the '{@link mm.app.operations.MoveProperty#isAddValueNull <em>Add Value Null</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Add Value Null</em>' attribute.
-	 * @see #isAddValueNull()
-	 * @generated
-	 */
-	void setAddValueNull(boolean value);
+	void setType(MergeType value);
 
 } // MoveProperty

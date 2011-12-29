@@ -12,6 +12,7 @@ import mm.app.Entity;
 import mm.app.Property;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -36,8 +37,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link mm.app.impl.PropertyImpl#isIsOrdered <em>Is Ordered</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#isIsUnique <em>Is Unique</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#isIsID <em>Is ID</em>}</li>
- *   <li>{@link mm.app.impl.PropertyImpl#getColumnName <em>Column Name</em>}</li>
- *   <li>{@link mm.app.impl.PropertyImpl#getColumnNamePattern <em>Column Name Pattern</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#getSequenceName <em>Sequence Name</em>}</li>
  * </ul>
  * </p>
@@ -45,16 +44,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * @generated
  */
 public class PropertyImpl extends EObjectImpl implements Property {
-	/**
-	 * The cached value of the '{@link #getOwningClass() <em>Owning Class</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOwningClass()
-	 * @generated
-	 * @ordered
-	 */
-	protected AbstractClass owningClass;
-
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -216,46 +205,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	protected boolean isID = IS_ID_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getColumnName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String COLUMN_NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getColumnName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String columnName = COLUMN_NAME_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getColumnNamePattern() <em>Column Name Pattern</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getColumnNamePattern()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String COLUMN_NAME_PATTERN_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getColumnNamePattern() <em>Column Name Pattern</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getColumnNamePattern()
-	 * @generated
-	 * @ordered
-	 */
-	protected String columnNamePattern = COLUMN_NAME_PATTERN_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getSequenceName() <em>Sequence Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -300,24 +249,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * @generated
 	 */
 	public AbstractClass getOwningClass() {
-		if (owningClass != null && owningClass.eIsProxy()) {
-			InternalEObject oldOwningClass = (InternalEObject)owningClass;
-			owningClass = (AbstractClass)eResolveProxy(oldOwningClass);
-			if (owningClass != oldOwningClass) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AppPackage.PROPERTY__OWNING_CLASS, oldOwningClass, owningClass));
-			}
-		}
-		return owningClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AbstractClass basicGetOwningClass() {
-		return owningClass;
+		if (eContainerFeatureID() != AppPackage.PROPERTY__OWNING_CLASS) return null;
+		return (AbstractClass)eContainer();
 	}
 
 	/**
@@ -548,48 +481,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getColumnName() {
-		return columnName;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setColumnName(String newColumnName) {
-		String oldColumnName = columnName;
-		columnName = newColumnName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AppPackage.PROPERTY__COLUMN_NAME, oldColumnName, columnName));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getColumnNamePattern() {
-		return columnNamePattern;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setColumnNamePattern(String newColumnNamePattern) {
-		String oldColumnNamePattern = columnNamePattern;
-		columnNamePattern = newColumnNamePattern;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, AppPackage.PROPERTY__COLUMN_NAME_PATTERN, oldColumnNamePattern, columnNamePattern));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getSequenceName() {
 		return sequenceName;
 	}
@@ -612,11 +503,54 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case AppPackage.PROPERTY__OWNING_CLASS:
+				if (eInternalContainer() != null)
+					msgs = eBasicRemoveFromContainer(msgs);
+				return eBasicSetContainer(otherEnd, AppPackage.PROPERTY__OWNING_CLASS, msgs);
+		}
+		return super.eInverseAdd(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case AppPackage.PROPERTY__OWNING_CLASS:
+				return eBasicSetContainer(null, AppPackage.PROPERTY__OWNING_CLASS, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
+		switch (eContainerFeatureID()) {
+			case AppPackage.PROPERTY__OWNING_CLASS:
+				return eInternalContainer().eInverseRemove(this, AppPackage.ABSTRACT_CLASS__PROPERTIES, AbstractClass.class, msgs);
+		}
+		return super.eBasicRemoveFromContainerFeature(msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case AppPackage.PROPERTY__OWNING_CLASS:
-				if (resolve) return getOwningClass();
-				return basicGetOwningClass();
+				return getOwningClass();
 			case AppPackage.PROPERTY__NAME:
 				return getName();
 			case AppPackage.PROPERTY__TYPE:
@@ -637,10 +571,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 				return isIsUnique();
 			case AppPackage.PROPERTY__IS_ID:
 				return isIsID();
-			case AppPackage.PROPERTY__COLUMN_NAME:
-				return getColumnName();
-			case AppPackage.PROPERTY__COLUMN_NAME_PATTERN:
-				return getColumnNamePattern();
 			case AppPackage.PROPERTY__SEQUENCE_NAME:
 				return getSequenceName();
 		}
@@ -681,12 +611,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 				return;
 			case AppPackage.PROPERTY__IS_ID:
 				setIsID((Boolean)newValue);
-				return;
-			case AppPackage.PROPERTY__COLUMN_NAME:
-				setColumnName((String)newValue);
-				return;
-			case AppPackage.PROPERTY__COLUMN_NAME_PATTERN:
-				setColumnNamePattern((String)newValue);
 				return;
 			case AppPackage.PROPERTY__SEQUENCE_NAME:
 				setSequenceName((String)newValue);
@@ -730,12 +654,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 			case AppPackage.PROPERTY__IS_ID:
 				setIsID(IS_ID_EDEFAULT);
 				return;
-			case AppPackage.PROPERTY__COLUMN_NAME:
-				setColumnName(COLUMN_NAME_EDEFAULT);
-				return;
-			case AppPackage.PROPERTY__COLUMN_NAME_PATTERN:
-				setColumnNamePattern(COLUMN_NAME_PATTERN_EDEFAULT);
-				return;
 			case AppPackage.PROPERTY__SEQUENCE_NAME:
 				setSequenceName(SEQUENCE_NAME_EDEFAULT);
 				return;
@@ -752,7 +670,7 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case AppPackage.PROPERTY__OWNING_CLASS:
-				return owningClass != null;
+				return getOwningClass() != null;
 			case AppPackage.PROPERTY__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case AppPackage.PROPERTY__TYPE:
@@ -771,10 +689,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 				return isUnique != IS_UNIQUE_EDEFAULT;
 			case AppPackage.PROPERTY__IS_ID:
 				return isID != IS_ID_EDEFAULT;
-			case AppPackage.PROPERTY__COLUMN_NAME:
-				return COLUMN_NAME_EDEFAULT == null ? columnName != null : !COLUMN_NAME_EDEFAULT.equals(columnName);
-			case AppPackage.PROPERTY__COLUMN_NAME_PATTERN:
-				return COLUMN_NAME_PATTERN_EDEFAULT == null ? columnNamePattern != null : !COLUMN_NAME_PATTERN_EDEFAULT.equals(columnNamePattern);
 			case AppPackage.PROPERTY__SEQUENCE_NAME:
 				return SEQUENCE_NAME_EDEFAULT == null ? sequenceName != null : !SEQUENCE_NAME_EDEFAULT.equals(sequenceName);
 		}
@@ -805,10 +719,6 @@ public class PropertyImpl extends EObjectImpl implements Property {
 		result.append(isUnique);
 		result.append(", isID: ");
 		result.append(isID);
-		result.append(", columnName: ");
-		result.append(columnName);
-		result.append(", columnNamePattern: ");
-		result.append(columnNamePattern);
 		result.append(", sequenceName: ");
 		result.append(sequenceName);
 		result.append(')');

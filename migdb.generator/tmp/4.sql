@@ -1,2 +1,2 @@
-ALTER TABLE public.first
-	ADD Name char
+CREATE INDEX prvniIndex
+	ON public.first ("Name")

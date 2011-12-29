@@ -26,8 +26,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link mm.app.Property#isIsOrdered <em>Is Ordered</em>}</li>
  *   <li>{@link mm.app.Property#isIsUnique <em>Is Unique</em>}</li>
  *   <li>{@link mm.app.Property#isIsID <em>Is ID</em>}</li>
- *   <li>{@link mm.app.Property#getColumnName <em>Column Name</em>}</li>
- *   <li>{@link mm.app.Property#getColumnNamePattern <em>Column Name Pattern</em>}</li>
  *   <li>{@link mm.app.Property#getSequenceName <em>Sequence Name</em>}</li>
  * </ul>
  * </p>
@@ -38,16 +36,18 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Property extends EObject {
 	/**
-	 * Returns the value of the '<em><b>Owning Class</b></em>' reference.
+	 * Returns the value of the '<em><b>Owning Class</b></em>' container reference.
+	 * It is bidirectional and its opposite is '{@link mm.app.AbstractClass#getProperties <em>Properties</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Owning Class</em>' reference isn't clear,
+	 * If the meaning of the '<em>Owning Class</em>' container reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Owning Class</em>' reference.
+	 * @return the value of the '<em>Owning Class</em>' container reference.
 	 * @see mm.app.AppPackage#getProperty_OwningClass()
-	 * @model required="true" changeable="false" derived="true"
+	 * @see mm.app.AbstractClass#getProperties
+	 * @model opposite="properties" required="true" transient="false" changeable="false" derived="true"
 	 * @generated
 	 */
 	AbstractClass getOwningClass();
@@ -290,58 +290,6 @@ public interface Property extends EObject {
 	 * @generated
 	 */
 	void setIsID(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Column Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Column Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Column Name</em>' attribute.
-	 * @see #setColumnName(String)
-	 * @see mm.app.AppPackage#getProperty_ColumnName()
-	 * @model unique="false"
-	 * @generated
-	 */
-	String getColumnName();
-
-	/**
-	 * Sets the value of the '{@link mm.app.Property#getColumnName <em>Column Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Column Name</em>' attribute.
-	 * @see #getColumnName()
-	 * @generated
-	 */
-	void setColumnName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Column Name Pattern</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Column Name Pattern</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Column Name Pattern</em>' attribute.
-	 * @see #setColumnNamePattern(String)
-	 * @see mm.app.AppPackage#getProperty_ColumnNamePattern()
-	 * @model
-	 * @generated
-	 */
-	String getColumnNamePattern();
-
-	/**
-	 * Sets the value of the '{@link mm.app.Property#getColumnNamePattern <em>Column Name Pattern</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Column Name Pattern</em>' attribute.
-	 * @see #getColumnNamePattern()
-	 * @generated
-	 */
-	void setColumnNamePattern(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Sequence Name</b></em>' attribute.

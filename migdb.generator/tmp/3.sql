@@ -1,3 +1,2 @@
-CREATE TABLE public.first (
-	  id integer PRIMARY KEY
-)
+ALTER TABLE public.first
+	ADD COLUMN Name char

@@ -6,12 +6,12 @@
  */
 package mm.app.operations.util;
 
-import java.util.List;
-
 import mm.app.operations.*;
 
-import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+
+import org.eclipse.emf.ecore.util.Switch;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,7 +26,7 @@ import org.eclipse.emf.ecore.EObject;
  * @see mm.app.operations.OperationsPackage
  * @generated
  */
-public class OperationsSwitch<T> {
+public class OperationsSwitch<T> extends Switch<T> {
 	/**
 	 * The cached model package
 	 * <!-- begin-user-doc -->
@@ -48,14 +48,16 @@ public class OperationsSwitch<T> {
 	}
 
 	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
+	 * Checks whether this is a switch for the given package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
+	 * @parameter ePackage the package in question.
+	 * @return whether this is a switch for the given package.
 	 * @generated
 	 */
-	public T doSwitch(EObject theEObject) {
-		return doSwitch(theEObject.eClass(), theEObject);
+	@Override
+	protected boolean isSwitchFor(EPackage ePackage) {
+		return ePackage == modelPackage;
 	}
 
 	/**
@@ -65,26 +67,7 @@ public class OperationsSwitch<T> {
 	 * @return the first non-null result returned by a <code>caseXXX</code> call.
 	 * @generated
 	 */
-	protected T doSwitch(EClass theEClass, EObject theEObject) {
-		if (theEClass.eContainer() == modelPackage) {
-			return doSwitch(theEClass.getClassifierID(), theEObject);
-		}
-		else {
-			List<EClass> eSuperTypes = theEClass.getESuperTypes();
-			return
-				eSuperTypes.isEmpty() ?
-					defaultCase(theEObject) :
-					doSwitch(eSuperTypes.get(0), theEObject);
-		}
-	}
-
-	/**
-	 * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the first non-null result returned by a <code>caseXXX</code> call.
-	 * @generated
-	 */
+	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 			case OperationsPackage.MODEL_OPERATION: {
@@ -184,20 +167,6 @@ public class OperationsSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.COPY_PROPERTY: {
-				CopyProperty copyProperty = (CopyProperty)theEObject;
-				T result = caseCopyProperty(copyProperty);
-				if (result == null) result = caseModelOperation(copyProperty);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.MOVE_PROPERTY: {
-				MoveProperty moveProperty = (MoveProperty)theEObject;
-				T result = caseMoveProperty(moveProperty);
-				if (result == null) result = caseModelOperation(moveProperty);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case OperationsPackage.ADD_PRIMITIVE_CLASS: {
 				AddPrimitiveClass addPrimitiveClass = (AddPrimitiveClass)theEObject;
 				T result = caseAddPrimitiveClass(addPrimitiveClass);
@@ -209,6 +178,20 @@ public class OperationsSwitch<T> {
 				AddEmbeddedClass addEmbeddedClass = (AddEmbeddedClass)theEObject;
 				T result = caseAddEmbeddedClass(addEmbeddedClass);
 				if (result == null) result = caseModelOperation(addEmbeddedClass);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.COPY_PROPERTY: {
+				CopyProperty copyProperty = (CopyProperty)theEObject;
+				T result = caseCopyProperty(copyProperty);
+				if (result == null) result = caseModelOperation(copyProperty);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.MOVE_PROPERTY: {
+				MoveProperty moveProperty = (MoveProperty)theEObject;
+				T result = caseMoveProperty(moveProperty);
+				if (result == null) result = caseModelOperation(moveProperty);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -427,36 +410,6 @@ public class OperationsSwitch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Copy Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Copy Property</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseCopyProperty(CopyProperty object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Move Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Move Property</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseMoveProperty(MoveProperty object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Add Primitive Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -487,6 +440,36 @@ public class OperationsSwitch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Copy Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Copy Property</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCopyProperty(CopyProperty object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Move Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Move Property</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMoveProperty(MoveProperty object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -497,6 +480,7 @@ public class OperationsSwitch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject)
 	 * @generated
 	 */
+	@Override
 	public T defaultCase(EObject object) {
 		return null;
 	}

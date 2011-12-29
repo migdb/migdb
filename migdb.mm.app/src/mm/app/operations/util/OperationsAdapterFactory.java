@@ -128,20 +128,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createRemovePropertyAdapter();
 			}
 			@Override
-			public Adapter caseCopyProperty(CopyProperty object) {
-				return createCopyPropertyAdapter();
-			}
-			@Override
-			public Adapter caseMoveProperty(MoveProperty object) {
-				return createMovePropertyAdapter();
-			}
-			@Override
 			public Adapter caseAddPrimitiveClass(AddPrimitiveClass object) {
 				return createAddPrimitiveClassAdapter();
 			}
 			@Override
 			public Adapter caseAddEmbeddedClass(AddEmbeddedClass object) {
 				return createAddEmbeddedClassAdapter();
+			}
+			@Override
+			public Adapter caseCopyProperty(CopyProperty object) {
+				return createCopyPropertyAdapter();
+			}
+			@Override
+			public Adapter caseMoveProperty(MoveProperty object) {
+				return createMovePropertyAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -360,34 +360,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.CopyProperty <em>Copy Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.CopyProperty
-	 * @generated
-	 */
-	public Adapter createCopyPropertyAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.MoveProperty <em>Move Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.MoveProperty
-	 * @generated
-	 */
-	public Adapter createMovePropertyAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -412,6 +384,34 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddEmbeddedClassAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.CopyProperty <em>Copy Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.CopyProperty
+	 * @generated
+	 */
+	public Adapter createCopyPropertyAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.MoveProperty <em>Move Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.MoveProperty
+	 * @generated
+	 */
+	public Adapter createMovePropertyAdapter() {
 		return null;
 	}
 

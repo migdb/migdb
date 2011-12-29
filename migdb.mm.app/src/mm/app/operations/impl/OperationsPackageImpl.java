@@ -15,6 +15,7 @@ import mm.app.operations.AddEmbeddedClass;
 import mm.app.operations.AddPrimitiveClass;
 import mm.app.operations.AddProperty;
 import mm.app.operations.CopyProperty;
+import mm.app.operations.MergeType;
 import mm.app.operations.ModelOperation;
 import mm.app.operations.MoveProperty;
 import mm.app.operations.OperationsFactory;
@@ -33,6 +34,7 @@ import mm.app.operations.SetUnique;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -148,6 +150,20 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass addPrimitiveClassEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass addEmbeddedClassEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass copyPropertyEClass = null;
 
 	/**
@@ -162,14 +178,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass addPrimitiveClassEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass addEmbeddedClassEClass = null;
+	private EEnum mergeTypeEEnum = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -800,114 +809,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getCopyProperty() {
-		return copyPropertyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCopyProperty_OwningClassName() {
-		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCopyProperty_PropertyName() {
-		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCopyProperty_TargetClassName() {
-		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCopyProperty_EndInOwerload() {
-		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCopyProperty_AddValueNull() {
-		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getMoveProperty() {
-		return movePropertyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveProperty_OwningClassName() {
-		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveProperty_PropertyName() {
-		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveProperty_TargetClassName() {
-		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveProperty_EndInOwerload() {
-		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveProperty_AddValueNull() {
-		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getAddPrimitiveClass() {
 		return addPrimitiveClassEClass;
 	}
@@ -946,6 +847,105 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 */
 	public EAttribute getAddEmbeddedClass_Name() {
 		return (EAttribute)addEmbeddedClassEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getCopyProperty() {
+		return copyPropertyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyProperty_OwningClassName() {
+		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyProperty_Name() {
+		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyProperty_TargetClassName() {
+		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyProperty_Type() {
+		return (EAttribute)copyPropertyEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getMoveProperty() {
+		return movePropertyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveProperty_OwningClassName() {
+		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveProperty_Name() {
+		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveProperty_TargetClassName() {
+		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMoveProperty_Type() {
+		return (EAttribute)movePropertyEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getMergeType() {
+		return mergeTypeEEnum;
 	}
 
 	/**
@@ -1052,26 +1052,27 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(removePropertyEClass, REMOVE_PROPERTY__OWNING_CLASS_NAME);
 		createEAttribute(removePropertyEClass, REMOVE_PROPERTY__NAME);
 
-		copyPropertyEClass = createEClass(COPY_PROPERTY);
-		createEAttribute(copyPropertyEClass, COPY_PROPERTY__OWNING_CLASS_NAME);
-		createEAttribute(copyPropertyEClass, COPY_PROPERTY__PROPERTY_NAME);
-		createEAttribute(copyPropertyEClass, COPY_PROPERTY__TARGET_CLASS_NAME);
-		createEAttribute(copyPropertyEClass, COPY_PROPERTY__END_IN_OWERLOAD);
-		createEAttribute(copyPropertyEClass, COPY_PROPERTY__ADD_VALUE_NULL);
-
-		movePropertyEClass = createEClass(MOVE_PROPERTY);
-		createEAttribute(movePropertyEClass, MOVE_PROPERTY__OWNING_CLASS_NAME);
-		createEAttribute(movePropertyEClass, MOVE_PROPERTY__PROPERTY_NAME);
-		createEAttribute(movePropertyEClass, MOVE_PROPERTY__TARGET_CLASS_NAME);
-		createEAttribute(movePropertyEClass, MOVE_PROPERTY__END_IN_OWERLOAD);
-		createEAttribute(movePropertyEClass, MOVE_PROPERTY__ADD_VALUE_NULL);
-
 		addPrimitiveClassEClass = createEClass(ADD_PRIMITIVE_CLASS);
 		createEAttribute(addPrimitiveClassEClass, ADD_PRIMITIVE_CLASS__NAME);
 		createEAttribute(addPrimitiveClassEClass, ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE);
 
 		addEmbeddedClassEClass = createEClass(ADD_EMBEDDED_CLASS);
 		createEAttribute(addEmbeddedClassEClass, ADD_EMBEDDED_CLASS__NAME);
+
+		copyPropertyEClass = createEClass(COPY_PROPERTY);
+		createEAttribute(copyPropertyEClass, COPY_PROPERTY__OWNING_CLASS_NAME);
+		createEAttribute(copyPropertyEClass, COPY_PROPERTY__NAME);
+		createEAttribute(copyPropertyEClass, COPY_PROPERTY__TARGET_CLASS_NAME);
+		createEAttribute(copyPropertyEClass, COPY_PROPERTY__TYPE);
+
+		movePropertyEClass = createEClass(MOVE_PROPERTY);
+		createEAttribute(movePropertyEClass, MOVE_PROPERTY__OWNING_CLASS_NAME);
+		createEAttribute(movePropertyEClass, MOVE_PROPERTY__NAME);
+		createEAttribute(movePropertyEClass, MOVE_PROPERTY__TARGET_CLASS_NAME);
+		createEAttribute(movePropertyEClass, MOVE_PROPERTY__TYPE);
+
+		// Create enums
+		mergeTypeEEnum = createEEnum(MERGE_TYPE);
 	}
 
 	/**
@@ -1118,10 +1119,10 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		setOrderedEClass.getESuperTypes().add(this.getModelOperation());
 		setUniqueEClass.getESuperTypes().add(this.getModelOperation());
 		removePropertyEClass.getESuperTypes().add(this.getModelOperation());
-		copyPropertyEClass.getESuperTypes().add(this.getModelOperation());
-		movePropertyEClass.getESuperTypes().add(this.getModelOperation());
 		addPrimitiveClassEClass.getESuperTypes().add(this.getModelOperation());
 		addEmbeddedClassEClass.getESuperTypes().add(this.getModelOperation());
+		copyPropertyEClass.getESuperTypes().add(this.getModelOperation());
+		movePropertyEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1200,26 +1201,30 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getRemoveProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, RemoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(copyPropertyEClass, CopyProperty.class, "CopyProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCopyProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCopyProperty_PropertyName(), ecorePackage.getEString(), "propertyName", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCopyProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCopyProperty_EndInOwerload(), ecorePackage.getEBoolean(), "endInOwerload", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCopyProperty_AddValueNull(), ecorePackage.getEBoolean(), "addValueNull", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(movePropertyEClass, MoveProperty.class, "MoveProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMoveProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveProperty_PropertyName(), ecorePackage.getEString(), "propertyName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveProperty_EndInOwerload(), ecorePackage.getEBoolean(), "endInOwerload", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveProperty_AddValueNull(), ecorePackage.getEBoolean(), "addValueNull", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(addPrimitiveClassEClass, AddPrimitiveClass.class, "AddPrimitiveClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddPrimitiveClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddPrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddPrimitiveClass_PrimitiveType(), theAppPackage.getPrimitiveType(), "primitiveType", null, 1, 1, AddPrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addEmbeddedClassEClass, AddEmbeddedClass.class, "AddEmbeddedClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddEmbeddedClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddEmbeddedClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(copyPropertyEClass, CopyProperty.class, "CopyProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCopyProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyProperty_Type(), this.getMergeType(), "type", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(movePropertyEClass, MoveProperty.class, "MoveProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMoveProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveProperty_Type(), this.getMergeType(), "type", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize enums and add enum literals
+		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");
+		addEEnumLiteral(mergeTypeEEnum, MergeType.STRICT);
+		addEEnumLiteral(mergeTypeEEnum, MergeType.FORCE);
+		addEEnumLiteral(mergeTypeEEnum, MergeType.TOLERANT);
 	}
 
 } //OperationsPackageImpl

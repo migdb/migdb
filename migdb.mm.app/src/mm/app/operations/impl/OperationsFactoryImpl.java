@@ -9,6 +9,7 @@ package mm.app.operations.impl;
 import mm.app.operations.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -73,12 +74,42 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.SET_ORDERED: return createSetOrdered();
 			case OperationsPackage.SET_UNIQUE: return createSetUnique();
 			case OperationsPackage.REMOVE_PROPERTY: return createRemoveProperty();
-			case OperationsPackage.COPY_PROPERTY: return createCopyProperty();
-			case OperationsPackage.MOVE_PROPERTY: return createMoveProperty();
 			case OperationsPackage.ADD_PRIMITIVE_CLASS: return createAddPrimitiveClass();
 			case OperationsPackage.ADD_EMBEDDED_CLASS: return createAddEmbeddedClass();
+			case OperationsPackage.COPY_PROPERTY: return createCopyProperty();
+			case OperationsPackage.MOVE_PROPERTY: return createMoveProperty();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case OperationsPackage.MERGE_TYPE:
+				return createMergeTypeFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case OperationsPackage.MERGE_TYPE:
+				return convertMergeTypeToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -217,6 +248,26 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AddPrimitiveClass createAddPrimitiveClass() {
+		AddPrimitiveClassImpl addPrimitiveClass = new AddPrimitiveClassImpl();
+		return addPrimitiveClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AddEmbeddedClass createAddEmbeddedClass() {
+		AddEmbeddedClassImpl addEmbeddedClass = new AddEmbeddedClassImpl();
+		return addEmbeddedClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public CopyProperty createCopyProperty() {
 		CopyPropertyImpl copyProperty = new CopyPropertyImpl();
 		return copyProperty;
@@ -237,9 +288,10 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AddPrimitiveClass createAddPrimitiveClass() {
-		AddPrimitiveClassImpl addPrimitiveClass = new AddPrimitiveClassImpl();
-		return addPrimitiveClass;
+	public MergeType createMergeTypeFromString(EDataType eDataType, String initialValue) {
+		MergeType result = MergeType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
+		return result;
 	}
 
 	/**
@@ -247,9 +299,8 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AddEmbeddedClass createAddEmbeddedClass() {
-		AddEmbeddedClassImpl addEmbeddedClass = new AddEmbeddedClassImpl();
-		return addEmbeddedClass;
+	public String convertMergeTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

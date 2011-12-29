@@ -143,24 +143,6 @@ public interface OperationsFactory extends EFactory {
 	RemoveProperty createRemoveProperty();
 
 	/**
-	 * Returns a new object of class '<em>Copy Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Copy Property</em>'.
-	 * @generated
-	 */
-	CopyProperty createCopyProperty();
-
-	/**
-	 * Returns a new object of class '<em>Move Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Move Property</em>'.
-	 * @generated
-	 */
-	MoveProperty createMoveProperty();
-
-	/**
 	 * Returns a new object of class '<em>Add Primitive Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -177,6 +159,24 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	AddEmbeddedClass createAddEmbeddedClass();
+
+	/**
+	 * Returns a new object of class '<em>Copy Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Copy Property</em>'.
+	 * @generated
+	 */
+	CopyProperty createCopyProperty();
+
+	/**
+	 * Returns a new object of class '<em>Move Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Move Property</em>'.
+	 * @generated
+	 */
+	MoveProperty createMoveProperty();
 
 	/**
 	 * Returns the package supported by this factory.
