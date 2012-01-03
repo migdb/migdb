@@ -680,6 +680,15 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getAddPrimaryKey_ColumnName() {
+		return (EAttribute)addPrimaryKeyEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAddForeignKey() {
 		return addForeignKeyEClass;
 	}
@@ -1031,6 +1040,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(addPrimaryKeyEClass, ADD_PRIMARY_KEY__OWNING_TABLE_NAME);
 		createEAttribute(addPrimaryKeyEClass, ADD_PRIMARY_KEY__NAME);
 		createEAttribute(addPrimaryKeyEClass, ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME);
+		createEAttribute(addPrimaryKeyEClass, ADD_PRIMARY_KEY__COLUMN_NAME);
 
 		addForeignKeyEClass = createEClass(ADD_FOREIGN_KEY);
 		createEAttribute(addForeignKeyEClass, ADD_FOREIGN_KEY__OWNING_SCHEMA_NAME);
@@ -1179,6 +1189,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getAddPrimaryKey_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, AddPrimaryKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddPrimaryKey_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddPrimaryKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddPrimaryKey_UnderlyingIndexName(), ecorePackage.getEString(), "underlyingIndexName", null, 1, 1, AddPrimaryKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAddPrimaryKey_ColumnName(), ecorePackage.getEString(), "columnName", "", 1, 1, AddPrimaryKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addForeignKeyEClass, AddForeignKey.class, "AddForeignKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddForeignKey_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

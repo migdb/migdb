@@ -594,13 +594,22 @@ public interface OperationsPackage extends EPackage {
 	int ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_PRIMARY_KEY__COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Add Primary Key</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_PRIMARY_KEY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+	int ADD_PRIMARY_KEY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddForeignKeyImpl <em>Add Foreign Key</em>}' class.
@@ -1440,6 +1449,17 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddPrimaryKey_UnderlyingIndexName();
 
 	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddPrimaryKey#getColumnName <em>Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Column Name</em>'.
+	 * @see mm.rdb.operations.AddPrimaryKey#getColumnName()
+	 * @see #getAddPrimaryKey()
+	 * @generated
+	 */
+	EAttribute getAddPrimaryKey_ColumnName();
+
+	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddForeignKey <em>Add Foreign Key</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2183,6 +2203,14 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME = eINSTANCE.getAddPrimaryKey_UnderlyingIndexName();
+
+		/**
+		 * The meta object literal for the '<em><b>Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_PRIMARY_KEY__COLUMN_NAME = eINSTANCE.getAddPrimaryKey_ColumnName();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddForeignKeyImpl <em>Add Foreign Key</em>}' class.

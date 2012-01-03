@@ -26,6 +26,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link mm.rdb.operations.impl.AddPrimaryKeyImpl#getOwningTableName <em>Owning Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddPrimaryKeyImpl#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddPrimaryKeyImpl#getUnderlyingIndexName <em>Underlying Index Name</em>}</li>
+ *   <li>{@link mm.rdb.operations.impl.AddPrimaryKeyImpl#getColumnName <em>Column Name</em>}</li>
  * </ul>
  * </p>
  *
@@ -111,6 +112,26 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 	 * @ordered
 	 */
 	protected String underlyingIndexName = UNDERLYING_INDEX_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColumnName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COLUMN_NAME_EDEFAULT = "";
+
+	/**
+	 * The cached value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColumnName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String columnName = COLUMN_NAME_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -220,6 +241,27 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getColumnName() {
+		return columnName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setColumnName(String newColumnName) {
+		String oldColumnName = columnName;
+		columnName = newColumnName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.ADD_PRIMARY_KEY__COLUMN_NAME, oldColumnName, columnName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -231,6 +273,8 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 				return getName();
 			case OperationsPackage.ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME:
 				return getUnderlyingIndexName();
+			case OperationsPackage.ADD_PRIMARY_KEY__COLUMN_NAME:
+				return getColumnName();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -254,6 +298,9 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 				return;
 			case OperationsPackage.ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME:
 				setUnderlyingIndexName((String)newValue);
+				return;
+			case OperationsPackage.ADD_PRIMARY_KEY__COLUMN_NAME:
+				setColumnName((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -279,6 +326,9 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 			case OperationsPackage.ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME:
 				setUnderlyingIndexName(UNDERLYING_INDEX_NAME_EDEFAULT);
 				return;
+			case OperationsPackage.ADD_PRIMARY_KEY__COLUMN_NAME:
+				setColumnName(COLUMN_NAME_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -299,6 +349,8 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case OperationsPackage.ADD_PRIMARY_KEY__UNDERLYING_INDEX_NAME:
 				return UNDERLYING_INDEX_NAME_EDEFAULT == null ? underlyingIndexName != null : !UNDERLYING_INDEX_NAME_EDEFAULT.equals(underlyingIndexName);
+			case OperationsPackage.ADD_PRIMARY_KEY__COLUMN_NAME:
+				return COLUMN_NAME_EDEFAULT == null ? columnName != null : !COLUMN_NAME_EDEFAULT.equals(columnName);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -321,6 +373,8 @@ public class AddPrimaryKeyImpl extends ModelOperationImpl implements AddPrimaryK
 		result.append(name);
 		result.append(", underlyingIndexName: ");
 		result.append(underlyingIndexName);
+		result.append(", columnName: ");
+		result.append(columnName);
 		result.append(')');
 		return result.toString();
 	}

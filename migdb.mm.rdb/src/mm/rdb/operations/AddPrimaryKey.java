@@ -19,6 +19,7 @@ package mm.rdb.operations;
  *   <li>{@link mm.rdb.operations.AddPrimaryKey#getOwningTableName <em>Owning Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddPrimaryKey#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddPrimaryKey#getUnderlyingIndexName <em>Underlying Index Name</em>}</li>
+ *   <li>{@link mm.rdb.operations.AddPrimaryKey#getColumnName <em>Column Name</em>}</li>
  * </ul>
  * </p>
  *
@@ -130,5 +131,32 @@ public interface AddPrimaryKey extends ModelOperation {
 	 * @generated
 	 */
 	void setUnderlyingIndexName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Column Name</b></em>' attribute.
+	 * The default value is <code>""</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Column Name</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Column Name</em>' attribute.
+	 * @see #setColumnName(String)
+	 * @see mm.rdb.operations.OperationsPackage#getAddPrimaryKey_ColumnName()
+	 * @model default="" required="true"
+	 * @generated
+	 */
+	String getColumnName();
+
+	/**
+	 * Sets the value of the '{@link mm.rdb.operations.AddPrimaryKey#getColumnName <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Column Name</em>' attribute.
+	 * @see #getColumnName()
+	 * @generated
+	 */
+	void setColumnName(String value);
 
 } // AddPrimaryKey

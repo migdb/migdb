@@ -1,0 +1,90 @@
+module migb.run.run
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+Workflow {
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "output"
+	}	
+/**/
+	component = QVTOExecutor {
+		transformationFile = "qvto/buildAPP.qvto"
+		outputSlot = "buildModelAPP"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "qvto/buildRDB.qvto"
+		outputSlot = "buildModelRDB"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "buildModelAPP"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_app.qvto"
+		outputSlot = "generationModelAPP"
+	}
+/**/	
+	component = QVTOExecutor {
+		inputSlot = "buildModelAPP"
+		inOutSlot = "buildModelRDB"
+		transformationFile = "../migdb.qvto/transforms/orm/orm_operations.qvto"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "buildModelRDB"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "generationModelRDB"
+	}
+/**/	
+	component = Writer {
+		modelSlot = "generationModelAPP"
+		uri = "output/outAPP.xmi"
+		
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "generationModelRDB"
+		uri = "output/outRDB.xmi"
+		
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/	
+	component = CodeGenComponent {
+		withoutModel = false
+		slot = "buildModelRDB"
+		generator = Generator {}
+		outputPath = "output/"
+	}		
+/**	
+	component = org.eclipse.emf.mwe.utils.Reader {
+		modelSlot = "xxx"
+		uri = "fdsafa"
+	}
+/**/	
+}

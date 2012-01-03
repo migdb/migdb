@@ -94,7 +94,6 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 		owningTableName := self.name.toLower();
 		name := "PK_" + self.name.toLower();
 		underlyingIndexName := "IX_" + self.name.toLower() + "_id";
-		columnName := "id";
 	};
 }
 

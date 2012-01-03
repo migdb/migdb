@@ -8,6 +8,7 @@ import mm.rdb.operations.impl.AddColumnImpl;
 import mm.rdb.operations.impl.AddForeignKeyImpl;
 import mm.rdb.operations.impl.AddIndexImpl;
 import mm.rdb.operations.impl.AddNotNullConstraintImpl;
+import mm.rdb.operations.impl.AddPrimaryKeyImpl;
 import mm.rdb.operations.impl.AddSchemaImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
@@ -86,6 +87,29 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
+  protected StringConcatenation _genOperation(final AddPrimaryKeyImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ADD CONSTRAINT ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("PRIMARY KEY (");
+    String _columnName = operation.getColumnName();
+    _builder.append(_columnName, "	");
+    _builder.append(")");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
   protected StringConcatenation _genOperation(final AddForeignKeyImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("ALTER TABLE ");
@@ -110,7 +134,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _owningTableName_1 = operation.getOwningTableName();
     _builder.append(_owningTableName_1, "	");
-    _builder.append(" (\"id\")");
+    _builder.append(" (id)");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -159,9 +183,7 @@ public class Generator extends BaseCodeGenerator {
         } else {
           _builder.appendImmediate(",", "	");
         }
-        _builder.append("\"");
         _builder.append(col, "	");
-        _builder.append("\"");
       }
     }
     _builder.append(")");
@@ -340,6 +362,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddIndexImpl)operation);
     } else if ((operation instanceof AddNotNullConstraintImpl)) {
       return _genOperation((AddNotNullConstraintImpl)operation);
+    } else if ((operation instanceof AddPrimaryKeyImpl)) {
+      return _genOperation((AddPrimaryKeyImpl)operation);
     } else if ((operation instanceof AddSchemaImpl)) {
       return _genOperation((AddSchemaImpl)operation);
     } else if ((operation instanceof AddTableImpl)) {

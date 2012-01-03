@@ -1,0 +1,29 @@
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation build_model(inout inoutModel : APP);
+
+
+main() {
+	log("BUILDING APP MODEL");
+	var classInteger : APP::operations::AddPrimitiveClass := object APP::operations::AddPrimitiveClass{
+														name := "Integer";
+														primitiveType := PrimitiveType::int;
+	};
+	
+	var classParent : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "Parent";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := true;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::__not_defined;
+												  };											  									  												  												  									  	
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+		};
+	 };
+    model.operations += classInteger; // defaultni primitivni trida integer
+	model.operations += classParent; // prvni trida v modelu
+}

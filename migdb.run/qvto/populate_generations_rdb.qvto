@@ -148,12 +148,10 @@ mapping RDB::operations::AddUniqueIndex::apply(inout gen : RDB::ModelGeneration)
 }
 
 query RDB::operations::AddPrimaryKey::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// pro danou tabulku neexistuje omezeni stejneho nazvu
+	// pro danou tabulku neexistuje omezen� stejn�ho n�zvu
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-	// v danem schematu existuje dany index
-	and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName)
-	// v dane tabulce existuje dany sloupec
-	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.columnName);
+	// v dan�m sch�matu existuje dan� index
+	and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName);
 }
 
 // p�id� omezen� 'PrimaryKey' pro tabulku

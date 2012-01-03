@@ -87,6 +87,18 @@ class Generator extends BaseCodeGenerator {
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ALTER COLUMN «operation.owningColumnName» SET NOT NULL
 	'''	
+	
+	/**
+	 * CREATE PRIMARY KEY
+	 * To add an automatically named primary key constraint to a table, noting that a table can only ever have one primary key:
+	 * >> ALTER TABLE distributors ADD PRIMARY KEY (dist_id); <<
+	 * @param AddPrimaryKeyImpl operation : operation of type AddPrimaryKeyImpl
+	 */
+	def dispatch genOperation(AddPrimaryKeyImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
+			ADD CONSTRAINT «operation.name»
+			PRIMARY KEY («operation.columnName»)
+	'''		
 
 	/**
 	 * CREATE FOREIGN KEY
@@ -99,7 +111,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» ("id")
+			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» (id)
 	'''		
 
 	/**
@@ -122,7 +134,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddIndexImpl operation) '''
 		CREATE INDEX «operation.name»
-			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»"«col»"«ENDFOR»)
+			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»)
 	'''
 	
 	/**
