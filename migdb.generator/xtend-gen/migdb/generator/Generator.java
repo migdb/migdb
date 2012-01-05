@@ -22,6 +22,7 @@ import mm.rdb.operations.impl.RenameColumnImpl;
 import mm.rdb.operations.impl.RenameTableImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.eclipse.xtext.xtend2.lib.StringConcatenation;
@@ -82,7 +83,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("ALTER COLUMN ");
     String _owningColumnName = operation.getOwningColumnName();
     _builder.append(_owningColumnName, "	");
-    _builder.append(" SET NOT NULL");
+    _builder.append(" SET NOT NULL;");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -105,7 +106,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("PRIMARY KEY (");
     String _columnName = operation.getColumnName();
     _builder.append(_columnName, "	");
-    _builder.append(")");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -134,7 +135,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _owningTableName_1 = operation.getOwningTableName();
     _builder.append(_owningTableName_1, "	");
-    _builder.append(" (id)");
+    _builder.append(" (id);");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -155,7 +156,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" (");
     String _underlyingIndexName = operation.getUnderlyingIndexName();
     _builder.append(_underlyingIndexName, "	");
-    _builder.append(")");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -186,7 +187,7 @@ public class Generator extends BaseCodeGenerator {
         _builder.append(col, "	");
       }
     }
-    _builder.append(")");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -207,6 +208,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" ");
     PrimitiveType _type = operation.getType();
     _builder.append(_type, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -222,20 +224,29 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" (");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("id integer PRIMARY KEY");
+    _builder.append("id int PRIMARY KEY");
     _builder.newLine();
-    _builder.append(")");
+    _builder.append(");");
     _builder.newLine();
     return _builder;
   }
   
   protected StringConcatenation _genOperation(final AddSchemaImpl operation) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("CREATE SCHEMA ");
+    StringConcatenation _xifexpression = null;
     String _name = operation.getName();
-    _builder.append(_name, "");
-    _builder.newLineIfNotEmpty();
-    return _builder;
+    String _lowerCase = _name.toLowerCase();
+    boolean _equals = _lowerCase.equals("public");
+    boolean _operator_not = BooleanExtensions.operator_not(_equals);
+    if (_operator_not) {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append(" ");
+      _builder.append("CREATE SCHEMA ");
+      String _name_1 = operation.getName();
+      _builder.append(_name_1, " ");
+      _builder.append(";");
+      return _builder;
+    }
+    return _xifexpression;
   }
   
   protected StringConcatenation _genOperation(final RemoveTableImpl operation) {
@@ -246,6 +257,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _name = operation.getName();
     _builder.append(_name, "");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -264,6 +276,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("DROP COLUMN ");
     String _name = operation.getName();
     _builder.append(_name, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -273,6 +286,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("DROP INDEX ");
     String _name = operation.getName();
     _builder.append(_name, "");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -291,6 +305,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("DROP CONSTRAINT ");
     String _name = operation.getName();
     _builder.append(_name, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -309,7 +324,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("ALTER COLUMN ");
     String _owningColumnName = operation.getOwningColumnName();
     _builder.append(_owningColumnName, "	");
-    _builder.append(" DROP NOT NULL");
+    _builder.append(" DROP NOT NULL;");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -328,6 +343,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("RENAME TO ");
     String _newName = operation.getNewName();
     _builder.append(_newName, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -349,6 +365,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" TO ");
     String _newName = operation.getNewName();
     _builder.append(_newName, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }

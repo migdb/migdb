@@ -80,11 +80,10 @@ Workflow {
 		slot = "buildModelRDB"
 		generator = Generator {}
 		outputPath = "output/"
-	}		
-/**	
-	component = org.eclipse.emf.mwe.utils.Reader {
-		modelSlot = "xxx"
-		uri = "fdsafa"
 	}
-/**/	
+/**
+	component = CommandLineExec{
+		command = "java migdb_sql/Main [cesta] [ovladac]"
+	}		
+/**/
 }

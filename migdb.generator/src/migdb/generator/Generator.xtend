@@ -85,7 +85,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddNotNullConstraintImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ALTER COLUMN «operation.owningColumnName» SET NOT NULL
+			ALTER COLUMN «operation.owningColumnName» SET NOT NULL;
 	'''	
 	
 	/**
@@ -97,7 +97,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddPrimaryKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			PRIMARY KEY («operation.columnName»)
+			PRIMARY KEY («operation.columnName»);
 	'''		
 
 	/**
@@ -111,7 +111,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» (id)
+			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» (id);
 	'''		
 
 	/**
@@ -123,7 +123,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddUniqueIndexImpl operation) '''
 		CREATE UNIQUE INDEX «operation.name»
-			ON «operation.owningSchemaName».«operation.owningTableName» («operation.underlyingIndexName»)
+			ON «operation.owningSchemaName».«operation.owningTableName» («operation.underlyingIndexName»);
 	'''	
 	
 	/**
@@ -134,7 +134,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddIndexImpl operation) '''
 		CREATE INDEX «operation.name»
-			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»)
+			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»);
 	'''
 	
 	/**
@@ -145,7 +145,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD COLUMN «operation.name» «operation.type»
+			ADD COLUMN «operation.name» «operation.type»;
 	'''
 	
 	// WARNING !! We do not have rule for create ID with new table.
@@ -158,19 +158,21 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddTableImpl operation) '''
 		CREATE TABLE «operation.owningSchemaName».«operation.name» (
-			id integer PRIMARY KEY
-		)
+			id int PRIMARY KEY
+		);
 	'''
 	
 	/**
 	 * CREATE SCHEMA
 	 * To create a schema, use the CREATE SCHEMA command. Give the schema a name of your choice. For example:
 	 * >> CREATE SCHEMA myschema; <<
+	 * Operation is mode complex. If user want to create schema which name is "public" -> operation do nothing
 	 * @param AddSchemaImpl operation : operation of type AddSchemaImpl
 	 */
-	def dispatch genOperation(AddSchemaImpl operation) '''
-		CREATE SCHEMA «operation.name»
-	'''
+	def dispatch genOperation(AddSchemaImpl operation){
+		if(!operation.name.toLowerCase.equals("public"))
+			return ''' CREATE SCHEMA «operation.name»;''';
+	}
 	
 	/**		REMOVE OPERATIONS		**/
 	
@@ -181,7 +183,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveTableImpl operation : operation of type RemoveTableImpl
 	 */
 	def dispatch genOperation(RemoveTableImpl operation) '''
-		DROP TABLE «operation.owningSchemaName».«operation.name»
+		DROP TABLE «operation.owningSchemaName».«operation.name»;
 	'''
 	
 	/**
@@ -192,7 +194,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(RemoveColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			DROP COLUMN «operation.name»
+			DROP COLUMN «operation.name»;
 	'''	
 	
 	// WARNING !! This operation has a lot of useless information.
@@ -203,7 +205,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveIndexImpl operation : operation of type RemoveIndexImpl
 	 */
 	def dispatch genOperation(RemoveIndexImpl operation) '''
-		DROP INDEX «operation.name»
+		DROP INDEX «operation.name»;
 	'''		
 	
 	/**
@@ -214,7 +216,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(RemoveTableConstraintImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			DROP CONSTRAINT «operation.name»
+			DROP CONSTRAINT «operation.name»;
 	'''		
 		
 	// WARNING !! Name of this operation may be RemoveNotNullConstraint.
@@ -226,7 +228,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(RemoveColumnConstraintImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» DROP NOT NULL
+			ALTER COLUMN «operation.owningColumnName» DROP NOT NULL;
 	'''			
 	
 	/**		RENAME OPERATIONS		**/	
@@ -239,7 +241,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(RenameTableImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.name» 
-			RENAME TO «operation.newName»
+			RENAME TO «operation.newName»;
 	'''				
 
 	/**
@@ -250,7 +252,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(RenameColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			RENAME COLUMN «operation.name» TO «operation.newName»
+			RENAME COLUMN «operation.name» TO «operation.newName»;
 	'''	
 	
 	/**		NEEDED OPERATIONS		**/		
@@ -267,24 +269,5 @@ class Generator extends BaseCodeGenerator {
 	// 3) Remove Default value
 	// To remove any default value, use:
 	// >> ALTER TABLE products ALTER COLUMN price DROP DEFAULT; <<
-	
-	/**		NEEDED TO CHANGE OPERATIONS		**/	
-	
-	// 1) Add primary key to an existing Table
-	// a) Add a column with type integer to your table
-	// b) Create a sequence
-	// c) Update the column table with sequence values
-	// d) Set the necessary column properties (e.g. default, not null, etc.
-
-	// ALTER TABLE "public"."foo"   ADD COLUMN "id" INTEGER;
-	// CREATE SEQUENCE "public"."foo_id_seq";
-	// UPDATE foo SET id = nextval('"public"."foo_id_seq"');
-	// ALTER TABLE "public"."foo" ALTER COLUMN "id" SET DEFAULT nextval('"public"."foo_id_seq"');
-	// ALTER TABLE "public"."foo" ALTER COLUMN "id" SET NOT NULL;
-	// ALTER TABLE "public"."foo" ADD UNIQUE ("id");
-	// ALTER TABLE "public"."foo" DROP CONSTRAINT "foo_id_key" RESTRICT;
-	// ALTER TABLE "public"."foo" ADD PRIMARY KEY ("id");
-	// OR ONLY
-	// ALTER TABLE product ADD PRIMARY KEY (col); // column must be NOT NULL and UNIQUE
 	
 }
