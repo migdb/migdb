@@ -95,6 +95,7 @@
       <eLiterals name="boolean"/>
       <eLiterals name="char" value="1"/>
       <eLiterals name="int" value="2"/>
+      <eLiterals name="float" value="3"/>
     </eClassifiers>
     <eSubpackages name="operations" nsURI="http://www.collectionspro.eu/jam/mm/rdb-ops"
         nsPrefix="rdb-ops">
@@ -249,6 +250,36 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//rdb/operations/MergeType"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SetColumnType" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningColumnName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="newType" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="oldType" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="SetColumnDefaultValue" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningColumnName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="newDefaultValue" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="RemoveDefaultValue" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningColumnName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="MergeType">
         <eLiterals name="strict"/>

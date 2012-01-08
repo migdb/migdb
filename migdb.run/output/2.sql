@@ -1,3 +1,3 @@
 CREATE TABLE public.parent (
-	id integer PRIMARY KEY
-)
+	id int PRIMARY KEY
+);

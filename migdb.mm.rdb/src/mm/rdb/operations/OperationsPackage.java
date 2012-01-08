@@ -933,6 +933,171 @@ public interface OperationsPackage extends EPackage {
 	int MOVE_COLUMN_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.SetColumnTypeImpl <em>Set Column Type</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.SetColumnTypeImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnType()
+	 * @generated
+	 */
+	int SET_COLUMN_TYPE = 18;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>New Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE__NEW_TYPE = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Old Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE__OLD_TYPE = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>Set Column Type</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_TYPE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.SetColumnDefaultValueImpl <em>Set Column Default Value</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.SetColumnDefaultValueImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnDefaultValue()
+	 * @generated
+	 */
+	int SET_COLUMN_DEFAULT_VALUE = 19;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>New Default Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Set Column Default Value</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveDefaultValueImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveDefaultValue()
+	 * @generated
+	 */
+	int REMOVE_DEFAULT_VALUE = 20;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_DEFAULT_VALUE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_DEFAULT_VALUE__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_DEFAULT_VALUE__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Remove Default Value</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -940,7 +1105,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 18;
+	int MERGE_TYPE = 21;
 
 
 	/**
@@ -1773,6 +1938,168 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getMoveColumn_Type();
 
 	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.SetColumnType <em>Set Column Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Set Column Type</em>'.
+	 * @see mm.rdb.operations.SetColumnType
+	 * @generated
+	 */
+	EClass getSetColumnType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnType#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.SetColumnType#getOwningSchemaName()
+	 * @see #getSetColumnType()
+	 * @generated
+	 */
+	EAttribute getSetColumnType_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnType#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.SetColumnType#getOwningTableName()
+	 * @see #getSetColumnType()
+	 * @generated
+	 */
+	EAttribute getSetColumnType_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnType#getOwningColumnName <em>Owning Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
+	 * @see mm.rdb.operations.SetColumnType#getOwningColumnName()
+	 * @see #getSetColumnType()
+	 * @generated
+	 */
+	EAttribute getSetColumnType_OwningColumnName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnType#getNewType <em>New Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>New Type</em>'.
+	 * @see mm.rdb.operations.SetColumnType#getNewType()
+	 * @see #getSetColumnType()
+	 * @generated
+	 */
+	EAttribute getSetColumnType_NewType();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnType#getOldType <em>Old Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Old Type</em>'.
+	 * @see mm.rdb.operations.SetColumnType#getOldType()
+	 * @see #getSetColumnType()
+	 * @generated
+	 */
+	EAttribute getSetColumnType_OldType();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.SetColumnDefaultValue <em>Set Column Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Set Column Default Value</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue
+	 * @generated
+	 */
+	EClass getSetColumnDefaultValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue#getOwningSchemaName()
+	 * @see #getSetColumnDefaultValue()
+	 * @generated
+	 */
+	EAttribute getSetColumnDefaultValue_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue#getOwningTableName()
+	 * @see #getSetColumnDefaultValue()
+	 * @generated
+	 */
+	EAttribute getSetColumnDefaultValue_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#getOwningColumnName <em>Owning Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue#getOwningColumnName()
+	 * @see #getSetColumnDefaultValue()
+	 * @generated
+	 */
+	EAttribute getSetColumnDefaultValue_OwningColumnName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#getNewDefaultValue <em>New Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>New Default Value</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue#getNewDefaultValue()
+	 * @see #getSetColumnDefaultValue()
+	 * @generated
+	 */
+	EAttribute getSetColumnDefaultValue_NewDefaultValue();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Default Value</em>'.
+	 * @see mm.rdb.operations.RemoveDefaultValue
+	 * @generated
+	 */
+	EClass getRemoveDefaultValue();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveDefaultValue#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveDefaultValue#getOwningSchemaName()
+	 * @see #getRemoveDefaultValue()
+	 * @generated
+	 */
+	EAttribute getRemoveDefaultValue_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveDefaultValue#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.RemoveDefaultValue#getOwningTableName()
+	 * @see #getRemoveDefaultValue()
+	 * @generated
+	 */
+	EAttribute getRemoveDefaultValue_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveDefaultValue#getOwningColumnName <em>Owning Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
+	 * @see mm.rdb.operations.RemoveDefaultValue#getOwningColumnName()
+	 * @see #getRemoveDefaultValue()
+	 * @generated
+	 */
+	EAttribute getRemoveDefaultValue_OwningColumnName();
+
+	/**
 	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2455,6 +2782,132 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MOVE_COLUMN__TYPE = eINSTANCE.getMoveColumn_Type();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.SetColumnTypeImpl <em>Set Column Type</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.SetColumnTypeImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnType()
+		 * @generated
+		 */
+		EClass SET_COLUMN_TYPE = eINSTANCE.getSetColumnType();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_TYPE__OWNING_SCHEMA_NAME = eINSTANCE.getSetColumnType_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_TYPE__OWNING_TABLE_NAME = eINSTANCE.getSetColumnType_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_TYPE__OWNING_COLUMN_NAME = eINSTANCE.getSetColumnType_OwningColumnName();
+
+		/**
+		 * The meta object literal for the '<em><b>New Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_TYPE__NEW_TYPE = eINSTANCE.getSetColumnType_NewType();
+
+		/**
+		 * The meta object literal for the '<em><b>Old Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_TYPE__OLD_TYPE = eINSTANCE.getSetColumnType_OldType();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.SetColumnDefaultValueImpl <em>Set Column Default Value</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.SetColumnDefaultValueImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnDefaultValue()
+		 * @generated
+		 */
+		EClass SET_COLUMN_DEFAULT_VALUE = eINSTANCE.getSetColumnDefaultValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_DEFAULT_VALUE__OWNING_SCHEMA_NAME = eINSTANCE.getSetColumnDefaultValue_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_DEFAULT_VALUE__OWNING_TABLE_NAME = eINSTANCE.getSetColumnDefaultValue_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_DEFAULT_VALUE__OWNING_COLUMN_NAME = eINSTANCE.getSetColumnDefaultValue_OwningColumnName();
+
+		/**
+		 * The meta object literal for the '<em><b>New Default Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = eINSTANCE.getSetColumnDefaultValue_NewDefaultValue();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveDefaultValueImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveDefaultValue()
+		 * @generated
+		 */
+		EClass REMOVE_DEFAULT_VALUE = eINSTANCE.getRemoveDefaultValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_DEFAULT_VALUE__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveDefaultValue_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_DEFAULT_VALUE__OWNING_TABLE_NAME = eINSTANCE.getRemoveDefaultValue_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_DEFAULT_VALUE__OWNING_COLUMN_NAME = eINSTANCE.getRemoveDefaultValue_OwningColumnName();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.

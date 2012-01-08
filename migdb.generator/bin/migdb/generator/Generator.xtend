@@ -54,16 +54,16 @@ class Generator extends BaseCodeGenerator {
 	 * @param ModelOperationImpl operation : method do not need specific type of operation
 	 */
 	def generateOperationFile(ModelOperationImpl operation) {
-		generateFile(operation.fileName, operation.genOperation)
+		generateFile(operation.getFileName(".sql"), operation.genOperation)
 	}
 		
 	/**
 	 * Method define name of file
 	 * @param ModelOperationImpl operation : method do not need specific type of operation
 	 */
-	def String getFileName(ModelOperationImpl operation) {
+	def String getFileName(ModelOperationImpl operation, String type) {
 		this.counter = counter + 1;
-		return ""+this.counter+".sql";
+		return "" + this.counter + type;
 	}
 
 	/*****************************************************************
@@ -71,6 +71,16 @@ class Generator extends BaseCodeGenerator {
  	 *****************************************************************/
 
 	/**		CREATE OPERATIONS		**/
+	
+	/**
+	 * CREATE SEQUENCE
+	 * Create an ascending sequence called serial, starting at 101:
+	 * >> CREATE SEQUENCE serial START 101; <<
+	 * @param AddSequenceImpl operation : operation of type AddSequenceImpl
+	 */
+	def dispatch genOperation(AddSequenceImpl operation) '''
+		CREATE SEQUENCE «operation.owningSchemaName».«operation.name» START «operation.cacheSize»;
+	'''		
 
 	/**
 	 * CREATE NOT NULL CONSTRAINT
@@ -148,18 +158,14 @@ class Generator extends BaseCodeGenerator {
 			ADD COLUMN «operation.name» «operation.type»;
 	'''
 	
-	// WARNING !! We do not have rule for create ID with new table.
 	/**
 	 * CREATE TABLE
 	 * So to create a table in the new schema, use:
 	 * >> CREATE TABLE myschema.mytable (...); <<
-	 * Also create column ID
 	 * @param AddTableImpl operation : operation of type AddTableImpl
 	 */
 	def dispatch genOperation(AddTableImpl operation) '''
-		CREATE TABLE «operation.owningSchemaName».«operation.name» (
-			id int PRIMARY KEY
-		);
+		CREATE TABLE «operation.owningSchemaName».«operation.name» ();
 	'''
 	
 	/**
@@ -172,6 +178,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddSchemaImpl operation){
 		if(!operation.name.toLowerCase.equals("public"))
 			return ''' CREATE SCHEMA «operation.name»;''';
+		return "";
 	}
 	
 	/**		REMOVE OPERATIONS		**/
@@ -197,7 +204,6 @@ class Generator extends BaseCodeGenerator {
 			DROP COLUMN «operation.name»;
 	'''	
 	
-	// WARNING !! This operation has a lot of useless information.
 	/**
 	 * REMOVE INDEX
 	 * This command will remove the index title_idx:
@@ -219,7 +225,6 @@ class Generator extends BaseCodeGenerator {
 			DROP CONSTRAINT «operation.name»;
 	'''		
 		
-	// WARNING !! Name of this operation may be RemoveNotNullConstraint.
 	/**
 	 * REMOVE COLUMN CONSTRAINT
 	 * This works the same for all constraint types except not-null constraints. To drop a not null constraint use:
@@ -229,7 +234,18 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(RemoveColumnConstraintImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 			ALTER COLUMN «operation.owningColumnName» DROP NOT NULL;
-	'''			
+	'''		
+	
+	/**
+	 * REMOVE DEFAULT VALUE
+	 * To remove any default value, use:
+	 * >> ALTER TABLE products ALTER COLUMN price DROP DEFAULT; <<
+	 * @param RemoveDefaultValueImpl operation : operation of type RemoveDefaultValueImpl
+	 */
+	def dispatch genOperation(RemoveDefaultValueImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			ALTER COLUMN «operation.owningColumnName» DROP DEFAULT;
+	'''		
 	
 	/**		RENAME OPERATIONS		**/	
 		
@@ -253,21 +269,109 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(RenameColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 			RENAME COLUMN «operation.name» TO «operation.newName»;
+	'''		
+	
+	/**	    SET OPERATIONS	    	**/	
+
+	/**
+	 * SET COLUMN DEFAULT VALUE
+	 * To set a new default for a column, use a command like:
+	 * >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
+	 * Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
+	 * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
+	 */
+	def dispatch genOperation(SetColumnDefaultValueImpl operation) '''
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «operation.newDefaultValue»;
 	'''	
 	
-	/**		NEEDED OPERATIONS		**/		
+	/**
+	 * SET COLUMN DATA TYPE
+	 * To convert a column to a different data type, use a command like:
+	 * >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
+	 * For some not trivial causes of changing of data type are created functions.
+	 * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
+	 */
+	def dispatch genOperation(SetColumnTypeImpl operation){
+		
+		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
+						«IF operation.newType == "boolean" && operation.oldType == "int"»
+							USING converting_booltoint(«operation.owningColumnName»)
+						«ELSEIF operation.newType == "int" && operation.oldType == "boolean"»
+							USING converting_inttoboolean(«operation.owningColumnName»)
+						«ELSEIF operation.newType == "char" && operation.oldType == "boolean"»
+							USING converting_chartobool(«operation.owningColumnName»)
+						«ELSEIF operation.newType == "char" && operation.oldType == "int"»
+							USING converting_chartoint(«operation.owningColumnName»)
+						«ENDIF»;''';
+	}
+				
 	
-	// 1) Changing a Column's Data Type
-	// To convert a column to a different data type, use a command like:
-	// >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
+	/**		COMPLEX OPERATIONS		**/	
 	
-	// 2) Changing a Column's Default Value
-	// To set a new default for a column, use a command like:
-	// >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
-	// Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
-
-	// 3) Remove Default value
-	// To remove any default value, use:
-	// >> ALTER TABLE products ALTER COLUMN price DROP DEFAULT; <<
+	/**
+	 * COPY DATA 
+	 */
 	
+	
+	
+	
+	/** 		CONVERTING 			**/
+	
+	/**
+	 * BOOLEAN TO INTEGER
+	 * Rule for converting:
+	 * True -> 1
+	 * False -> 0
+	 */
+	def convertBoolToInt() '''
+		CREATE OR REPLACE FUNCTION convert_booltoint(booltoconvert boolean) RETURNS integer AS
+			$BODY$
+				SELECT CASE WHEN $1 = TRUE THEN 1 ELSE 0 END;
+			$BODY$
+			LANGUAGE 'sql' IMMUTABLE STRICT;
+  	'''
+  	
+  	/**
+	 * INTEGER TO BOOLEAN
+	 * Rule for converting:
+	 * x < 1 -> False
+	 * x >= 1 -> True
+	 */
+	def convertIntToBool() '''
+		CREATE OR REPLACE FUNCTION convert_inttoboolean(inttoconvert integer) RETURNS boolean AS
+			$BODY$
+				SELECT CASE WHEN $1 < 1 THEN FALSE ELSE TRUE END;
+			$BODY$
+			LANGUAGE 'sql' IMMUTABLE STRICT; 
+  	'''
+  	
+  	/**
+	 * VARCHAR TO INTEGER
+	 * Rule for converting:
+	 * Find number in String
+	 */
+	def convertCharToInt() '''
+		CREATE OR REPLACE FUNCTION convert_chartoint(chartoconvert character varying) RETURNS integer AS
+			$BODY$
+				SELECT CASE WHEN trim($1) SIMILAR TO '[0-9]+' THEN CAST(trim($1) AS integer) ELSE NULL END;
+			$BODY$
+			LANGUAGE 'sql' IMMUTABLE STRICT;	
+  	'''  
+  	/**
+	 * VARCHAR TO BOOLEAN
+	 * Rule for converting:
+	 * Find boolean in String
+	 */
+	def convertCharToBool() '''
+		CREATE OR REPLACE FUNCTION convert_chartobool(chartoconvert character varying) RETURNS boolean AS
+			$BODY$
+				SELECT CASE 
+							WHEN trim($1) LIKE 'true' THEN TRUE
+							WHEN trim($1) LIKE 'false' THEN FALSE 
+					   END;
+			$BODY$
+			LANGUAGE 'sql' IMMUTABLE STRICT;
+  	''' 		
 }

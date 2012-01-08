@@ -179,6 +179,33 @@ public interface OperationsFactory extends EFactory {
 	MoveColumn createMoveColumn();
 
 	/**
+	 * Returns a new object of class '<em>Set Column Type</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Set Column Type</em>'.
+	 * @generated
+	 */
+	SetColumnType createSetColumnType();
+
+	/**
+	 * Returns a new object of class '<em>Set Column Default Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Set Column Default Value</em>'.
+	 * @generated
+	 */
+	SetColumnDefaultValue createSetColumnDefaultValue();
+
+	/**
+	 * Returns a new object of class '<em>Remove Default Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Default Value</em>'.
+	 * @generated
+	 */
+	RemoveDefaultValue createRemoveDefaultValue();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

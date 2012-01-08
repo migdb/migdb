@@ -50,7 +50,17 @@ public enum PrimitiveType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	INT(2, "int", "int");
+	INT(2, "int", "int"),
+
+	/**
+	 * The '<em><b>Float</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #FLOAT_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	FLOAT(3, "float", "float");
 
 	/**
 	 * The '<em><b>Boolean</b></em>' literal value.
@@ -98,6 +108,21 @@ public enum PrimitiveType implements Enumerator {
 	public static final int INT_VALUE = 2;
 
 	/**
+	 * The '<em><b>Float</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Float</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #FLOAT
+	 * @model name="float"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int FLOAT_VALUE = 3;
+
+	/**
 	 * An array of all the '<em><b>Primitive Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -108,6 +133,7 @@ public enum PrimitiveType implements Enumerator {
 			BOOLEAN,
 			CHAR,
 			INT,
+			FLOAT,
 		};
 
 	/**
@@ -161,6 +187,7 @@ public enum PrimitiveType implements Enumerator {
 			case BOOLEAN_VALUE: return BOOLEAN;
 			case CHAR_VALUE: return CHAR;
 			case INT_VALUE: return INT;
+			case FLOAT_VALUE: return FLOAT;
 		}
 		return null;
 	}

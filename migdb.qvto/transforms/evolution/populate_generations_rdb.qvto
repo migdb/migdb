@@ -225,6 +225,38 @@ mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
 	c.name := self.newName;
 }
 
+/**
+ * SET COLUMN TYPE
+ * This operation replace old type of column with a new type of column
+ * Column and new type must exists in actual model generation. 
+ */
+query RDB::operations::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// column with @name must exists in generation
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
+	// new type must exists in generation
+		   and gen.isPrimitiveType(self.newType);
+}
+
+mapping RDB::operations::SetColumnType::apply(inout gen : RDB::ModelGeneration){
+	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.type := gen.createPrimitiveType(self.newType);
+}
+
+/**
+ * SET DEFAULT VALUE
+ * This operation set new default value to column
+ * Column must exists in actual model generation. 
+ */
+query RDB::operations::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// column with @name must exists in generation
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+}
+
+mapping RDB::operations::SetColumnDefaultValue::apply(inout gen : RDB::ModelGeneration){
+	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.defaultValue := self.newDefaultValue;
+}
+
 
 /* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
 
@@ -320,6 +352,21 @@ mapping RDB::operations::MoveColumn::apply(inout gen : RDB::ModelGeneration) {
 	};
 	
 	o.columns := o.columns->excluding(c);
+}
+
+/**
+ * REMOVE DEFAULT VALUE
+ * This operation remove default value and set value to NULL
+ * Column must exists in actual model generation. 
+ */
+query RDB::operations::RemoveDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// column with @name must exists in generation
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+}
+
+mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGeneration){
+	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.defaultValue := null;
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -441,4 +488,21 @@ query RDB::ModelGeneration::isNotNull(sName : String, tName : String, cName : St
 		return r.owningColumn.name = cName;
 	};
 	return false;
+}
+
+// overi, zda primitivni typ existuje (true - exituje, false - neexistuje)
+query RDB::ModelGeneration::isPrimitiveType(type : String) : Boolean {
+	// je treba prohledat enum, zda se v nem nachazi nas hledany prvek
+	return not (self.createPrimitiveType(type) = null);
+}
+
+// prirazeni primitivni hodnoty podle vstupniho stringu
+query RDB::ModelGeneration::createPrimitiveType (type : String) : RDB::PrimitiveType {
+	switch {
+		case (type = "boolean") return RDB::PrimitiveType::boolean;
+		case (type = "char") return RDB::PrimitiveType::char;
+		case (type = "int") return RDB::PrimitiveType::int;
+		case (type = "float") return RDB::PrimitiveType::float;
+	};
+	return null;
 }

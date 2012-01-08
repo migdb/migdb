@@ -78,6 +78,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT: return createRemoveColumnConstraint();
 			case OperationsPackage.REMOVE_INDEX: return createRemoveIndex();
 			case OperationsPackage.MOVE_COLUMN: return createMoveColumn();
+			case OperationsPackage.SET_COLUMN_TYPE: return createSetColumnType();
+			case OperationsPackage.SET_COLUMN_DEFAULT_VALUE: return createSetColumnDefaultValue();
+			case OperationsPackage.REMOVE_DEFAULT_VALUE: return createRemoveDefaultValue();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -281,6 +284,36 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public MoveColumn createMoveColumn() {
 		MoveColumnImpl moveColumn = new MoveColumnImpl();
 		return moveColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SetColumnType createSetColumnType() {
+		SetColumnTypeImpl setColumnType = new SetColumnTypeImpl();
+		return setColumnType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SetColumnDefaultValue createSetColumnDefaultValue() {
+		SetColumnDefaultValueImpl setColumnDefaultValue = new SetColumnDefaultValueImpl();
+		return setColumnDefaultValue;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public RemoveDefaultValue createRemoveDefaultValue() {
+		RemoveDefaultValueImpl removeDefaultValue = new RemoveDefaultValueImpl();
+		return removeDefaultValue;
 	}
 
 	/**

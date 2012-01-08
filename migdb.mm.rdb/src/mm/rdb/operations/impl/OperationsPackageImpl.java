@@ -30,11 +30,14 @@ import mm.rdb.operations.OperationsFactory;
 import mm.rdb.operations.OperationsPackage;
 import mm.rdb.operations.RemoveColumn;
 import mm.rdb.operations.RemoveColumnConstraint;
+import mm.rdb.operations.RemoveDefaultValue;
 import mm.rdb.operations.RemoveIndex;
 import mm.rdb.operations.RemoveTable;
 import mm.rdb.operations.RemoveTableConstraint;
 import mm.rdb.operations.RenameColumn;
 import mm.rdb.operations.RenameTable;
+import mm.rdb.operations.SetColumnDefaultValue;
+import mm.rdb.operations.SetColumnType;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -175,6 +178,27 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass moveColumnEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass setColumnTypeEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass setColumnDefaultValueEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass removeDefaultValueEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -950,6 +974,141 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getSetColumnType() {
+		return setColumnTypeEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnType_OwningSchemaName() {
+		return (EAttribute)setColumnTypeEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnType_OwningTableName() {
+		return (EAttribute)setColumnTypeEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnType_OwningColumnName() {
+		return (EAttribute)setColumnTypeEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnType_NewType() {
+		return (EAttribute)setColumnTypeEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnType_OldType() {
+		return (EAttribute)setColumnTypeEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSetColumnDefaultValue() {
+		return setColumnDefaultValueEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnDefaultValue_OwningSchemaName() {
+		return (EAttribute)setColumnDefaultValueEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnDefaultValue_OwningTableName() {
+		return (EAttribute)setColumnDefaultValueEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnDefaultValue_OwningColumnName() {
+		return (EAttribute)setColumnDefaultValueEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnDefaultValue_NewDefaultValue() {
+		return (EAttribute)setColumnDefaultValueEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getRemoveDefaultValue() {
+		return removeDefaultValueEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveDefaultValue_OwningSchemaName() {
+		return (EAttribute)removeDefaultValueEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveDefaultValue_OwningTableName() {
+		return (EAttribute)removeDefaultValueEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveDefaultValue_OwningColumnName() {
+		return (EAttribute)removeDefaultValueEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getMergeType() {
 		return mergeTypeEEnum;
 	}
@@ -1077,6 +1236,24 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(moveColumnEClass, MOVE_COLUMN__TARGET_TABLE_NAME);
 		createEAttribute(moveColumnEClass, MOVE_COLUMN__TYPE);
 
+		setColumnTypeEClass = createEClass(SET_COLUMN_TYPE);
+		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__OWNING_SCHEMA_NAME);
+		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__OWNING_TABLE_NAME);
+		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__OWNING_COLUMN_NAME);
+		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__NEW_TYPE);
+		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__OLD_TYPE);
+
+		setColumnDefaultValueEClass = createEClass(SET_COLUMN_DEFAULT_VALUE);
+		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__OWNING_SCHEMA_NAME);
+		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__OWNING_TABLE_NAME);
+		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__OWNING_COLUMN_NAME);
+		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE);
+
+		removeDefaultValueEClass = createEClass(REMOVE_DEFAULT_VALUE);
+		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_SCHEMA_NAME);
+		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_TABLE_NAME);
+		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_COLUMN_NAME);
+
 		// Create enums
 		mergeTypeEEnum = createEEnum(MERGE_TYPE);
 	}
@@ -1129,6 +1306,9 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeColumnConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeIndexEClass.getESuperTypes().add(this.getModelOperation());
 		moveColumnEClass.getESuperTypes().add(this.getModelOperation());
+		setColumnTypeEClass.getESuperTypes().add(this.getModelOperation());
+		setColumnDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
+		removeDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1225,6 +1405,24 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getMoveColumn_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveColumn_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveColumn_Type(), this.getMergeType(), "type", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(setColumnTypeEClass, SetColumnType.class, "SetColumnType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSetColumnType_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnType_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnType_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnType_NewType(), ecorePackage.getEString(), "newType", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnType_OldType(), ecorePackage.getEString(), "oldType", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(setColumnDefaultValueEClass, SetColumnDefaultValue.class, "SetColumnDefaultValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSetColumnDefaultValue_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnDefaultValue_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnDefaultValue_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnDefaultValue_NewDefaultValue(), ecorePackage.getEString(), "newDefaultValue", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(removeDefaultValueEClass, RemoveDefaultValue.class, "RemoveDefaultValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getRemoveDefaultValue_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRemoveDefaultValue_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRemoveDefaultValue_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");

@@ -845,6 +845,7 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		addEEnumLiteral(primitiveTypeEEnum, PrimitiveType.BOOLEAN);
 		addEEnumLiteral(primitiveTypeEEnum, PrimitiveType.CHAR);
 		addEEnumLiteral(primitiveTypeEEnum, PrimitiveType.INT);
+		addEEnumLiteral(primitiveTypeEEnum, PrimitiveType.FLOAT);
 
 		// Create resource
 		createResource(eNS_URI);

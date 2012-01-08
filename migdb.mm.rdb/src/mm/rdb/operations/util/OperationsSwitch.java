@@ -195,6 +195,27 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OperationsPackage.SET_COLUMN_TYPE: {
+				SetColumnType setColumnType = (SetColumnType)theEObject;
+				T result = caseSetColumnType(setColumnType);
+				if (result == null) result = caseModelOperation(setColumnType);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.SET_COLUMN_DEFAULT_VALUE: {
+				SetColumnDefaultValue setColumnDefaultValue = (SetColumnDefaultValue)theEObject;
+				T result = caseSetColumnDefaultValue(setColumnDefaultValue);
+				if (result == null) result = caseModelOperation(setColumnDefaultValue);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.REMOVE_DEFAULT_VALUE: {
+				RemoveDefaultValue removeDefaultValue = (RemoveDefaultValue)theEObject;
+				T result = caseRemoveDefaultValue(removeDefaultValue);
+				if (result == null) result = caseModelOperation(removeDefaultValue);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -466,6 +487,51 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseMoveColumn(MoveColumn object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Set Column Type</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Set Column Type</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSetColumnType(SetColumnType object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Set Column Default Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Set Column Default Value</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSetColumnDefaultValue(SetColumnDefaultValue object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Remove Default Value</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Remove Default Value</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseRemoveDefaultValue(RemoveDefaultValue object) {
 		return null;
 	}
 

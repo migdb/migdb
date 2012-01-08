@@ -144,6 +144,18 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createMoveColumnAdapter();
 			}
 			@Override
+			public Adapter caseSetColumnType(SetColumnType object) {
+				return createSetColumnTypeAdapter();
+			}
+			@Override
+			public Adapter caseSetColumnDefaultValue(SetColumnDefaultValue object) {
+				return createSetColumnDefaultValueAdapter();
+			}
+			@Override
+			public Adapter caseRemoveDefaultValue(RemoveDefaultValue object) {
+				return createRemoveDefaultValueAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -412,6 +424,48 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMoveColumnAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.SetColumnType <em>Set Column Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.SetColumnType
+	 * @generated
+	 */
+	public Adapter createSetColumnTypeAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.SetColumnDefaultValue <em>Set Column Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.SetColumnDefaultValue
+	 * @generated
+	 */
+	public Adapter createSetColumnDefaultValueAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveDefaultValue
+	 * @generated
+	 */
+	public Adapter createRemoveDefaultValueAdapter() {
 		return null;
 	}
 

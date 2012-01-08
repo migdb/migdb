@@ -1,2 +1,2 @@
 ALTER TABLE public.parent
-	ADD COLUMN id int
+	ADD COLUMN id int;
