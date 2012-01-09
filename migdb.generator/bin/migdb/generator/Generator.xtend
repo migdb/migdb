@@ -293,7 +293,10 @@ class Generator extends BaseCodeGenerator {
 	 * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
 	 */
 	def dispatch genOperation(SetColumnTypeImpl operation){
-		
+		generateFile(operation.getFileName(".sql"), this.convertBoolToInt);
+		generateFile(operation.getFileName(".sql"), this.convertCharToBool);
+		generateFile(operation.getFileName(".sql"), this.convertCharToInt);
+		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
 		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
 						«IF operation.newType == "boolean" && operation.oldType == "int"»
@@ -315,6 +318,10 @@ class Generator extends BaseCodeGenerator {
 	 */
 	
 	
+	/** 		 QUERRIES	 		**/
+	def isNumberOfRowsSame()'''
+		SELECT COUNT (*) FROM tablename;
+	'''
 	
 	
 	/** 		CONVERTING 			**/

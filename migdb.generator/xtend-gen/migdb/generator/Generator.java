@@ -429,99 +429,120 @@ public class Generator extends BaseCodeGenerator {
   }
   
   protected CharSequence _genOperation(final SetColumnTypeImpl operation) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("ALTER TABLE ");
-    String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "");
-    _builder.append(".");
-    String _owningTableName = operation.getOwningTableName();
-    _builder.append(_owningTableName, "");
-    _builder.append(" ");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t\t\t\t  \t  ");
-    _builder.append("ALTER COLUMN ");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "				  	  ");
-    _builder.append(" TYPE ");
-    String _newType = operation.getNewType();
-    _builder.append(_newType, "				  	  ");
-    _builder.newLineIfNotEmpty();
     {
-      boolean _operator_and = false;
-      String _newType_1 = operation.getNewType();
-      boolean _operator_equals = ObjectExtensions.operator_equals(_newType_1, "boolean");
-      if (!_operator_equals) {
-        _operator_and = false;
-      } else {
-        String _oldType = operation.getOldType();
-        boolean _operator_equals_1 = ObjectExtensions.operator_equals(_oldType, "int");
-        _operator_and = BooleanExtensions.operator_and(_operator_equals, _operator_equals_1);
-      }
-      if (_operator_and) {
-        _builder.append("\t\t\t\t\t\t");
-        _builder.append("USING converting_booltoint(");
-        String _owningColumnName_1 = operation.getOwningColumnName();
-        _builder.append(_owningColumnName_1, "						");
-        _builder.append(")");
-        _builder.newLineIfNotEmpty();} else {
-        boolean _operator_and_1 = false;
-        String _newType_2 = operation.getNewType();
-        boolean _operator_equals_2 = ObjectExtensions.operator_equals(_newType_2, "int");
-        if (!_operator_equals_2) {
-          _operator_and_1 = false;
+      String _fileName = this.getFileName(operation, ".sql");
+      StringConcatenation _convertBoolToInt = this.convertBoolToInt();
+      this.generateFile(_fileName, _convertBoolToInt);
+      String _fileName_1 = this.getFileName(operation, ".sql");
+      StringConcatenation _convertCharToBool = this.convertCharToBool();
+      this.generateFile(_fileName_1, _convertCharToBool);
+      String _fileName_2 = this.getFileName(operation, ".sql");
+      StringConcatenation _convertCharToInt = this.convertCharToInt();
+      this.generateFile(_fileName_2, _convertCharToInt);
+      String _fileName_3 = this.getFileName(operation, ".sql");
+      StringConcatenation _convertIntToBool = this.convertIntToBool();
+      this.generateFile(_fileName_3, _convertIntToBool);
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("ALTER TABLE ");
+      String _owningSchemaName = operation.getOwningSchemaName();
+      _builder.append(_owningSchemaName, "");
+      _builder.append(".");
+      String _owningTableName = operation.getOwningTableName();
+      _builder.append(_owningTableName, "");
+      _builder.append(" ");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t\t\t\t  \t  ");
+      _builder.append("ALTER COLUMN ");
+      String _owningColumnName = operation.getOwningColumnName();
+      _builder.append(_owningColumnName, "				  	  ");
+      _builder.append(" TYPE ");
+      String _newType = operation.getNewType();
+      _builder.append(_newType, "				  	  ");
+      _builder.newLineIfNotEmpty();
+      {
+        boolean _operator_and = false;
+        String _newType_1 = operation.getNewType();
+        boolean _operator_equals = ObjectExtensions.operator_equals(_newType_1, "boolean");
+        if (!_operator_equals) {
+          _operator_and = false;
         } else {
-          String _oldType_1 = operation.getOldType();
-          boolean _operator_equals_3 = ObjectExtensions.operator_equals(_oldType_1, "boolean");
-          _operator_and_1 = BooleanExtensions.operator_and(_operator_equals_2, _operator_equals_3);
+          String _oldType = operation.getOldType();
+          boolean _operator_equals_1 = ObjectExtensions.operator_equals(_oldType, "int");
+          _operator_and = BooleanExtensions.operator_and(_operator_equals, _operator_equals_1);
         }
-        if (_operator_and_1) {
+        if (_operator_and) {
           _builder.append("\t\t\t\t\t\t");
-          _builder.append("USING converting_inttoboolean(");
-          String _owningColumnName_2 = operation.getOwningColumnName();
-          _builder.append(_owningColumnName_2, "						");
+          _builder.append("USING converting_booltoint(");
+          String _owningColumnName_1 = operation.getOwningColumnName();
+          _builder.append(_owningColumnName_1, "						");
           _builder.append(")");
           _builder.newLineIfNotEmpty();} else {
-          boolean _operator_and_2 = false;
-          String _newType_3 = operation.getNewType();
-          boolean _operator_equals_4 = ObjectExtensions.operator_equals(_newType_3, "char");
-          if (!_operator_equals_4) {
-            _operator_and_2 = false;
+          boolean _operator_and_1 = false;
+          String _newType_2 = operation.getNewType();
+          boolean _operator_equals_2 = ObjectExtensions.operator_equals(_newType_2, "int");
+          if (!_operator_equals_2) {
+            _operator_and_1 = false;
           } else {
-            String _oldType_2 = operation.getOldType();
-            boolean _operator_equals_5 = ObjectExtensions.operator_equals(_oldType_2, "boolean");
-            _operator_and_2 = BooleanExtensions.operator_and(_operator_equals_4, _operator_equals_5);
+            String _oldType_1 = operation.getOldType();
+            boolean _operator_equals_3 = ObjectExtensions.operator_equals(_oldType_1, "boolean");
+            _operator_and_1 = BooleanExtensions.operator_and(_operator_equals_2, _operator_equals_3);
           }
-          if (_operator_and_2) {
+          if (_operator_and_1) {
             _builder.append("\t\t\t\t\t\t");
-            _builder.append("USING converting_chartobool(");
-            String _owningColumnName_3 = operation.getOwningColumnName();
-            _builder.append(_owningColumnName_3, "						");
+            _builder.append("USING converting_inttoboolean(");
+            String _owningColumnName_2 = operation.getOwningColumnName();
+            _builder.append(_owningColumnName_2, "						");
             _builder.append(")");
             _builder.newLineIfNotEmpty();} else {
-            boolean _operator_and_3 = false;
-            String _newType_4 = operation.getNewType();
-            boolean _operator_equals_6 = ObjectExtensions.operator_equals(_newType_4, "char");
-            if (!_operator_equals_6) {
-              _operator_and_3 = false;
+            boolean _operator_and_2 = false;
+            String _newType_3 = operation.getNewType();
+            boolean _operator_equals_4 = ObjectExtensions.operator_equals(_newType_3, "char");
+            if (!_operator_equals_4) {
+              _operator_and_2 = false;
             } else {
-              String _oldType_3 = operation.getOldType();
-              boolean _operator_equals_7 = ObjectExtensions.operator_equals(_oldType_3, "int");
-              _operator_and_3 = BooleanExtensions.operator_and(_operator_equals_6, _operator_equals_7);
+              String _oldType_2 = operation.getOldType();
+              boolean _operator_equals_5 = ObjectExtensions.operator_equals(_oldType_2, "boolean");
+              _operator_and_2 = BooleanExtensions.operator_and(_operator_equals_4, _operator_equals_5);
             }
-            if (_operator_and_3) {
+            if (_operator_and_2) {
               _builder.append("\t\t\t\t\t\t");
-              _builder.append("USING converting_chartoint(");
-              String _owningColumnName_4 = operation.getOwningColumnName();
-              _builder.append(_owningColumnName_4, "						");
+              _builder.append("USING converting_chartobool(");
+              String _owningColumnName_3 = operation.getOwningColumnName();
+              _builder.append(_owningColumnName_3, "						");
               _builder.append(")");
-              _builder.newLineIfNotEmpty();
-              _builder.append("\t\t\t\t\t\t");
+              _builder.newLineIfNotEmpty();} else {
+              boolean _operator_and_3 = false;
+              String _newType_4 = operation.getNewType();
+              boolean _operator_equals_6 = ObjectExtensions.operator_equals(_newType_4, "char");
+              if (!_operator_equals_6) {
+                _operator_and_3 = false;
+              } else {
+                String _oldType_3 = operation.getOldType();
+                boolean _operator_equals_7 = ObjectExtensions.operator_equals(_oldType_3, "int");
+                _operator_and_3 = BooleanExtensions.operator_and(_operator_equals_6, _operator_equals_7);
+              }
+              if (_operator_and_3) {
+                _builder.append("\t\t\t\t\t\t");
+                _builder.append("USING converting_chartoint(");
+                String _owningColumnName_4 = operation.getOwningColumnName();
+                _builder.append(_owningColumnName_4, "						");
+                _builder.append(")");
+                _builder.newLineIfNotEmpty();
+                _builder.append("\t\t\t\t\t\t");
+              }
             }
           }
         }
       }
+      _builder.append(";");
+      return _builder;
     }
-    _builder.append(";");
+  }
+  
+  public StringConcatenation isNumberOfRowsSame() {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("SELECT COUNT (*) FROM tablename;");
+    _builder.newLine();
     return _builder;
   }
   
