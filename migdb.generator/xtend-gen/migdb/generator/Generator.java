@@ -539,10 +539,14 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
-  public StringConcatenation isNumberOfRowsSame() {
+  public StringConcatenation isSameTableSize(final String table1, final String table2) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("SELECT COUNT (*) FROM tablename;");
-    _builder.newLine();
+    _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
+    _builder.append(table1, "");
+    _builder.append(") = (SELECT COUNT(*) FROM ");
+    _builder.append(table2, "");
+    _builder.append(") THEN TRUE ELSE FALSE END;");
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   

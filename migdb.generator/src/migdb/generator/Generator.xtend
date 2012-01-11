@@ -293,6 +293,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
 	 */
 	def dispatch genOperation(SetColumnTypeImpl operation){
+		// create SQL functions for converting columns data type
 		generateFile(operation.getFileName(".sql"), this.convertBoolToInt);
 		generateFile(operation.getFileName(".sql"), this.convertCharToBool);
 		generateFile(operation.getFileName(".sql"), this.convertCharToInt);
@@ -309,18 +310,19 @@ class Generator extends BaseCodeGenerator {
 							USING converting_chartoint(«operation.owningColumnName»)
 						«ENDIF»;''';
 	}
-				
-	
-	/**		COMPLEX OPERATIONS		**/	
-	
-	/**
-	 * COPY DATA 
-	 */
-	
 	
 	/** 		 QUERRIES	 		**/
-	def isNumberOfRowsSame()'''
-		SELECT COUNT (*) FROM tablename;
+	
+	/**
+	 * IS SAME TABLE SIZE
+	 * This query check size of two tables and compare
+	 * number of their rows.
+	 * @param String table1 : first table to compare
+	 * @param String table2 : secont table to compare
+	 * @return boolean : t - the same size; f - different size
+	 */
+	def isSameTableSize(String table1, String table2)'''
+		SELECT CASE WHEN (SELECT COUNT(*) FROM «table1») = (SELECT COUNT(*) FROM «table2») THEN TRUE ELSE FALSE END;
 	'''
 	
 	
