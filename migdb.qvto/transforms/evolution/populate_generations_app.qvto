@@ -49,7 +49,7 @@ main() {
 		} endif;
 	};
 	
-	root.operations = root.operations->reject(true);
+	root.operations := root.operations->reject(true);
 }
 
 // kontrola validity operace
@@ -64,36 +64,46 @@ abstract mapping APP::operations::ModelOperation::
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
 query APP::operations::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	var b : Boolean := true;
-	if (self.parent <> null) then { b := gen.isAbstractClassInGeneration(self.parent) and not (self.name = self.parent); } endif;
-	return not gen.isAbstractClassInGeneration(self.name) and b;
+	return not gen.isEntityInGeneration(self.name);
 }
 
-// pridani standardni tridy do generace
-mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {
+// pridani standardni tridy do generace / slozeno z AddEmptyClass a AddProperty
+mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {	
+	
+	object APP::operations::AddEmptyClass {
+		name := self.name;
+		isAbstract := self.isAbstract;
+		inheritanceType := self.inheritanceType;
+	}.xmap apply(gen);
+	
+	object APP::operations::AddProperty {
+		owningClassName := self.name;
+		name := "id";
+		type := "Integer"; // gen0 musi obsahovat primitivni tridu Integer
+		lowerBound := 1;
+		upperBound := 1;
+		isID := true;
+	}.xmap apply(gen);
+}
+
+query APP::operations::AddEmptyClass::isValid(gen : APP::ModelGeneration) : Boolean {
+	return not gen.isEntityInGeneration(self.name);
+}
+
+// pridani prazdne tridy do generace
+mapping APP::operations::AddEmptyClass::apply(inout gen : APP::ModelGeneration) {
 	gen.classes += object APP::Class {
 		name := self.name;
-		parent := gen.findAbstractClass(self.parent).oclAsType(APP::Class);
 		isAbstract := self.isAbstract;
 		inheritanceType := self.inheritanceType;
 	};
-	
-	// vytvoreni id atributu
-	if (self.parent = null) then {
-		var c : APP::Class := gen.findAbstractClass(self.name).oclAsType(APP::Class);
-		c.properties += object APP::Property {
-			name := "id";
-			isID := true;
-			// [?] nutne nastavit typ atributu
-		};
-	} endif;
 }
 
 query APP::operations::AddPrimitiveClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	return not gen.isAbstractClassInGeneration(self.name);
+	return not gen.isEntityInGeneration(self.name);
 }
 
-// prida primitivni tridu do generace
+// pridani primitivni tridy do generace
 mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGeneration) {
 	gen.classes += object APP::PrimitiveClass {
 		name := self.name;
@@ -101,52 +111,42 @@ mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGenerati
 	};
 }
 
-/**
- * ADDEMBEDDEDCLASS
- * Pridani nove tridy typu Embedded do generace.
- * Pred vytvorenim musime overit, zda trida jiz neexistuje
- * @param String name : jmeno nove Embedded tridy
- */
 query APP::operations::AddEmbeddedClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	return not gen.isAbstractClassInGeneration(self.name);
+	return not gen.isEntityInGeneration(self.name);
 }
 
+// pridani vestavene tridy do generace
 mapping APP::operations::AddEmbeddedClass::apply(inout gen : APP::ModelGeneration) {
 	gen.classes += object APP::EmbeddedClass {
 		name := self.name;
 	};
 }
 
-
 query APP::operations::AddProperty::isValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isAbstractClassInGeneration(self.owningClassName)
-		   and not gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class).isPropertyInClass(self.name)
-	// overi, zda-li existuje trida pozadovaneho typu atributu
-		   and gen.isAbstractClassInGeneration(self.type)
-	// overi, zda-li jsou hranice nastaveny smysluplne
-		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
-	// v hierarchii neexistuje atribut se stejnym nazvem
-		   and not gen.isPropertyInHierarchy(self.owningClassName, self.name);
+	return gen.isPropertyInAbstractClass(self.owningClassName, self.name)
+		   and gen.isEntityInGeneration(self.type)
+		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound));
 }
 
-// Pri vytvoreni Property lze vytvorit jednostranne navigabilni asociaci
-// lze nastavit i kolekci:
-//isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
-//isUnique := self.isUnique; // has to be a collection (upperBound == -1)
+// pridani atributu do tridy
 mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
 	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
-	
+		
 	c.properties += object APP::Property {
 		name := self.name;
-		type := gen.findAbstractClass(self.type);
-		defaultValue := self.defaultValue; // a value type has to be equal with a type of property
+		type := gen.findEntity(self.type);
+		defaultValue := self.defaultValue;
 		lowerBound := self.lowerBound;
 		upperBound := self.upperBound;
-		isOrdered := self.isOrdered; // has to be a collection (upperBound == -1)
-		isUnique := self.isUnique; // has to be a collection (upperBound == -1)
+		isOrdered := self.isOrdered; // ma smysl jen pro upperBound = -1
+		isUnique := self.isUnique; // my smysl jen pro upperBound = -1
+		isID := self.isID;
 		sequenceName := self.sequenceName;
 	};
 }
+
+
+/* ++++++++++ SET OPERATIONS FOR CLASSES ++++++++++++++++++++ */
 
 query APP::operations::SetOpposite::isValid(gen : APP::ModelGeneration) : Boolean {
 	var pre : Boolean := 
@@ -183,9 +183,6 @@ mapping APP::operations::SetOpposite::apply(inout gen : APP::ModelGeneration) {
 		p2.oppositeProperty := null;
 	} endif;	
 }
-
-
-/* ++++++++++ SET OPERATIONS FOR CLASSES ++++++++++++++++++++ */
 
 query APP::operations::SetAbstract::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.name);
@@ -274,14 +271,14 @@ mapping APP::operations::SetUnique::apply(inout gen : APP::ModelGeneration) {
 
 /* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
 
-query APP::operations::RenameClass::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::operations::RenameEntity::isValid(gen : APP::ModelGeneration) : Boolean {
 	// trida s nazvem @name existuje v generaci
 	return gen.isAbstractClassInGeneration(self.name)
 	// trida s nazvem @newName neexistuje v generaci
 		   and not gen.isAbstractClassInGeneration(self.newName);
 }
 
-mapping APP::operations::RenameClass::apply(inout gen : APP::ModelGeneration) {
+mapping APP::operations::RenameEntity::apply(inout gen : APP::ModelGeneration) {
 	var c : APP::Entity := gen.findAbstractClass(self.name);
 	// zmena hodnoty atributu name
 	c.name := self.newName;
@@ -360,7 +357,6 @@ query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boole
 		   		or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-// [!] uvádí model do nekonzistentního stavu
 mapping APP::operations::CopyProperty::apply(inout gen : APP::ModelGeneration){
 	var c : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
 	var p : APP::Property := gen.findPropertyInAbstractClass(self.owningClassName, self.name);
@@ -384,12 +380,13 @@ query APP::operations::MoveProperty::isValid(gen : APP::ModelGeneration) : Boole
 		   		or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-// [!] duplikuje činnost CopyProeprty
+
 mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
-	var c : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
+	var t : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
+	var o : APP::AbstractClass := gen.findAbstractClass(self.owningClassName);
 	var p : APP::Property := gen.findPropertyInAbstractClass(self.owningClassName, self.name);
 	
-	c.properties += object APP::Property {
+	t.properties += object APP::Property {
 		name := p.name;
 		type := p.type;
 		defaultValue := p.defaultValue;
@@ -399,7 +396,7 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 		isUnique := p.isUnique;
 	};
 	
-	c.properties := c.properties->excluding(p);	
+	o.properties := o.properties->excluding(p);
 }
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
@@ -410,6 +407,14 @@ query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
 	return self.classes![name = eName];
+}
+
+query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
+	return self.isEntityInGeneration(cName).oclIsTypeOf(APP::PrimitiveClass);
+}
+
+query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
+	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
 query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
@@ -427,7 +432,6 @@ query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : St
 query APP::ModelGeneration::findPropertyInAbstractClass(cName : String, pName : String) : APP::Property {
 	return self.findAbstractClass(cName).properties![name = pName];
 }
-
 
 
 

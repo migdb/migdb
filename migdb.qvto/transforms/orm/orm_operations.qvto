@@ -94,7 +94,6 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 		owningTableName := self.name.toLower();
 		name := "PK_" + self.name.toLower();
 		underlyingIndexName := "IX_" + self.name.toLower() + "_id";
-		columnName := "id";
 	};
 }
 
@@ -262,6 +261,39 @@ when { appGen.findClass(self.parentName).inheritanceType = APP::InheritanceType:
 	};
 }
 
+mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+
+	rdbRoot.operations += object RDB::operations::RenameColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName.toLower();
+		name := self.name;
+		newName := self.name + "_old";
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.targetClassName.toLower();
+		name := self.name;
+		type := RDB::PrimitiveType::boolean;
+	};
+	
+	rdbRoot.operations += object RDB::operations::CopyInstances {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName.toLower();
+		sourceColumnName := self.name + '_old';
+		targetTableName := self.targetClassName.toLower();
+		targetColumnName := self.name;
+		type := appGen.mergeTypeInAppToMergeTypeInRdb(self.type);
+	};
+	
+	rdbRoot.operations += object RDB::operations::RemoveColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName.toLower();
+		name := self.name + "_old";		
+	};
+}
+
+
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
@@ -281,6 +313,19 @@ query APP::ModelGeneration::findPrimitiveTypeInRdb(pName : String) : RDB::Primit
 		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::boolean) return RDB::PrimitiveType::boolean;
 		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::char) return RDB::PrimitiveType::char;
 		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::int) return RDB::PrimitiveType::int;
+	};
+	return null;
+}
+
+query APP::ModelGeneration::findMergeTypeInApp(pName : String) : APP::PrimitiveType {
+	return self.findEntity(pName).oclAsType(APP::PrimitiveClass).primitiveType;
+}
+
+query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::operations::MergeType) : RDB::operations::MergeType {
+	switch {
+		case (type = APP::operations::MergeType::strict) return RDB::operations::MergeType::strict;
+		case (type = APP::operations::MergeType::force) return RDB::operations::MergeType::force;
+		case (type = APP::operations::MergeType::tolerant) return RDB::operations::MergeType::tolerant;
 	};
 	return null;
 }
