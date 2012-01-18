@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.EStructuralFeature
 import java.util.List
 import java.util.ArrayList
 import mm.rdb.operations.impl.*
+import mm.rdb.operations.*
 import com.sun.org.apache.xalan.internal.xsltc.compiler.ForEach
 
 
@@ -311,6 +312,37 @@ class Generator extends BaseCodeGenerator {
 						«ENDIF»;''';
 	}
 	
+	/** 		 	DATA OPERATIONS	 		**/
+	/** 
+ 	 * This operations do not change context of models.
+     * This operations just work with instances (rows) in database.
+     */
+     
+	/**
+	 * COPY INSTANCES
+	 * This operation copy data from one column to another. 
+ 	 * Target and source column can be in the same table.
+ 	 * MergeType:
+ 	 * strict -> Can not transfer data if a tables have different number of instances (rows).
+ 	 * force -> Delete rows if there is more instancef in source table. If source table has less number
+ 	 * of instances add default value or null.
+	 * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
+	 */
+	def dispatch genOperation(CopyInstancesImpl operation){
+		if(operation.type.toString().equals("strict")){
+			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
+		}
+		if(operation.type.toString().equals("force")){
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
+		}
+		return "";
+	}
+
+	
+	
 	/** 		 QUERRIES	 		**/
 	
 	/**
@@ -321,8 +353,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param String table2 : secont table to compare
 	 * @return boolean : t - the same size; f - different size
 	 */
-	def isSameTableSize(String table1, String table2)'''
-		SELECT CASE WHEN (SELECT COUNT(*) FROM «table1») = (SELECT COUNT(*) FROM «table2») THEN TRUE ELSE FALSE END;
+	def isSameTableSize(String schema, String table1, String table2)'''
+		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
 	'''
 	
 	
@@ -368,6 +400,7 @@ class Generator extends BaseCodeGenerator {
 			$BODY$
 			LANGUAGE 'sql' IMMUTABLE STRICT;	
   	'''  
+  	
   	/**
 	 * VARCHAR TO BOOLEAN
 	 * Rule for converting:

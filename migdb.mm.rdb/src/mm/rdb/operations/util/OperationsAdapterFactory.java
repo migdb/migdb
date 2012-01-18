@@ -108,6 +108,10 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createRenameColumnAdapter();
 			}
 			@Override
+			public Adapter caseCopyInstances(CopyInstances object) {
+				return createCopyInstancesAdapter();
+			}
+			@Override
 			public Adapter caseRemoveColumn(RemoveColumn object) {
 				return createRemoveColumnAdapter();
 			}
@@ -124,12 +128,12 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createAddForeignKeyAdapter();
 			}
 			@Override
-			public Adapter caseAddNotNullConstraint(AddNotNullConstraint object) {
-				return createAddNotNullConstraintAdapter();
-			}
-			@Override
 			public Adapter caseRemoveTableConstraint(RemoveTableConstraint object) {
 				return createRemoveTableConstraintAdapter();
+			}
+			@Override
+			public Adapter caseAddNotNullConstraint(AddNotNullConstraint object) {
+				return createAddNotNullConstraintAdapter();
 			}
 			@Override
 			public Adapter caseRemoveColumnConstraint(RemoveColumnConstraint object) {
@@ -138,10 +142,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseRemoveIndex(RemoveIndex object) {
 				return createRemoveIndexAdapter();
-			}
-			@Override
-			public Adapter caseMoveColumn(MoveColumn object) {
-				return createMoveColumnAdapter();
 			}
 			@Override
 			public Adapter caseSetColumnType(SetColumnType object) {
@@ -302,6 +302,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.CopyInstances <em>Copy Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.CopyInstances
+	 * @generated
+	 */
+	public Adapter createCopyInstancesAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveColumn <em>Remove Column</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -358,20 +372,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.AddNotNullConstraint <em>Add Not Null Constraint</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.rdb.operations.AddNotNullConstraint
-	 * @generated
-	 */
-	public Adapter createAddNotNullConstraintAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveTableConstraint <em>Remove Table Constraint</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -382,6 +382,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createRemoveTableConstraintAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.AddNotNullConstraint <em>Add Not Null Constraint</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.AddNotNullConstraint
+	 * @generated
+	 */
+	public Adapter createAddNotNullConstraintAdapter() {
 		return null;
 	}
 
@@ -410,20 +424,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createRemoveIndexAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.MoveColumn <em>Move Column</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.rdb.operations.MoveColumn
-	 * @generated
-	 */
-	public Adapter createMoveColumnAdapter() {
 		return null;
 	}
 

@@ -132,6 +132,13 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OperationsPackage.COPY_INSTANCES: {
+				CopyInstances copyInstances = (CopyInstances)theEObject;
+				T result = caseCopyInstances(copyInstances);
+				if (result == null) result = caseModelOperation(copyInstances);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case OperationsPackage.REMOVE_COLUMN: {
 				RemoveColumn removeColumn = (RemoveColumn)theEObject;
 				T result = caseRemoveColumn(removeColumn);
@@ -160,17 +167,17 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.ADD_NOT_NULL_CONSTRAINT: {
-				AddNotNullConstraint addNotNullConstraint = (AddNotNullConstraint)theEObject;
-				T result = caseAddNotNullConstraint(addNotNullConstraint);
-				if (result == null) result = caseModelOperation(addNotNullConstraint);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case OperationsPackage.REMOVE_TABLE_CONSTRAINT: {
 				RemoveTableConstraint removeTableConstraint = (RemoveTableConstraint)theEObject;
 				T result = caseRemoveTableConstraint(removeTableConstraint);
 				if (result == null) result = caseModelOperation(removeTableConstraint);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.ADD_NOT_NULL_CONSTRAINT: {
+				AddNotNullConstraint addNotNullConstraint = (AddNotNullConstraint)theEObject;
+				T result = caseAddNotNullConstraint(addNotNullConstraint);
+				if (result == null) result = caseModelOperation(addNotNullConstraint);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -185,13 +192,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 				RemoveIndex removeIndex = (RemoveIndex)theEObject;
 				T result = caseRemoveIndex(removeIndex);
 				if (result == null) result = caseModelOperation(removeIndex);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.MOVE_COLUMN: {
-				MoveColumn moveColumn = (MoveColumn)theEObject;
-				T result = caseMoveColumn(moveColumn);
-				if (result == null) result = caseModelOperation(moveColumn);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -356,6 +356,21 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Copy Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Copy Instances</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCopyInstances(CopyInstances object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Remove Column</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -416,21 +431,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Add Not Null Constraint</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Add Not Null Constraint</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseAddNotNullConstraint(AddNotNullConstraint object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Remove Table Constraint</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -442,6 +442,21 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseRemoveTableConstraint(RemoveTableConstraint object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Add Not Null Constraint</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Add Not Null Constraint</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseAddNotNullConstraint(AddNotNullConstraint object) {
 		return null;
 	}
 
@@ -472,21 +487,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseRemoveIndex(RemoveIndex object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Move Column</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Move Column</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseMoveColumn(MoveColumn object) {
 		return null;
 	}
 

@@ -4,6 +4,7 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import mm.rdb.PrimitiveType;
+import mm.rdb.operations.MergeType;
 import mm.rdb.operations.impl.AddColumnImpl;
 import mm.rdb.operations.impl.AddForeignKeyImpl;
 import mm.rdb.operations.impl.AddIndexImpl;
@@ -13,6 +14,7 @@ import mm.rdb.operations.impl.AddSchemaImpl;
 import mm.rdb.operations.impl.AddSequenceImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
+import mm.rdb.operations.impl.CopyInstancesImpl;
 import mm.rdb.operations.impl.ModelOperationImpl;
 import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
 import mm.rdb.operations.impl.RemoveColumnImpl;
@@ -539,11 +541,87 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
-  public StringConcatenation isSameTableSize(final String table1, final String table2) {
+  protected CharSequence _genOperation(final CopyInstancesImpl operation) {
+    {
+      MergeType _type = operation.getType();
+      String _string = _type.toString();
+      boolean _equals = _string.equals("strict");
+      if (_equals) {
+        {
+          String _fileName = this.getFileName(operation, ".q");
+          String _owningSchemaName = operation.getOwningSchemaName();
+          String _owningTableName = operation.getOwningTableName();
+          String _targetTableName = operation.getTargetTableName();
+          StringConcatenation _isSameTableSize = this.isSameTableSize(_owningSchemaName, _owningTableName, _targetTableName);
+          this.generateFile(_fileName, _isSameTableSize);
+          StringConcatenation _builder = new StringConcatenation();
+          _builder.append("UPDATE ");
+          String _owningSchemaName_1 = operation.getOwningSchemaName();
+          _builder.append(_owningSchemaName_1, "");
+          _builder.append(".");
+          String _targetTableName_1 = operation.getTargetTableName();
+          _builder.append(_targetTableName_1, "");
+          _builder.append(" AS target SET ");
+          String _targetColumnName = operation.getTargetColumnName();
+          _builder.append(_targetColumnName, "");
+          _builder.append(" = ");
+          _builder.newLineIfNotEmpty();
+          _builder.append("\t\t\t\t\t\t\t");
+          _builder.append("(SELECT ");
+          String _sourceColumnName = operation.getSourceColumnName();
+          _builder.append(_sourceColumnName, "							");
+          _builder.append(" FROM ");
+          String _owningSchemaName_2 = operation.getOwningSchemaName();
+          _builder.append(_owningSchemaName_2, "							");
+          _builder.append(".");
+          String _owningTableName_1 = operation.getOwningTableName();
+          _builder.append(_owningTableName_1, "							");
+          _builder.append(" AS source WHERE target.id = source.id );");
+          return _builder;
+        }
+      }
+      MergeType _type_1 = operation.getType();
+      String _string_1 = _type_1.toString();
+      boolean _equals_1 = _string_1.equals("force");
+      if (_equals_1) {
+        StringConcatenation _builder_1 = new StringConcatenation();
+        _builder_1.append("UPDATE ");
+        String _owningSchemaName_3 = operation.getOwningSchemaName();
+        _builder_1.append(_owningSchemaName_3, "");
+        _builder_1.append(".");
+        String _targetTableName_2 = operation.getTargetTableName();
+        _builder_1.append(_targetTableName_2, "");
+        _builder_1.append(" AS target SET ");
+        String _targetColumnName_1 = operation.getTargetColumnName();
+        _builder_1.append(_targetColumnName_1, "");
+        _builder_1.append(" = ");
+        _builder_1.newLineIfNotEmpty();
+        _builder_1.append("\t\t\t\t\t\t\t");
+        _builder_1.append("(SELECT ");
+        String _sourceColumnName_1 = operation.getSourceColumnName();
+        _builder_1.append(_sourceColumnName_1, "							");
+        _builder_1.append(" FROM ");
+        String _owningSchemaName_4 = operation.getOwningSchemaName();
+        _builder_1.append(_owningSchemaName_4, "							");
+        _builder_1.append(".");
+        String _owningTableName_2 = operation.getOwningTableName();
+        _builder_1.append(_owningTableName_2, "							");
+        _builder_1.append(" AS source WHERE target.id = source.id );");
+        return _builder_1;
+      }
+      return "";
+    }
+  }
+  
+  public StringConcatenation isSameTableSize(final String schema, final String table1, final String table2) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
+    _builder.append(schema, "");
+    _builder.append(".");
     _builder.append(table1, "");
     _builder.append(") = (SELECT COUNT(*) FROM ");
+    _builder.append(schema, "");
+    _builder.append(".");
     _builder.append(table2, "");
     _builder.append(") THEN TRUE ELSE FALSE END;");
     _builder.newLineIfNotEmpty();
@@ -654,6 +732,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddTableImpl)operation);
     } else if ((operation instanceof AddUniqueIndexImpl)) {
       return _genOperation((AddUniqueIndexImpl)operation);
+    } else if ((operation instanceof CopyInstancesImpl)) {
+      return _genOperation((CopyInstancesImpl)operation);
     } else if ((operation instanceof RemoveColumnConstraintImpl)) {
       return _genOperation((RemoveColumnConstraintImpl)operation);
     } else if ((operation instanceof RemoveColumnImpl)) {

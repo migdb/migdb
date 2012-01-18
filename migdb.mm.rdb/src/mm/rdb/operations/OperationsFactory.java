@@ -98,6 +98,15 @@ public interface OperationsFactory extends EFactory {
 	RenameColumn createRenameColumn();
 
 	/**
+	 * Returns a new object of class '<em>Copy Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Copy Instances</em>'.
+	 * @generated
+	 */
+	CopyInstances createCopyInstances();
+
+	/**
 	 * Returns a new object of class '<em>Remove Column</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -134,15 +143,6 @@ public interface OperationsFactory extends EFactory {
 	AddForeignKey createAddForeignKey();
 
 	/**
-	 * Returns a new object of class '<em>Add Not Null Constraint</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Add Not Null Constraint</em>'.
-	 * @generated
-	 */
-	AddNotNullConstraint createAddNotNullConstraint();
-
-	/**
 	 * Returns a new object of class '<em>Remove Table Constraint</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -150,6 +150,15 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	RemoveTableConstraint createRemoveTableConstraint();
+
+	/**
+	 * Returns a new object of class '<em>Add Not Null Constraint</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Add Not Null Constraint</em>'.
+	 * @generated
+	 */
+	AddNotNullConstraint createAddNotNullConstraint();
 
 	/**
 	 * Returns a new object of class '<em>Remove Column Constraint</em>'.
@@ -168,15 +177,6 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	RemoveIndex createRemoveIndex();
-
-	/**
-	 * Returns a new object of class '<em>Move Column</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Move Column</em>'.
-	 * @generated
-	 */
-	MoveColumn createMoveColumn();
 
 	/**
 	 * Returns a new object of class '<em>Set Column Type</em>'.

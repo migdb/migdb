@@ -23,9 +23,9 @@ import mm.rdb.operations.AddSchema;
 import mm.rdb.operations.AddSequence;
 import mm.rdb.operations.AddTable;
 import mm.rdb.operations.AddUniqueIndex;
+import mm.rdb.operations.CopyInstances;
 import mm.rdb.operations.MergeType;
 import mm.rdb.operations.ModelOperation;
-import mm.rdb.operations.MoveColumn;
 import mm.rdb.operations.OperationsFactory;
 import mm.rdb.operations.OperationsPackage;
 import mm.rdb.operations.RemoveColumn;
@@ -121,6 +121,13 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass copyInstancesEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass removeColumnEClass = null;
 
 	/**
@@ -149,14 +156,14 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass addNotNullConstraintEClass = null;
+	private EClass removeTableConstraintEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass removeTableConstraintEClass = null;
+	private EClass addNotNullConstraintEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -171,13 +178,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass removeIndexEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass moveColumnEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -578,6 +578,69 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getCopyInstances() {
+		return copyInstancesEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_OwningSchemaName() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_OwningTableName() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_SourceColumnName() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_TargetTableName() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_TargetColumnName() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCopyInstances_Type() {
+		return (EAttribute)copyInstancesEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getRemoveColumn() {
 		return removeColumnEClass;
 	}
@@ -767,6 +830,42 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getRemoveTableConstraint() {
+		return removeTableConstraintEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveTableConstraint_OwningSchemaName() {
+		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveTableConstraint_OwningTableName() {
+		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveTableConstraint_Name() {
+		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAddNotNullConstraint() {
 		return addNotNullConstraintEClass;
 	}
@@ -805,42 +904,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 */
 	public EAttribute getAddNotNullConstraint_Name() {
 		return (EAttribute)addNotNullConstraintEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getRemoveTableConstraint() {
-		return removeTableConstraintEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRemoveTableConstraint_OwningSchemaName() {
-		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRemoveTableConstraint_OwningTableName() {
-		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRemoveTableConstraint_Name() {
-		return (EAttribute)removeTableConstraintEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -913,60 +976,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 */
 	public EAttribute getRemoveIndex_Name() {
 		return (EAttribute)removeIndexEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getMoveColumn() {
-		return moveColumnEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveColumn_OwningSchemaName() {
-		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveColumn_OwningTableName() {
-		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveColumn_Name() {
-		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveColumn_TargetTableName() {
-		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMoveColumn_Type() {
-		return (EAttribute)moveColumnEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1183,6 +1192,14 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(renameColumnEClass, RENAME_COLUMN__NAME);
 		createEAttribute(renameColumnEClass, RENAME_COLUMN__NEW_NAME);
 
+		copyInstancesEClass = createEClass(COPY_INSTANCES);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__OWNING_SCHEMA_NAME);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__OWNING_TABLE_NAME);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__SOURCE_COLUMN_NAME);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__TARGET_TABLE_NAME);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__TARGET_COLUMN_NAME);
+		createEAttribute(copyInstancesEClass, COPY_INSTANCES__TYPE);
+
 		removeColumnEClass = createEClass(REMOVE_COLUMN);
 		createEAttribute(removeColumnEClass, REMOVE_COLUMN__OWNING_SCHEMA_NAME);
 		createEAttribute(removeColumnEClass, REMOVE_COLUMN__OWNING_TABLE_NAME);
@@ -1208,16 +1225,16 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(addForeignKeyEClass, ADD_FOREIGN_KEY__TARGET_TABLE_NAME);
 		createEAttribute(addForeignKeyEClass, ADD_FOREIGN_KEY__CONSTRAINED_COLUMN_NAME);
 
+		removeTableConstraintEClass = createEClass(REMOVE_TABLE_CONSTRAINT);
+		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME);
+		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME);
+		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__NAME);
+
 		addNotNullConstraintEClass = createEClass(ADD_NOT_NULL_CONSTRAINT);
 		createEAttribute(addNotNullConstraintEClass, ADD_NOT_NULL_CONSTRAINT__OWNING_SCHEMA_NAME);
 		createEAttribute(addNotNullConstraintEClass, ADD_NOT_NULL_CONSTRAINT__OWNING_TABLE_NAME);
 		createEAttribute(addNotNullConstraintEClass, ADD_NOT_NULL_CONSTRAINT__OWNING_COLUMN_NAME);
 		createEAttribute(addNotNullConstraintEClass, ADD_NOT_NULL_CONSTRAINT__NAME);
-
-		removeTableConstraintEClass = createEClass(REMOVE_TABLE_CONSTRAINT);
-		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME);
-		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME);
-		createEAttribute(removeTableConstraintEClass, REMOVE_TABLE_CONSTRAINT__NAME);
 
 		removeColumnConstraintEClass = createEClass(REMOVE_COLUMN_CONSTRAINT);
 		createEAttribute(removeColumnConstraintEClass, REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME);
@@ -1228,13 +1245,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeIndexEClass = createEClass(REMOVE_INDEX);
 		createEAttribute(removeIndexEClass, REMOVE_INDEX__OWNING_SCHEMA_NAME);
 		createEAttribute(removeIndexEClass, REMOVE_INDEX__NAME);
-
-		moveColumnEClass = createEClass(MOVE_COLUMN);
-		createEAttribute(moveColumnEClass, MOVE_COLUMN__OWNING_SCHEMA_NAME);
-		createEAttribute(moveColumnEClass, MOVE_COLUMN__OWNING_TABLE_NAME);
-		createEAttribute(moveColumnEClass, MOVE_COLUMN__NAME);
-		createEAttribute(moveColumnEClass, MOVE_COLUMN__TARGET_TABLE_NAME);
-		createEAttribute(moveColumnEClass, MOVE_COLUMN__TYPE);
 
 		setColumnTypeEClass = createEClass(SET_COLUMN_TYPE);
 		createEAttribute(setColumnTypeEClass, SET_COLUMN_TYPE__OWNING_SCHEMA_NAME);
@@ -1297,15 +1307,15 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeTableEClass.getESuperTypes().add(this.getModelOperation());
 		addColumnEClass.getESuperTypes().add(this.getModelOperation());
 		renameColumnEClass.getESuperTypes().add(this.getModelOperation());
+		copyInstancesEClass.getESuperTypes().add(this.getModelOperation());
 		removeColumnEClass.getESuperTypes().add(this.getModelOperation());
 		addUniqueIndexEClass.getESuperTypes().add(this.getModelOperation());
 		addPrimaryKeyEClass.getESuperTypes().add(this.getModelOperation());
 		addForeignKeyEClass.getESuperTypes().add(this.getModelOperation());
-		addNotNullConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeTableConstraintEClass.getESuperTypes().add(this.getModelOperation());
+		addNotNullConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeColumnConstraintEClass.getESuperTypes().add(this.getModelOperation());
 		removeIndexEClass.getESuperTypes().add(this.getModelOperation());
-		moveColumnEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnTypeEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
 		removeDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
@@ -1353,6 +1363,14 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getRenameColumn_Name(), ecorePackage.getEString(), "name", null, 1, 1, RenameColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRenameColumn_NewName(), ecorePackage.getEString(), "newName", null, 1, 1, RenameColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(copyInstancesEClass, CopyInstances.class, "CopyInstances", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCopyInstances_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyInstances_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyInstances_SourceColumnName(), ecorePackage.getEString(), "sourceColumnName", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyInstances_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyInstances_TargetColumnName(), ecorePackage.getEString(), "targetColumnName", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCopyInstances_Type(), this.getMergeType(), "type", null, 1, 1, CopyInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(removeColumnEClass, RemoveColumn.class, "RemoveColumn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveColumn_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveColumn_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1378,16 +1396,16 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getAddForeignKey_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, AddForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddForeignKey_ConstrainedColumnName(), ecorePackage.getEString(), "constrainedColumnName", null, 1, 1, AddForeignKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(removeTableConstraintEClass, RemoveTableConstraint.class, "RemoveTableConstraint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getRemoveTableConstraint_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRemoveTableConstraint_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRemoveTableConstraint_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(addNotNullConstraintEClass, AddNotNullConstraint.class, "AddNotNullConstraint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddNotNullConstraint_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddNotNullConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddNotNullConstraint_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, AddNotNullConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddNotNullConstraint_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, AddNotNullConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddNotNullConstraint_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddNotNullConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(removeTableConstraintEClass, RemoveTableConstraint.class, "RemoveTableConstraint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRemoveTableConstraint_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRemoveTableConstraint_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getRemoveTableConstraint_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveTableConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(removeColumnConstraintEClass, RemoveColumnConstraint.class, "RemoveColumnConstraint", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveColumnConstraint_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveColumnConstraint.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1398,13 +1416,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(removeIndexEClass, RemoveIndex.class, "RemoveIndex", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveIndex_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveIndex_Name(), ecorePackage.getEString(), "name", null, 1, 1, RemoveIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(moveColumnEClass, MoveColumn.class, "MoveColumn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMoveColumn_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveColumn_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveColumn_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveColumn_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getMoveColumn_Type(), this.getMergeType(), "type", null, 1, 1, MoveColumn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(setColumnTypeEClass, SetColumnType.class, "SetColumnType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSetColumnType_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, SetColumnType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

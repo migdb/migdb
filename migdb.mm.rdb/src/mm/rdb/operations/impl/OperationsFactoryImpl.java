@@ -69,15 +69,15 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.REMOVE_TABLE: return createRemoveTable();
 			case OperationsPackage.ADD_COLUMN: return createAddColumn();
 			case OperationsPackage.RENAME_COLUMN: return createRenameColumn();
+			case OperationsPackage.COPY_INSTANCES: return createCopyInstances();
 			case OperationsPackage.REMOVE_COLUMN: return createRemoveColumn();
 			case OperationsPackage.ADD_UNIQUE_INDEX: return createAddUniqueIndex();
 			case OperationsPackage.ADD_PRIMARY_KEY: return createAddPrimaryKey();
 			case OperationsPackage.ADD_FOREIGN_KEY: return createAddForeignKey();
-			case OperationsPackage.ADD_NOT_NULL_CONSTRAINT: return createAddNotNullConstraint();
 			case OperationsPackage.REMOVE_TABLE_CONSTRAINT: return createRemoveTableConstraint();
+			case OperationsPackage.ADD_NOT_NULL_CONSTRAINT: return createAddNotNullConstraint();
 			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT: return createRemoveColumnConstraint();
 			case OperationsPackage.REMOVE_INDEX: return createRemoveIndex();
-			case OperationsPackage.MOVE_COLUMN: return createMoveColumn();
 			case OperationsPackage.SET_COLUMN_TYPE: return createSetColumnType();
 			case OperationsPackage.SET_COLUMN_DEFAULT_VALUE: return createSetColumnDefaultValue();
 			case OperationsPackage.REMOVE_DEFAULT_VALUE: return createRemoveDefaultValue();
@@ -201,6 +201,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public CopyInstances createCopyInstances() {
+		CopyInstancesImpl copyInstances = new CopyInstancesImpl();
+		return copyInstances;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public RemoveColumn createRemoveColumn() {
 		RemoveColumnImpl removeColumn = new RemoveColumnImpl();
 		return removeColumn;
@@ -241,9 +251,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AddNotNullConstraint createAddNotNullConstraint() {
-		AddNotNullConstraintImpl addNotNullConstraint = new AddNotNullConstraintImpl();
-		return addNotNullConstraint;
+	public RemoveTableConstraint createRemoveTableConstraint() {
+		RemoveTableConstraintImpl removeTableConstraint = new RemoveTableConstraintImpl();
+		return removeTableConstraint;
 	}
 
 	/**
@@ -251,9 +261,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RemoveTableConstraint createRemoveTableConstraint() {
-		RemoveTableConstraintImpl removeTableConstraint = new RemoveTableConstraintImpl();
-		return removeTableConstraint;
+	public AddNotNullConstraint createAddNotNullConstraint() {
+		AddNotNullConstraintImpl addNotNullConstraint = new AddNotNullConstraintImpl();
+		return addNotNullConstraint;
 	}
 
 	/**
@@ -274,16 +284,6 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public RemoveIndex createRemoveIndex() {
 		RemoveIndexImpl removeIndex = new RemoveIndexImpl();
 		return removeIndex;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MoveColumn createMoveColumn() {
-		MoveColumnImpl moveColumn = new MoveColumnImpl();
-		return moveColumn;
 	}
 
 	/**
