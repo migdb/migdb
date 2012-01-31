@@ -76,6 +76,20 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OperationsPackage.ADD_PRIMITIVE_CLASS: {
+				AddPrimitiveClass addPrimitiveClass = (AddPrimitiveClass)theEObject;
+				T result = caseAddPrimitiveClass(addPrimitiveClass);
+				if (result == null) result = caseModelOperation(addPrimitiveClass);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.ADD_EMBEDDED_CLASS: {
+				AddEmbeddedClass addEmbeddedClass = (AddEmbeddedClass)theEObject;
+				T result = caseAddEmbeddedClass(addEmbeddedClass);
+				if (result == null) result = caseModelOperation(addEmbeddedClass);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case OperationsPackage.ADD_CLASS: {
 				AddClass addClass = (AddClass)theEObject;
 				T result = caseAddClass(addClass);
@@ -83,10 +97,10 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.RENAME_CLASS: {
-				RenameClass renameClass = (RenameClass)theEObject;
-				T result = caseRenameClass(renameClass);
-				if (result == null) result = caseModelOperation(renameClass);
+			case OperationsPackage.RENAME_ENTITY: {
+				RenameEntity renameEntity = (RenameEntity)theEObject;
+				T result = caseRenameEntity(renameEntity);
+				if (result == null) result = caseModelOperation(renameEntity);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -125,6 +139,13 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OperationsPackage.REMOVE_PROPERTY: {
+				RemoveProperty removeProperty = (RemoveProperty)theEObject;
+				T result = caseRemoveProperty(removeProperty);
+				if (result == null) result = caseModelOperation(removeProperty);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case OperationsPackage.SET_TYPE: {
 				SetType setType = (SetType)theEObject;
 				T result = caseSetType(setType);
@@ -157,27 +178,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 				SetUnique setUnique = (SetUnique)theEObject;
 				T result = caseSetUnique(setUnique);
 				if (result == null) result = caseModelOperation(setUnique);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.REMOVE_PROPERTY: {
-				RemoveProperty removeProperty = (RemoveProperty)theEObject;
-				T result = caseRemoveProperty(removeProperty);
-				if (result == null) result = caseModelOperation(removeProperty);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.ADD_PRIMITIVE_CLASS: {
-				AddPrimitiveClass addPrimitiveClass = (AddPrimitiveClass)theEObject;
-				T result = caseAddPrimitiveClass(addPrimitiveClass);
-				if (result == null) result = caseModelOperation(addPrimitiveClass);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case OperationsPackage.ADD_EMBEDDED_CLASS: {
-				AddEmbeddedClass addEmbeddedClass = (AddEmbeddedClass)theEObject;
-				T result = caseAddEmbeddedClass(addEmbeddedClass);
-				if (result == null) result = caseModelOperation(addEmbeddedClass);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -215,6 +215,36 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Add Primitive Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Add Primitive Class</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseAddPrimitiveClass(AddPrimitiveClass object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseAddEmbeddedClass(AddEmbeddedClass object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Add Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -230,17 +260,17 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Rename Class</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Rename Entity</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Rename Class</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Rename Entity</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseRenameClass(RenameClass object) {
+	public T caseRenameEntity(RenameEntity object) {
 		return null;
 	}
 
@@ -320,6 +350,21 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Remove Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Remove Property</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseRemoveProperty(RemoveProperty object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Set Type</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -391,51 +436,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseSetUnique(SetUnique object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Remove Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Remove Property</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseRemoveProperty(RemoveProperty object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Add Primitive Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Add Primitive Class</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseAddPrimitiveClass(AddPrimitiveClass object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Add Embedded Class</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseAddEmbeddedClass(AddEmbeddedClass object) {
 		return null;
 	}
 

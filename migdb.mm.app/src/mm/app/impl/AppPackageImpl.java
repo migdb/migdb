@@ -623,10 +623,9 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 
 		// Initialize enums and add enum literals
 		initEEnum(inheritanceTypeEEnum, InheritanceType.class, "InheritanceType");
-		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType._NOT_DEFINED);
-		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType.SINGLE_TABLE);
-		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType.TABLE_PER_CLASS);
 		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType.JOINED);
+		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType.TABLE_PER_CLASS);
+		addEEnumLiteral(inheritanceTypeEEnum, InheritanceType.SINGLE_TABLE);
 
 		initEEnum(primitiveTypeEEnum, PrimitiveType.class, "PrimitiveType");
 		addEEnumLiteral(primitiveTypeEEnum, PrimitiveType.BOOLEAN);

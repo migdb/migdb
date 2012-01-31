@@ -236,13 +236,22 @@ public interface RdbPackage extends EPackage {
 	int SEQUENCE__NAME = 1;
 
 	/**
-	 * The feature id for the '<em><b>Cache Size</b></em>' attribute.
+	 * The feature id for the '<em><b>Start Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SEQUENCE__CACHE_SIZE = 2;
+	int SEQUENCE__START_VALUE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Sequenced Column</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SEQUENCE__SEQUENCED_COLUMN = 3;
 
 	/**
 	 * The number of structural features of the '<em>Sequence</em>' class.
@@ -251,7 +260,7 @@ public interface RdbPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SEQUENCE_FEATURE_COUNT = 3;
+	int SEQUENCE_FEATURE_COUNT = 4;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.impl.IndexImpl <em>Index</em>}' class.
@@ -897,15 +906,26 @@ public interface RdbPackage extends EPackage {
 	EAttribute getSequence_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.Sequence#getCacheSize <em>Cache Size</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.rdb.Sequence#getStartValue <em>Start Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Cache Size</em>'.
-	 * @see mm.rdb.Sequence#getCacheSize()
+	 * @return the meta object for the attribute '<em>Start Value</em>'.
+	 * @see mm.rdb.Sequence#getStartValue()
 	 * @see #getSequence()
 	 * @generated
 	 */
-	EAttribute getSequence_CacheSize();
+	EAttribute getSequence_StartValue();
+
+	/**
+	 * Returns the meta object for the reference '{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Sequenced Column</em>'.
+	 * @see mm.rdb.Sequence#getSequencedColumn()
+	 * @see #getSequence()
+	 * @generated
+	 */
+	EReference getSequence_SequencedColumn();
 
 	/**
 	 * Returns the meta object for class '{@link mm.rdb.Index <em>Index</em>}'.
@@ -1385,12 +1405,20 @@ public interface RdbPackage extends EPackage {
 		EAttribute SEQUENCE__NAME = eINSTANCE.getSequence_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Cache Size</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Start Value</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SEQUENCE__CACHE_SIZE = eINSTANCE.getSequence_CacheSize();
+		EAttribute SEQUENCE__START_VALUE = eINSTANCE.getSequence_StartValue();
+
+		/**
+		 * The meta object literal for the '<em><b>Sequenced Column</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SEQUENCE__SEQUENCED_COLUMN = eINSTANCE.getSequence_SequencedColumn();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.impl.IndexImpl <em>Index</em>}' class.

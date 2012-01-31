@@ -14,10 +14,20 @@ main() {
 														name := "Parent";
 														parent := null;
 														isAbstract := false;
-														isEmbedded := true;
+														isEmbedded := false;
 														tableName := null;
-														inheritanceType := APP::InheritanceType::__not_defined;
-												  };											  									  												  												  									  	
+														inheritanceType := APP::InheritanceType::joined;
+												  };	
+											
+	var classChild : APP::operations::AddClass := object APP::operations::AddClass {
+														name := "Child";
+														parent := null;
+														isAbstract := false;
+														isEmbedded := false;
+														tableName := null;
+														inheritanceType := APP::InheritanceType::joined;	
+												  };												  
+												  																					  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
@@ -26,4 +36,5 @@ main() {
 	 };
     model.operations += classInteger; // defaultni primitivni trida integer
 	model.operations += classParent; // prvni trida v modelu
+	model.operations += classChild; // potomek
 }

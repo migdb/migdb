@@ -18,7 +18,8 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link mm.rdb.Sequence#getOwningSchema <em>Owning Schema</em>}</li>
  *   <li>{@link mm.rdb.Sequence#getName <em>Name</em>}</li>
- *   <li>{@link mm.rdb.Sequence#getCacheSize <em>Cache Size</em>}</li>
+ *   <li>{@link mm.rdb.Sequence#getStartValue <em>Start Value</em>}</li>
+ *   <li>{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -71,29 +72,55 @@ public interface Sequence extends EObject {
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Cache Size</b></em>' attribute.
+	 * Returns the value of the '<em><b>Start Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Cache Size</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Start Value</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Cache Size</em>' attribute.
-	 * @see #setCacheSize(int)
-	 * @see mm.rdb.RdbPackage#getSequence_CacheSize()
+	 * @return the value of the '<em>Start Value</em>' attribute.
+	 * @see #setStartValue(int)
+	 * @see mm.rdb.RdbPackage#getSequence_StartValue()
+	 * @model required="true"
+	 * @generated
+	 */
+	int getStartValue();
+
+	/**
+	 * Sets the value of the '{@link mm.rdb.Sequence#getStartValue <em>Start Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Start Value</em>' attribute.
+	 * @see #getStartValue()
+	 * @generated
+	 */
+	void setStartValue(int value);
+
+	/**
+	 * Returns the value of the '<em><b>Sequenced Column</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Sequenced Column</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Sequenced Column</em>' reference.
+	 * @see #setSequencedColumn(Column)
+	 * @see mm.rdb.RdbPackage#getSequence_SequencedColumn()
 	 * @model
 	 * @generated
 	 */
-	int getCacheSize();
+	Column getSequencedColumn();
 
 	/**
-	 * Sets the value of the '{@link mm.rdb.Sequence#getCacheSize <em>Cache Size</em>}' attribute.
+	 * Sets the value of the '{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Cache Size</em>' attribute.
-	 * @see #getCacheSize()
+	 * @param value the new value of the '<em>Sequenced Column</em>' reference.
+	 * @see #getSequencedColumn()
 	 * @generated
 	 */
-	void setCacheSize(int value);
+	void setSequencedColumn(Column value);
 
 } // Sequence

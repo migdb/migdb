@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link mm.rdb.operations.impl.AddSequenceImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddSequenceImpl#getName <em>Name</em>}</li>
- *   <li>{@link mm.rdb.operations.impl.AddSequenceImpl#getCacheSize <em>Cache Size</em>}</li>
+ *   <li>{@link mm.rdb.operations.impl.AddSequenceImpl#getStartValue <em>Start Value</em>}</li>
  * </ul>
  * </p>
  *
@@ -72,24 +72,24 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getCacheSize() <em>Cache Size</em>}' attribute.
+	 * The default value of the '{@link #getStartValue() <em>Start Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCacheSize()
+	 * @see #getStartValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int CACHE_SIZE_EDEFAULT = 0;
+	protected static final int START_VALUE_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getCacheSize() <em>Cache Size</em>}' attribute.
+	 * The cached value of the '{@link #getStartValue() <em>Start Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCacheSize()
+	 * @see #getStartValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected int cacheSize = CACHE_SIZE_EDEFAULT;
+	protected int startValue = START_VALUE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -157,8 +157,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int getCacheSize() {
-		return cacheSize;
+	public int getStartValue() {
+		return startValue;
 	}
 
 	/**
@@ -166,11 +166,11 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setCacheSize(int newCacheSize) {
-		int oldCacheSize = cacheSize;
-		cacheSize = newCacheSize;
+	public void setStartValue(int newStartValue) {
+		int oldStartValue = startValue;
+		startValue = newStartValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.ADD_SEQUENCE__CACHE_SIZE, oldCacheSize, cacheSize));
+			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.ADD_SEQUENCE__START_VALUE, oldStartValue, startValue));
 	}
 
 	/**
@@ -185,8 +185,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 				return getOwningSchemaName();
 			case OperationsPackage.ADD_SEQUENCE__NAME:
 				return getName();
-			case OperationsPackage.ADD_SEQUENCE__CACHE_SIZE:
-				return getCacheSize();
+			case OperationsPackage.ADD_SEQUENCE__START_VALUE:
+				return getStartValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -205,8 +205,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 			case OperationsPackage.ADD_SEQUENCE__NAME:
 				setName((String)newValue);
 				return;
-			case OperationsPackage.ADD_SEQUENCE__CACHE_SIZE:
-				setCacheSize((Integer)newValue);
+			case OperationsPackage.ADD_SEQUENCE__START_VALUE:
+				setStartValue((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -226,8 +226,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 			case OperationsPackage.ADD_SEQUENCE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case OperationsPackage.ADD_SEQUENCE__CACHE_SIZE:
-				setCacheSize(CACHE_SIZE_EDEFAULT);
+			case OperationsPackage.ADD_SEQUENCE__START_VALUE:
+				setStartValue(START_VALUE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -245,8 +245,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
 			case OperationsPackage.ADD_SEQUENCE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case OperationsPackage.ADD_SEQUENCE__CACHE_SIZE:
-				return cacheSize != CACHE_SIZE_EDEFAULT;
+			case OperationsPackage.ADD_SEQUENCE__START_VALUE:
+				return startValue != START_VALUE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -265,8 +265,8 @@ public class AddSequenceImpl extends ModelOperationImpl implements AddSequence {
 		result.append(owningSchemaName);
 		result.append(", name: ");
 		result.append(name);
-		result.append(", cacheSize: ");
-		result.append(cacheSize);
+		result.append(", startValue: ");
+		result.append(startValue);
 		result.append(')');
 		return result.toString();
 	}

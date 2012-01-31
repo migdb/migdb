@@ -76,12 +76,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createModelOperationAdapter();
 			}
 			@Override
+			public Adapter caseAddPrimitiveClass(AddPrimitiveClass object) {
+				return createAddPrimitiveClassAdapter();
+			}
+			@Override
+			public Adapter caseAddEmbeddedClass(AddEmbeddedClass object) {
+				return createAddEmbeddedClassAdapter();
+			}
+			@Override
 			public Adapter caseAddClass(AddClass object) {
 				return createAddClassAdapter();
 			}
 			@Override
-			public Adapter caseRenameClass(RenameClass object) {
-				return createRenameClassAdapter();
+			public Adapter caseRenameEntity(RenameEntity object) {
+				return createRenameEntityAdapter();
 			}
 			@Override
 			public Adapter caseSetParent(SetParent object) {
@@ -104,6 +112,10 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createRenamePropertyAdapter();
 			}
 			@Override
+			public Adapter caseRemoveProperty(RemoveProperty object) {
+				return createRemovePropertyAdapter();
+			}
+			@Override
 			public Adapter caseSetType(SetType object) {
 				return createSetTypeAdapter();
 			}
@@ -122,18 +134,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseSetUnique(SetUnique object) {
 				return createSetUniqueAdapter();
-			}
-			@Override
-			public Adapter caseRemoveProperty(RemoveProperty object) {
-				return createRemovePropertyAdapter();
-			}
-			@Override
-			public Adapter caseAddPrimitiveClass(AddPrimitiveClass object) {
-				return createAddPrimitiveClassAdapter();
-			}
-			@Override
-			public Adapter caseAddEmbeddedClass(AddEmbeddedClass object) {
-				return createAddEmbeddedClassAdapter();
 			}
 			@Override
 			public Adapter caseCopyProperty(CopyProperty object) {
@@ -178,6 +178,34 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.AddPrimitiveClass
+	 * @generated
+	 */
+	public Adapter createAddPrimitiveClassAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.AddEmbeddedClass
+	 * @generated
+	 */
+	public Adapter createAddEmbeddedClassAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddClass <em>Add Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -192,16 +220,16 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.RenameClass <em>Rename Class</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.RenameEntity <em>Rename Entity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.operations.RenameClass
+	 * @see mm.app.operations.RenameEntity
 	 * @generated
 	 */
-	public Adapter createRenameClassAdapter() {
+	public Adapter createRenameEntityAdapter() {
 		return null;
 	}
 
@@ -276,6 +304,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.RemoveProperty <em>Remove Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.RemoveProperty
+	 * @generated
+	 */
+	public Adapter createRemovePropertyAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.app.operations.SetType <em>Set Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -342,48 +384,6 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createSetUniqueAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.RemoveProperty <em>Remove Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.RemoveProperty
-	 * @generated
-	 */
-	public Adapter createRemovePropertyAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.AddPrimitiveClass
-	 * @generated
-	 */
-	public Adapter createAddPrimitiveClassAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see mm.app.operations.AddEmbeddedClass
-	 * @generated
-	 */
-	public Adapter createAddEmbeddedClassAdapter() {
 		return null;
 	}
 

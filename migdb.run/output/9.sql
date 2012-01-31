@@ -1,0 +1,3 @@
+ALTER TABLE public.child
+	ADD CONSTRAINT PK_child
+	PRIMARY KEY ();

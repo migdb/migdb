@@ -135,13 +135,13 @@ public interface OperationsPackage extends EPackage {
 	int ADD_SEQUENCE__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Cache Size</b></em>' attribute.
+	 * The feature id for the '<em><b>Start Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_SEQUENCE__CACHE_SIZE = MODEL_OPERATION_FEATURE_COUNT + 2;
+	int ADD_SEQUENCE__START_VALUE = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Add Sequence</em>' class.
@@ -1052,13 +1052,77 @@ public interface OperationsPackage extends EPackage {
 	int SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Is Sequence</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Set Column Default Value</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.SetColumnSequenceImpl <em>Set Column Sequence</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.SetColumnSequenceImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnSequence()
+	 * @generated
+	 */
+	int SET_COLUMN_SEQUENCE = 20;
+
+	/**
+	 * The feature id for the '<em><b>Sequence Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_SEQUENCE__SEQUENCE_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Set Column Sequence</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_COLUMN_SEQUENCE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
@@ -1068,7 +1132,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveDefaultValue()
 	 * @generated
 	 */
-	int REMOVE_DEFAULT_VALUE = 20;
+	int REMOVE_DEFAULT_VALUE = 21;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -1107,6 +1171,43 @@ public interface OperationsPackage extends EPackage {
 	int REMOVE_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveSequenceImpl <em>Remove Sequence</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.RemoveSequenceImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveSequence()
+	 * @generated
+	 */
+	int REMOVE_SEQUENCE = 22;
+
+	/**
+	 * The feature id for the '<em><b>Sequence Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_SEQUENCE__SEQUENCE_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_SEQUENCE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Remove Sequence</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_SEQUENCE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1114,7 +1215,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 21;
+	int MERGE_TYPE = 23;
 
 
 	/**
@@ -1181,15 +1282,15 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddSequence_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddSequence#getCacheSize <em>Cache Size</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddSequence#getStartValue <em>Start Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Cache Size</em>'.
-	 * @see mm.rdb.operations.AddSequence#getCacheSize()
+	 * @return the meta object for the attribute '<em>Start Value</em>'.
+	 * @see mm.rdb.operations.AddSequence#getStartValue()
 	 * @see #getAddSequence()
 	 * @generated
 	 */
-	EAttribute getAddSequence_CacheSize();
+	EAttribute getAddSequence_StartValue();
 
 	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddIndex <em>Add Index</em>}'.
@@ -2077,6 +2178,71 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetColumnDefaultValue_NewDefaultValue();
 
 	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#isIsSequence <em>Is Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Sequence</em>'.
+	 * @see mm.rdb.operations.SetColumnDefaultValue#isIsSequence()
+	 * @see #getSetColumnDefaultValue()
+	 * @generated
+	 */
+	EAttribute getSetColumnDefaultValue_IsSequence();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.SetColumnSequence <em>Set Column Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Set Column Sequence</em>'.
+	 * @see mm.rdb.operations.SetColumnSequence
+	 * @generated
+	 */
+	EClass getSetColumnSequence();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getSequenceName <em>Sequence Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Sequence Name</em>'.
+	 * @see mm.rdb.operations.SetColumnSequence#getSequenceName()
+	 * @see #getSetColumnSequence()
+	 * @generated
+	 */
+	EAttribute getSetColumnSequence_SequenceName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.SetColumnSequence#getOwningSchemaName()
+	 * @see #getSetColumnSequence()
+	 * @generated
+	 */
+	EAttribute getSetColumnSequence_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningTableName <em>Owning Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
+	 * @see mm.rdb.operations.SetColumnSequence#getOwningTableName()
+	 * @see #getSetColumnSequence()
+	 * @generated
+	 */
+	EAttribute getSetColumnSequence_OwningTableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningColumnName <em>Owning Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
+	 * @see mm.rdb.operations.SetColumnSequence#getOwningColumnName()
+	 * @see #getSetColumnSequence()
+	 * @generated
+	 */
+	EAttribute getSetColumnSequence_OwningColumnName();
+
+	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2118,6 +2284,38 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRemoveDefaultValue_OwningColumnName();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveSequence <em>Remove Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Sequence</em>'.
+	 * @see mm.rdb.operations.RemoveSequence
+	 * @generated
+	 */
+	EClass getRemoveSequence();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveSequence#getSequenceName <em>Sequence Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Sequence Name</em>'.
+	 * @see mm.rdb.operations.RemoveSequence#getSequenceName()
+	 * @see #getRemoveSequence()
+	 * @generated
+	 */
+	EAttribute getRemoveSequence_SequenceName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.RemoveSequence#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.RemoveSequence#getOwningSchemaName()
+	 * @see #getRemoveSequence()
+	 * @generated
+	 */
+	EAttribute getRemoveSequence_OwningSchemaName();
 
 	/**
 	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
@@ -2206,12 +2404,12 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_SEQUENCE__NAME = eINSTANCE.getAddSequence_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Cache Size</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Start Value</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ADD_SEQUENCE__CACHE_SIZE = eINSTANCE.getAddSequence_CacheSize();
+		EAttribute ADD_SEQUENCE__START_VALUE = eINSTANCE.getAddSequence_StartValue();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddIndexImpl <em>Add Index</em>}' class.
@@ -2904,6 +3102,56 @@ public interface OperationsPackage extends EPackage {
 		EAttribute SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = eINSTANCE.getSetColumnDefaultValue_NewDefaultValue();
 
 		/**
+		 * The meta object literal for the '<em><b>Is Sequence</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE = eINSTANCE.getSetColumnDefaultValue_IsSequence();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.SetColumnSequenceImpl <em>Set Column Sequence</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.SetColumnSequenceImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnSequence()
+		 * @generated
+		 */
+		EClass SET_COLUMN_SEQUENCE = eINSTANCE.getSetColumnSequence();
+
+		/**
+		 * The meta object literal for the '<em><b>Sequence Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_SEQUENCE__SEQUENCE_NAME = eINSTANCE.getSetColumnSequence_SequenceName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME = eINSTANCE.getSetColumnSequence_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME = eINSTANCE.getSetColumnSequence_OwningTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME = eINSTANCE.getSetColumnSequence_OwningColumnName();
+
+		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2936,6 +3184,32 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute REMOVE_DEFAULT_VALUE__OWNING_COLUMN_NAME = eINSTANCE.getRemoveDefaultValue_OwningColumnName();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveSequenceImpl <em>Remove Sequence</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.RemoveSequenceImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveSequence()
+		 * @generated
+		 */
+		EClass REMOVE_SEQUENCE = eINSTANCE.getRemoveSequence();
+
+		/**
+		 * The meta object literal for the '<em><b>Sequence Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_SEQUENCE__SEQUENCE_NAME = eINSTANCE.getRemoveSequence_SequenceName();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_SEQUENCE__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveSequence_OwningSchemaName();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.

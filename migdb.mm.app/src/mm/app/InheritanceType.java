@@ -23,24 +23,14 @@ import org.eclipse.emf.common.util.Enumerator;
  */
 public enum InheritanceType implements Enumerator {
 	/**
-	 * The '<em><b>not defined</b></em>' literal object.
+	 * The '<em><b>Joined</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #_NOT_DEFINED_VALUE
+	 * @see #JOINED_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	_NOT_DEFINED(0, "__not_defined", "__not_defined"),
-
-	/**
-	 * The '<em><b>Single Table</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #SINGLE_TABLE_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	SINGLE_TABLE(1, "singleTable", "singleTable"),
+	JOINED(0, "joined", "joined"),
 
 	/**
 	 * The '<em><b>Table Per Class</b></em>' literal object.
@@ -50,62 +40,17 @@ public enum InheritanceType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	TABLE_PER_CLASS(2, "tablePerClass", "tablePerClass"),
+	TABLE_PER_CLASS(1, "tablePerClass", "tablePerClass"),
 
 	/**
-	 * The '<em><b>Joined</b></em>' literal object.
+	 * The '<em><b>Single Table</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #JOINED_VALUE
+	 * @see #SINGLE_TABLE_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	JOINED(3, "joined", "joined");
-
-	/**
-	 * The '<em><b>not defined</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>not defined</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #_NOT_DEFINED
-	 * @model name="__not_defined"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int _NOT_DEFINED_VALUE = 0;
-
-	/**
-	 * The '<em><b>Single Table</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Single Table</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #SINGLE_TABLE
-	 * @model name="singleTable"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int SINGLE_TABLE_VALUE = 1;
-
-	/**
-	 * The '<em><b>Table Per Class</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Table Per Class</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #TABLE_PER_CLASS
-	 * @model name="tablePerClass"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int TABLE_PER_CLASS_VALUE = 2;
+	SINGLE_TABLE(2, "singleTable", "singleTable");
 
 	/**
 	 * The '<em><b>Joined</b></em>' literal value.
@@ -120,7 +65,37 @@ public enum InheritanceType implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int JOINED_VALUE = 3;
+	public static final int JOINED_VALUE = 0;
+
+	/**
+	 * The '<em><b>Table Per Class</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Table Per Class</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #TABLE_PER_CLASS
+	 * @model name="tablePerClass"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int TABLE_PER_CLASS_VALUE = 1;
+
+	/**
+	 * The '<em><b>Single Table</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Single Table</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #SINGLE_TABLE
+	 * @model name="singleTable"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SINGLE_TABLE_VALUE = 2;
 
 	/**
 	 * An array of all the '<em><b>Inheritance Type</b></em>' enumerators.
@@ -130,10 +105,9 @@ public enum InheritanceType implements Enumerator {
 	 */
 	private static final InheritanceType[] VALUES_ARRAY =
 		new InheritanceType[] {
-			_NOT_DEFINED,
-			SINGLE_TABLE,
-			TABLE_PER_CLASS,
 			JOINED,
+			TABLE_PER_CLASS,
+			SINGLE_TABLE,
 		};
 
 	/**
@@ -184,10 +158,9 @@ public enum InheritanceType implements Enumerator {
 	 */
 	public static InheritanceType get(int value) {
 		switch (value) {
-			case _NOT_DEFINED_VALUE: return _NOT_DEFINED;
-			case SINGLE_TABLE_VALUE: return SINGLE_TABLE;
-			case TABLE_PER_CLASS_VALUE: return TABLE_PER_CLASS;
 			case JOINED_VALUE: return JOINED;
+			case TABLE_PER_CLASS_VALUE: return TABLE_PER_CLASS;
+			case SINGLE_TABLE_VALUE: return SINGLE_TABLE;
 		}
 		return null;
 	}

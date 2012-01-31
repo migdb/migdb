@@ -17,7 +17,7 @@ package mm.rdb.operations;
  * <ul>
  *   <li>{@link mm.rdb.operations.AddSequence#getOwningSchemaName <em>Owning Schema Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddSequence#getName <em>Name</em>}</li>
- *   <li>{@link mm.rdb.operations.AddSequence#getCacheSize <em>Cache Size</em>}</li>
+ *   <li>{@link mm.rdb.operations.AddSequence#getStartValue <em>Start Value</em>}</li>
  * </ul>
  * </p>
  *
@@ -79,29 +79,29 @@ public interface AddSequence extends ModelOperation {
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Cache Size</b></em>' attribute.
+	 * Returns the value of the '<em><b>Start Value</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Cache Size</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Start Value</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Cache Size</em>' attribute.
-	 * @see #setCacheSize(int)
-	 * @see mm.rdb.operations.OperationsPackage#getAddSequence_CacheSize()
-	 * @model
+	 * @return the value of the '<em>Start Value</em>' attribute.
+	 * @see #setStartValue(int)
+	 * @see mm.rdb.operations.OperationsPackage#getAddSequence_StartValue()
+	 * @model required="true"
 	 * @generated
 	 */
-	int getCacheSize();
+	int getStartValue();
 
 	/**
-	 * Sets the value of the '{@link mm.rdb.operations.AddSequence#getCacheSize <em>Cache Size</em>}' attribute.
+	 * Sets the value of the '{@link mm.rdb.operations.AddSequence#getStartValue <em>Start Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Cache Size</em>' attribute.
-	 * @see #getCacheSize()
+	 * @param value the new value of the '<em>Start Value</em>' attribute.
+	 * @see #getStartValue()
 	 * @generated
 	 */
-	void setCacheSize(int value);
+	void setStartValue(int value);
 
 } // AddSequence

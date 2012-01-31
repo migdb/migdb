@@ -144,7 +144,7 @@ public class AddClassImpl extends ModelOperationImpl implements AddClass {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final InheritanceType INHERITANCE_TYPE_EDEFAULT = InheritanceType._NOT_DEFINED;
+	protected static final InheritanceType INHERITANCE_TYPE_EDEFAULT = InheritanceType.JOINED;
 
 	/**
 	 * The cached value of the '{@link #getInheritanceType() <em>Inheritance Type</em>}' attribute.

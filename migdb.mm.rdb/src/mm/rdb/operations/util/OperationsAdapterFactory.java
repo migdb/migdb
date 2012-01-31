@@ -152,8 +152,16 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createSetColumnDefaultValueAdapter();
 			}
 			@Override
+			public Adapter caseSetColumnSequence(SetColumnSequence object) {
+				return createSetColumnSequenceAdapter();
+			}
+			@Override
 			public Adapter caseRemoveDefaultValue(RemoveDefaultValue object) {
 				return createRemoveDefaultValueAdapter();
+			}
+			@Override
+			public Adapter caseRemoveSequence(RemoveSequence object) {
+				return createRemoveSequenceAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -456,6 +464,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.SetColumnSequence <em>Set Column Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.SetColumnSequence
+	 * @generated
+	 */
+	public Adapter createSetColumnSequenceAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -466,6 +488,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createRemoveDefaultValueAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.RemoveSequence <em>Remove Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.RemoveSequence
+	 * @generated
+	 */
+	public Adapter createRemoveSequenceAdapter() {
 		return null;
 	}
 

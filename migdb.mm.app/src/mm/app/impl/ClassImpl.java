@@ -70,7 +70,7 @@ public class ClassImpl extends AbstractClassImpl implements mm.app.Class {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final InheritanceType INHERITANCE_TYPE_EDEFAULT = InheritanceType._NOT_DEFINED;
+	protected static final InheritanceType INHERITANCE_TYPE_EDEFAULT = InheritanceType.JOINED;
 
 	/**
 	 * The cached value of the '{@link #getInheritanceType() <em>Inheritance Type</em>}' attribute.

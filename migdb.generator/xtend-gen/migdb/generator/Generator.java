@@ -423,8 +423,18 @@ public class Generator extends BaseCodeGenerator {
     String _owningColumnName = operation.getOwningColumnName();
     _builder.append(_owningColumnName, "	");
     _builder.append(" SET DEFAULT ");
-    String _newDefaultValue = operation.getNewDefaultValue();
-    _builder.append(_newDefaultValue, "	");
+    {
+      boolean _isIsSequence = operation.isIsSequence();
+      boolean _operator_equals = ObjectExtensions.operator_equals(((Boolean)_isIsSequence), ((Boolean)true));
+      if (_operator_equals) {
+        _builder.append("nextval(\'");
+        String _newDefaultValue = operation.getNewDefaultValue();
+        _builder.append(_newDefaultValue, "	");
+        _builder.append("\')");} else {
+        String _newDefaultValue_1 = operation.getNewDefaultValue();
+        _builder.append(_newDefaultValue_1, "	");
+      }
+    }
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;

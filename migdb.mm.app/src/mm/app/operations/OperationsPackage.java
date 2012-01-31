@@ -89,6 +89,89 @@ public interface OperationsPackage extends EPackage {
 	int MODEL_OPERATION_FEATURE_COUNT = 1;
 
 	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.AddPrimitiveClassImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
+	 * @generated
+	 */
+	int ADD_PRIMITIVE_CLASS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_PRIMITIVE_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_PRIMITIVE_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Primitive Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Add Primitive Class</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_PRIMITIVE_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.AddEmbeddedClassImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
+	 * @generated
+	 */
+	int ADD_EMBEDDED_CLASS = 2;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_EMBEDDED_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_EMBEDDED_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Add Embedded Class</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_EMBEDDED_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.AddClassImpl <em>Add Class</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -96,7 +179,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddClass()
 	 * @generated
 	 */
-	int ADD_CLASS = 1;
+	int ADD_CLASS = 3;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -171,14 +254,14 @@ public interface OperationsPackage extends EPackage {
 	int ADD_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 6;
 
 	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.RenameClassImpl <em>Rename Class</em>}' class.
+	 * The meta object id for the '{@link mm.app.operations.impl.RenameEntityImpl <em>Rename Entity</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.RenameClassImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameClass()
+	 * @see mm.app.operations.impl.RenameEntityImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameEntity()
 	 * @generated
 	 */
-	int RENAME_CLASS = 2;
+	int RENAME_ENTITY = 4;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -187,7 +270,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RENAME_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+	int RENAME_ENTITY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -196,7 +279,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RENAME_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+	int RENAME_ENTITY__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>New Name</b></em>' attribute.
@@ -205,16 +288,16 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RENAME_CLASS__NEW_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+	int RENAME_ENTITY__NEW_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Rename Class</em>' class.
+	 * The number of structural features of the '<em>Rename Entity</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RENAME_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+	int RENAME_ENTITY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.SetParentImpl <em>Set Parent</em>}' class.
@@ -224,7 +307,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetParent()
 	 * @generated
 	 */
-	int SET_PARENT = 3;
+	int SET_PARENT = 5;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -270,7 +353,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetAbstract()
 	 * @generated
 	 */
-	int SET_ABSTRACT = 4;
+	int SET_ABSTRACT = 6;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -316,7 +399,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveEntity()
 	 * @generated
 	 */
-	int REMOVE_ENTITY = 5;
+	int REMOVE_ENTITY = 7;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -353,7 +436,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddProperty()
 	 * @generated
 	 */
-	int ADD_PROPERTY = 6;
+	int ADD_PROPERTY = 8;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -480,7 +563,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameProperty()
 	 * @generated
 	 */
-	int RENAME_PROPERTY = 7;
+	int RENAME_PROPERTY = 9;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -528,6 +611,52 @@ public interface OperationsPackage extends EPackage {
 	int RENAME_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.RemovePropertyImpl <em>Remove Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.RemovePropertyImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveProperty()
+	 * @generated
+	 */
+	int REMOVE_PROPERTY = 10;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_PROPERTY__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Remove Property</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REMOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.SetTypeImpl <em>Set Type</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -535,7 +664,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetType()
 	 * @generated
 	 */
-	int SET_TYPE = 8;
+	int SET_TYPE = 11;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -590,7 +719,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetOpposite()
 	 * @generated
 	 */
-	int SET_OPPOSITE = 9;
+	int SET_OPPOSITE = 12;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -663,7 +792,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetBoundries()
 	 * @generated
 	 */
-	int SET_BOUNDRIES = 10;
+	int SET_BOUNDRIES = 13;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -727,7 +856,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetOrdered()
 	 * @generated
 	 */
-	int SET_ORDERED = 11;
+	int SET_ORDERED = 14;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -782,7 +911,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getSetUnique()
 	 * @generated
 	 */
-	int SET_UNIQUE = 12;
+	int SET_UNIQUE = 15;
 
 	/**
 	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
@@ -828,135 +957,6 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int SET_UNIQUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.RemovePropertyImpl <em>Remove Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.RemovePropertyImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveProperty()
-	 * @generated
-	 */
-	int REMOVE_PROPERTY = 13;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_PROPERTY__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Owning Class Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_PROPERTY__OWNING_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_PROPERTY__NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Remove Property</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int REMOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.AddPrimitiveClassImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
-	 * @generated
-	 */
-	int ADD_PRIMITIVE_CLASS = 14;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_PRIMITIVE_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_PRIMITIVE_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Primitive Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Add Primitive Class</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_PRIMITIVE_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.app.operations.impl.AddEmbeddedClassImpl
-	 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
-	 * @generated
-	 */
-	int ADD_EMBEDDED_CLASS = 15;
-
-	/**
-	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_EMBEDDED_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_EMBEDDED_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Add Embedded Class</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_EMBEDDED_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.
@@ -1119,6 +1119,59 @@ public interface OperationsPackage extends EPackage {
 	EReference getModelOperation_ModelRoot();
 
 	/**
+	 * Returns the meta object for class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Add Primitive Class</em>'.
+	 * @see mm.app.operations.AddPrimitiveClass
+	 * @generated
+	 */
+	EClass getAddPrimitiveClass();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.AddPrimitiveClass#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.operations.AddPrimitiveClass#getName()
+	 * @see #getAddPrimitiveClass()
+	 * @generated
+	 */
+	EAttribute getAddPrimitiveClass_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.AddPrimitiveClass#getPrimitiveType <em>Primitive Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Primitive Type</em>'.
+	 * @see mm.app.operations.AddPrimitiveClass#getPrimitiveType()
+	 * @see #getAddPrimitiveClass()
+	 * @generated
+	 */
+	EAttribute getAddPrimitiveClass_PrimitiveType();
+
+	/**
+	 * Returns the meta object for class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Add Embedded Class</em>'.
+	 * @see mm.app.operations.AddEmbeddedClass
+	 * @generated
+	 */
+	EClass getAddEmbeddedClass();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.AddEmbeddedClass#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.operations.AddEmbeddedClass#getName()
+	 * @see #getAddEmbeddedClass()
+	 * @generated
+	 */
+	EAttribute getAddEmbeddedClass_Name();
+
+	/**
 	 * Returns the meta object for class '{@link mm.app.operations.AddClass <em>Add Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1195,36 +1248,36 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddClass_InheritanceType();
 
 	/**
-	 * Returns the meta object for class '{@link mm.app.operations.RenameClass <em>Rename Class</em>}'.
+	 * Returns the meta object for class '{@link mm.app.operations.RenameEntity <em>Rename Entity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Rename Class</em>'.
-	 * @see mm.app.operations.RenameClass
+	 * @return the meta object for class '<em>Rename Entity</em>'.
+	 * @see mm.app.operations.RenameEntity
 	 * @generated
 	 */
-	EClass getRenameClass();
+	EClass getRenameEntity();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RenameClass#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.app.operations.RenameEntity#getName <em>Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.RenameClass#getName()
-	 * @see #getRenameClass()
+	 * @see mm.app.operations.RenameEntity#getName()
+	 * @see #getRenameEntity()
 	 * @generated
 	 */
-	EAttribute getRenameClass_Name();
+	EAttribute getRenameEntity_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RenameClass#getNewName <em>New Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.app.operations.RenameEntity#getNewName <em>New Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>New Name</em>'.
-	 * @see mm.app.operations.RenameClass#getNewName()
-	 * @see #getRenameClass()
+	 * @see mm.app.operations.RenameEntity#getNewName()
+	 * @see #getRenameEntity()
 	 * @generated
 	 */
-	EAttribute getRenameClass_NewName();
+	EAttribute getRenameEntity_NewName();
 
 	/**
 	 * Returns the meta object for class '{@link mm.app.operations.SetParent <em>Set Parent</em>}'.
@@ -1486,6 +1539,38 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getRenameProperty_NewName();
 
 	/**
+	 * Returns the meta object for class '{@link mm.app.operations.RemoveProperty <em>Remove Property</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Remove Property</em>'.
+	 * @see mm.app.operations.RemoveProperty
+	 * @generated
+	 */
+	EClass getRemoveProperty();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveProperty#getOwningClassName <em>Owning Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
+	 * @see mm.app.operations.RemoveProperty#getOwningClassName()
+	 * @see #getRemoveProperty()
+	 * @generated
+	 */
+	EAttribute getRemoveProperty_OwningClassName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveProperty#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see mm.app.operations.RemoveProperty#getName()
+	 * @see #getRemoveProperty()
+	 * @generated
+	 */
+	EAttribute getRemoveProperty_Name();
+
+	/**
 	 * Returns the meta object for class '{@link mm.app.operations.SetType <em>Set Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1734,91 +1819,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetUnique_IsUnique();
 
 	/**
-	 * Returns the meta object for class '{@link mm.app.operations.RemoveProperty <em>Remove Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Remove Property</em>'.
-	 * @see mm.app.operations.RemoveProperty
-	 * @generated
-	 */
-	EClass getRemoveProperty();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveProperty#getOwningClassName <em>Owning Class Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Class Name</em>'.
-	 * @see mm.app.operations.RemoveProperty#getOwningClassName()
-	 * @see #getRemoveProperty()
-	 * @generated
-	 */
-	EAttribute getRemoveProperty_OwningClassName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.RemoveProperty#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.RemoveProperty#getName()
-	 * @see #getRemoveProperty()
-	 * @generated
-	 */
-	EAttribute getRemoveProperty_Name();
-
-	/**
-	 * Returns the meta object for class '{@link mm.app.operations.AddPrimitiveClass <em>Add Primitive Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Add Primitive Class</em>'.
-	 * @see mm.app.operations.AddPrimitiveClass
-	 * @generated
-	 */
-	EClass getAddPrimitiveClass();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.AddPrimitiveClass#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.AddPrimitiveClass#getName()
-	 * @see #getAddPrimitiveClass()
-	 * @generated
-	 */
-	EAttribute getAddPrimitiveClass_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.AddPrimitiveClass#getPrimitiveType <em>Primitive Type</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Primitive Type</em>'.
-	 * @see mm.app.operations.AddPrimitiveClass#getPrimitiveType()
-	 * @see #getAddPrimitiveClass()
-	 * @generated
-	 */
-	EAttribute getAddPrimitiveClass_PrimitiveType();
-
-	/**
-	 * Returns the meta object for class '{@link mm.app.operations.AddEmbeddedClass <em>Add Embedded Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Add Embedded Class</em>'.
-	 * @see mm.app.operations.AddEmbeddedClass
-	 * @generated
-	 */
-	EClass getAddEmbeddedClass();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.AddEmbeddedClass#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see mm.app.operations.AddEmbeddedClass#getName()
-	 * @see #getAddEmbeddedClass()
-	 * @generated
-	 */
-	EAttribute getAddEmbeddedClass_Name();
-
-	/**
 	 * Returns the meta object for class '{@link mm.app.operations.CopyProperty <em>Copy Property</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1977,6 +1977,50 @@ public interface OperationsPackage extends EPackage {
 		EReference MODEL_OPERATION__MODEL_ROOT = eINSTANCE.getModelOperation_ModelRoot();
 
 		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.AddPrimitiveClassImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
+		 * @generated
+		 */
+		EClass ADD_PRIMITIVE_CLASS = eINSTANCE.getAddPrimitiveClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_PRIMITIVE_CLASS__NAME = eINSTANCE.getAddPrimitiveClass_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Primitive Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE = eINSTANCE.getAddPrimitiveClass_PrimitiveType();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.AddEmbeddedClassImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
+		 * @generated
+		 */
+		EClass ADD_EMBEDDED_CLASS = eINSTANCE.getAddEmbeddedClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_EMBEDDED_CLASS__NAME = eINSTANCE.getAddEmbeddedClass_Name();
+
+		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.AddClassImpl <em>Add Class</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2035,14 +2079,14 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_CLASS__INHERITANCE_TYPE = eINSTANCE.getAddClass_InheritanceType();
 
 		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.RenameClassImpl <em>Rename Class</em>}' class.
+		 * The meta object literal for the '{@link mm.app.operations.impl.RenameEntityImpl <em>Rename Entity</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.RenameClassImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameClass()
+		 * @see mm.app.operations.impl.RenameEntityImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getRenameEntity()
 		 * @generated
 		 */
-		EClass RENAME_CLASS = eINSTANCE.getRenameClass();
+		EClass RENAME_ENTITY = eINSTANCE.getRenameEntity();
 
 		/**
 		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -2050,7 +2094,7 @@ public interface OperationsPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute RENAME_CLASS__NAME = eINSTANCE.getRenameClass_Name();
+		EAttribute RENAME_ENTITY__NAME = eINSTANCE.getRenameEntity_Name();
 
 		/**
 		 * The meta object literal for the '<em><b>New Name</b></em>' attribute feature.
@@ -2058,7 +2102,7 @@ public interface OperationsPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute RENAME_CLASS__NEW_NAME = eINSTANCE.getRenameClass_NewName();
+		EAttribute RENAME_ENTITY__NEW_NAME = eINSTANCE.getRenameEntity_NewName();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.SetParentImpl <em>Set Parent</em>}' class.
@@ -2263,6 +2307,32 @@ public interface OperationsPackage extends EPackage {
 		EAttribute RENAME_PROPERTY__NEW_NAME = eINSTANCE.getRenameProperty_NewName();
 
 		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.RemovePropertyImpl <em>Remove Property</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.RemovePropertyImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveProperty()
+		 * @generated
+		 */
+		EClass REMOVE_PROPERTY = eINSTANCE.getRemoveProperty();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getRemoveProperty_OwningClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute REMOVE_PROPERTY__NAME = eINSTANCE.getRemoveProperty_Name();
+
+		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.SetTypeImpl <em>Set Type</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2455,76 +2525,6 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SET_UNIQUE__IS_UNIQUE = eINSTANCE.getSetUnique_IsUnique();
-
-		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.RemovePropertyImpl <em>Remove Property</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.RemovePropertyImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getRemoveProperty()
-		 * @generated
-		 */
-		EClass REMOVE_PROPERTY = eINSTANCE.getRemoveProperty();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Class Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute REMOVE_PROPERTY__OWNING_CLASS_NAME = eINSTANCE.getRemoveProperty_OwningClassName();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute REMOVE_PROPERTY__NAME = eINSTANCE.getRemoveProperty_Name();
-
-		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.AddPrimitiveClassImpl <em>Add Primitive Class</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.AddPrimitiveClassImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getAddPrimitiveClass()
-		 * @generated
-		 */
-		EClass ADD_PRIMITIVE_CLASS = eINSTANCE.getAddPrimitiveClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_PRIMITIVE_CLASS__NAME = eINSTANCE.getAddPrimitiveClass_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Primitive Type</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_PRIMITIVE_CLASS__PRIMITIVE_TYPE = eINSTANCE.getAddPrimitiveClass_PrimitiveType();
-
-		/**
-		 * The meta object literal for the '{@link mm.app.operations.impl.AddEmbeddedClassImpl <em>Add Embedded Class</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.app.operations.impl.AddEmbeddedClassImpl
-		 * @see mm.app.operations.impl.OperationsPackageImpl#getAddEmbeddedClass()
-		 * @generated
-		 */
-		EClass ADD_EMBEDDED_CLASS = eINSTANCE.getAddEmbeddedClass();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_EMBEDDED_CLASS__NAME = eINSTANCE.getAddEmbeddedClass_Name();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.CopyPropertyImpl <em>Copy Property</em>}' class.

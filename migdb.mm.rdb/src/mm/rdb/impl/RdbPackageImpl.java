@@ -370,8 +370,17 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getSequence_CacheSize() {
+	public EAttribute getSequence_StartValue() {
 		return (EAttribute)sequenceEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSequence_SequencedColumn() {
+		return (EReference)sequenceEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -691,7 +700,8 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		sequenceEClass = createEClass(SEQUENCE);
 		createEReference(sequenceEClass, SEQUENCE__OWNING_SCHEMA);
 		createEAttribute(sequenceEClass, SEQUENCE__NAME);
-		createEAttribute(sequenceEClass, SEQUENCE__CACHE_SIZE);
+		createEAttribute(sequenceEClass, SEQUENCE__START_VALUE);
+		createEReference(sequenceEClass, SEQUENCE__SEQUENCED_COLUMN);
 
 		indexEClass = createEClass(INDEX);
 		createEReference(indexEClass, INDEX__OWNING_SCHEMA);
@@ -799,7 +809,8 @@ public class RdbPackageImpl extends EPackageImpl implements RdbPackage {
 		initEClass(sequenceEClass, Sequence.class, "Sequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getSequence_OwningSchema(), this.getSchema(), this.getSchema_Sequences(), "owningSchema", null, 1, 1, Sequence.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSequence_Name(), ecorePackage.getEString(), "name", null, 1, 1, Sequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSequence_CacheSize(), ecorePackage.getEInt(), "cacheSize", null, 0, 1, Sequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSequence_StartValue(), ecorePackage.getEInt(), "startValue", null, 1, 1, Sequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSequence_SequencedColumn(), this.getColumn(), null, "sequencedColumn", null, 0, 1, Sequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(indexEClass, Index.class, "Index", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getIndex_OwningSchema(), this.getSchema(), this.getSchema_Indexes(), "owningSchema", null, 1, 1, Index.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);

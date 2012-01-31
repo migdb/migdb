@@ -26,6 +26,24 @@ public interface OperationsFactory extends EFactory {
 	OperationsFactory eINSTANCE = mm.app.operations.impl.OperationsFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Add Primitive Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Add Primitive Class</em>'.
+	 * @generated
+	 */
+	AddPrimitiveClass createAddPrimitiveClass();
+
+	/**
+	 * Returns a new object of class '<em>Add Embedded Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Add Embedded Class</em>'.
+	 * @generated
+	 */
+	AddEmbeddedClass createAddEmbeddedClass();
+
+	/**
 	 * Returns a new object of class '<em>Add Class</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -35,13 +53,13 @@ public interface OperationsFactory extends EFactory {
 	AddClass createAddClass();
 
 	/**
-	 * Returns a new object of class '<em>Rename Class</em>'.
+	 * Returns a new object of class '<em>Rename Entity</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Rename Class</em>'.
+	 * @return a new object of class '<em>Rename Entity</em>'.
 	 * @generated
 	 */
-	RenameClass createRenameClass();
+	RenameEntity createRenameEntity();
 
 	/**
 	 * Returns a new object of class '<em>Set Parent</em>'.
@@ -89,6 +107,15 @@ public interface OperationsFactory extends EFactory {
 	RenameProperty createRenameProperty();
 
 	/**
+	 * Returns a new object of class '<em>Remove Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Remove Property</em>'.
+	 * @generated
+	 */
+	RemoveProperty createRemoveProperty();
+
+	/**
 	 * Returns a new object of class '<em>Set Type</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -132,33 +159,6 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	SetUnique createSetUnique();
-
-	/**
-	 * Returns a new object of class '<em>Remove Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Remove Property</em>'.
-	 * @generated
-	 */
-	RemoveProperty createRemoveProperty();
-
-	/**
-	 * Returns a new object of class '<em>Add Primitive Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Add Primitive Class</em>'.
-	 * @generated
-	 */
-	AddPrimitiveClass createAddPrimitiveClass();
-
-	/**
-	 * Returns a new object of class '<em>Add Embedded Class</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Add Embedded Class</em>'.
-	 * @generated
-	 */
-	AddEmbeddedClass createAddEmbeddedClass();
 
 	/**
 	 * Returns a new object of class '<em>Copy Property</em>'.

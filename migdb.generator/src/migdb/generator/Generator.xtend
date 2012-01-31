@@ -248,6 +248,16 @@ class Generator extends BaseCodeGenerator {
 			ALTER COLUMN «operation.owningColumnName» DROP DEFAULT;
 	'''		
 	
+	/**
+	 * REMOVE SEQUENCE
+	 * To remove sequence serial from database:
+	 * >> DROP SEQUENCE serial;
+	 * @param RemoveSequenceImpl operation : operation of type RemoveSequenceImpl
+	 */
+	def dispatch genOperation(RemoveSequenceImpl operation)'''
+		DROP SEQUENCE «operation.owningSchemaName».«operation.sequenceName»;
+	'''		
+	
 	/**		RENAME OPERATIONS		**/	
 		
 	/**
@@ -259,8 +269,8 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(RenameTableImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.name» 
 			RENAME TO «operation.newName»;
-	'''				
-
+	'''		
+	
 	/**
 	 * RENAME COLUMN
 	 * To rename a column:
@@ -271,11 +281,23 @@ class Generator extends BaseCodeGenerator {
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 			RENAME COLUMN «operation.name» TO «operation.newName»;
 	'''		
-	
+		
 	/**	    SET OPERATIONS	    	**/	
+	
+	/**
+	 * SET COLUMN SEQUENCE
+	 * For change sequence on column we use Update column which recalculate column values
+	 * Change the word Drama to Dramatic in the column kind of the table films:
+	 * >> UPDATE films SET kind = 'Dramatic' WHERE kind = 'Drama';
+	 * @param SetColumnSequenceImpl operation : operation of type SetColumnSequenceImpl
+	 */
+	def dispatch genOperation(SetColumnSequenceImpl operation)'''
+		UPDATE «operation.owningTableName» SET «operation.owningColumnName» = nextval(«operation.owningSchemaName».«operation.sequenceName»);
+	'''		
 
 	/**
 	 * SET COLUMN DEFAULT VALUE
+	 * This operation can be used for setting sequence for PrimaryKey -> DEFAULT nextval('seqName')
 	 * To set a new default for a column, use a command like:
 	 * >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
 	 * Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
@@ -283,7 +305,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(SetColumnDefaultValueImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «operation.newDefaultValue»;
+			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «IF operation.isSequence == true»nextval('«operation.newDefaultValue»')«ELSE»«operation.newDefaultValue»«ENDIF»;
 	'''	
 	
 	/**

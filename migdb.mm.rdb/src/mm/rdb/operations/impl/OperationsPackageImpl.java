@@ -32,11 +32,13 @@ import mm.rdb.operations.RemoveColumn;
 import mm.rdb.operations.RemoveColumnConstraint;
 import mm.rdb.operations.RemoveDefaultValue;
 import mm.rdb.operations.RemoveIndex;
+import mm.rdb.operations.RemoveSequence;
 import mm.rdb.operations.RemoveTable;
 import mm.rdb.operations.RemoveTableConstraint;
 import mm.rdb.operations.RenameColumn;
 import mm.rdb.operations.RenameTable;
 import mm.rdb.operations.SetColumnDefaultValue;
+import mm.rdb.operations.SetColumnSequence;
 import mm.rdb.operations.SetColumnType;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -198,7 +200,21 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass setColumnSequenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass removeDefaultValueEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass removeSequenceEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -335,7 +351,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAddSequence_CacheSize() {
+	public EAttribute getAddSequence_StartValue() {
 		return (EAttribute)addSequenceEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -1082,6 +1098,60 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getSetColumnDefaultValue_IsSequence() {
+		return (EAttribute)setColumnDefaultValueEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getSetColumnSequence() {
+		return setColumnSequenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnSequence_SequenceName() {
+		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnSequence_OwningSchemaName() {
+		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnSequence_OwningTableName() {
+		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSetColumnSequence_OwningColumnName() {
+		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getRemoveDefaultValue() {
 		return removeDefaultValueEClass;
 	}
@@ -1111,6 +1181,33 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 */
 	public EAttribute getRemoveDefaultValue_OwningColumnName() {
 		return (EAttribute)removeDefaultValueEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getRemoveSequence() {
+		return removeSequenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveSequence_SequenceName() {
+		return (EAttribute)removeSequenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getRemoveSequence_OwningSchemaName() {
+		return (EAttribute)removeSequenceEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1158,7 +1255,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		addSequenceEClass = createEClass(ADD_SEQUENCE);
 		createEAttribute(addSequenceEClass, ADD_SEQUENCE__OWNING_SCHEMA_NAME);
 		createEAttribute(addSequenceEClass, ADD_SEQUENCE__NAME);
-		createEAttribute(addSequenceEClass, ADD_SEQUENCE__CACHE_SIZE);
+		createEAttribute(addSequenceEClass, ADD_SEQUENCE__START_VALUE);
 
 		addIndexEClass = createEClass(ADD_INDEX);
 		createEAttribute(addIndexEClass, ADD_INDEX__OWNING_SCHEMA_NAME);
@@ -1258,11 +1355,22 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__OWNING_TABLE_NAME);
 		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__OWNING_COLUMN_NAME);
 		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE);
+		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE);
+
+		setColumnSequenceEClass = createEClass(SET_COLUMN_SEQUENCE);
+		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__SEQUENCE_NAME);
+		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME);
+		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME);
+		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME);
 
 		removeDefaultValueEClass = createEClass(REMOVE_DEFAULT_VALUE);
 		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_SCHEMA_NAME);
 		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_TABLE_NAME);
 		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_COLUMN_NAME);
+
+		removeSequenceEClass = createEClass(REMOVE_SEQUENCE);
+		createEAttribute(removeSequenceEClass, REMOVE_SEQUENCE__SEQUENCE_NAME);
+		createEAttribute(removeSequenceEClass, REMOVE_SEQUENCE__OWNING_SCHEMA_NAME);
 
 		// Create enums
 		mergeTypeEEnum = createEEnum(MERGE_TYPE);
@@ -1318,7 +1426,9 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeIndexEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnTypeEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
+		setColumnSequenceEClass.getESuperTypes().add(this.getModelOperation());
 		removeDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
+		removeSequenceEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1329,7 +1439,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(addSequenceEClass, AddSequence.class, "AddSequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddSequence_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddSequence_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAddSequence_CacheSize(), ecorePackage.getEInt(), "cacheSize", null, 0, 1, AddSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAddSequence_StartValue(), ecorePackage.getEInt(), "startValue", null, 1, 1, AddSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addIndexEClass, AddIndex.class, "AddIndex", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddIndex_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1429,11 +1539,22 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getSetColumnDefaultValue_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSetColumnDefaultValue_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSetColumnDefaultValue_NewDefaultValue(), ecorePackage.getEString(), "newDefaultValue", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnDefaultValue_IsSequence(), ecorePackage.getEBoolean(), "isSequence", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(setColumnSequenceEClass, SetColumnSequence.class, "SetColumnSequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSetColumnSequence_SequenceName(), ecorePackage.getEString(), "sequenceName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnSequence_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnSequence_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetColumnSequence_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(removeDefaultValueEClass, RemoveDefaultValue.class, "RemoveDefaultValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveDefaultValue_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveDefaultValue_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveDefaultValue_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(removeSequenceEClass, RemoveSequence.class, "RemoveSequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getRemoveSequence_SequenceName(), ecorePackage.getEString(), "sequenceName", null, 1, 1, RemoveSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getRemoveSequence_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");

@@ -61,21 +61,21 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case OperationsPackage.ADD_PRIMITIVE_CLASS: return createAddPrimitiveClass();
+			case OperationsPackage.ADD_EMBEDDED_CLASS: return createAddEmbeddedClass();
 			case OperationsPackage.ADD_CLASS: return createAddClass();
-			case OperationsPackage.RENAME_CLASS: return createRenameClass();
+			case OperationsPackage.RENAME_ENTITY: return createRenameEntity();
 			case OperationsPackage.SET_PARENT: return createSetParent();
 			case OperationsPackage.SET_ABSTRACT: return createSetAbstract();
 			case OperationsPackage.REMOVE_ENTITY: return createRemoveEntity();
 			case OperationsPackage.ADD_PROPERTY: return createAddProperty();
 			case OperationsPackage.RENAME_PROPERTY: return createRenameProperty();
+			case OperationsPackage.REMOVE_PROPERTY: return createRemoveProperty();
 			case OperationsPackage.SET_TYPE: return createSetType();
 			case OperationsPackage.SET_OPPOSITE: return createSetOpposite();
 			case OperationsPackage.SET_BOUNDRIES: return createSetBoundries();
 			case OperationsPackage.SET_ORDERED: return createSetOrdered();
 			case OperationsPackage.SET_UNIQUE: return createSetUnique();
-			case OperationsPackage.REMOVE_PROPERTY: return createRemoveProperty();
-			case OperationsPackage.ADD_PRIMITIVE_CLASS: return createAddPrimitiveClass();
-			case OperationsPackage.ADD_EMBEDDED_CLASS: return createAddEmbeddedClass();
 			case OperationsPackage.COPY_PROPERTY: return createCopyProperty();
 			case OperationsPackage.MOVE_PROPERTY: return createMoveProperty();
 			default:
@@ -118,6 +118,26 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AddPrimitiveClass createAddPrimitiveClass() {
+		AddPrimitiveClassImpl addPrimitiveClass = new AddPrimitiveClassImpl();
+		return addPrimitiveClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AddEmbeddedClass createAddEmbeddedClass() {
+		AddEmbeddedClassImpl addEmbeddedClass = new AddEmbeddedClassImpl();
+		return addEmbeddedClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public AddClass createAddClass() {
 		AddClassImpl addClass = new AddClassImpl();
 		return addClass;
@@ -128,9 +148,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public RenameClass createRenameClass() {
-		RenameClassImpl renameClass = new RenameClassImpl();
-		return renameClass;
+	public RenameEntity createRenameEntity() {
+		RenameEntityImpl renameEntity = new RenameEntityImpl();
+		return renameEntity;
 	}
 
 	/**
@@ -188,6 +208,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public RemoveProperty createRemoveProperty() {
+		RemovePropertyImpl removeProperty = new RemovePropertyImpl();
+		return removeProperty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public SetType createSetType() {
 		SetTypeImpl setType = new SetTypeImpl();
 		return setType;
@@ -231,36 +261,6 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public SetUnique createSetUnique() {
 		SetUniqueImpl setUnique = new SetUniqueImpl();
 		return setUnique;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public RemoveProperty createRemoveProperty() {
-		RemovePropertyImpl removeProperty = new RemovePropertyImpl();
-		return removeProperty;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AddPrimitiveClass createAddPrimitiveClass() {
-		AddPrimitiveClassImpl addPrimitiveClass = new AddPrimitiveClassImpl();
-		return addPrimitiveClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AddEmbeddedClass createAddEmbeddedClass() {
-		AddEmbeddedClassImpl addEmbeddedClass = new AddEmbeddedClassImpl();
-		return addEmbeddedClass;
 	}
 
 	/**

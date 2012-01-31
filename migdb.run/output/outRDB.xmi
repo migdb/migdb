@@ -4,9 +4,12 @@
     <schemas name="public">
       <tables name="parent">
         <columns name="id" type="int"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_parent" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
+      </tables>
+      <tables name="child">
+        <columns name="id" type="int"/>
       </tables>
       <indexes name="IX_parent_id" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
+      <indexes name="IX_child_id" columns="//@modelGenerations.0/@schemas.0/@tables.1/@columns.0"/>
     </schemas>
   </modelGenerations>
   <operations xsi:type="rdb-ops:AddSchema" name="public"/>
@@ -15,5 +18,12 @@
   <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="parent" name="IX_parent_id">
     <columnsNames>id</columnsNames>
   </operations>
-  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="parent" name="PK_parent" underlyingIndexName="IX_parent_id" columnName="id"/>
+  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="parent" name="PK_parent" underlyingIndexName="IX_parent_id"/>
+  <operations xsi:type="rdb-ops:AddTable" owningSchemaName="public" name="child"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="child" name="id" type="int"/>
+  <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="child" name="IX_child_id">
+    <columnsNames>id</columnsNames>
+  </operations>
+  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="child" name="PK_child" underlyingIndexName="IX_child_id"/>
+  <operations xsi:type="rdb-ops:AddNotNullConstraint" owningSchemaName="public" owningTableName="Parent" owningColumnName="age" name="NN_age"/>
 </rdb:ModelRoot>

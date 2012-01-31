@@ -6,6 +6,7 @@
  */
 package mm.rdb.impl;
 
+import mm.rdb.Column;
 import mm.rdb.RdbPackage;
 import mm.rdb.Schema;
 import mm.rdb.Sequence;
@@ -28,7 +29,8 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <ul>
  *   <li>{@link mm.rdb.impl.SequenceImpl#getOwningSchema <em>Owning Schema</em>}</li>
  *   <li>{@link mm.rdb.impl.SequenceImpl#getName <em>Name</em>}</li>
- *   <li>{@link mm.rdb.impl.SequenceImpl#getCacheSize <em>Cache Size</em>}</li>
+ *   <li>{@link mm.rdb.impl.SequenceImpl#getStartValue <em>Start Value</em>}</li>
+ *   <li>{@link mm.rdb.impl.SequenceImpl#getSequencedColumn <em>Sequenced Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -56,24 +58,34 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 	protected String name = NAME_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getCacheSize() <em>Cache Size</em>}' attribute.
+	 * The default value of the '{@link #getStartValue() <em>Start Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCacheSize()
+	 * @see #getStartValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int CACHE_SIZE_EDEFAULT = 0;
+	protected static final int START_VALUE_EDEFAULT = 0;
 
 	/**
-	 * The cached value of the '{@link #getCacheSize() <em>Cache Size</em>}' attribute.
+	 * The cached value of the '{@link #getStartValue() <em>Start Value</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getCacheSize()
+	 * @see #getStartValue()
 	 * @generated
 	 * @ordered
 	 */
-	protected int cacheSize = CACHE_SIZE_EDEFAULT;
+	protected int startValue = START_VALUE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getSequencedColumn() <em>Sequenced Column</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSequencedColumn()
+	 * @generated
+	 * @ordered
+	 */
+	protected Column sequencedColumn;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -130,8 +142,8 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public int getCacheSize() {
-		return cacheSize;
+	public int getStartValue() {
+		return startValue;
 	}
 
 	/**
@@ -139,11 +151,49 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setCacheSize(int newCacheSize) {
-		int oldCacheSize = cacheSize;
-		cacheSize = newCacheSize;
+	public void setStartValue(int newStartValue) {
+		int oldStartValue = startValue;
+		startValue = newStartValue;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.SEQUENCE__CACHE_SIZE, oldCacheSize, cacheSize));
+			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.SEQUENCE__START_VALUE, oldStartValue, startValue));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Column getSequencedColumn() {
+		if (sequencedColumn != null && sequencedColumn.eIsProxy()) {
+			InternalEObject oldSequencedColumn = (InternalEObject)sequencedColumn;
+			sequencedColumn = (Column)eResolveProxy(oldSequencedColumn);
+			if (sequencedColumn != oldSequencedColumn) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RdbPackage.SEQUENCE__SEQUENCED_COLUMN, oldSequencedColumn, sequencedColumn));
+			}
+		}
+		return sequencedColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Column basicGetSequencedColumn() {
+		return sequencedColumn;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSequencedColumn(Column newSequencedColumn) {
+		Column oldSequencedColumn = sequencedColumn;
+		sequencedColumn = newSequencedColumn;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.SEQUENCE__SEQUENCED_COLUMN, oldSequencedColumn, sequencedColumn));
 	}
 
 	/**
@@ -202,8 +252,11 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 				return getOwningSchema();
 			case RdbPackage.SEQUENCE__NAME:
 				return getName();
-			case RdbPackage.SEQUENCE__CACHE_SIZE:
-				return getCacheSize();
+			case RdbPackage.SEQUENCE__START_VALUE:
+				return getStartValue();
+			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
+				if (resolve) return getSequencedColumn();
+				return basicGetSequencedColumn();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -219,8 +272,11 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 			case RdbPackage.SEQUENCE__NAME:
 				setName((String)newValue);
 				return;
-			case RdbPackage.SEQUENCE__CACHE_SIZE:
-				setCacheSize((Integer)newValue);
+			case RdbPackage.SEQUENCE__START_VALUE:
+				setStartValue((Integer)newValue);
+				return;
+			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
+				setSequencedColumn((Column)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -237,8 +293,11 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 			case RdbPackage.SEQUENCE__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case RdbPackage.SEQUENCE__CACHE_SIZE:
-				setCacheSize(CACHE_SIZE_EDEFAULT);
+			case RdbPackage.SEQUENCE__START_VALUE:
+				setStartValue(START_VALUE_EDEFAULT);
+				return;
+			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
+				setSequencedColumn((Column)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -256,8 +315,10 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 				return getOwningSchema() != null;
 			case RdbPackage.SEQUENCE__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case RdbPackage.SEQUENCE__CACHE_SIZE:
-				return cacheSize != CACHE_SIZE_EDEFAULT;
+			case RdbPackage.SEQUENCE__START_VALUE:
+				return startValue != START_VALUE_EDEFAULT;
+			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
+				return sequencedColumn != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -274,8 +335,8 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
-		result.append(", cacheSize: ");
-		result.append(cacheSize);
+		result.append(", startValue: ");
+		result.append(startValue);
 		result.append(')');
 		return result.toString();
 	}

@@ -1,0 +1,2 @@
+ALTER TABLE public.Parent
+	ALTER COLUMN age SET NOT NULL;
