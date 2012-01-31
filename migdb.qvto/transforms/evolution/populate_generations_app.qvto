@@ -52,11 +52,11 @@ main() {
 	root.operations := root.operations->reject(true);
 }
 
-// verification of an operation
+// a verification of an operation
 abstract query APP::operations::ModelOperation::
 	isValid(gen : APP::ModelGeneration) : Boolean;
 
-// mapping of an operation
+// a mapping of an operation
 abstract mapping APP::operations::ModelOperation::
 	apply(inout gen : APP::ModelGeneration);
 
@@ -85,7 +85,8 @@ mapping APP::operations::AddEmbeddedClass::apply(inout gen : APP::ModelGeneratio
 }
 
 query APP::operations::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
-	return not gen.isEntityInGeneration(self.name);
+	return not gen.isEntityInGeneration(self.name)
+		   and gen.isPrimitiveClassInGeneration("Integer");
 }
 
 mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {	
@@ -144,22 +145,20 @@ mapping APP::operations::RemoveEntity::apply(inout gen : APP::ModelGeneration) {
 }
 
 query APP::operations::AddProperty::isValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isPropertyInAbstractClass(self.owningClassName, self.name)
-		   and gen.isEntityInGeneration(self.type)
-		   and gen.areBoundsValid(self.lowerBound, self.upperBound)
-		   and gen.findAbstractClass(self.owningClassName).isTypeValid(gen);
+	return gen.isAbstractClassInGeneration(self.owningClassName)
+		   and not gen.isPropertyInAbstractClass(self.owningClassName, self.name)
+		   and gen.findAbstractClass(self.owningClassName).isTypeValid(gen, self.type)
+		   and gen.areBoundsValid(self.lowerBound, self.upperBound);
 }
 
-query APP::AbstractClass::isTypeValid(gen : APP::ModelGeneration) : Boolean {
+query APP::AbstractClass::isTypeValid(gen : APP::ModelGeneration, type : String) : Boolean {
+	if (self.oclIsTypeOf(APP::EmbeddedClass)) then {
+		return gen.isPrimitiveClassInGeneration(type);
+	} endif;
+	if (self.oclIsTypeOf(APP::Class)) then {
+		return gen.isAbstractClassInGeneration(type);
+	} endif;
 	return false;
-}
-
-query APP::EmbeddedClass::isTypeValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isPrimitiveClassInGeneration(self.name);
-}
-
-query APP::Class::isTypeValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isClassInGeneration(self.name);
 }
 
 mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
@@ -373,7 +372,7 @@ query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
 }
 
 query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
-	return self.isEntityInGeneration(cName).oclIsTypeOf(APP::PrimitiveClass);
+	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
 query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
@@ -381,7 +380,7 @@ query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveC
 }
 
 query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
-	return self.isEntityInGeneration(cName).oclIsTypeOf(APP::AbstractClass);
+	return self.findEntity(cName).oclIsKindOf(APP::AbstractClass);
 }
 
 query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
