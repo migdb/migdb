@@ -101,7 +101,7 @@ mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {
 			lowerBound := 1;
 			upperBound := 1;
 			isID := true;
-			sequenceName := ""; // todo
+			sequenceName := "SQ_" + self.name.toLower();
 		};
 	};
 }
@@ -235,18 +235,34 @@ mapping APP::operations::SetAbstract::apply(inout gen : APP::ModelGeneration) {
 }
 
 query APP::operations::SetParent::isValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isAbstractClassInGeneration(self.name)
-		   and gen.isAbstractClassInGeneration(self.parentName);
-		   //and not gen.findAbstractClass(self.parentName).oclAsType(APP::Class).isDescendantOf(self.name);
+	return gen.isClassInGeneration(self.name)
+		   and gen.isClassInGeneration(self.parentName)
+		   and not gen.findClass(self.parentName).isDescendantOf(self.name);
 }
 
 mapping APP::operations::SetParent::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.name).oclAsType(APP::Class);
-	c.parent := gen.findAbstractClass(self.parentName).oclAsType(APP::Class);	
-	// Je nutne po pridani tridy do hierarchie overit, zda ma sloupec ID a pokud ano, tak jej smazat
-	if (c.properties->exists(isID = true)) then {
+	var c : APP::Class := gen.findClass(self.name);
+	
+	// tridu odebirame z hierarchie
+	if (self.parentName = null) then {
+		c.parent := null;
+		// vytvoreni ID atributu
+		c.properties += object APP::Property {
+			name := "id";
+			type := gen.findEntity("Integer");
+			lowerBound := 1;
+			upperBound := 1;
+			isID := true;
+			sequenceName := "SQ_" + self.name.toLower();
+		};
+		
+	// tridu pridavame do hierarchie
+	} else {
+		c.parent := gen.findClass(self.parentName);
+		// smazani ID atributu
 		c.properties := c.properties->excluding(c.properties->selectOne(isID = true));
-	}endif;
+		
+	} endif;
 }
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
@@ -396,7 +412,7 @@ query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::
 }
 
 query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.isEntityInGeneration(cName).oclIsTypeOf(APP::Class);
+	return self.findEntity(cName).oclIsTypeOf(APP::Class);
 }
 
 query APP::ModelGeneration::findClass(cName : String) : APP::Class {
@@ -410,8 +426,10 @@ query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : In
 
 // overime, zda-li je trida potomkem tridy cName
 query APP::Class::isDescendantOf(cName : String) : Boolean {
-	if (self.parent <> null and self.parent.name = cName) then return true
-	else return self.parent.isDescendantOf(cName) endif;
+	if (self.parent <> null) then {
+		if (self.parent.name = cName) then return true
+		else return self.parent.isDescendantOf(cName) endif;
+	} endif;
 	return false;
 }
 
