@@ -209,13 +209,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.SET_COLUMN_SEQUENCE: {
-				SetColumnSequence setColumnSequence = (SetColumnSequence)theEObject;
-				T result = caseSetColumnSequence(setColumnSequence);
-				if (result == null) result = caseModelOperation(setColumnSequence);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case OperationsPackage.REMOVE_DEFAULT_VALUE: {
 				RemoveDefaultValue removeDefaultValue = (RemoveDefaultValue)theEObject;
 				T result = caseRemoveDefaultValue(removeDefaultValue);
@@ -227,6 +220,13 @@ public class OperationsSwitch<T> extends Switch<T> {
 				RemoveSequence removeSequence = (RemoveSequence)theEObject;
 				T result = caseRemoveSequence(removeSequence);
 				if (result == null) result = caseModelOperation(removeSequence);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.CHECK_INSTANCES: {
+				CheckInstances checkInstances = (CheckInstances)theEObject;
+				T result = caseCheckInstances(checkInstances);
+				if (result == null) result = caseModelOperation(checkInstances);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -535,21 +535,6 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Set Column Sequence</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Set Column Sequence</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseSetColumnSequence(SetColumnSequence object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Remove Default Value</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -576,6 +561,21 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseRemoveSequence(RemoveSequence object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Check Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Check Instances</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseCheckInstances(CheckInstances object) {
 		return null;
 	}
 

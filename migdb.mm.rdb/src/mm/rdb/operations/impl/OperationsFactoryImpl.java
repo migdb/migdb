@@ -80,9 +80,9 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.REMOVE_INDEX: return createRemoveIndex();
 			case OperationsPackage.SET_COLUMN_TYPE: return createSetColumnType();
 			case OperationsPackage.SET_COLUMN_DEFAULT_VALUE: return createSetColumnDefaultValue();
-			case OperationsPackage.SET_COLUMN_SEQUENCE: return createSetColumnSequence();
 			case OperationsPackage.REMOVE_DEFAULT_VALUE: return createRemoveDefaultValue();
 			case OperationsPackage.REMOVE_SEQUENCE: return createRemoveSequence();
+			case OperationsPackage.CHECK_INSTANCES: return createCheckInstances();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -313,16 +313,6 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SetColumnSequence createSetColumnSequence() {
-		SetColumnSequenceImpl setColumnSequence = new SetColumnSequenceImpl();
-		return setColumnSequence;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public RemoveDefaultValue createRemoveDefaultValue() {
 		RemoveDefaultValueImpl removeDefaultValue = new RemoveDefaultValueImpl();
 		return removeDefaultValue;
@@ -336,6 +326,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public RemoveSequence createRemoveSequence() {
 		RemoveSequenceImpl removeSequence = new RemoveSequenceImpl();
 		return removeSequence;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public CheckInstances createCheckInstances() {
+		CheckInstancesImpl checkInstances = new CheckInstancesImpl();
+		return checkInstances;
 	}
 
 	/**

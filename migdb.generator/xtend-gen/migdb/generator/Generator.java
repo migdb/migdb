@@ -4,7 +4,9 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import mm.rdb.PrimitiveType;
+import mm.rdb.operations.CheckInstances;
 import mm.rdb.operations.MergeType;
+import mm.rdb.operations.ModelOperation;
 import mm.rdb.operations.impl.AddColumnImpl;
 import mm.rdb.operations.impl.AddForeignKeyImpl;
 import mm.rdb.operations.impl.AddIndexImpl;
@@ -20,6 +22,7 @@ import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
 import mm.rdb.operations.impl.RemoveColumnImpl;
 import mm.rdb.operations.impl.RemoveDefaultValueImpl;
 import mm.rdb.operations.impl.RemoveIndexImpl;
+import mm.rdb.operations.impl.RemoveSequenceImpl;
 import mm.rdb.operations.impl.RemoveTableConstraintImpl;
 import mm.rdb.operations.impl.RemoveTableImpl;
 import mm.rdb.operations.impl.RenameColumnImpl;
@@ -86,8 +89,8 @@ public class Generator extends BaseCodeGenerator {
     String _name = operation.getName();
     _builder.append(_name, "");
     _builder.append(" START ");
-    int _cacheSize = operation.getCacheSize();
-    _builder.append(_cacheSize, "");
+    int _startValue = operation.getStartValue();
+    _builder.append(_startValue, "");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -367,6 +370,19 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
+  protected CharSequence _genOperation(final RemoveSequenceImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("DROP SEQUENCE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _sequenceName = operation.getSequenceName();
+    _builder.append(_sequenceName, "");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
   protected CharSequence _genOperation(final RenameTableImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("ALTER TABLE ");
@@ -551,6 +567,34 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
+  protected CharSequence _genOperation(final CheckInstances operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("SELECT COUNT(1) > 0 ");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("FROM ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "	");
+    _builder.append(".");
+    String _parentTableName = operation.getParentTableName();
+    _builder.append(_parentTableName, "	");
+    _builder.append(" AS parent");
+    _builder.newLineIfNotEmpty();
+    {
+      EList<String> _childTableNames = operation.getChildTableNames();
+      for(final String tab : _childTableNames) {
+        _builder.append("\t");
+        _builder.append("LEFT JOIN ");
+        _builder.append(tab, "	");
+        _builder.append(" ON ");
+        _builder.append(tab, "	");
+        _builder.append(".id = parent.id\t\t");
+        _builder.newLineIfNotEmpty();
+      }
+    }
+    return _builder;
+  }
+  
   protected CharSequence _genOperation(final CopyInstancesImpl operation) {
     {
       MergeType _type = operation.getType();
@@ -723,7 +767,7 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
-  public CharSequence genOperation(final ModelOperationImpl operation) {
+  public CharSequence genOperation(final ModelOperation operation) {
     if ((operation instanceof AddColumnImpl)) {
       return _genOperation((AddColumnImpl)operation);
     } else if ((operation instanceof AddForeignKeyImpl)) {
@@ -752,6 +796,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((RemoveDefaultValueImpl)operation);
     } else if ((operation instanceof RemoveIndexImpl)) {
       return _genOperation((RemoveIndexImpl)operation);
+    } else if ((operation instanceof RemoveSequenceImpl)) {
+      return _genOperation((RemoveSequenceImpl)operation);
     } else if ((operation instanceof RemoveTableConstraintImpl)) {
       return _genOperation((RemoveTableConstraintImpl)operation);
     } else if ((operation instanceof RemoveTableImpl)) {
@@ -764,6 +810,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((SetColumnDefaultValueImpl)operation);
     } else if ((operation instanceof SetColumnTypeImpl)) {
       return _genOperation((SetColumnTypeImpl)operation);
+    } else if ((operation instanceof CheckInstances)) {
+      return _genOperation((CheckInstances)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         java.util.Arrays.<Object>asList(operation).toString());

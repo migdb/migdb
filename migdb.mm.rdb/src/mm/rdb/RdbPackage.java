@@ -245,22 +245,13 @@ public interface RdbPackage extends EPackage {
 	int SEQUENCE__START_VALUE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Sequenced Column</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SEQUENCE__SEQUENCED_COLUMN = 3;
-
-	/**
 	 * The number of structural features of the '<em>Sequence</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SEQUENCE_FEATURE_COUNT = 4;
+	int SEQUENCE_FEATURE_COUNT = 3;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.impl.IndexImpl <em>Index</em>}' class.
@@ -917,17 +908,6 @@ public interface RdbPackage extends EPackage {
 	EAttribute getSequence_StartValue();
 
 	/**
-	 * Returns the meta object for the reference '{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Sequenced Column</em>'.
-	 * @see mm.rdb.Sequence#getSequencedColumn()
-	 * @see #getSequence()
-	 * @generated
-	 */
-	EReference getSequence_SequencedColumn();
-
-	/**
 	 * Returns the meta object for class '{@link mm.rdb.Index <em>Index</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1411,14 +1391,6 @@ public interface RdbPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SEQUENCE__START_VALUE = eINSTANCE.getSequence_StartValue();
-
-		/**
-		 * The meta object literal for the '<em><b>Sequenced Column</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference SEQUENCE__SEQUENCED_COLUMN = eINSTANCE.getSequence_SequencedColumn();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.impl.IndexImpl <em>Index</em>}' class.

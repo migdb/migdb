@@ -19,7 +19,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link mm.rdb.Sequence#getOwningSchema <em>Owning Schema</em>}</li>
  *   <li>{@link mm.rdb.Sequence#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.Sequence#getStartValue <em>Start Value</em>}</li>
- *   <li>{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -96,31 +95,5 @@ public interface Sequence extends EObject {
 	 * @generated
 	 */
 	void setStartValue(int value);
-
-	/**
-	 * Returns the value of the '<em><b>Sequenced Column</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Sequenced Column</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Sequenced Column</em>' reference.
-	 * @see #setSequencedColumn(Column)
-	 * @see mm.rdb.RdbPackage#getSequence_SequencedColumn()
-	 * @model
-	 * @generated
-	 */
-	Column getSequencedColumn();
-
-	/**
-	 * Sets the value of the '{@link mm.rdb.Sequence#getSequencedColumn <em>Sequenced Column</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Sequenced Column</em>' reference.
-	 * @see #getSequencedColumn()
-	 * @generated
-	 */
-	void setSequencedColumn(Column value);
 
 } // Sequence

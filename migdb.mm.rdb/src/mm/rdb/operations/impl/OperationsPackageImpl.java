@@ -23,6 +23,7 @@ import mm.rdb.operations.AddSchema;
 import mm.rdb.operations.AddSequence;
 import mm.rdb.operations.AddTable;
 import mm.rdb.operations.AddUniqueIndex;
+import mm.rdb.operations.CheckInstances;
 import mm.rdb.operations.CopyInstances;
 import mm.rdb.operations.MergeType;
 import mm.rdb.operations.ModelOperation;
@@ -38,7 +39,6 @@ import mm.rdb.operations.RemoveTableConstraint;
 import mm.rdb.operations.RenameColumn;
 import mm.rdb.operations.RenameTable;
 import mm.rdb.operations.SetColumnDefaultValue;
-import mm.rdb.operations.SetColumnSequence;
 import mm.rdb.operations.SetColumnType;
 
 import org.eclipse.emf.ecore.EAttribute;
@@ -200,13 +200,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass setColumnSequenceEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass removeDefaultValueEClass = null;
 
 	/**
@@ -215,6 +208,13 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass removeSequenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass checkInstancesEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1107,51 +1107,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getSetColumnSequence() {
-		return setColumnSequenceEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSetColumnSequence_SequenceName() {
-		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSetColumnSequence_OwningSchemaName() {
-		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSetColumnSequence_OwningTableName() {
-		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSetColumnSequence_OwningColumnName() {
-		return (EAttribute)setColumnSequenceEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getRemoveDefaultValue() {
 		return removeDefaultValueEClass;
 	}
@@ -1208,6 +1163,42 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 */
 	public EAttribute getRemoveSequence_OwningSchemaName() {
 		return (EAttribute)removeSequenceEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getCheckInstances() {
+		return checkInstancesEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCheckInstances_OwningSchemaName() {
+		return (EAttribute)checkInstancesEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCheckInstances_ParentTableName() {
+		return (EAttribute)checkInstancesEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCheckInstances_ChildTableNames() {
+		return (EAttribute)checkInstancesEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1357,12 +1348,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE);
 		createEAttribute(setColumnDefaultValueEClass, SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE);
 
-		setColumnSequenceEClass = createEClass(SET_COLUMN_SEQUENCE);
-		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__SEQUENCE_NAME);
-		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME);
-		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME);
-		createEAttribute(setColumnSequenceEClass, SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME);
-
 		removeDefaultValueEClass = createEClass(REMOVE_DEFAULT_VALUE);
 		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_SCHEMA_NAME);
 		createEAttribute(removeDefaultValueEClass, REMOVE_DEFAULT_VALUE__OWNING_TABLE_NAME);
@@ -1371,6 +1356,11 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeSequenceEClass = createEClass(REMOVE_SEQUENCE);
 		createEAttribute(removeSequenceEClass, REMOVE_SEQUENCE__SEQUENCE_NAME);
 		createEAttribute(removeSequenceEClass, REMOVE_SEQUENCE__OWNING_SCHEMA_NAME);
+
+		checkInstancesEClass = createEClass(CHECK_INSTANCES);
+		createEAttribute(checkInstancesEClass, CHECK_INSTANCES__OWNING_SCHEMA_NAME);
+		createEAttribute(checkInstancesEClass, CHECK_INSTANCES__PARENT_TABLE_NAME);
+		createEAttribute(checkInstancesEClass, CHECK_INSTANCES__CHILD_TABLE_NAMES);
 
 		// Create enums
 		mergeTypeEEnum = createEEnum(MERGE_TYPE);
@@ -1426,9 +1416,9 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		removeIndexEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnTypeEClass.getESuperTypes().add(this.getModelOperation());
 		setColumnDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
-		setColumnSequenceEClass.getESuperTypes().add(this.getModelOperation());
 		removeDefaultValueEClass.getESuperTypes().add(this.getModelOperation());
 		removeSequenceEClass.getESuperTypes().add(this.getModelOperation());
+		checkInstancesEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1541,12 +1531,6 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getSetColumnDefaultValue_NewDefaultValue(), ecorePackage.getEString(), "newDefaultValue", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSetColumnDefaultValue_IsSequence(), ecorePackage.getEBoolean(), "isSequence", null, 1, 1, SetColumnDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(setColumnSequenceEClass, SetColumnSequence.class, "SetColumnSequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getSetColumnSequence_SequenceName(), ecorePackage.getEString(), "sequenceName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSetColumnSequence_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSetColumnSequence_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSetColumnSequence_OwningColumnName(), ecorePackage.getEString(), "owningColumnName", null, 1, 1, SetColumnSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(removeDefaultValueEClass, RemoveDefaultValue.class, "RemoveDefaultValue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveDefaultValue_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveDefaultValue_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, RemoveDefaultValue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1555,6 +1539,11 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(removeSequenceEClass, RemoveSequence.class, "RemoveSequence", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getRemoveSequence_SequenceName(), ecorePackage.getEString(), "sequenceName", null, 1, 1, RemoveSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getRemoveSequence_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, RemoveSequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(checkInstancesEClass, CheckInstances.class, "CheckInstances", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCheckInstances_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCheckInstances_ParentTableName(), ecorePackage.getEString(), "parentTableName", null, 0, 1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCheckInstances_ChildTableNames(), ecorePackage.getEString(), "childTableNames", null, 1, -1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");

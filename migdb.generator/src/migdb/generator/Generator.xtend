@@ -80,7 +80,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddSequenceImpl operation : operation of type AddSequenceImpl
 	 */
 	def dispatch genOperation(AddSequenceImpl operation) '''
-		CREATE SEQUENCE «operation.owningSchemaName».«operation.name» START «operation.cacheSize»;
+		CREATE SEQUENCE «operation.owningSchemaName».«operation.name» START «operation.startValue»;
 	'''		
 
 	/**
@@ -282,18 +282,7 @@ class Generator extends BaseCodeGenerator {
 			RENAME COLUMN «operation.name» TO «operation.newName»;
 	'''		
 		
-	/**	    SET OPERATIONS	    	**/	
-	
-	/**
-	 * SET COLUMN SEQUENCE
-	 * For change sequence on column we use Update column which recalculate column values
-	 * Change the word Drama to Dramatic in the column kind of the table films:
-	 * >> UPDATE films SET kind = 'Dramatic' WHERE kind = 'Drama';
-	 * @param SetColumnSequenceImpl operation : operation of type SetColumnSequenceImpl
-	 */
-	def dispatch genOperation(SetColumnSequenceImpl operation)'''
-		UPDATE «operation.owningTableName» SET «operation.owningColumnName» = nextval(«operation.owningSchemaName».«operation.sequenceName»);
-	'''		
+	/**	    SET OPERATIONS	    	**/		
 
 	/**
 	 * SET COLUMN DEFAULT VALUE
@@ -340,6 +329,21 @@ class Generator extends BaseCodeGenerator {
      * This operations just work with instances (rows) in database.
      */
      
+    
+    /**
+     * CHECK INSTANCES
+     * This operation check if table has some rows.
+     * @param CheckInstances operation : operation of type CheckInstances
+     * @return boolean : t - no instances; f - some instances 
+     */ 
+    def dispatch genOperation(CheckInstances operation)'''
+    	SELECT COUNT(1) > 0 
+    		FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
+    		«FOR tab : operation.childTableNames»
+    			LEFT JOIN «tab» ON «tab».id = parent.id		
+    		«ENDFOR»
+    '''
+    
 	/**
 	 * COPY INSTANCES
 	 * This operation copy data from one column to another. 

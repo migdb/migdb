@@ -1070,61 +1070,6 @@ public interface OperationsPackage extends EPackage {
 	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
-	 * The meta object id for the '{@link mm.rdb.operations.impl.SetColumnSequenceImpl <em>Set Column Sequence</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see mm.rdb.operations.impl.SetColumnSequenceImpl
-	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnSequence()
-	 * @generated
-	 */
-	int SET_COLUMN_SEQUENCE = 20;
-
-	/**
-	 * The feature id for the '<em><b>Sequence Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_SEQUENCE__SEQUENCE_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Owning Table Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Owning Column Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
-
-	/**
-	 * The number of structural features of the '<em>Set Column Sequence</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_SEQUENCE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
-
-	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1132,7 +1077,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveDefaultValue()
 	 * @generated
 	 */
-	int REMOVE_DEFAULT_VALUE = 21;
+	int REMOVE_DEFAULT_VALUE = 20;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -1178,7 +1123,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getRemoveSequence()
 	 * @generated
 	 */
-	int REMOVE_SEQUENCE = 22;
+	int REMOVE_SEQUENCE = 21;
 
 	/**
 	 * The feature id for the '<em><b>Sequence Name</b></em>' attribute.
@@ -1206,6 +1151,52 @@ public interface OperationsPackage extends EPackage {
 	 * @ordered
 	 */
 	int REMOVE_SEQUENCE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.CheckInstancesImpl <em>Check Instances</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.CheckInstancesImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getCheckInstances()
+	 * @generated
+	 */
+	int CHECK_INSTANCES = 22;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHECK_INSTANCES__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Parent Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHECK_INSTANCES__PARENT_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Child Table Names</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHECK_INSTANCES__CHILD_TABLE_NAMES = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Check Instances</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CHECK_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
@@ -2189,60 +2180,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetColumnDefaultValue_IsSequence();
 
 	/**
-	 * Returns the meta object for class '{@link mm.rdb.operations.SetColumnSequence <em>Set Column Sequence</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Set Column Sequence</em>'.
-	 * @see mm.rdb.operations.SetColumnSequence
-	 * @generated
-	 */
-	EClass getSetColumnSequence();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getSequenceName <em>Sequence Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Sequence Name</em>'.
-	 * @see mm.rdb.operations.SetColumnSequence#getSequenceName()
-	 * @see #getSetColumnSequence()
-	 * @generated
-	 */
-	EAttribute getSetColumnSequence_SequenceName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningSchemaName <em>Owning Schema Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
-	 * @see mm.rdb.operations.SetColumnSequence#getOwningSchemaName()
-	 * @see #getSetColumnSequence()
-	 * @generated
-	 */
-	EAttribute getSetColumnSequence_OwningSchemaName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningTableName <em>Owning Table Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Table Name</em>'.
-	 * @see mm.rdb.operations.SetColumnSequence#getOwningTableName()
-	 * @see #getSetColumnSequence()
-	 * @generated
-	 */
-	EAttribute getSetColumnSequence_OwningTableName();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnSequence#getOwningColumnName <em>Owning Column Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Owning Column Name</em>'.
-	 * @see mm.rdb.operations.SetColumnSequence#getOwningColumnName()
-	 * @see #getSetColumnSequence()
-	 * @generated
-	 */
-	EAttribute getSetColumnSequence_OwningColumnName();
-
-	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2316,6 +2253,49 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getRemoveSequence_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.CheckInstances <em>Check Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Check Instances</em>'.
+	 * @see mm.rdb.operations.CheckInstances
+	 * @generated
+	 */
+	EClass getCheckInstances();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.CheckInstances#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.CheckInstances#getOwningSchemaName()
+	 * @see #getCheckInstances()
+	 * @generated
+	 */
+	EAttribute getCheckInstances_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.CheckInstances#getParentTableName <em>Parent Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Parent Table Name</em>'.
+	 * @see mm.rdb.operations.CheckInstances#getParentTableName()
+	 * @see #getCheckInstances()
+	 * @generated
+	 */
+	EAttribute getCheckInstances_ParentTableName();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link mm.rdb.operations.CheckInstances#getChildTableNames <em>Child Table Names</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Child Table Names</em>'.
+	 * @see mm.rdb.operations.CheckInstances#getChildTableNames()
+	 * @see #getCheckInstances()
+	 * @generated
+	 */
+	EAttribute getCheckInstances_ChildTableNames();
 
 	/**
 	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
@@ -3110,48 +3090,6 @@ public interface OperationsPackage extends EPackage {
 		EAttribute SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE = eINSTANCE.getSetColumnDefaultValue_IsSequence();
 
 		/**
-		 * The meta object literal for the '{@link mm.rdb.operations.impl.SetColumnSequenceImpl <em>Set Column Sequence</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see mm.rdb.operations.impl.SetColumnSequenceImpl
-		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getSetColumnSequence()
-		 * @generated
-		 */
-		EClass SET_COLUMN_SEQUENCE = eINSTANCE.getSetColumnSequence();
-
-		/**
-		 * The meta object literal for the '<em><b>Sequence Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_COLUMN_SEQUENCE__SEQUENCE_NAME = eINSTANCE.getSetColumnSequence_SequenceName();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_COLUMN_SEQUENCE__OWNING_SCHEMA_NAME = eINSTANCE.getSetColumnSequence_OwningSchemaName();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Table Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_COLUMN_SEQUENCE__OWNING_TABLE_NAME = eINSTANCE.getSetColumnSequence_OwningTableName();
-
-		/**
-		 * The meta object literal for the '<em><b>Owning Column Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_COLUMN_SEQUENCE__OWNING_COLUMN_NAME = eINSTANCE.getSetColumnSequence_OwningColumnName();
-
-		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3210,6 +3148,40 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute REMOVE_SEQUENCE__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveSequence_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.CheckInstancesImpl <em>Check Instances</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.CheckInstancesImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getCheckInstances()
+		 * @generated
+		 */
+		EClass CHECK_INSTANCES = eINSTANCE.getCheckInstances();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHECK_INSTANCES__OWNING_SCHEMA_NAME = eINSTANCE.getCheckInstances_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Parent Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHECK_INSTANCES__PARENT_TABLE_NAME = eINSTANCE.getCheckInstances_ParentTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Child Table Names</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute CHECK_INSTANCES__CHILD_TABLE_NAMES = eINSTANCE.getCheckInstances_ChildTableNames();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.

@@ -6,7 +6,6 @@
  */
 package mm.rdb.impl;
 
-import mm.rdb.Column;
 import mm.rdb.RdbPackage;
 import mm.rdb.Schema;
 import mm.rdb.Sequence;
@@ -30,7 +29,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link mm.rdb.impl.SequenceImpl#getOwningSchema <em>Owning Schema</em>}</li>
  *   <li>{@link mm.rdb.impl.SequenceImpl#getName <em>Name</em>}</li>
  *   <li>{@link mm.rdb.impl.SequenceImpl#getStartValue <em>Start Value</em>}</li>
- *   <li>{@link mm.rdb.impl.SequenceImpl#getSequencedColumn <em>Sequenced Column</em>}</li>
  * </ul>
  * </p>
  *
@@ -76,16 +74,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 	 * @ordered
 	 */
 	protected int startValue = START_VALUE_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getSequencedColumn() <em>Sequenced Column</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSequencedColumn()
-	 * @generated
-	 * @ordered
-	 */
-	protected Column sequencedColumn;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -163,44 +151,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Column getSequencedColumn() {
-		if (sequencedColumn != null && sequencedColumn.eIsProxy()) {
-			InternalEObject oldSequencedColumn = (InternalEObject)sequencedColumn;
-			sequencedColumn = (Column)eResolveProxy(oldSequencedColumn);
-			if (sequencedColumn != oldSequencedColumn) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, RdbPackage.SEQUENCE__SEQUENCED_COLUMN, oldSequencedColumn, sequencedColumn));
-			}
-		}
-		return sequencedColumn;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Column basicGetSequencedColumn() {
-		return sequencedColumn;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSequencedColumn(Column newSequencedColumn) {
-		Column oldSequencedColumn = sequencedColumn;
-		sequencedColumn = newSequencedColumn;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, RdbPackage.SEQUENCE__SEQUENCED_COLUMN, oldSequencedColumn, sequencedColumn));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -254,9 +204,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 				return getName();
 			case RdbPackage.SEQUENCE__START_VALUE:
 				return getStartValue();
-			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
-				if (resolve) return getSequencedColumn();
-				return basicGetSequencedColumn();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -274,9 +221,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 				return;
 			case RdbPackage.SEQUENCE__START_VALUE:
 				setStartValue((Integer)newValue);
-				return;
-			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
-				setSequencedColumn((Column)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -296,9 +240,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 			case RdbPackage.SEQUENCE__START_VALUE:
 				setStartValue(START_VALUE_EDEFAULT);
 				return;
-			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
-				setSequencedColumn((Column)null);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -317,8 +258,6 @@ public class SequenceImpl extends EObjectImpl implements Sequence {
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case RdbPackage.SEQUENCE__START_VALUE:
 				return startValue != START_VALUE_EDEFAULT;
-			case RdbPackage.SEQUENCE__SEQUENCED_COLUMN:
-				return sequencedColumn != null;
 		}
 		return super.eIsSet(featureID);
 	}

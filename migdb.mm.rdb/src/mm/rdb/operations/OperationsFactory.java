@@ -197,15 +197,6 @@ public interface OperationsFactory extends EFactory {
 	SetColumnDefaultValue createSetColumnDefaultValue();
 
 	/**
-	 * Returns a new object of class '<em>Set Column Sequence</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Set Column Sequence</em>'.
-	 * @generated
-	 */
-	SetColumnSequence createSetColumnSequence();
-
-	/**
 	 * Returns a new object of class '<em>Remove Default Value</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -222,6 +213,15 @@ public interface OperationsFactory extends EFactory {
 	 * @generated
 	 */
 	RemoveSequence createRemoveSequence();
+
+	/**
+	 * Returns a new object of class '<em>Check Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Check Instances</em>'.
+	 * @generated
+	 */
+	CheckInstances createCheckInstances();
 
 	/**
 	 * Returns the package supported by this factory.

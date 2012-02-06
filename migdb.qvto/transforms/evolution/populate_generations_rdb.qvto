@@ -73,12 +73,18 @@ mapping RDB::operations::AddSchema::apply(inout gen : RDB::ModelGeneration) {
 	}
 }
 
+/**
+ * ADD SEQUENCE
+ * In the system we use only one global sequence. 
+ * Operation is something like singleton - Sequence can be created only one times
+ */
 query RDB::operations::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// v danem schematu neexistuje sekvence stejneho nazvu
-	return not gen.isSequenceInSchema(self.owningSchemaName, self.name);
+	// sequence with @newDefaultValue must exists in generation
+	return not gen.isSequenceInSchema(self.owningSchemaName, self.name) 
+	// in schema can not be another sequence
+	       and gen.findSchema(self.owningSchemaName)->sequences->size() = 0;
 }
 
-// prida sekvenci do schematu
 mapping RDB::operations::AddSequence::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
 	s.sequences += object RDB::Sequence {
@@ -243,18 +249,16 @@ mapping RDB::operations::SetColumnType::apply(inout gen : RDB::ModelGeneration){
 }
 
 /**
- * SET DEFAULT VALUE
+ * SET COLUMN DEFAULT VALUE
  * This operation set new default value to column
  * Column must exists in actual model generation. 
- * If is property isSequence set on TRUE - Sequence must exist in generation
+ * If is property isSequence set on TRUE - Sequence must exist in generation - this information is used only in SQL generator
  * In sequence case @newDefaultValue means name of sequence in model generation
  */
 query RDB::operations::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
 	var isSequence : Boolean := true;
 	// sequence with @newDefaultValue must exists in generation
-	if (self.isSequence = true) then {
-		isSequence := gen.isSequenceInSchema(self.owningSchemaName, self.newDefaultValue);
-	} endif;
+	if (not gen.isSequenceInSchema(self.owningSchemaName, self.newDefaultValue)) then { isSequence := false; } endif;
 	// column with @owningColumnName must exists in generation
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName) and isSequence;
 }
@@ -262,33 +266,6 @@ query RDB::operations::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration
 mapping RDB::operations::SetColumnDefaultValue::apply(inout gen : RDB::ModelGeneration){
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 	c.defaultValue := self.newDefaultValue;
-	// Save column on which we apply sequnce
-	if(self.isSequence = true) then {
-		gen.findSequence(self.owningSchemaName, self.newDefaultValue).sequencedColumn := c;
-	} endif;
-}
-
-/**
- * SET COLUMN SEQUENCE
- * This operation update sequence which is applicated on column.
- * Column and new sequence must exists in actual model generation. 
- */
-query RDB::operations::SetColumnSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// column with @owningColumnName must exists in generation
-	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName) 
-	// new sequence must exists in generation
-		   and gen.isSequenceInSchema(self.owningSchemaName, self.sequenceName)
-	// old default value must be existing sequence too
-		   and gen.isSequenceInSchema(self.owningSchemaName, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName).defaultValue);
-}
-
-mapping RDB::operations::SetColumnSequence::apply(inout gen : RDB::ModelGeneration){
-	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	// remove column from sequence
-	gen.findSequence(self.owningSchemaName, c.defaultValue).sequencedColumn = null;
-	// add column to new sequence
-	gen.findSequence(self.owningSchemaName, self.sequenceName).sequencedColumn = c;
-	c.defaultValue := self.sequenceName;
 }
 
 
