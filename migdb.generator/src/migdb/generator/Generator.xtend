@@ -294,7 +294,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(SetColumnDefaultValueImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «IF operation.isSequence == true»nextval('«operation.newDefaultValue»')«ELSE»«operation.newDefaultValue»«ENDIF»;
+			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «operation.newDefaultValue»;
 	'''	
 	
 	/**
@@ -332,16 +332,18 @@ class Generator extends BaseCodeGenerator {
     
     /**
      * CHECK INSTANCES
-     * This operation check if table has some rows.
+     * This operation check if table has some own rows.
+     * This SQL check ownership between instances and tables. Table can have
+     * a lot of rows ale nemuseji tabulce patrit hierarchicky.
+     *  
      * @param CheckInstances operation : operation of type CheckInstances
      * @return boolean : t - no instances; f - some instances 
      */ 
     def dispatch genOperation(CheckInstances operation)'''
     	SELECT COUNT(1) > 0 
     		FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
-    		«FOR tab : operation.childTableNames»
-    			LEFT JOIN «tab» ON «tab».id = parent.id		
-    		«ENDFOR»
+    		«FOR tab : operation.childTableNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
+    		WHERE «FOR tab : operation.childTableNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»
     '''
     
 	/**

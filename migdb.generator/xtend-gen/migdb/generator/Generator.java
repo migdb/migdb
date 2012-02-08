@@ -439,18 +439,8 @@ public class Generator extends BaseCodeGenerator {
     String _owningColumnName = operation.getOwningColumnName();
     _builder.append(_owningColumnName, "	");
     _builder.append(" SET DEFAULT ");
-    {
-      boolean _isIsSequence = operation.isIsSequence();
-      boolean _operator_equals = ObjectExtensions.operator_equals(((Boolean)_isIsSequence), ((Boolean)true));
-      if (_operator_equals) {
-        _builder.append("nextval(\'");
-        String _newDefaultValue = operation.getNewDefaultValue();
-        _builder.append(_newDefaultValue, "	");
-        _builder.append("\')");} else {
-        String _newDefaultValue_1 = operation.getNewDefaultValue();
-        _builder.append(_newDefaultValue_1, "	");
-      }
-    }
+    String _newDefaultValue = operation.getNewDefaultValue();
+    _builder.append(_newDefaultValue, "	");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -580,18 +570,35 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_parentTableName, "	");
     _builder.append(" AS parent");
     _builder.newLineIfNotEmpty();
+    _builder.append("\t");
     {
       EList<String> _childTableNames = operation.getChildTableNames();
       for(final String tab : _childTableNames) {
-        _builder.append("\t");
         _builder.append("LEFT JOIN ");
         _builder.append(tab, "	");
         _builder.append(" ON ");
         _builder.append(tab, "	");
-        _builder.append(".id = parent.id\t\t");
-        _builder.newLineIfNotEmpty();
+        _builder.append(".id = parent.id");
       }
     }
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("WHERE ");
+    {
+      EList<String> _childTableNames_1 = operation.getChildTableNames();
+      boolean hasAnyElements = false;
+      for(final String tab_1 : _childTableNames_1) {
+        if (!hasAnyElements) {
+          hasAnyElements = true;
+        } else {
+          _builder.appendImmediate("AND", "	");
+        }
+        _builder.append(" ");
+        _builder.append(tab_1, "	");
+        _builder.append(".id IS null ");
+      }
+    }
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   

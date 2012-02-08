@@ -256,11 +256,8 @@ mapping RDB::operations::SetColumnType::apply(inout gen : RDB::ModelGeneration){
  * In sequence case @newDefaultValue means name of sequence in model generation
  */
 query RDB::operations::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
-	var isSequence : Boolean := true;
-	// sequence with @newDefaultValue must exists in generation
-	if (not gen.isSequenceInSchema(self.owningSchemaName, self.newDefaultValue)) then { isSequence := false; } endif;
 	// column with @owningColumnName must exists in generation
-	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName) and isSequence;
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
 mapping RDB::operations::SetColumnDefaultValue::apply(inout gen : RDB::ModelGeneration){

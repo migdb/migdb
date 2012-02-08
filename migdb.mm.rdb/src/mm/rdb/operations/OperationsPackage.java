@@ -1052,22 +1052,13 @@ public interface OperationsPackage extends EPackage {
 	int SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
-	 * The feature id for the '<em><b>Is Sequence</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE = MODEL_OPERATION_FEATURE_COUNT + 4;
-
-	/**
 	 * The number of structural features of the '<em>Set Column Default Value</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
+	int SET_COLUMN_DEFAULT_VALUE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
@@ -2169,17 +2160,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetColumnDefaultValue_NewDefaultValue();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.SetColumnDefaultValue#isIsSequence <em>Is Sequence</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Sequence</em>'.
-	 * @see mm.rdb.operations.SetColumnDefaultValue#isIsSequence()
-	 * @see #getSetColumnDefaultValue()
-	 * @generated
-	 */
-	EAttribute getSetColumnDefaultValue_IsSequence();
-
-	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.RemoveDefaultValue <em>Remove Default Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3080,14 +3060,6 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SET_COLUMN_DEFAULT_VALUE__NEW_DEFAULT_VALUE = eINSTANCE.getSetColumnDefaultValue_NewDefaultValue();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Sequence</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute SET_COLUMN_DEFAULT_VALUE__IS_SEQUENCE = eINSTANCE.getSetColumnDefaultValue_IsSequence();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.RemoveDefaultValueImpl <em>Remove Default Value</em>}' class.
