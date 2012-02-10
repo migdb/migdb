@@ -1582,7 +1582,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(checkInstancesEClass, CheckInstances.class, "CheckInstances", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCheckInstances_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCheckInstances_ParentTableName(), ecorePackage.getEString(), "parentTableName", null, 1, 1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getCheckInstances_ChildTableNames(), ecorePackage.getEString(), "childTableNames", null, 1, -1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCheckInstances_ChildTableNames(), ecorePackage.getEString(), "childTableNames", null, 0, -1, CheckInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addInstancesEClass, AddInstances.class, "AddInstances", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddInstances_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
