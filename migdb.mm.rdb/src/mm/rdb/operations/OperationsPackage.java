@@ -1190,6 +1190,52 @@ public interface OperationsPackage extends EPackage {
 	int CHECK_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.AddInstancesImpl <em>Add Instances</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.AddInstancesImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddInstances()
+	 * @generated
+	 */
+	int ADD_INSTANCES = 23;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_INSTANCES__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Source Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_INSTANCES__SOURCE_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Target Table Names</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_INSTANCES__TARGET_TABLE_NAMES = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Add Instances</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1197,7 +1243,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 23;
+	int MERGE_TYPE = 24;
 
 
 	/**
@@ -2278,6 +2324,49 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getCheckInstances_ChildTableNames();
 
 	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.AddInstances <em>Add Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Add Instances</em>'.
+	 * @see mm.rdb.operations.AddInstances
+	 * @generated
+	 */
+	EClass getAddInstances();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddInstances#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.AddInstances#getOwningSchemaName()
+	 * @see #getAddInstances()
+	 * @generated
+	 */
+	EAttribute getAddInstances_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddInstances#getSourceTableName <em>Source Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Source Table Name</em>'.
+	 * @see mm.rdb.operations.AddInstances#getSourceTableName()
+	 * @see #getAddInstances()
+	 * @generated
+	 */
+	EAttribute getAddInstances_SourceTableName();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link mm.rdb.operations.AddInstances#getTargetTableNames <em>Target Table Names</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Target Table Names</em>'.
+	 * @see mm.rdb.operations.AddInstances#getTargetTableNames()
+	 * @see #getAddInstances()
+	 * @generated
+	 */
+	EAttribute getAddInstances_TargetTableNames();
+
+	/**
 	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3154,6 +3243,40 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CHECK_INSTANCES__CHILD_TABLE_NAMES = eINSTANCE.getCheckInstances_ChildTableNames();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddInstancesImpl <em>Add Instances</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.AddInstancesImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddInstances()
+		 * @generated
+		 */
+		EClass ADD_INSTANCES = eINSTANCE.getAddInstances();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_INSTANCES__OWNING_SCHEMA_NAME = eINSTANCE.getAddInstances_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Source Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_INSTANCES__SOURCE_TABLE_NAME = eINSTANCE.getAddInstances_SourceTableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Table Names</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_INSTANCES__TARGET_TABLE_NAMES = eINSTANCE.getAddInstances_TargetTableNames();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.

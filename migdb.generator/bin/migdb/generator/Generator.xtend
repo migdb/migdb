@@ -328,7 +328,21 @@ class Generator extends BaseCodeGenerator {
  	 * This operations do not change context of models.
      * This operations just work with instances (rows) in database.
      */
-     
+    
+     /**
+     * ADD INSTANCES
+     * This operation add defined number of rows to defined tables.
+     * This SQL get all instances from source table and copy 
+     * these instances to target tables.
+     *  
+     * @param AddInstances operation : operation of type AddInstances 
+     */ 
+     def dispatch genOperation(AddInstancesImpl operation){
+     	for(String tab : operation.targetTableNames){
+     		generateFile(operation.getFileName(".sql"), this.addInstancesToTabble(operation.owningSchemaName, operation.sourceTableName, tab));
+     	}
+     	return "";
+     }
     
     /**
      * CHECK INSTANCES
@@ -339,7 +353,7 @@ class Generator extends BaseCodeGenerator {
      * @param CheckInstances operation : operation of type CheckInstances
      * @return boolean : t - no instances; f - some instances 
      */ 
-    def dispatch genOperation(CheckInstances operation)'''
+    def dispatch genOperation(CheckInstancesImpl operation)'''
     	SELECT COUNT(1) > 0 
     		FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
     		«FOR tab : operation.childTableNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
@@ -372,6 +386,19 @@ class Generator extends BaseCodeGenerator {
 	
 	
 	/** 		 QUERRIES	 		**/
+	
+	/**
+	 * ADD INSTANCES TO TABLE
+	 * This query copy instances form source table to target table
+	 * @param String schema : tables schema
+	 * @param String targetTable : target table for instances
+	 * @param String sourceTable : source table for copiing
+	 * @return SQL
+	 */
+	def addInstancesToTabble(String schema, String sourceTable, String targetTable)'''
+		INSERT INTO «schema».«targetTable» (id) VALUES
+			SELECT id FROM «schema».«sourceTable»;
+	'''
 	
 	/**
 	 * IS SAME TABLE SIZE

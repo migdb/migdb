@@ -4,18 +4,18 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import mm.rdb.PrimitiveType;
-import mm.rdb.operations.CheckInstances;
 import mm.rdb.operations.MergeType;
-import mm.rdb.operations.ModelOperation;
 import mm.rdb.operations.impl.AddColumnImpl;
 import mm.rdb.operations.impl.AddForeignKeyImpl;
 import mm.rdb.operations.impl.AddIndexImpl;
+import mm.rdb.operations.impl.AddInstancesImpl;
 import mm.rdb.operations.impl.AddNotNullConstraintImpl;
 import mm.rdb.operations.impl.AddPrimaryKeyImpl;
 import mm.rdb.operations.impl.AddSchemaImpl;
 import mm.rdb.operations.impl.AddSequenceImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
+import mm.rdb.operations.impl.CheckInstancesImpl;
 import mm.rdb.operations.impl.CopyInstancesImpl;
 import mm.rdb.operations.impl.ModelOperationImpl;
 import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
@@ -557,7 +557,21 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
-  protected CharSequence _genOperation(final CheckInstances operation) {
+  protected CharSequence _genOperation(final AddInstancesImpl operation) {
+    {
+      EList<String> _targetTableNames = operation.getTargetTableNames();
+      for (final String tab : _targetTableNames) {
+        String _fileName = this.getFileName(operation, ".sql");
+        String _owningSchemaName = operation.getOwningSchemaName();
+        String _sourceTableName = operation.getSourceTableName();
+        StringConcatenation _addInstancesToTabble = this.addInstancesToTabble(_owningSchemaName, _sourceTableName, tab);
+        this.generateFile(_fileName, _addInstancesToTabble);
+      }
+      return "";
+    }
+  }
+  
+  protected CharSequence _genOperation(final CheckInstancesImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("SELECT COUNT(1) > 0 ");
     _builder.newLine();
@@ -674,6 +688,24 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
+  public StringConcatenation addInstancesToTabble(final String schema, final String sourceTable, final String targetTable) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("INSERT INTO ");
+    _builder.append(schema, "");
+    _builder.append(".");
+    _builder.append(targetTable, "");
+    _builder.append(" (id) VALUES");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("SELECT id FROM ");
+    _builder.append(schema, "	");
+    _builder.append(".");
+    _builder.append(sourceTable, "	");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
   public StringConcatenation isSameTableSize(final String schema, final String table1, final String table2) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
@@ -774,13 +806,15 @@ public class Generator extends BaseCodeGenerator {
     return _builder;
   }
   
-  public CharSequence genOperation(final ModelOperation operation) {
+  public CharSequence genOperation(final ModelOperationImpl operation) {
     if ((operation instanceof AddColumnImpl)) {
       return _genOperation((AddColumnImpl)operation);
     } else if ((operation instanceof AddForeignKeyImpl)) {
       return _genOperation((AddForeignKeyImpl)operation);
     } else if ((operation instanceof AddIndexImpl)) {
       return _genOperation((AddIndexImpl)operation);
+    } else if ((operation instanceof AddInstancesImpl)) {
+      return _genOperation((AddInstancesImpl)operation);
     } else if ((operation instanceof AddNotNullConstraintImpl)) {
       return _genOperation((AddNotNullConstraintImpl)operation);
     } else if ((operation instanceof AddPrimaryKeyImpl)) {
@@ -793,6 +827,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddTableImpl)operation);
     } else if ((operation instanceof AddUniqueIndexImpl)) {
       return _genOperation((AddUniqueIndexImpl)operation);
+    } else if ((operation instanceof CheckInstancesImpl)) {
+      return _genOperation((CheckInstancesImpl)operation);
     } else if ((operation instanceof CopyInstancesImpl)) {
       return _genOperation((CopyInstancesImpl)operation);
     } else if ((operation instanceof RemoveColumnConstraintImpl)) {
@@ -817,8 +853,6 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((SetColumnDefaultValueImpl)operation);
     } else if ((operation instanceof SetColumnTypeImpl)) {
       return _genOperation((SetColumnTypeImpl)operation);
-    } else if ((operation instanceof CheckInstances)) {
-      return _genOperation((CheckInstances)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         java.util.Arrays.<Object>asList(operation).toString());

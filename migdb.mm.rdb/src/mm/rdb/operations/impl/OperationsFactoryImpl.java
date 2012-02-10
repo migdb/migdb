@@ -83,6 +83,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.REMOVE_DEFAULT_VALUE: return createRemoveDefaultValue();
 			case OperationsPackage.REMOVE_SEQUENCE: return createRemoveSequence();
 			case OperationsPackage.CHECK_INSTANCES: return createCheckInstances();
+			case OperationsPackage.ADD_INSTANCES: return createAddInstances();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -336,6 +337,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public CheckInstances createCheckInstances() {
 		CheckInstancesImpl checkInstances = new CheckInstancesImpl();
 		return checkInstances;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AddInstances createAddInstances() {
+		AddInstancesImpl addInstances = new AddInstancesImpl();
+		return addInstances;
 	}
 
 	/**
