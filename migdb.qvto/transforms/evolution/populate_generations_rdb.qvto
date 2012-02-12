@@ -355,6 +355,57 @@ mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGenerat
 	c.defaultValue := null;
 }
 
+/* ++++++++++ DATA OPERATIONS ++++++++++++++++++++ */
+// Model is in the same state after use these operations
+
+/**
+ * COPY INSTANCES
+ * This operation copy data from one column to another. 
+ * Target and source column can be in the same table.
+ * MergeType:
+ * strict -> Can not transfer data if a tables have different number of instances (rows).
+ * force -> Delete rows if there is more instancef in source table. If source table has less number
+ * of instances add default value or null.
+ */
+query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// column with @sourceColumnName must exists in generation
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.sourceColumnName)
+	// target column with @targetColumnName must exists in generation
+		   and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName);
+}
+
+mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
+}
+
+/**
+ * CHECK INSTANCES
+ * This operation check if table has some own rows.
+ */
+query RDB::operations::CheckInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// table with @parentTableName must exists in generation
+	return gen.isTableInSchema(self.owningSchemaName, self.parentTableName)
+	// child tables with @Name must exists in generation
+		   and gen.areTablesInSchema(self.owningSchemaName, self.childTableNames);
+}
+
+mapping RDB::operations::CheckInstances::apply(inout gen : RDB::ModelGeneration){
+}
+
+/**
+ * ADD INSTANCES
+ * This operation add defined number of rows to defined tables.
+ */
+query RDB::operations::AddInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
+	// table with @sourceTableName must exists in generation
+	return gen.isTableInSchema(self.owningSchemaName, self.sourceTableName)
+	// target tables with @Name must exists in generation
+		   and gen.areTablesInSchema(self.owningSchemaName, self.targetTableNames);
+}
+
+mapping RDB::operations::AddInstances::apply(inout gen : RDB::ModelGeneration){
+}
+
+
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 // overi, zda-li existuje schema v generaci
@@ -392,6 +443,16 @@ query RDB::ModelGeneration::isTableInSchema(sName : String, tName : String) : Bo
 	return self.findSchema(sName).tables->exists(name = tName);
 }
 
+// overi, zda-li existuji tabulky ve schematu
+query RDB::ModelGeneration::areTablesInSchema(sName : String, tNames : OrderedSet(String)) : Boolean {
+	return tNames->forAll(name | self.isTableInSchema(sName, name));
+//	var b : Boolean := true;
+//	tNames->forEach(tName) {
+//		b = b and self.isTableInSchema(sName, tName);
+//	};
+//	return b;
+}
+
 // vrati tabulku ze schematu
 query RDB::ModelGeneration::findTable(sName : String, tName : String) : RDB::Table {
 	return self.findSchema(sName).tables->selectOne(name = tName);
@@ -402,7 +463,7 @@ query RDB::ModelGeneration::isColumnInTable(sName : String, tName : String, cNam
 	return self.findTable(sName, tName).columns->exists(name = cName);
 }
 
-// overi, zda-li existuje sloupce v tabulce
+// overi, zda-li existuji sloupce v tabulce
 query RDB::ModelGeneration::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
 	var b : Boolean := true;
 	cNames->forEach(cName) {

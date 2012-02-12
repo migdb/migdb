@@ -16,7 +16,7 @@ import eu.collectionspro.mwe.*
 import migdb.generator.*
 
 Workflow {
-/**/
+/**
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
@@ -30,7 +30,7 @@ Workflow {
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output"
 	}	
-/**/
+/**
 	component = QVTOExecutor {
 		transformationFile = "qvto/buildAPP.qvto"
 		outputSlot = "buildModelAPP"
@@ -40,13 +40,13 @@ Workflow {
 		transformationFile = "qvto/buildRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
-/**/
+/**
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_app.qvto"
 		outputSlot = "generationModelAPP"
 	}
-/**/	
+/**	
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
 		inOutSlot = "buildModelRDB"
@@ -58,7 +58,7 @@ Workflow {
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
 		outputSlot = "generationModelRDB"
 	}
-/**/	
+/**	
 	component = Writer {
 		modelSlot = "generationModelAPP"
 		uri = "output/outAPP.xmi"
