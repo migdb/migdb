@@ -1,0 +1,2 @@
+ALTER TABLE public.child 
+	ALTER COLUMN name DROP NOT NULL;

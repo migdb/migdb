@@ -1,0 +1,5 @@
+CREATE OR REPLACE FUNCTION convert_inttoboolean(inttoconvert integer) RETURNS boolean AS
+	$BODY$
+		SELECT CASE WHEN $1 < 1 THEN FALSE ELSE TRUE END;
+	$BODY$
+	LANGUAGE 'sql' IMMUTABLE STRICT; 

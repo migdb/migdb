@@ -44,10 +44,11 @@ main() {
 			op.xmap apply(gen0);
 		} else {
 			log("	operation is invalid " + op.repr());
+			break;
 		} endif;
 	};
 
-	root.operations = root.operations->reject(true);
+	root.operations := root.operations->reject(true);
 }
 
 // kontroluje validitu operace
@@ -61,12 +62,15 @@ abstract mapping RDB::operations::ModelOperation::
 
 /* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
 
+/**
+ * ADD SCHEMA
+ * Operation create new database schema in generation model
+ */
 query RDB::operations::AddSchema::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// v dane generaci neexistuje schema stejneho nazvu
+	// schema with @name must not exists in generation
 	return not gen.isSchemaInGeneration(self.name);
 }
 
-// prida schema do generace
 mapping RDB::operations::AddSchema::apply(inout gen : RDB::ModelGeneration) {
 	gen.schemas += object RDB::Schema {
 		name := self.name;
@@ -79,7 +83,7 @@ mapping RDB::operations::AddSchema::apply(inout gen : RDB::ModelGeneration) {
  * Operation is something like singleton - Sequence can be created only one times
  */
 query RDB::operations::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// sequence with @newDefaultValue must exists in generation
+	// sequence with @newDefaultValue must not exists in generation
 	return not gen.isSequenceInSchema(self.owningSchemaName, self.name) 
 	// in schema can not be another sequence
 	       and gen.findSchema(self.owningSchemaName)->sequences->size() = 0;
@@ -174,10 +178,8 @@ mapping RDB::operations::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) 
 query RDB::operations::AddForeignKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 	// pro danou tabulku neexistuje omezeni stejneho nazvu
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-	// v danem schematu existuje cilova tabulka
-	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName)
 	// v cilove tabulce existuje dany sloupce
-	and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.constrainedColumnName);
+	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
 }
 
 // prida omezeni 'ForeignKey' pro tabulku
@@ -239,7 +241,7 @@ mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
 query RDB::operations::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {
 	// column with @name must exists in generation
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
-	// new type must exists in generation
+	// new type must exists in metamodel
 		   and gen.isPrimitiveType(self.newType);
 }
 
@@ -448,7 +450,7 @@ query RDB::ModelGeneration::areTablesInSchema(sName : String, tNames : OrderedSe
 	return tNames->forAll(name | self.isTableInSchema(sName, name));
 //	var b : Boolean := true;
 //	tNames->forEach(tName) {
-//		b = b and self.isTableInSchema(sName, tName);
+//		b := b and self.isTableInSchema(sName, tName);
 //	};
 //	return b;
 }
@@ -458,18 +460,20 @@ query RDB::ModelGeneration::findTable(sName : String, tName : String) : RDB::Tab
 	return self.findSchema(sName).tables->selectOne(name = tName);
 }
 
-// overi, zda-li existuje sloupec v tabulce
+/**
+ * IS COLUMN IN TABLE
+ * Query tested the existence of the given column in the table.
+ */
 query RDB::ModelGeneration::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
 	return self.findTable(sName, tName).columns->exists(name = cName);
 }
 
-// overi, zda-li existuji sloupce v tabulce
+/**
+ * ARE COLUMNS IN TABLE
+ * Query tested the existence of the given columns in the table.
+ */
 query RDB::ModelGeneration::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
-	var b : Boolean := true;
-	cNames->forEach(cName) {
-		b = b and self.isColumnInTable(sName, tName, cName);
-	};
-	return b;
+	return cNames->forAll(name | self.isColumnInTable(sName, tName, name));
 }
 
 // vrati sloupec z tabulky

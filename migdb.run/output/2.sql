@@ -1,1 +1,1 @@
-CREATE TABLE public.parent ();
+CREATE SEQUENCE public.SEQ_Global START 1;

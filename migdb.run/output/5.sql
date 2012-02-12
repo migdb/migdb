@@ -1,3 +1,2 @@
-ALTER TABLE public.parent
-	ADD CONSTRAINT PK_parent
-	PRIMARY KEY ();
+CREATE INDEX IX_index_id
+	ON public.parent (id);

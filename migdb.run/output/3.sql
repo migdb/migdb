@@ -1,2 +1,1 @@
-ALTER TABLE public.parent
-	ADD COLUMN id int;
+CREATE TABLE public.parent ();

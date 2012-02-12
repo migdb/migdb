@@ -1,0 +1,5 @@
+CREATE OR REPLACE FUNCTION convert_booltoint(booltoconvert boolean) RETURNS integer AS
+	$BODY$
+		SELECT CASE WHEN $1 = TRUE THEN 1 ELSE 0 END;
+	$BODY$
+	LANGUAGE 'sql' IMMUTABLE STRICT;

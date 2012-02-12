@@ -312,13 +312,13 @@ class Generator extends BaseCodeGenerator {
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
 		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
-						«IF operation.newType == "boolean" && operation.oldType == "int"»
+						«IF operation.newType == "int" && operation.oldType == "boolean"»
 							USING converting_booltoint(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "int" && operation.oldType == "boolean"»
+						«ELSEIF operation.newType == "boolean" && operation.oldType == "int"»
 							USING converting_inttoboolean(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "char" && operation.oldType == "boolean"»
+						«ELSEIF operation.newType == "boolean" && operation.oldType == "char"»
 							USING converting_chartobool(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "char" && operation.oldType == "int"»
+						«ELSEIF operation.newType == "int" && operation.oldType == "char"»
 							USING converting_chartoint(«operation.owningColumnName»)
 						«ENDIF»;''';
 	}
