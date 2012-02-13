@@ -1,3 +1,3 @@
-ALTER TABLE publice.child
+ALTER TABLE public.child
 	ADD CONSTRAINT fk_klic
-	FOREIGN KEY (fk) REFERENCES publice.child (id);
+	FOREIGN KEY (fk) REFERENCES public.child (id);

@@ -1,28 +1,3 @@
-/*
- * The MIT License
- * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
-
 modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
 
 transformation DB_To_Rdb(in inModel : RDB, out outModel : RDB);
@@ -51,23 +26,24 @@ main() {
 	root.operations := root.operations->reject(true);
 }
 
-// kontroluje validitu operace
 abstract query RDB::operations::ModelOperation::
 	isValid(gen : RDB::ModelGeneration) : Boolean;
 
-// namapuje danou operaci
 abstract mapping RDB::operations::ModelOperation::
 	apply(inout gen : RDB::ModelGeneration);
 
 
-/* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
+/********************************************************************************
+ *								ADD OPERATIONS									*
+ ********************************************************************************/
+
 
 /**
  * ADD SCHEMA
  * Operation create new database schema in generation model
+ * @restriction : schema with @name must not exists in generation
  */
 query RDB::operations::AddSchema::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// schema with @name must not exists in generation
 	return not gen.isSchemaInGeneration(self.name);
 }
 
@@ -79,13 +55,13 @@ mapping RDB::operations::AddSchema::apply(inout gen : RDB::ModelGeneration) {
 
 /**
  * ADD SEQUENCE
- * In the system we use only one global sequence. 
- * Operation is something like singleton - Sequence can be created only one times
+ * we can use only one global sequence in the system. 
+ * Operation is something like singleton - Sequence can be created only one times.
+ * @restriction : sequence with @newDefaultValue must not exists in generation
+ * @restriction : in the schema must not be other sequence
  */
 query RDB::operations::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// sequence with @newDefaultValue must not exists in generation
 	return not gen.isSequenceInSchema(self.owningSchemaName, self.name) 
-	// in schema can not be another sequence
 	       and gen.findSchema(self.owningSchemaName)->sequences->size() = 0;
 }
 
@@ -97,14 +73,17 @@ mapping RDB::operations::AddSequence::apply(inout gen : RDB::ModelGeneration) {
 	}
 }
 
+/**
+ * ADD INDEX
+ * Create index in defined schema.
+ * @restriction : in the schema must not be an index with the same @name.
+ * @restriction : columns with @columnsNames must exists in table
+ */
 query RDB::operations::AddIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// v danem schematu neexistuje index stejneho nazvu
 	return not gen.isIndexInSchema(self.owningSchemaName, self.name)
-	// v dane tabulce existuje dany sloupce
 		   and gen.areColumnsInTable(self.owningSchemaName, self.owningTableName, self.columnsNames);
 }
 
-// prida index do schematu
 mapping RDB::operations::AddIndex::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
 	s.indexes += object RDB::Index {
@@ -113,12 +92,15 @@ mapping RDB::operations::AddIndex::apply(inout gen : RDB::ModelGeneration) {
 	}
 }
 
+/**
+ * ADD TABLE
+ * Create table in defined schema.
+ * @restriction : in the schema must not be a table with the same @name.
+ */
 query RDB::operations::AddTable::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// v danem schematu neexistuje tabulka stejneho nazvu
 	return not gen.isTableInSchema(self.owningSchemaName, self.name);
 }
 
-// prida tabulku do schematu
 mapping RDB::operations::AddTable::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
 	s.tables += object RDB::Table {
@@ -205,7 +187,9 @@ mapping RDB::operations::AddNotNullConstraint::apply(inout gen : RDB::ModelGener
 	}
 }
 
-/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
+/********************************************************************************
+ *								SET OPERATIONS									*
+ ********************************************************************************/
 
 query RDB::operations::RenameTable::isValid( gen : RDB::ModelGeneration) : Boolean {
 	// tabulka s nazvem @name existuje ve schematu
@@ -237,11 +221,11 @@ mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
  * SET COLUMN TYPE
  * This operation replace old type of column with a new type of column
  * Column and new type must exists in actual model generation. 
+ * @restriction : column with @name must exists in generation
+ * @restriction : new type must exists in metamodel
  */
 query RDB::operations::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// column with @name must exists in generation
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
-	// new type must exists in metamodel
 		   and gen.isPrimitiveType(self.newType);
 }
 
@@ -256,9 +240,9 @@ mapping RDB::operations::SetColumnType::apply(inout gen : RDB::ModelGeneration){
  * Column must exists in actual model generation. 
  * If is property isSequence set on TRUE - Sequence must exist in generation - this information is used only in SQL generator
  * In sequence case @newDefaultValue means name of sequence in model generation
+ * @restriction : column with @owningColumnName must exists in table
  */
 query RDB::operations::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// column with @owningColumnName must exists in generation
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
@@ -268,19 +252,25 @@ mapping RDB::operations::SetColumnDefaultValue::apply(inout gen : RDB::ModelGene
 }
 
 
-/* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
+/********************************************************************************
+ *							 REMOVE OPERATIONS									*
+ ********************************************************************************/
 
+/**
+ * REMOVE TABLE
+ * This operation remove table from schema and generation.
+ * @restriction : table with @name must exists in generation
+ * @restriction : table must not have columns
+ * @restriction : table must not have table constraints
+ */
 query RDB::operations::RemoveTable::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// tabulka existuje v danem schematu
 	return gen.isTableInSchema(self.owningSchemaName, self.name)
-	// v tabulce existuje pouze identifikacni sloupec
-		   and gen.findTable(self.owningSchemaName, self.name).columns->size() = 1;
+		   and gen.findTable(self.owningSchemaName, self.name).columns->size() = 0
+		   and gen.findTable(self.owningSchemaName, self.name).constraints->size() = 0;
 }
 
-// odstrani tabulku z daneho schematu
 mapping RDB::operations::RemoveTable::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
-	// odstraneni tabulky
 	s.tables := s.tables->excluding(gen.findTable(self.owningSchemaName, self.name));
 }
 
@@ -345,10 +335,10 @@ mapping RDB::operations::RemoveIndex::apply(inout gen : RDB::ModelGeneration) {
 /**
  * REMOVE DEFAULT VALUE
  * This operation remove default value and set value to NULL
- * Column must exists in actual model generation. 
+ * Column must exists in actual model generation.
+ * @restriction :  column with @name must exists in generation
  */
-query RDB::operations::RemoveDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// column with @name must exists in generation
+query RDB::operations::RemoveDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean { 
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
@@ -357,8 +347,9 @@ mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGenerat
 	c.defaultValue := null;
 }
 
-/* ++++++++++ DATA OPERATIONS ++++++++++++++++++++ */
-// Model is in the same state after use these operations
+/********************************************************************************
+ *								DATA OPERATIONS									*
+ ********************************************************************************/
 
 /**
  * COPY INSTANCES
@@ -368,11 +359,11 @@ mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGenerat
  * strict -> Can not transfer data if a tables have different number of instances (rows).
  * force -> Delete rows if there is more instancef in source table. If source table has less number
  * of instances add default value or null.
+ * @restriction : column with @sourceColumnName must exists in generation
+ * @restriction : target column with @targetColumnName must exists in generation
  */
 query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// column with @sourceColumnName must exists in generation
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.sourceColumnName)
-	// target column with @targetColumnName must exists in generation
 		   and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName);
 }
 
@@ -382,11 +373,11 @@ mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
 /**
  * CHECK INSTANCES
  * This operation check if table has some own rows.
+ * @restriction : table with @parentTableName must exists in generation
+ * @restriction : child tables with @name must exists in generation
  */
 query RDB::operations::CheckInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// table with @parentTableName must exists in generation
 	return gen.isTableInSchema(self.owningSchemaName, self.parentTableName)
-	// child tables with @Name must exists in generation
 		   and gen.areTablesInSchema(self.owningSchemaName, self.childTableNames);
 }
 
@@ -396,11 +387,11 @@ mapping RDB::operations::CheckInstances::apply(inout gen : RDB::ModelGeneration)
 /**
  * ADD INSTANCES
  * This operation add defined number of rows to defined tables.
+ * @restriction : table with @sourceTableName must exists in generation
+ * @restriction : target tables with @name must exists in generation
  */
 query RDB::operations::AddInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// table with @sourceTableName must exists in generation
 	return gen.isTableInSchema(self.owningSchemaName, self.sourceTableName)
-	// target tables with @Name must exists in generation
 		   and gen.areTablesInSchema(self.owningSchemaName, self.targetTableNames);
 }
 
@@ -408,7 +399,9 @@ mapping RDB::operations::AddInstances::apply(inout gen : RDB::ModelGeneration){
 }
 
 
-/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+/********************************************************************************
+ *									QUERIES										*
+ ********************************************************************************/
 
 // overi, zda-li existuje schema v generaci
 query RDB::ModelGeneration::isSchemaInGeneration(sName : String) : Boolean {

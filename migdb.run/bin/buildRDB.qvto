@@ -145,7 +145,23 @@ main() {
 		targetTableName := "parent";
 		constrainedColumnName := "fk";
 	};	
+	
+	var removeFk : RDB::operations::RemoveTableConstraint := object RDB::operations::RemoveTableConstraint {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk_klic";	
+	};	
 
+	var removeColumnFk : RDB::operations::RemoveColumn := object RDB::operations::RemoveColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk";		
+	};
+	
+	var removeTableChild : RDB::operations::RemoveTable := object RDB::operations::RemoveTable {
+		owningSchemaName := "public";
+		name := "child";
+	};
 	
 	var model : RDB::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
@@ -175,4 +191,7 @@ main() {
 	 model.operations += removeColumn;
 	 model.operations += columnfkChild;
 	 model.operations += fk;
+	 model.operations += removeFk;
+	 model.operations += removeColumnFk;
+	 model.operations += removeTableChild;
 }

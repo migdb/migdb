@@ -83,7 +83,8 @@ Workflow {
 	}
 /**
 	component = CommandLineExec{
-		command = "java migdb_sql/Main [cesta] [ovladac]"
+		command = ""
+		//command = "java migdb_sql/Main [cesta] [ovladac]"
 	}		
 /**/
 }

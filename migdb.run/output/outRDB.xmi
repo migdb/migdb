@@ -7,16 +7,16 @@
           <columns name="id" type="int"/>
           <constraints xsi:type="rdb:PrimaryKey" name="PK_idcolumn" underlyingIndex="/0/@modelGenerations.0/@schemas.0/@indexes.0"/>
         </tables>
-        <tables name="child">
-          <columns name="fk" type="int"/>
-        </tables>
         <sequences name="SEQ_Global" startValue="1"/>
         <indexes name="IX_index_id" columns="/0/@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
       </schemas>
     </modelGenerations>
   </rdb:ModelRoot>
+  <rdb:Table name="child"/>
   <rdb:Column name="name" type="int"/>
   <rdb:NotNullConstraint name="notnull_name"/>
-  <rdb:Index name="IX_index_name" columns="/1"/>
-  <rdb:UniqueIndex name="unique" underlyingIndex="/3"/>
+  <rdb:Index name="IX_index_name" columns="/2"/>
+  <rdb:UniqueIndex name="unique" underlyingIndex="/4"/>
+  <rdb:Column name="fk" type="int"/>
+  <rdb:ForeignKey name="fk_klic" targetTable="/0/@modelGenerations.0/@schemas.0/@tables.0"/>
 </xmi:XMI>
