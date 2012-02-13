@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link mm.rdb.operations.impl.AddUniqueIndexImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddUniqueIndexImpl#getOwningTableName <em>Owning Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddUniqueIndexImpl#getName <em>Name</em>}</li>
+ *   <li>{@link mm.rdb.operations.impl.AddUniqueIndexImpl#getColumnName <em>Column Name</em>}</li>
  *   <li>{@link mm.rdb.operations.impl.AddUniqueIndexImpl#getUnderlyingIndexName <em>Underlying Index Name</em>}</li>
  * </ul>
  * </p>
@@ -91,6 +92,26 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColumnName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COLUMN_NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getColumnName() <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColumnName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String columnName = COLUMN_NAME_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getUnderlyingIndexName() <em>Underlying Index Name</em>}' attribute.
@@ -199,6 +220,27 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getColumnName() {
+		return columnName;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setColumnName(String newColumnName) {
+		String oldColumnName = columnName;
+		columnName = newColumnName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.ADD_UNIQUE_INDEX__COLUMN_NAME, oldColumnName, columnName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getUnderlyingIndexName() {
 		return underlyingIndexName;
 	}
@@ -229,6 +271,8 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 				return getOwningTableName();
 			case OperationsPackage.ADD_UNIQUE_INDEX__NAME:
 				return getName();
+			case OperationsPackage.ADD_UNIQUE_INDEX__COLUMN_NAME:
+				return getColumnName();
 			case OperationsPackage.ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME:
 				return getUnderlyingIndexName();
 		}
@@ -251,6 +295,9 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 				return;
 			case OperationsPackage.ADD_UNIQUE_INDEX__NAME:
 				setName((String)newValue);
+				return;
+			case OperationsPackage.ADD_UNIQUE_INDEX__COLUMN_NAME:
+				setColumnName((String)newValue);
 				return;
 			case OperationsPackage.ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME:
 				setUnderlyingIndexName((String)newValue);
@@ -276,6 +323,9 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 			case OperationsPackage.ADD_UNIQUE_INDEX__NAME:
 				setName(NAME_EDEFAULT);
 				return;
+			case OperationsPackage.ADD_UNIQUE_INDEX__COLUMN_NAME:
+				setColumnName(COLUMN_NAME_EDEFAULT);
+				return;
 			case OperationsPackage.ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME:
 				setUnderlyingIndexName(UNDERLYING_INDEX_NAME_EDEFAULT);
 				return;
@@ -297,6 +347,8 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 				return OWNING_TABLE_NAME_EDEFAULT == null ? owningTableName != null : !OWNING_TABLE_NAME_EDEFAULT.equals(owningTableName);
 			case OperationsPackage.ADD_UNIQUE_INDEX__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case OperationsPackage.ADD_UNIQUE_INDEX__COLUMN_NAME:
+				return COLUMN_NAME_EDEFAULT == null ? columnName != null : !COLUMN_NAME_EDEFAULT.equals(columnName);
 			case OperationsPackage.ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME:
 				return UNDERLYING_INDEX_NAME_EDEFAULT == null ? underlyingIndexName != null : !UNDERLYING_INDEX_NAME_EDEFAULT.equals(underlyingIndexName);
 		}
@@ -319,6 +371,8 @@ public class AddUniqueIndexImpl extends ModelOperationImpl implements AddUniqueI
 		result.append(owningTableName);
 		result.append(", name: ");
 		result.append(name);
+		result.append(", columnName: ");
+		result.append(columnName);
 		result.append(", underlyingIndexName: ");
 		result.append(underlyingIndexName);
 		result.append(')');

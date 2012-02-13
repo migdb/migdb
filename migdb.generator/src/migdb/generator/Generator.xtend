@@ -129,12 +129,14 @@ class Generator extends BaseCodeGenerator {
 	 * CREATE UNIQUE INDEX
 	 * To create a B-tree index on the column title in the table films:
 	 * >> CREATE UNIQUE INDEX title_idx ON films (title); <<
+	 * To add a constraint, the table constraint syntax is used. For example:
+	 * >> ALTER TABLE products ADD CONSTRAINT some_name UNIQUE (product_no); <<
 	 * Unique index can use only on column with index.
 	 * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
 	 */
 	def dispatch genOperation(AddUniqueIndexImpl operation) '''
-		CREATE UNIQUE INDEX «operation.name»
-			ON «operation.owningSchemaName».«operation.owningTableName» («operation.underlyingIndexName»);
+		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
+			ADD CONSTRAINT «operation.name» UNIQUE («operation.columnName»);
 	'''	
 	
 	/**

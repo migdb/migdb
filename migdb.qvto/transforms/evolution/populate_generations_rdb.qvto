@@ -123,14 +123,19 @@ mapping RDB::operations::AddColumn::apply(inout gen : RDB::ModelGeneration) {
 	}
 }
 
+/**
+ * ADD UNIQUE INDEX
+ * Create unique constraint on defined column.
+ * @restriction : in the table must not be a constraint with the same @name.
+ * @restriction : index with @underlyingIndexName must exists in schema
+ * @restriction : column with @columnName must exists in table
+ */
 query RDB::operations::AddUniqueIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// pro danou tabulku neexistuje omezeni stejneho nazvu
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-	// v danem schematu existuje dany index
-	and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName);
+		   and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName)
+		   and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.columnName);
 }
 
-// prida omezeni 'UniqueIndex' pro tabulku
 mapping RDB::operations::AddUniqueIndex::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
 	t.constraints += object RDB::UniqueIndex {
@@ -221,7 +226,7 @@ mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
  * SET COLUMN TYPE
  * This operation replace old type of column with a new type of column
  * Column and new type must exists in actual model generation. 
- * @restriction : column with @name must exists in generation
+ * @restriction : column with @name must exists in table
  * @restriction : new type must exists in metamodel
  */
 query RDB::operations::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {

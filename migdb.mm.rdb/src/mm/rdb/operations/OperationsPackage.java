@@ -603,13 +603,22 @@ public interface OperationsPackage extends EPackage {
 	int ADD_UNIQUE_INDEX__NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ADD_UNIQUE_INDEX__COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
 	 * The feature id for the '<em><b>Underlying Index Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+	int ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Add Unique Index</em>' class.
@@ -618,7 +627,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_UNIQUE_INDEX_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+	int ADD_UNIQUE_INDEX_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddPrimaryKeyImpl <em>Add Primary Key</em>}' class.
@@ -1763,6 +1772,17 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddUniqueIndex_Name();
 
 	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddUniqueIndex#getColumnName <em>Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Column Name</em>'.
+	 * @see mm.rdb.operations.AddUniqueIndex#getColumnName()
+	 * @see #getAddUniqueIndex()
+	 * @generated
+	 */
+	EAttribute getAddUniqueIndex_ColumnName();
+
+	/**
 	 * Returns the meta object for the attribute '{@link mm.rdb.operations.AddUniqueIndex#getUnderlyingIndexName <em>Underlying Index Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2805,6 +2825,14 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ADD_UNIQUE_INDEX__NAME = eINSTANCE.getAddUniqueIndex_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ADD_UNIQUE_INDEX__COLUMN_NAME = eINSTANCE.getAddUniqueIndex_ColumnName();
 
 		/**
 		 * The meta object literal for the '<em><b>Underlying Index Name</b></em>' attribute feature.

@@ -168,20 +168,20 @@ public class Generator extends BaseCodeGenerator {
   
   protected CharSequence _genOperation(final AddUniqueIndexImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("CREATE UNIQUE INDEX ");
-    String _name = operation.getName();
-    _builder.append(_name, "");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("ON ");
+    _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "	");
+    _builder.append(_owningSchemaName, "");
     _builder.append(".");
     String _owningTableName = operation.getOwningTableName();
-    _builder.append(_owningTableName, "	");
-    _builder.append(" (");
-    String _underlyingIndexName = operation.getUnderlyingIndexName();
-    _builder.append(_underlyingIndexName, "	");
+    _builder.append(_owningTableName, "");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ADD CONSTRAINT ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.append(" UNIQUE (");
+    String _columnName = operation.getColumnName();
+    _builder.append(_columnName, "	");
     _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;

@@ -18,6 +18,7 @@ package mm.rdb.operations;
  *   <li>{@link mm.rdb.operations.AddUniqueIndex#getOwningSchemaName <em>Owning Schema Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddUniqueIndex#getOwningTableName <em>Owning Table Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddUniqueIndex#getName <em>Name</em>}</li>
+ *   <li>{@link mm.rdb.operations.AddUniqueIndex#getColumnName <em>Column Name</em>}</li>
  *   <li>{@link mm.rdb.operations.AddUniqueIndex#getUnderlyingIndexName <em>Underlying Index Name</em>}</li>
  * </ul>
  * </p>
@@ -104,6 +105,32 @@ public interface AddUniqueIndex extends ModelOperation {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Column Name</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Column Name</em>' attribute.
+	 * @see #setColumnName(String)
+	 * @see mm.rdb.operations.OperationsPackage#getAddUniqueIndex_ColumnName()
+	 * @model required="true"
+	 * @generated
+	 */
+	String getColumnName();
+
+	/**
+	 * Sets the value of the '{@link mm.rdb.operations.AddUniqueIndex#getColumnName <em>Column Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Column Name</em>' attribute.
+	 * @see #getColumnName()
+	 * @generated
+	 */
+	void setColumnName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Underlying Index Name</b></em>' attribute.

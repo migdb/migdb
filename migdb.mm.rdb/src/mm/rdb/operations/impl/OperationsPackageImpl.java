@@ -737,8 +737,17 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAddUniqueIndex_UnderlyingIndexName() {
+	public EAttribute getAddUniqueIndex_ColumnName() {
 		return (EAttribute)addUniqueIndexEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getAddUniqueIndex_UnderlyingIndexName() {
+		return (EAttribute)addUniqueIndexEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1332,6 +1341,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(addUniqueIndexEClass, ADD_UNIQUE_INDEX__OWNING_SCHEMA_NAME);
 		createEAttribute(addUniqueIndexEClass, ADD_UNIQUE_INDEX__OWNING_TABLE_NAME);
 		createEAttribute(addUniqueIndexEClass, ADD_UNIQUE_INDEX__NAME);
+		createEAttribute(addUniqueIndexEClass, ADD_UNIQUE_INDEX__COLUMN_NAME);
 		createEAttribute(addUniqueIndexEClass, ADD_UNIQUE_INDEX__UNDERLYING_INDEX_NAME);
 
 		addPrimaryKeyEClass = createEClass(ADD_PRIMARY_KEY);
@@ -1520,6 +1530,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getAddUniqueIndex_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, AddUniqueIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddUniqueIndex_OwningTableName(), ecorePackage.getEString(), "owningTableName", null, 1, 1, AddUniqueIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddUniqueIndex_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddUniqueIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAddUniqueIndex_ColumnName(), ecorePackage.getEString(), "columnName", null, 1, 1, AddUniqueIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddUniqueIndex_UnderlyingIndexName(), ecorePackage.getEString(), "underlyingIndexName", null, 1, 1, AddUniqueIndex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(addPrimaryKeyEClass, AddPrimaryKey.class, "AddPrimaryKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
