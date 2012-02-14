@@ -329,3 +329,21 @@ query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::operation
 	};
 	return null;
 }
+
+query APP::Class::isDescendantOf(cName : String) : Boolean {
+	if (self.parent <> null) then {
+		if (self.parent.name = cName) then return true
+		else return self.parent.isDescendantOf(cName) endif;
+	} endif;
+	return false;
+}
+
+query APP::ModelGeneration::findDescendants(cName : String) : Set(String) {
+	var d : Set(String);
+	self.classes->oclAsType(APP::Class)->forEach(c) {
+		if (c.isDescendantOf(cName)) then {
+			d += c.name;
+		} endif;
+	};
+	return d;
+}
