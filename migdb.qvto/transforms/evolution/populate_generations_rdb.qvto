@@ -133,7 +133,7 @@ mapping RDB::operations::AddColumn::apply(inout gen : RDB::ModelGeneration) {
 query RDB::operations::AddUniqueIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
 		   and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName)
-		   and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.columnName);
+		   and gen.areColumnsInTable(self.owningSchemaName, self.owningTableName, self.columnsNames);
 }
 
 mapping RDB::operations::AddUniqueIndex::apply(inout gen : RDB::ModelGeneration) {
@@ -227,16 +227,14 @@ mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
  * This operation replace old type of column with a new type of column
  * Column and new type must exists in actual model generation. 
  * @restriction : column with @name must exists in table
- * @restriction : new type must exists in metamodel
  */
 query RDB::operations::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {
-	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
-		   and gen.isPrimitiveType(self.newType);
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
 mapping RDB::operations::SetColumnType::apply(inout gen : RDB::ModelGeneration){
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	c.type := gen.createPrimitiveType(self.newType);
+	c.type := self.newType;
 }
 
 /**
@@ -366,10 +364,12 @@ mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGenerat
  * of instances add default value or null.
  * @restriction : column with @sourceColumnName must exists in generation
  * @restriction : target column with @targetColumnName must exists in generation
+ * @restriction : target and source column type must be same
  */
 query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.sourceColumnName)
-		   and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName);
+		   and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName)
+		   and gen.isSameColumnType(self.owningSchemaName, self.owningTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName);
 }
 
 mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
@@ -559,4 +559,12 @@ query RDB::ModelGeneration::createPrimitiveType (type : String) : RDB::Primitive
 		case (type = "float") return RDB::PrimitiveType::float;
 	};
 	return null;
+}
+
+/**
+ * IS SAME COLUMN TYPE
+ * Query tested type of columns. 
+ */
+query RDB::ModelGeneration::isSameColumnType (sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
 }

@@ -1,0 +1,2 @@
+UPDATE public.tableB AS target SET cislo = 
+							(SELECT number FROM public.tableA AS source WHERE target.id = source.id );

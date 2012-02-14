@@ -1,2 +1,2 @@
-ALTER TABLE public.child
-	ADD COLUMN surname char;
+ALTER TABLE public.tableB
+	ADD COLUMN id int;

@@ -1,2 +1,2 @@
-ALTER TABLE public.child 
-	RENAME COLUMN surname TO name;
+CREATE INDEX IX_tableB_id
+	ON public.tableB (id);

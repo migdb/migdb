@@ -1,2 +1,2 @@
-CREATE INDEX IX_index_id
-	ON public.parent (id);
+CREATE INDEX IX_tableA_id
+	ON public.tableA (id);

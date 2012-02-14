@@ -1,4 +1,3 @@
-ALTER TABLE public.child 
-				  	  ALTER COLUMN name TYPE int
-						USING converting_chartoint(name)
-						;
+ALTER TABLE public.tableB
+	ADD CONSTRAINT PK_tableB_id
+	PRIMARY KEY (id);

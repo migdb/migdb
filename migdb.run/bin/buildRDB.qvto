@@ -13,7 +13,7 @@ main() {
 		startValue := 1;
 	};
 	
-	var parentTable : RDB::operations::AddTable := object RDB::operations::AddTable {
+/*	var parentTable : RDB::operations::AddTable := object RDB::operations::AddTable {
 		owningSchemaName := "public";
 		name := "parent";
 	};
@@ -162,7 +162,98 @@ main() {
 		owningSchemaName := "public";
 		name := "child";
 	};
+*/
+	 // test datovych operaci
+	 
+	 // TABLE A
+	var tableA : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "tableA";
+	}; 	
 	
+	var columnIDTableA : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "id";
+		type := PrimitiveType::int;
+	};
+	
+	var indexOnIDTableA : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "IX_tableA_id";
+		columnsNames := OrderedSet{"id"};
+	};
+	
+	var pkOnIDTableAIndex : RDB::operations::AddPrimaryKey := object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "PK_tableA_id";
+		underlyingIndexName := "IX_tableA_id";
+		columnName := "id";		
+	};	
+	
+	var columnNumber : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "number";
+		type := PrimitiveType::int;
+	};	
+	
+// TABLE B
+	var tableB : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "tableB";
+	}; 	
+	
+	var columnIDTableB : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "id";
+		type := PrimitiveType::int;
+	};
+	
+	var indexOnIDTableB : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "IX_tableB_id";
+		columnsNames := OrderedSet{"id"};
+	};
+	
+	var pkOnIDTableBIndex : RDB::operations::AddPrimaryKey := object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "PK_tableB_id";
+		underlyingIndexName := "IX_tableB_id";
+		columnName := "id";		
+	};	
+	
+	var columnCislo : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "cislo";
+		type := PrimitiveType::int;
+	};		
+	
+	var columnNew : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "new_column";
+		type := PrimitiveType::int;
+	};			
+	
+	var copyInstances : RDB::operations::CopyInstances := object RDB::operations::CopyInstances {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		sourceColumnName := "number";
+		targetTableName := "tableB";
+		targetColumnName := "new_column";
+		type := RDB::operations::MergeType::strict; // musi mit stejne instanci		
+	};
+	
+	
+	
+	// MODEL
 	var model : RDB::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
@@ -171,6 +262,7 @@ main() {
 	 
 	 model.operations += schema;
 	 model.operations += sequence;
+/*
 	 model.operations += parentTable;
 	 model.operations += columnIDParent;
 	 model.operations += indexOnIDParent;
@@ -194,4 +286,25 @@ main() {
 	 model.operations += removeFk;
 	 model.operations += removeColumnFk;
 	 model.operations += removeTableChild;
+*/
+	 // Testing datovych operaci
+	 
+	 model.operations += tableA;
+	 model.operations += columnIDTableA;
+	 model.operations += indexOnIDTableA;
+	 model.operations += pkOnIDTableAIndex;
+	 model.operations += columnNumber;
+	 
+	 model.operations += tableB;
+	 model.operations += columnIDTableB;
+	 model.operations += indexOnIDTableB;
+	 model.operations += pkOnIDTableBIndex;
+	 model.operations += columnCislo;
+	 model.operations += columnNew;
+	 // copy instances
+	 model.operations += copyInstances;
+	 
+	 
+	 
+
 }

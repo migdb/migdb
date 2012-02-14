@@ -135,8 +135,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
 	 */
 	def dispatch genOperation(AddUniqueIndexImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name» UNIQUE («operation.columnName»);
+		CREATE UNIQUE INDEX «operation.name» 
+			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»); 
 	'''	
 	
 	/**
@@ -314,13 +314,13 @@ class Generator extends BaseCodeGenerator {
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
 		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
-						«IF operation.newType == "int" && operation.oldType == "boolean"»
+						«IF operation.newType.toString().equals("int") && operation.oldType.toString().equals("boolean")»
 							USING converting_booltoint(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "boolean" && operation.oldType == "int"»
+						«ELSEIF operation.newType.toString().equals("boolean") && operation.oldType.toString().equals("int")»
 							USING converting_inttoboolean(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "boolean" && operation.oldType == "char"»
+						«ELSEIF operation.newType.toString().equals("boolean") && operation.oldType.toString().equals("char")»
 							USING converting_chartobool(«operation.owningColumnName»)
-						«ELSEIF operation.newType == "int" && operation.oldType == "char"»
+						«ELSEIF operation.newType.toString().equals("int") && operation.oldType.toString().equals("char")»
 							USING converting_chartoint(«operation.owningColumnName»)
 						«ENDIF»;''';
 	}
@@ -356,10 +356,14 @@ class Generator extends BaseCodeGenerator {
      * @return boolean : t - no instances; f - some instances 
      */ 
     def dispatch genOperation(CheckInstancesImpl operation)'''
-    	SELECT COUNT(1) > 0 
-    		FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
-    		«FOR tab : operation.childTableNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
-    		WHERE «FOR tab : operation.childTableNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»
+    	«IF operation.childTableNames.empty»
+    		SELECT COUNT(1) > 0 FROM «operation.owningSchemaName».«operation.parentTableName»;
+    	«ELSE»
+    		SELECT COUNT(1) > 0 
+    			FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
+    			«FOR tab : operation.childTableNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
+    			WHERE «FOR tab : operation.childTableNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»    	
+    	«ENDIF»
     '''
     
 	/**

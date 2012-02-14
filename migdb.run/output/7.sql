@@ -1,1 +1,2 @@
-CREATE TABLE public.dite ();
+ALTER TABLE public.tableA
+	ADD COLUMN number int;

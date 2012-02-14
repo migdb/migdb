@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage">
-  <rdb:ModelRoot>
-    <modelGenerations>
-      <schemas name="public">
-        <tables name="parent">
-          <columns name="id" type="int"/>
-          <constraints xsi:type="rdb:PrimaryKey" name="PK_idcolumn" underlyingIndex="/0/@modelGenerations.0/@schemas.0/@indexes.0"/>
-        </tables>
-        <sequences name="SEQ_Global" startValue="1"/>
-        <indexes name="IX_index_id" columns="/0/@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
-      </schemas>
-    </modelGenerations>
-  </rdb:ModelRoot>
-  <rdb:Table name="child"/>
-  <rdb:Column name="name" type="int"/>
-  <rdb:NotNullConstraint name="notnull_name"/>
-  <rdb:Index name="IX_index_name" columns="/2"/>
-  <rdb:UniqueIndex name="unique" underlyingIndex="/4"/>
-  <rdb:Column name="fk" type="int"/>
-  <rdb:ForeignKey name="fk_klic" targetTable="/0/@modelGenerations.0/@schemas.0/@tables.0"/>
-</xmi:XMI>
+<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage">
+  <modelGenerations>
+    <schemas name="public">
+      <tables name="tableA">
+        <columns name="id" type="int"/>
+        <columns name="number" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_tableA_id" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
+      </tables>
+      <tables name="tableB">
+        <columns name="id" type="int"/>
+        <columns name="cislo" type="int"/>
+        <columns name="new_column" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_tableB_id" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
+      </tables>
+      <sequences name="SEQ_Global" startValue="1"/>
+      <indexes name="IX_tableA_id" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
+      <indexes name="IX_tableB_id" columns="//@modelGenerations.0/@schemas.0/@tables.1/@columns.0"/>
+    </schemas>
+  </modelGenerations>
+</rdb:ModelRoot>

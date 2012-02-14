@@ -33,7 +33,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.IntegerExtensions;
-import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 import org.eclipse.xtext.xbase.lib.StringExtensions;
 import org.eclipse.xtext.xtend2.lib.StringConcatenation;
 
@@ -168,21 +167,32 @@ public class Generator extends BaseCodeGenerator {
   
   protected CharSequence _genOperation(final AddUniqueIndexImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("ALTER TABLE ");
-    String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "");
-    _builder.append(".");
-    String _owningTableName = operation.getOwningTableName();
-    _builder.append(_owningTableName, "");
+    _builder.append("CREATE UNIQUE INDEX ");
+    String _name = operation.getName();
+    _builder.append(_name, "");
+    _builder.append(" ");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("ADD CONSTRAINT ");
-    String _name = operation.getName();
-    _builder.append(_name, "	");
-    _builder.append(" UNIQUE (");
-    String _columnName = operation.getColumnName();
-    _builder.append(_columnName, "	");
-    _builder.append(");");
+    _builder.append("ON ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "	");
+    _builder.append(".");
+    String _owningTableName = operation.getOwningTableName();
+    _builder.append(_owningTableName, "	");
+    _builder.append(" (");
+    {
+      EList<String> _columnsNames = operation.getColumnsNames();
+      boolean hasAnyElements = false;
+      for(final String col : _columnsNames) {
+        if (!hasAnyElements) {
+          hasAnyElements = true;
+        } else {
+          _builder.appendImmediate(",", "	");
+        }
+        _builder.append(col, "	");
+      }
+    }
+    _builder.append("); ");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -474,19 +484,21 @@ public class Generator extends BaseCodeGenerator {
       String _owningColumnName = operation.getOwningColumnName();
       _builder.append(_owningColumnName, "				  	  ");
       _builder.append(" TYPE ");
-      String _newType = operation.getNewType();
+      PrimitiveType _newType = operation.getNewType();
       _builder.append(_newType, "				  	  ");
       _builder.newLineIfNotEmpty();
       {
         boolean _operator_and = false;
-        String _newType_1 = operation.getNewType();
-        boolean _operator_equals = ObjectExtensions.operator_equals(_newType_1, "int");
-        if (!_operator_equals) {
+        PrimitiveType _newType_1 = operation.getNewType();
+        String _string = _newType_1.toString();
+        boolean _equals = _string.equals("int");
+        if (!_equals) {
           _operator_and = false;
         } else {
-          String _oldType = operation.getOldType();
-          boolean _operator_equals_1 = ObjectExtensions.operator_equals(_oldType, "boolean");
-          _operator_and = BooleanExtensions.operator_and(_operator_equals, _operator_equals_1);
+          PrimitiveType _oldType = operation.getOldType();
+          String _string_1 = _oldType.toString();
+          boolean _equals_1 = _string_1.equals("boolean");
+          _operator_and = BooleanExtensions.operator_and(_equals, _equals_1);
         }
         if (_operator_and) {
           _builder.append("\t\t\t\t\t\t");
@@ -496,14 +508,16 @@ public class Generator extends BaseCodeGenerator {
           _builder.append(")");
           _builder.newLineIfNotEmpty();} else {
           boolean _operator_and_1 = false;
-          String _newType_2 = operation.getNewType();
-          boolean _operator_equals_2 = ObjectExtensions.operator_equals(_newType_2, "boolean");
-          if (!_operator_equals_2) {
+          PrimitiveType _newType_2 = operation.getNewType();
+          String _string_2 = _newType_2.toString();
+          boolean _equals_2 = _string_2.equals("boolean");
+          if (!_equals_2) {
             _operator_and_1 = false;
           } else {
-            String _oldType_1 = operation.getOldType();
-            boolean _operator_equals_3 = ObjectExtensions.operator_equals(_oldType_1, "int");
-            _operator_and_1 = BooleanExtensions.operator_and(_operator_equals_2, _operator_equals_3);
+            PrimitiveType _oldType_1 = operation.getOldType();
+            String _string_3 = _oldType_1.toString();
+            boolean _equals_3 = _string_3.equals("int");
+            _operator_and_1 = BooleanExtensions.operator_and(_equals_2, _equals_3);
           }
           if (_operator_and_1) {
             _builder.append("\t\t\t\t\t\t");
@@ -513,14 +527,16 @@ public class Generator extends BaseCodeGenerator {
             _builder.append(")");
             _builder.newLineIfNotEmpty();} else {
             boolean _operator_and_2 = false;
-            String _newType_3 = operation.getNewType();
-            boolean _operator_equals_4 = ObjectExtensions.operator_equals(_newType_3, "boolean");
-            if (!_operator_equals_4) {
+            PrimitiveType _newType_3 = operation.getNewType();
+            String _string_4 = _newType_3.toString();
+            boolean _equals_4 = _string_4.equals("boolean");
+            if (!_equals_4) {
               _operator_and_2 = false;
             } else {
-              String _oldType_2 = operation.getOldType();
-              boolean _operator_equals_5 = ObjectExtensions.operator_equals(_oldType_2, "char");
-              _operator_and_2 = BooleanExtensions.operator_and(_operator_equals_4, _operator_equals_5);
+              PrimitiveType _oldType_2 = operation.getOldType();
+              String _string_5 = _oldType_2.toString();
+              boolean _equals_5 = _string_5.equals("char");
+              _operator_and_2 = BooleanExtensions.operator_and(_equals_4, _equals_5);
             }
             if (_operator_and_2) {
               _builder.append("\t\t\t\t\t\t");
@@ -530,14 +546,16 @@ public class Generator extends BaseCodeGenerator {
               _builder.append(")");
               _builder.newLineIfNotEmpty();} else {
               boolean _operator_and_3 = false;
-              String _newType_4 = operation.getNewType();
-              boolean _operator_equals_6 = ObjectExtensions.operator_equals(_newType_4, "int");
-              if (!_operator_equals_6) {
+              PrimitiveType _newType_4 = operation.getNewType();
+              String _string_6 = _newType_4.toString();
+              boolean _equals_6 = _string_6.equals("int");
+              if (!_equals_6) {
                 _operator_and_3 = false;
               } else {
-                String _oldType_3 = operation.getOldType();
-                boolean _operator_equals_7 = ObjectExtensions.operator_equals(_oldType_3, "char");
-                _operator_and_3 = BooleanExtensions.operator_and(_operator_equals_6, _operator_equals_7);
+                PrimitiveType _oldType_3 = operation.getOldType();
+                String _string_7 = _oldType_3.toString();
+                boolean _equals_7 = _string_7.equals("char");
+                _operator_and_3 = BooleanExtensions.operator_and(_equals_6, _equals_7);
               }
               if (_operator_and_3) {
                 _builder.append("\t\t\t\t\t\t");
@@ -573,46 +591,61 @@ public class Generator extends BaseCodeGenerator {
   
   protected CharSequence _genOperation(final CheckInstancesImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("SELECT COUNT(1) > 0 ");
-    _builder.newLine();
-    _builder.append("\t");
-    _builder.append("FROM ");
-    String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "	");
-    _builder.append(".");
-    String _parentTableName = operation.getParentTableName();
-    _builder.append(_parentTableName, "	");
-    _builder.append(" AS parent");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
     {
       EList<String> _childTableNames = operation.getChildTableNames();
-      for(final String tab : _childTableNames) {
-        _builder.append("LEFT JOIN ");
-        _builder.append(tab, "	");
-        _builder.append(" ON ");
-        _builder.append(tab, "	");
-        _builder.append(".id = parent.id");
-      }
-    }
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("WHERE ");
-    {
-      EList<String> _childTableNames_1 = operation.getChildTableNames();
-      boolean hasAnyElements = false;
-      for(final String tab_1 : _childTableNames_1) {
-        if (!hasAnyElements) {
-          hasAnyElements = true;
-        } else {
-          _builder.appendImmediate("AND", "	");
+      boolean _isEmpty = _childTableNames.isEmpty();
+      if (_isEmpty) {
+        _builder.append("SELECT COUNT(1) > 0 FROM ");
+        String _owningSchemaName = operation.getOwningSchemaName();
+        _builder.append(_owningSchemaName, "");
+        _builder.append(".");
+        String _parentTableName = operation.getParentTableName();
+        _builder.append(_parentTableName, "");
+        _builder.append(";");
+        _builder.newLineIfNotEmpty();} else {
+        _builder.append("SELECT COUNT(1) > 0 ");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("FROM ");
+        String _owningSchemaName_1 = operation.getOwningSchemaName();
+        _builder.append(_owningSchemaName_1, "	");
+        _builder.append(".");
+        String _parentTableName_1 = operation.getParentTableName();
+        _builder.append(_parentTableName_1, "	");
+        _builder.append(" AS parent");
+        _builder.newLineIfNotEmpty();
+        _builder.append("\t");
+        {
+          EList<String> _childTableNames_1 = operation.getChildTableNames();
+          for(final String tab : _childTableNames_1) {
+            _builder.append("LEFT JOIN ");
+            _builder.append(tab, "	");
+            _builder.append(" ON ");
+            _builder.append(tab, "	");
+            _builder.append(".id = parent.id");
+          }
         }
-        _builder.append(" ");
-        _builder.append(tab_1, "	");
-        _builder.append(".id IS null ");
+        _builder.newLineIfNotEmpty();
+        _builder.append("\t");
+        _builder.append("WHERE ");
+        {
+          EList<String> _childTableNames_2 = operation.getChildTableNames();
+          boolean hasAnyElements = false;
+          for(final String tab_1 : _childTableNames_2) {
+            if (!hasAnyElements) {
+              hasAnyElements = true;
+            } else {
+              _builder.appendImmediate("AND", "	");
+            }
+            _builder.append(" ");
+            _builder.append(tab_1, "	");
+            _builder.append(".id IS null ");
+          }
+        }
+        _builder.append("    \t");
+        _builder.newLineIfNotEmpty();
       }
     }
-    _builder.newLineIfNotEmpty();
     return _builder;
   }
   

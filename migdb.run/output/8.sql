@@ -1,2 +1,1 @@
-ALTER TABLE public.dite 
-	RENAME TO child;
+CREATE TABLE public.tableB ();

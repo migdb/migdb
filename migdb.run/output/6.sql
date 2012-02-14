@@ -1,3 +1,3 @@
-ALTER TABLE public.parent
-	ADD CONSTRAINT PK_idcolumn
+ALTER TABLE public.tableA
+	ADD CONSTRAINT PK_tableA_id
 	PRIMARY KEY (id);

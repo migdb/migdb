@@ -1,1 +1,1 @@
-CREATE TABLE public.parent ();
+CREATE TABLE public.tableA ();
