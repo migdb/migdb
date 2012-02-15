@@ -226,12 +226,11 @@ mapping APP::operations::SetOpposite::apply(inout gen : APP::ModelGeneration) {
 }
 
 query APP::operations::SetAbstract::isValid(gen : APP::ModelGeneration) : Boolean {
-	return gen.isAbstractClassInGeneration(self.name);
+	return gen.isClassInGeneration(self.name);
 }
 
 mapping APP::operations::SetAbstract::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.name).oclAsType(APP::Class);
-	c.isAbstract := self.isAbstract;
+	gen.findClass(self.name).isAbstract := self.isAbstract;
 }
 
 query APP::operations::SetParent::isValid(gen : APP::ModelGeneration) : Boolean {

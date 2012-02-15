@@ -298,12 +298,18 @@
         <eLiterals name="force" value="1"/>
         <eLiterals name="tolerant" value="2"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CheckInstances" eSuperTypes="#//rdb/operations/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="HasNoOwnInstances" eSuperTypes="#//rdb/operations/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentTableName" lowerBound="1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="childTableNames" upperBound="-1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="descendantsNames" upperBound="-1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="HasNoInstances" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddInstances" eSuperTypes="#//rdb/operations/ModelOperation">
