@@ -157,7 +157,7 @@ query APP::AbstractClass::isTypeValid(gen : APP::ModelGeneration, type : String)
 		return gen.isPrimitiveClassInGeneration(type);
 	} endif;
 	if (self.oclIsTypeOf(APP::Class)) then {
-		return gen.isAbstractClassInGeneration(type);
+		return gen.isPrimitiveClassInGeneration(type) or gen.isAbstractClassInGeneration(type);
 	} endif;
 	return false;
 }
@@ -420,7 +420,7 @@ query APP::ModelGeneration::findClass(cName : String) : APP::Class {
 }
 
 query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
-	return (lowerBound > -1 and (upperBound = -1 or upperBound >= lowerBound));
+	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
 
