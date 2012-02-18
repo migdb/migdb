@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="ASCII"?>
 <rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage">
-  <modelGenerations/>
+  <modelGenerations>
+    <schemas name="public">
+      <tables name="party">
+        <columns name="id" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_party" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
+      </tables>
+      <tables name="legalperson">
+        <columns name="id" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_legalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
+      </tables>
+      <tables name="naturalperson">
+        <columns name="id" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_naturalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.2"/>
+      </tables>
+      <sequences name="seq_global" startValue="1"/>
+      <indexes name="IX_party_id" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
+      <indexes name="IX_legalperson_id" columns="//@modelGenerations.0/@schemas.0/@tables.1/@columns.0"/>
+      <indexes name="IX_naturalperson_id" columns="//@modelGenerations.0/@schemas.0/@tables.2/@columns.0"/>
+    </schemas>
+  </modelGenerations>
 </rdb:ModelRoot>

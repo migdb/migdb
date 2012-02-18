@@ -1,2 +1,1 @@
-ALTER TABLE public.party
-	ADD COLUMN id int;
+CREATE SEQUENCE public.seq_global START 1;

@@ -1,2 +1,3 @@
-ALTER TABLE public.legalperson
-	ADD COLUMN id int;
+ALTER TABLE public.party
+	ADD CONSTRAINT PK_party
+	PRIMARY KEY (id);

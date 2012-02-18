@@ -1,3 +1,2 @@
 ALTER TABLE public.party
-	ADD CONSTRAINT PK_party
-	PRIMARY KEY ();
+	ADD COLUMN id int;

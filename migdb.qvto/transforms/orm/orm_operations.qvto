@@ -92,6 +92,7 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
+		columnName := "id";
 		name := "PK_" + self.name.toLower();
 		underlyingIndexName := "IX_" + self.name.toLower() + "_id";
 	};

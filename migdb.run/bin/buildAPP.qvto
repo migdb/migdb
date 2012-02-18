@@ -82,7 +82,7 @@ main() {
 		name := "NaturalPerson";
 		parentName := "Party";
 	};														  
-												  																					  									  												  												  									  	
+											  																					  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {

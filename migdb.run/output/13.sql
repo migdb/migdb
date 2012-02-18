@@ -1,2 +1,2 @@
-ALTER TABLE public.tableB
-	ADD COLUMN new_column int;
+CREATE INDEX IX_naturalperson_id
+	ON public.naturalperson (id);
