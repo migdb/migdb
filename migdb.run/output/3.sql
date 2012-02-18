@@ -1,1 +1,2 @@
-CREATE TABLE public.tableA ();
+CREATE INDEX IX_party_id
+	ON public.party (id);

@@ -17,9 +17,7 @@ import mm.app.InheritanceType;
  * The following features are supported:
  * <ul>
  *   <li>{@link mm.app.operations.AddClass#getName <em>Name</em>}</li>
- *   <li>{@link mm.app.operations.AddClass#getParent <em>Parent</em>}</li>
  *   <li>{@link mm.app.operations.AddClass#isIsAbstract <em>Is Abstract</em>}</li>
- *   <li>{@link mm.app.operations.AddClass#isIsEmbedded <em>Is Embedded</em>}</li>
  *   <li>{@link mm.app.operations.AddClass#getTableName <em>Table Name</em>}</li>
  *   <li>{@link mm.app.operations.AddClass#getInheritanceType <em>Inheritance Type</em>}</li>
  * </ul>
@@ -57,32 +55,6 @@ public interface AddClass extends ModelOperation {
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Parent</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Parent</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parent</em>' attribute.
-	 * @see #setParent(String)
-	 * @see mm.app.operations.OperationsPackage#getAddClass_Parent()
-	 * @model
-	 * @generated
-	 */
-	String getParent();
-
-	/**
-	 * Sets the value of the '{@link mm.app.operations.AddClass#getParent <em>Parent</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Parent</em>' attribute.
-	 * @see #getParent()
-	 * @generated
-	 */
-	void setParent(String value);
-
-	/**
 	 * Returns the value of the '<em><b>Is Abstract</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -107,32 +79,6 @@ public interface AddClass extends ModelOperation {
 	 * @generated
 	 */
 	void setIsAbstract(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Is Embedded</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Is Embedded</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Is Embedded</em>' attribute.
-	 * @see #setIsEmbedded(boolean)
-	 * @see mm.app.operations.OperationsPackage#getAddClass_IsEmbedded()
-	 * @model
-	 * @generated
-	 */
-	boolean isIsEmbedded();
-
-	/**
-	 * Sets the value of the '{@link mm.app.operations.AddClass#isIsEmbedded <em>Is Embedded</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Is Embedded</em>' attribute.
-	 * @see #isIsEmbedded()
-	 * @generated
-	 */
-	void setIsEmbedded(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Table Name</b></em>' attribute.

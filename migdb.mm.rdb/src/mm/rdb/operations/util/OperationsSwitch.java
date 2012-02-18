@@ -223,10 +223,17 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case OperationsPackage.CHECK_INSTANCES: {
-				CheckInstances checkInstances = (CheckInstances)theEObject;
-				T result = caseCheckInstances(checkInstances);
-				if (result == null) result = caseModelOperation(checkInstances);
+			case OperationsPackage.HAS_NO_OWN_INSTANCES: {
+				HasNoOwnInstances hasNoOwnInstances = (HasNoOwnInstances)theEObject;
+				T result = caseHasNoOwnInstances(hasNoOwnInstances);
+				if (result == null) result = caseModelOperation(hasNoOwnInstances);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case OperationsPackage.HAS_NO_INSTANCES: {
+				HasNoInstances hasNoInstances = (HasNoInstances)theEObject;
+				T result = caseHasNoInstances(hasNoInstances);
+				if (result == null) result = caseModelOperation(hasNoInstances);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -572,17 +579,32 @@ public class OperationsSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Check Instances</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Has No Own Instances</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Check Instances</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Has No Own Instances</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseCheckInstances(CheckInstances object) {
+	public T caseHasNoOwnInstances(HasNoOwnInstances object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Has No Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Has No Instances</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseHasNoInstances(HasNoInstances object) {
 		return null;
 	}
 

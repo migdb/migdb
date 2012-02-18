@@ -1,2 +1,2 @@
-ALTER TABLE public.tableA
-	ADD COLUMN number int;
+CREATE INDEX IX_legalperson_id
+	ON public.legalperson (id);

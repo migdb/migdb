@@ -200,31 +200,13 @@ public interface OperationsPackage extends EPackage {
 	int ADD_CLASS__NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Parent</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_CLASS__PARENT = MODEL_OPERATION_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Is Abstract</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_CLASS__IS_ABSTRACT = MODEL_OPERATION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Is Embedded</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ADD_CLASS__IS_EMBEDDED = MODEL_OPERATION_FEATURE_COUNT + 3;
+	int ADD_CLASS__IS_ABSTRACT = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Table Name</b></em>' attribute.
@@ -233,7 +215,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_CLASS__TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 4;
+	int ADD_CLASS__TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Inheritance Type</b></em>' attribute.
@@ -242,7 +224,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_CLASS__INHERITANCE_TYPE = MODEL_OPERATION_FEATURE_COUNT + 5;
+	int ADD_CLASS__INHERITANCE_TYPE = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Add Class</em>' class.
@@ -251,7 +233,7 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ADD_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 6;
+	int ADD_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.RenameEntityImpl <em>Rename Entity</em>}' class.
@@ -1193,17 +1175,6 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getAddClass_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.AddClass#getParent <em>Parent</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Parent</em>'.
-	 * @see mm.app.operations.AddClass#getParent()
-	 * @see #getAddClass()
-	 * @generated
-	 */
-	EAttribute getAddClass_Parent();
-
-	/**
 	 * Returns the meta object for the attribute '{@link mm.app.operations.AddClass#isIsAbstract <em>Is Abstract</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1213,17 +1184,6 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAddClass_IsAbstract();
-
-	/**
-	 * Returns the meta object for the attribute '{@link mm.app.operations.AddClass#isIsEmbedded <em>Is Embedded</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Is Embedded</em>'.
-	 * @see mm.app.operations.AddClass#isIsEmbedded()
-	 * @see #getAddClass()
-	 * @generated
-	 */
-	EAttribute getAddClass_IsEmbedded();
 
 	/**
 	 * Returns the meta object for the attribute '{@link mm.app.operations.AddClass#getTableName <em>Table Name</em>}'.
@@ -2039,28 +1999,12 @@ public interface OperationsPackage extends EPackage {
 		EAttribute ADD_CLASS__NAME = eINSTANCE.getAddClass_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Parent</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_CLASS__PARENT = eINSTANCE.getAddClass_Parent();
-
-		/**
 		 * The meta object literal for the '<em><b>Is Abstract</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EAttribute ADD_CLASS__IS_ABSTRACT = eINSTANCE.getAddClass_IsAbstract();
-
-		/**
-		 * The meta object literal for the '<em><b>Is Embedded</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ADD_CLASS__IS_EMBEDDED = eINSTANCE.getAddClass_IsEmbedded();
 
 		/**
 		 * The meta object literal for the '<em><b>Table Name</b></em>' attribute feature.

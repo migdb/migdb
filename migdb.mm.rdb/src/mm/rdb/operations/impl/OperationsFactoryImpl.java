@@ -82,7 +82,8 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.SET_COLUMN_DEFAULT_VALUE: return createSetColumnDefaultValue();
 			case OperationsPackage.REMOVE_DEFAULT_VALUE: return createRemoveDefaultValue();
 			case OperationsPackage.REMOVE_SEQUENCE: return createRemoveSequence();
-			case OperationsPackage.CHECK_INSTANCES: return createCheckInstances();
+			case OperationsPackage.HAS_NO_OWN_INSTANCES: return createHasNoOwnInstances();
+			case OperationsPackage.HAS_NO_INSTANCES: return createHasNoInstances();
 			case OperationsPackage.ADD_INSTANCES: return createAddInstances();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -334,9 +335,19 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public CheckInstances createCheckInstances() {
-		CheckInstancesImpl checkInstances = new CheckInstancesImpl();
-		return checkInstances;
+	public HasNoOwnInstances createHasNoOwnInstances() {
+		HasNoOwnInstancesImpl hasNoOwnInstances = new HasNoOwnInstancesImpl();
+		return hasNoOwnInstances;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public HasNoInstances createHasNoInstances() {
+		HasNoInstancesImpl hasNoInstances = new HasNoInstancesImpl();
+		return hasNoInstances;
 	}
 
 	/**

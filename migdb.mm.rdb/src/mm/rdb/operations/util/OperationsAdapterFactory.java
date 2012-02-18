@@ -160,8 +160,12 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createRemoveSequenceAdapter();
 			}
 			@Override
-			public Adapter caseCheckInstances(CheckInstances object) {
-				return createCheckInstancesAdapter();
+			public Adapter caseHasNoOwnInstances(HasNoOwnInstances object) {
+				return createHasNoOwnInstancesAdapter();
+			}
+			@Override
+			public Adapter caseHasNoInstances(HasNoInstances object) {
+				return createHasNoInstancesAdapter();
 			}
 			@Override
 			public Adapter caseAddInstances(AddInstances object) {
@@ -496,16 +500,30 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.CheckInstances <em>Check Instances</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.HasNoOwnInstances <em>Has No Own Instances</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.rdb.operations.CheckInstances
+	 * @see mm.rdb.operations.HasNoOwnInstances
 	 * @generated
 	 */
-	public Adapter createCheckInstancesAdapter() {
+	public Adapter createHasNoOwnInstancesAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.HasNoInstances <em>Has No Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.HasNoInstances
+	 * @generated
+	 */
+	public Adapter createHasNoInstancesAdapter() {
 		return null;
 	}
 

@@ -1153,14 +1153,14 @@ public interface OperationsPackage extends EPackage {
 	int REMOVE_SEQUENCE_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link mm.rdb.operations.impl.CheckInstancesImpl <em>Check Instances</em>}' class.
+	 * The meta object id for the '{@link mm.rdb.operations.impl.HasNoOwnInstancesImpl <em>Has No Own Instances</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see mm.rdb.operations.impl.CheckInstancesImpl
-	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getCheckInstances()
+	 * @see mm.rdb.operations.impl.HasNoOwnInstancesImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getHasNoOwnInstances()
 	 * @generated
 	 */
-	int CHECK_INSTANCES = 22;
+	int HAS_NO_OWN_INSTANCES = 22;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -1169,34 +1169,71 @@ public interface OperationsPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CHECK_INSTANCES__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+	int HAS_NO_OWN_INSTANCES__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Parent Table Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Table Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHECK_INSTANCES__PARENT_TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+	int HAS_NO_OWN_INSTANCES__TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Child Table Names</b></em>' attribute list.
+	 * The feature id for the '<em><b>Descendants Names</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHECK_INSTANCES__CHILD_TABLE_NAMES = MODEL_OPERATION_FEATURE_COUNT + 2;
+	int HAS_NO_OWN_INSTANCES__DESCENDANTS_NAMES = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>Check Instances</em>' class.
+	 * The number of structural features of the '<em>Has No Own Instances</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CHECK_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+	int HAS_NO_OWN_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.HasNoInstancesImpl <em>Has No Instances</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.HasNoInstancesImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getHasNoInstances()
+	 * @generated
+	 */
+	int HAS_NO_INSTANCES = 23;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HAS_NO_INSTANCES__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HAS_NO_INSTANCES__TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Has No Instances</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HAS_NO_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link mm.rdb.operations.impl.AddInstancesImpl <em>Add Instances</em>}' class.
@@ -1206,7 +1243,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getAddInstances()
 	 * @generated
 	 */
-	int ADD_INSTANCES = 23;
+	int ADD_INSTANCES = 24;
 
 	/**
 	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
@@ -1252,7 +1289,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 24;
+	int MERGE_TYPE = 25;
 
 
 	/**
@@ -2301,47 +2338,79 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getRemoveSequence_OwningSchemaName();
 
 	/**
-	 * Returns the meta object for class '{@link mm.rdb.operations.CheckInstances <em>Check Instances</em>}'.
+	 * Returns the meta object for class '{@link mm.rdb.operations.HasNoOwnInstances <em>Has No Own Instances</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Check Instances</em>'.
-	 * @see mm.rdb.operations.CheckInstances
+	 * @return the meta object for class '<em>Has No Own Instances</em>'.
+	 * @see mm.rdb.operations.HasNoOwnInstances
 	 * @generated
 	 */
-	EClass getCheckInstances();
+	EClass getHasNoOwnInstances();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.CheckInstances#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.HasNoOwnInstances#getOwningSchemaName <em>Owning Schema Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
-	 * @see mm.rdb.operations.CheckInstances#getOwningSchemaName()
-	 * @see #getCheckInstances()
+	 * @see mm.rdb.operations.HasNoOwnInstances#getOwningSchemaName()
+	 * @see #getHasNoOwnInstances()
 	 * @generated
 	 */
-	EAttribute getCheckInstances_OwningSchemaName();
+	EAttribute getHasNoOwnInstances_OwningSchemaName();
 
 	/**
-	 * Returns the meta object for the attribute '{@link mm.rdb.operations.CheckInstances#getParentTableName <em>Parent Table Name</em>}'.
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.HasNoOwnInstances#getTableName <em>Table Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Parent Table Name</em>'.
-	 * @see mm.rdb.operations.CheckInstances#getParentTableName()
-	 * @see #getCheckInstances()
+	 * @return the meta object for the attribute '<em>Table Name</em>'.
+	 * @see mm.rdb.operations.HasNoOwnInstances#getTableName()
+	 * @see #getHasNoOwnInstances()
 	 * @generated
 	 */
-	EAttribute getCheckInstances_ParentTableName();
+	EAttribute getHasNoOwnInstances_TableName();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link mm.rdb.operations.CheckInstances#getChildTableNames <em>Child Table Names</em>}'.
+	 * Returns the meta object for the attribute list '{@link mm.rdb.operations.HasNoOwnInstances#getDescendantsNames <em>Descendants Names</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Child Table Names</em>'.
-	 * @see mm.rdb.operations.CheckInstances#getChildTableNames()
-	 * @see #getCheckInstances()
+	 * @return the meta object for the attribute list '<em>Descendants Names</em>'.
+	 * @see mm.rdb.operations.HasNoOwnInstances#getDescendantsNames()
+	 * @see #getHasNoOwnInstances()
 	 * @generated
 	 */
-	EAttribute getCheckInstances_ChildTableNames();
+	EAttribute getHasNoOwnInstances_DescendantsNames();
+
+	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.HasNoInstances <em>Has No Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Has No Instances</em>'.
+	 * @see mm.rdb.operations.HasNoInstances
+	 * @generated
+	 */
+	EClass getHasNoInstances();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.HasNoInstances#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.HasNoInstances#getOwningSchemaName()
+	 * @see #getHasNoInstances()
+	 * @generated
+	 */
+	EAttribute getHasNoInstances_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.HasNoInstances#getTableName <em>Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Table Name</em>'.
+	 * @see mm.rdb.operations.HasNoInstances#getTableName()
+	 * @see #getHasNoInstances()
+	 * @generated
+	 */
+	EAttribute getHasNoInstances_TableName();
 
 	/**
 	 * Returns the meta object for class '{@link mm.rdb.operations.AddInstances <em>Add Instances</em>}'.
@@ -3239,14 +3308,14 @@ public interface OperationsPackage extends EPackage {
 		EAttribute REMOVE_SEQUENCE__OWNING_SCHEMA_NAME = eINSTANCE.getRemoveSequence_OwningSchemaName();
 
 		/**
-		 * The meta object literal for the '{@link mm.rdb.operations.impl.CheckInstancesImpl <em>Check Instances</em>}' class.
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.HasNoOwnInstancesImpl <em>Has No Own Instances</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see mm.rdb.operations.impl.CheckInstancesImpl
-		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getCheckInstances()
+		 * @see mm.rdb.operations.impl.HasNoOwnInstancesImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getHasNoOwnInstances()
 		 * @generated
 		 */
-		EClass CHECK_INSTANCES = eINSTANCE.getCheckInstances();
+		EClass HAS_NO_OWN_INSTANCES = eINSTANCE.getHasNoOwnInstances();
 
 		/**
 		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
@@ -3254,23 +3323,49 @@ public interface OperationsPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CHECK_INSTANCES__OWNING_SCHEMA_NAME = eINSTANCE.getCheckInstances_OwningSchemaName();
+		EAttribute HAS_NO_OWN_INSTANCES__OWNING_SCHEMA_NAME = eINSTANCE.getHasNoOwnInstances_OwningSchemaName();
 
 		/**
-		 * The meta object literal for the '<em><b>Parent Table Name</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Table Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CHECK_INSTANCES__PARENT_TABLE_NAME = eINSTANCE.getCheckInstances_ParentTableName();
+		EAttribute HAS_NO_OWN_INSTANCES__TABLE_NAME = eINSTANCE.getHasNoOwnInstances_TableName();
 
 		/**
-		 * The meta object literal for the '<em><b>Child Table Names</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Descendants Names</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute CHECK_INSTANCES__CHILD_TABLE_NAMES = eINSTANCE.getCheckInstances_ChildTableNames();
+		EAttribute HAS_NO_OWN_INSTANCES__DESCENDANTS_NAMES = eINSTANCE.getHasNoOwnInstances_DescendantsNames();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.HasNoInstancesImpl <em>Has No Instances</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.HasNoInstancesImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getHasNoInstances()
+		 * @generated
+		 */
+		EClass HAS_NO_INSTANCES = eINSTANCE.getHasNoInstances();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute HAS_NO_INSTANCES__OWNING_SCHEMA_NAME = eINSTANCE.getHasNoInstances_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute HAS_NO_INSTANCES__TABLE_NAME = eINSTANCE.getHasNoInstances_TableName();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.impl.AddInstancesImpl <em>Add Instances</em>}' class.

@@ -15,8 +15,9 @@ import mm.rdb.operations.impl.AddSchemaImpl;
 import mm.rdb.operations.impl.AddSequenceImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
-import mm.rdb.operations.impl.CheckInstancesImpl;
 import mm.rdb.operations.impl.CopyInstancesImpl;
+import mm.rdb.operations.impl.HasNoInstancesImpl;
+import mm.rdb.operations.impl.HasNoOwnInstancesImpl;
 import mm.rdb.operations.impl.ModelOperationImpl;
 import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
 import mm.rdb.operations.impl.RemoveColumnImpl;
@@ -63,10 +64,15 @@ public class Generator extends BaseCodeGenerator {
   }
   
   public File generateOperationFile(final ModelOperationImpl operation) {
-    String _fileName = this.getFileName(operation, ".sql");
-    CharSequence _genOperation = this.genOperation(operation);
-    File _generateFile = this.generateFile(_fileName, _genOperation);
-    return _generateFile;
+    File _xblockexpression = null;
+    {
+      CharSequence _genOperation = this.genOperation(operation);
+      CharSequence text = _genOperation;
+      String _fileName = this.getFileName(operation, ".sql");
+      File _generateFile = this.generateFile(_fileName, text);
+      _xblockexpression = (_generateFile);
+    }
+    return _xblockexpression;
   }
   
   public String getFileName(final ModelOperationImpl operation, final String type) {
@@ -589,63 +595,62 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
-  protected CharSequence _genOperation(final CheckInstancesImpl operation) {
+  protected CharSequence _genOperation(final HasNoInstancesImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
+    _builder.append("SELECT COUNT(1) > 0 FROM ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _tableName = operation.getTableName();
+    _builder.append(_tableName, "");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected CharSequence _genOperation(final HasNoOwnInstancesImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("SELECT COUNT(1) > 0 ");
+    _builder.newLine();
+    _builder.append("\t");
+    _builder.append("FROM ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "	");
+    _builder.append(".");
+    String _tableName = operation.getTableName();
+    _builder.append(_tableName, "	");
+    _builder.append(" AS parent");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
     {
-      EList<String> _childTableNames = operation.getChildTableNames();
-      boolean _isEmpty = _childTableNames.isEmpty();
-      if (_isEmpty) {
-        _builder.append("SELECT COUNT(1) > 0 FROM ");
-        String _owningSchemaName = operation.getOwningSchemaName();
-        _builder.append(_owningSchemaName, "");
-        _builder.append(".");
-        String _parentTableName = operation.getParentTableName();
-        _builder.append(_parentTableName, "");
-        _builder.append(";");
-        _builder.newLineIfNotEmpty();} else {
-        _builder.append("SELECT COUNT(1) > 0 ");
-        _builder.newLine();
-        _builder.append("\t");
-        _builder.append("FROM ");
-        String _owningSchemaName_1 = operation.getOwningSchemaName();
-        _builder.append(_owningSchemaName_1, "	");
-        _builder.append(".");
-        String _parentTableName_1 = operation.getParentTableName();
-        _builder.append(_parentTableName_1, "	");
-        _builder.append(" AS parent");
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        {
-          EList<String> _childTableNames_1 = operation.getChildTableNames();
-          for(final String tab : _childTableNames_1) {
-            _builder.append("LEFT JOIN ");
-            _builder.append(tab, "	");
-            _builder.append(" ON ");
-            _builder.append(tab, "	");
-            _builder.append(".id = parent.id");
-          }
-        }
-        _builder.newLineIfNotEmpty();
-        _builder.append("\t");
-        _builder.append("WHERE ");
-        {
-          EList<String> _childTableNames_2 = operation.getChildTableNames();
-          boolean hasAnyElements = false;
-          for(final String tab_1 : _childTableNames_2) {
-            if (!hasAnyElements) {
-              hasAnyElements = true;
-            } else {
-              _builder.appendImmediate("AND", "	");
-            }
-            _builder.append(" ");
-            _builder.append(tab_1, "	");
-            _builder.append(".id IS null ");
-          }
-        }
-        _builder.append("    \t");
-        _builder.newLineIfNotEmpty();
+      EList<String> _descendantsNames = operation.getDescendantsNames();
+      for(final String tab : _descendantsNames) {
+        _builder.append("LEFT JOIN ");
+        _builder.append(tab, "	");
+        _builder.append(" ON ");
+        _builder.append(tab, "	");
+        _builder.append(".id = parent.id");
       }
     }
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("WHERE ");
+    {
+      EList<String> _descendantsNames_1 = operation.getDescendantsNames();
+      boolean hasAnyElements = false;
+      for(final String tab_1 : _descendantsNames_1) {
+        if (!hasAnyElements) {
+          hasAnyElements = true;
+        } else {
+          _builder.appendImmediate("AND", "	");
+        }
+        _builder.append(" ");
+        _builder.append(tab_1, "	");
+        _builder.append(".id IS null ");
+      }
+    }
+    _builder.append("    \t");
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   
@@ -860,10 +865,12 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddTableImpl)operation);
     } else if ((operation instanceof AddUniqueIndexImpl)) {
       return _genOperation((AddUniqueIndexImpl)operation);
-    } else if ((operation instanceof CheckInstancesImpl)) {
-      return _genOperation((CheckInstancesImpl)operation);
     } else if ((operation instanceof CopyInstancesImpl)) {
       return _genOperation((CopyInstancesImpl)operation);
+    } else if ((operation instanceof HasNoInstancesImpl)) {
+      return _genOperation((HasNoInstancesImpl)operation);
+    } else if ((operation instanceof HasNoOwnInstancesImpl)) {
+      return _genOperation((HasNoOwnInstancesImpl)operation);
     } else if ((operation instanceof RemoveColumnConstraintImpl)) {
       return _genOperation((RemoveColumnConstraintImpl)operation);
     } else if ((operation instanceof RemoveColumnImpl)) {

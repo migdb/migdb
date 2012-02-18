@@ -55,7 +55,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param ModelOperationImpl operation : method do not need specific type of operation
 	 */
 	def generateOperationFile(ModelOperationImpl operation) {
-		generateFile(operation.getFileName(".sql"), operation.genOperation)
+		var text = operation.genOperation;
+		generateFile(operation.getFileName(".sql"), text);
 	}
 		
 	/**
@@ -347,7 +348,18 @@ class Generator extends BaseCodeGenerator {
      }
     
     /**
-     * CHECK INSTANCES
+     * HAS NO INSTANCES
+     * This operation check if table has some rows.
+     *  
+     * @param HasNoInstances operation : operation of type HasNoInstances
+     * @return boolean : t - no instances; f - some instances 
+     */ 
+    def dispatch genOperation(HasNoInstancesImpl operation)'''
+    		SELECT COUNT(1) > 0 FROM «operation.owningSchemaName».«operation.tableName»;
+    '''
+    
+    /**
+     * HAS NO OWN INSTANCES
      * This operation check if table has some own rows.
      * This SQL check ownership between instances and tables. Table can have
      * a lot of rows ale nemuseji tabulce patrit hierarchicky.
@@ -355,16 +367,12 @@ class Generator extends BaseCodeGenerator {
      * @param CheckInstances operation : operation of type CheckInstances
      * @return boolean : t - no instances; f - some instances 
      */ 
-    def dispatch genOperation(CheckInstancesImpl operation)'''
-    	«IF operation.childTableNames.empty»
-    		SELECT COUNT(1) > 0 FROM «operation.owningSchemaName».«operation.parentTableName»;
-    	«ELSE»
+    def dispatch genOperation(HasNoOwnInstancesImpl operation)'''
     		SELECT COUNT(1) > 0 
-    			FROM «operation.owningSchemaName».«operation.parentTableName» AS parent
-    			«FOR tab : operation.childTableNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
-    			WHERE «FOR tab : operation.childTableNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»    	
-    	«ENDIF»
-    '''
+    			FROM «operation.owningSchemaName».«operation.tableName» AS parent
+    			«FOR tab : operation.descendantsNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
+    			WHERE «FOR tab : operation.descendantsNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»    	
+    '''    
     
 	/**
 	 * COPY INSTANCES

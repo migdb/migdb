@@ -332,7 +332,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAddClass_Parent() {
+	public EAttribute getAddClass_IsAbstract() {
 		return (EAttribute)addClassEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -341,7 +341,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAddClass_IsAbstract() {
+	public EAttribute getAddClass_TableName() {
 		return (EAttribute)addClassEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -350,26 +350,8 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAddClass_IsEmbedded() {
-		return (EAttribute)addClassEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAddClass_TableName() {
-		return (EAttribute)addClassEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getAddClass_InheritanceType() {
-		return (EAttribute)addClassEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)addClassEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -988,9 +970,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 
 		addClassEClass = createEClass(ADD_CLASS);
 		createEAttribute(addClassEClass, ADD_CLASS__NAME);
-		createEAttribute(addClassEClass, ADD_CLASS__PARENT);
 		createEAttribute(addClassEClass, ADD_CLASS__IS_ABSTRACT);
-		createEAttribute(addClassEClass, ADD_CLASS__IS_EMBEDDED);
 		createEAttribute(addClassEClass, ADD_CLASS__TABLE_NAME);
 		createEAttribute(addClassEClass, ADD_CLASS__INHERITANCE_TYPE);
 
@@ -1137,9 +1117,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 
 		initEClass(addClassEClass, AddClass.class, "AddClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAddClass_Name(), ecorePackage.getEString(), "name", null, 1, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAddClass_Parent(), ecorePackage.getEString(), "parent", null, 0, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddClass_IsAbstract(), ecorePackage.getEBoolean(), "isAbstract", null, 0, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAddClass_IsEmbedded(), ecorePackage.getEBoolean(), "isEmbedded", null, 0, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddClass_TableName(), ecorePackage.getEString(), "tableName", null, 0, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAddClass_InheritanceType(), theAppPackage.getInheritanceType(), "inheritanceType", null, 1, 1, AddClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

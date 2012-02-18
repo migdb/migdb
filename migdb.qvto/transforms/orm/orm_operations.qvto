@@ -239,7 +239,7 @@ mapping APP::operations::SetAbstract::abstractionToRdb(appGen : APP::ModelGenera
 	rdbRoot.operations += object RDB::operations::HasNoOwnInstances {
 		owningSchemaName := "public";
 		tableName := self.name.toLower();
-		descendantsTableNames := appGen.findDescendants(self.name);
+		descendantsNames := appGen.findDescendants(self.name);
 	};
 }
 

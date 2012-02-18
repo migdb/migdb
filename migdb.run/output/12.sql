@@ -1,2 +1,3 @@
-ALTER TABLE public.tableB
-	ADD COLUMN cislo int;
+ALTER TABLE public.naturalperson
+	ADD CONSTRAINT PK_naturalperson
+	PRIMARY KEY ();

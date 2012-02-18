@@ -1,1 +1,3 @@
-CREATE TABLE public.tableB ();
+ALTER TABLE public.legalperson
+	ADD CONSTRAINT PK_legalperson
+	PRIMARY KEY ();

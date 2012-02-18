@@ -2,12 +2,9 @@
 <app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
   <modelGenerations>
     <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-    <classes xsi:type="app:Class" name="Parent">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName=""/>
-      <properties name="age" type="//@modelGenerations.0/@classes.0" defaultValue="null" lowerBound="1"/>
-    </classes>
-    <classes xsi:type="app:Class" name="Child">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName=""/>
+    <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+    <classes xsi:type="app:Class" name="Party">
+      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName="SQ_party"/>
     </classes>
   </modelGenerations>
 </app:ModelRoot>

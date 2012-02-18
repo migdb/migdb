@@ -1,2 +1,1 @@
-ALTER TABLE public.tableB
-	ADD COLUMN id int;
+CREATE TABLE public.naturalperson ();

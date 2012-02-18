@@ -46,6 +46,7 @@ main() {
 			op.xmap apply(gen0);
 		} else {
 			log("	operation is invalid " + op.repr());
+			break;
 		} endif;
 	};
 	

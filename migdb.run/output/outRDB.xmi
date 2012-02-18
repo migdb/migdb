@@ -1,21 +1,4 @@
 <?xml version="1.0" encoding="ASCII"?>
 <rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage">
-  <modelGenerations>
-    <schemas name="public">
-      <tables name="tableA">
-        <columns name="id" type="int"/>
-        <columns name="number" type="int"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_tableA_id" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
-      </tables>
-      <tables name="tableB">
-        <columns name="id" type="int"/>
-        <columns name="cislo" type="int"/>
-        <columns name="new_column" type="int"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_tableB_id" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
-      </tables>
-      <sequences name="SEQ_Global" startValue="1"/>
-      <indexes name="IX_tableA_id" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
-      <indexes name="IX_tableB_id" columns="//@modelGenerations.0/@schemas.0/@tables.1/@columns.0"/>
-    </schemas>
-  </modelGenerations>
+  <modelGenerations/>
 </rdb:ModelRoot>

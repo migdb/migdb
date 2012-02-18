@@ -1,0 +1,310 @@
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation testRDBOperations(inout inoutModel : RDB);
+
+main() {
+	var schema : RDB::operations::AddSchema	:= object RDB::operations::AddSchema {
+		name := "public";
+	};
+	
+	var sequence : RDB::operations::AddSequence := object RDB::operations::AddSequence {
+		owningSchemaName := "public";
+		name := "SEQ_Global";
+		startValue := 1;
+	};
+	
+/*	var parentTable : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "parent";
+	};
+	
+	var columnIDParent : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "parent";
+		name := "id";
+		type := PrimitiveType::int;
+	};
+	
+	var indexOnIDParent : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "parent";
+		name := "IX_index_id";
+		columnsNames := OrderedSet{"id"};
+	};
+	
+	var pkOnIDParentIndex : RDB::operations::AddPrimaryKey := object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := "parent";
+		name := "PK_idcolumn";
+		underlyingIndexName := "IX_index_id";
+		columnName := "id";		
+	};
+
+	var childTable : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "dite";
+	};
+	
+	var renameTableDite : RDB::operations::RenameTable := object RDB::operations::RenameTable {
+		owningSchemaName := "public";
+		name := "dite";
+		newName := "child";
+	};
+	
+	var columnNameChild : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "surname";
+		type := PrimitiveType::char;
+	};
+	
+	var renameColumnName : RDB::operations::RenameColumn := object RDB::operations::RenameColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "surname";
+		newName := "name";		
+	};
+		
+	var setType : RDB::operations::SetColumnType := object RDB::operations::SetColumnType {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		owningColumnName := "name";
+		newType := "int";
+		oldType := "char";	
+	};
+	
+	var defaultValue : RDB::operations::SetColumnDefaultValue := object RDB::operations::SetColumnDefaultValue {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		owningColumnName := "name";
+		newDefaultValue := "test";		
+	};
+	
+	var removeDefaultValue : RDB::operations::RemoveDefaultValue := object RDB::operations::RemoveDefaultValue {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		owningColumnName := "name";		
+	};
+	
+	var notNull : RDB::operations::AddNotNullConstraint := object RDB::operations::AddNotNullConstraint {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		owningColumnName := "name";	
+		name := "notnull_name";		
+	};
+	
+	var removeNotNull : RDB::operations::RemoveColumnConstraint := object RDB::operations::RemoveColumnConstraint{
+		owningSchemaName := "public";
+		owningTableName := "child";
+		owningColumnName := "name";	
+		name := "notnull_name";			
+	};
+
+	var indexOnNameChild : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "IX_index_name";
+		columnsNames := OrderedSet{"name"};
+	};
+	
+	var unique : RDB::operations::AddUniqueIndex := object RDB::operations::AddUniqueIndex {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "unique";
+		underlyingIndexName := "IX_index_name";		
+	};
+	
+	var removeUnique : RDB::operations::RemoveTableConstraint := object RDB::operations::RemoveTableConstraint {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "unique";	
+	};
+	
+	var removeIndex : RDB::operations::RemoveIndex := object RDB::operations::RemoveIndex {
+		owningSchemaName := "public";
+		name := "IX_index_name";
+	};	
+	
+	var removeColumn : RDB::operations::RemoveColumn := object RDB::operations::RemoveColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "name";		
+	};
+	
+	var columnfkChild : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk";
+		type := PrimitiveType::int;
+	};	
+	
+	var fk : RDB::operations::AddForeignKey := object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk_klic";
+		targetTableName := "parent";
+		constrainedColumnName := "fk";
+	};	
+	
+	var removeFk : RDB::operations::RemoveTableConstraint := object RDB::operations::RemoveTableConstraint {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk_klic";	
+	};	
+
+	var removeColumnFk : RDB::operations::RemoveColumn := object RDB::operations::RemoveColumn {
+		owningSchemaName := "public";
+		owningTableName := "child";
+		name := "fk";		
+	};
+	
+	var removeTableChild : RDB::operations::RemoveTable := object RDB::operations::RemoveTable {
+		owningSchemaName := "public";
+		name := "child";
+	};
+*/
+	 // test datovych operaci
+	 
+	 // TABLE A
+	var tableA : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "tableA";
+	}; 	
+	
+	var columnIDTableA : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "id";
+		type := PrimitiveType::int;
+	};
+	
+	var indexOnIDTableA : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "IX_tableA_id";
+		columnsNames := OrderedSet{"id"};
+	};
+	
+	var pkOnIDTableAIndex : RDB::operations::AddPrimaryKey := object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "PK_tableA_id";
+		underlyingIndexName := "IX_tableA_id";
+		columnName := "id";		
+	};	
+	
+	var columnNumber : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		name := "number";
+		type := PrimitiveType::int;
+	};	
+	
+// TABLE B
+	var tableB : RDB::operations::AddTable := object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := "tableB";
+	}; 	
+	
+	var columnIDTableB : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "id";
+		type := PrimitiveType::int;
+	};
+	
+	var indexOnIDTableB : RDB::operations::AddIndex := object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "IX_tableB_id";
+		columnsNames := OrderedSet{"id"};
+	};
+	
+	var pkOnIDTableBIndex : RDB::operations::AddPrimaryKey := object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "PK_tableB_id";
+		underlyingIndexName := "IX_tableB_id";
+		columnName := "id";		
+	};	
+	
+	var columnCislo : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "cislo";
+		type := PrimitiveType::int;
+	};		
+	
+	var columnNew : RDB::operations::AddColumn := object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := "tableB";
+		name := "new_column";
+		type := PrimitiveType::int;
+	};			
+	
+	var copyInstances : RDB::operations::CopyInstances := object RDB::operations::CopyInstances {
+		owningSchemaName := "public";
+		owningTableName := "tableA";
+		sourceColumnName := "number";
+		targetTableName := "tableB";
+		targetColumnName := "new_column";
+		type := RDB::operations::MergeType::strict; // musi mit stejne instanci		
+	};
+	
+	
+	
+	// MODEL
+	var model : RDB::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+		};
+	 };
+	 
+	 model.operations += schema;
+	 model.operations += sequence;
+/*
+	 model.operations += parentTable;
+	 model.operations += columnIDParent;
+	 model.operations += indexOnIDParent;
+	 model.operations += pkOnIDParentIndex;
+	 model.operations += childTable;
+	 model.operations += renameTableDite;
+	 model.operations += columnNameChild;
+	 model.operations += renameColumnName;
+	 model.operations += setType;
+	 model.operations += defaultValue;
+	 model.operations += removeDefaultValue;
+	 model.operations += notNull;
+	 model.operations += removeNotNull;
+	 model.operations += indexOnNameChild;
+	 model.operations += unique; // myslim ze je operace Unique index spatne
+	 model.operations += removeUnique;
+	 model.operations += removeIndex;
+	 model.operations += removeColumn;
+	 model.operations += columnfkChild;
+	 model.operations += fk;
+	 model.operations += removeFk;
+	 model.operations += removeColumnFk;
+	 model.operations += removeTableChild;
+*/
+	 // Testing datovych operaci
+	 
+	 model.operations += tableA;
+	 model.operations += columnIDTableA;
+	 model.operations += indexOnIDTableA;
+	 model.operations += pkOnIDTableAIndex;
+	 model.operations += columnNumber;
+	 
+	 model.operations += tableB;
+	 model.operations += columnIDTableB;
+	 model.operations += indexOnIDTableB;
+	 model.operations += pkOnIDTableBIndex;
+	 model.operations += columnCislo;
+	 model.operations += columnNew;
+	 // copy instances
+	 model.operations += copyInstances;
+	 
+	 
+	 
+
+}

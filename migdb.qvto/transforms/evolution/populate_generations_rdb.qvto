@@ -376,10 +376,10 @@ mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
 }
 
 /**
- * CHECK INSTANCES
+ * HAS NO OWN INSTANCES
  * This operation check if table has some own rows.
- * @restriction : table with @parentTableName must exists in generation
- * @restriction : child tables with @name must exists in generation
+ * @restriction : table with @tableName must exists in generation
+ * @restriction : child tables with @descendantNames must exists in generation
  */
 query RDB::operations::HasNoOwnInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return gen.isTableInSchema(self.owningSchemaName, self.tableName)
@@ -391,10 +391,9 @@ mapping RDB::operations::HasNoOwnInstances::apply(inout gen : RDB::ModelGenerati
 }
 
 /**
- * CHECK INSTANCES
- * This operation check if table has some own rows.
- * @restriction : table with @parentTableName must exists in generation
- * @restriction : child tables with @name must exists in generation
+ * HAS NO INSTANCES
+ * This operation check if table has any rows.
+ * @restriction : table with @tableName must exists in generation
  */
 query RDB::operations::HasNoInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return gen.isTableInSchema(self.owningSchemaName, self.tableName);

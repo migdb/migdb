@@ -215,13 +215,22 @@ public interface OperationsFactory extends EFactory {
 	RemoveSequence createRemoveSequence();
 
 	/**
-	 * Returns a new object of class '<em>Check Instances</em>'.
+	 * Returns a new object of class '<em>Has No Own Instances</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Check Instances</em>'.
+	 * @return a new object of class '<em>Has No Own Instances</em>'.
 	 * @generated
 	 */
-	CheckInstances createCheckInstances();
+	HasNoOwnInstances createHasNoOwnInstances();
+
+	/**
+	 * Returns a new object of class '<em>Has No Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Has No Instances</em>'.
+	 * @generated
+	 */
+	HasNoInstances createHasNoInstances();
 
 	/**
 	 * Returns a new object of class '<em>Add Instances</em>'.

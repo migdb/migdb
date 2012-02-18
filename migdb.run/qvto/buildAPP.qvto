@@ -6,27 +6,82 @@ transformation build_model(inout inoutModel : APP);
 main() {
 	log("BUILDING APP MODEL");
 	var classInteger : APP::operations::AddPrimitiveClass := object APP::operations::AddPrimitiveClass{
-														name := "Integer";
-														primitiveType := PrimitiveType::int;
+		name := "Integer";
+		primitiveType := PrimitiveType::int;
 	};
 	
-	var classParent : APP::operations::AddClass := object APP::operations::AddClass {
-														name := "Parent";
-														parent := null;
-														isAbstract := false;
-														isEmbedded := false;
-														tableName := null;
-														inheritanceType := APP::InheritanceType::joined;
-												  };	
-											
-	var classChild : APP::operations::AddClass := object APP::operations::AddClass {
-														name := "Child";
-														parent := null;
-														isAbstract := false;
-														isEmbedded := false;
-														tableName := null;
-														inheritanceType := APP::InheritanceType::joined;	
-												  };												  
+	var classString : APP::operations::AddPrimitiveClass := object APP::operations::AddPrimitiveClass{
+		name := "String";
+		primitiveType := PrimitiveType::char;
+	};	
+	
+	// Party class
+	var classParty : APP::operations::AddClass := object APP::operations::AddClass {
+		name := "Party";
+		isAbstract := false;
+		inheritanceType := APP::InheritanceType::joined;
+	};
+	
+	var attributeStreet : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "Party";
+		name := "street";
+		type := "String";
+	};
+	
+	var attributeCity : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "Party";
+		name := "city";
+		type := "String";
+	};	
+	
+	// LegalPerson class								
+	var classLegalPerson : APP::operations::AddClass := object APP::operations::AddClass {
+		name := "LegalPerson";
+		isAbstract := false;
+		inheritanceType := APP::InheritanceType::joined;	
+	};	
+	
+	var attributeRegNo : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "LegalPerson";
+		name := "regNo";
+		type := "Integer";
+	};	
+	
+	var attributeBusName : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "LegalPerson";
+		name := "busName";
+		type := "String";
+	};		
+	
+	// NaturalPerson class								
+	var classNaturalPerson : APP::operations::AddClass := object APP::operations::AddClass {
+		name := "NaturalPerson";
+		isAbstract := false;
+		inheritanceType := APP::InheritanceType::joined;	
+	};	
+	
+	var attributeName : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "NaturalPerson";
+		name := "name";
+		type := "String";
+	};	
+	
+	var attributeSurname : APP::operations::AddProperty := object APP::operations::AddProperty {
+		owningClassName := "NaturalPerson";
+		name := "surname";
+		type := "String";
+	};
+	
+	// Create hierarchi
+	var setParentLegalPersonParty : APP::operations::SetParent := object APP::operations::SetParent {
+		name := "LegalPerson";
+		parentName := "Party";
+	};	
+	
+	var setParentNaturalPersonParty : APP::operations::SetParent := object APP::operations::SetParent {
+		name := "NaturalPerson";
+		parentName := "Party";
+	};														  
 												  																					  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
@@ -34,7 +89,17 @@ main() {
 			isMissing := false;
 		};
 	 };
-    model.operations += classInteger; // defaultni primitivni trida integer
-	model.operations += classParent; // prvni trida v modelu
-	model.operations += classChild; // potomek
+    model.operations += classInteger; 
+	model.operations += classString;
+	model.operations += classParty;
+	model.operations += attributeStreet; 
+	model.operations += attributeCity;
+	model.operations += classLegalPerson;
+	model.operations += attributeRegNo; 
+	model.operations += attributeBusName;
+	model.operations += classNaturalPerson;
+	model.operations += attributeName; 
+	model.operations += attributeSurname;
+	model.operations += setParentLegalPersonParty;
+	model.operations += setParentNaturalPersonParty;
 }

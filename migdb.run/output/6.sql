@@ -1,3 +1,2 @@
-ALTER TABLE public.tableA
-	ADD CONSTRAINT PK_tableA_id
-	PRIMARY KEY (id);
+ALTER TABLE public.legalperson
+	ADD COLUMN id int;
