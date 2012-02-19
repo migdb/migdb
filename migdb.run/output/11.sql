@@ -1,1 +1,2 @@
-CREATE TABLE public.naturalperson ();
+CREATE INDEX IX_legalperson_id
+	ON public.legalperson (id);

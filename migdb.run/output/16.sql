@@ -1,2 +1,2 @@
-ALTER TABLE public.child 
-	ALTER COLUMN name SET DEFAULT test;
+ALTER TABLE public.naturalperson
+	ADD COLUMN id int;

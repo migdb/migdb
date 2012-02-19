@@ -1,2 +1,2 @@
-ALTER TABLE public.child 
-	ALTER COLUMN name DROP NOT NULL;
+ALTER TABLE public.naturalperson
+	ADD COLUMN name boolean;

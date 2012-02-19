@@ -276,7 +276,7 @@ mapping APP::operations::SetParent::toRdb(appGen : APP::ModelGeneration, inout r
 mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	
 	var targets : Set(String);
-	targets += self.parentName;
+	targets += self.parentName.toLower();
 	targets += appGen.findAncestors(self.parentName);
 	
 	if (appGen.hasAnyColumns(targets)) then {

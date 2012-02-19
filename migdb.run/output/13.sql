@@ -1,2 +1,2 @@
-CREATE INDEX IX_naturalperson_id
-	ON public.naturalperson (id);
+ALTER TABLE public.legalperson
+	ADD COLUMN regno boolean;

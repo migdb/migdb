@@ -1,3 +1,2 @@
-ALTER TABLE public.naturalperson
-	ADD CONSTRAINT PK_naturalperson
-	PRIMARY KEY (id);
+ALTER TABLE public.legalperson
+	ADD COLUMN busname boolean;

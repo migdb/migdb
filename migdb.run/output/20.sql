@@ -1,2 +1,2 @@
-CREATE INDEX IX_index_name
-	ON public.child (name);
+ALTER TABLE public.naturalperson
+	ADD COLUMN surname boolean;

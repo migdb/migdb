@@ -1,2 +1,2 @@
-CREATE UNIQUE INDEX unique
-	ON public.child (IX_index_name);
+INSERT INTO public.party (id) VALUES
+	SELECT id FROM public.legalperson;

@@ -1,1 +1,2 @@
-DROP INDEX IX_index_name;
+INSERT INTO public.party (id) VALUES
+	SELECT id FROM public.naturalperson;

@@ -1,2 +1,2 @@
-ALTER TABLE public.child 
-	ALTER COLUMN name DROP DEFAULT;
+CREATE INDEX IX_naturalperson_id
+	ON public.naturalperson (id);

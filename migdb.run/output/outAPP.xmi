@@ -1,10 +1,24 @@
 <?xml version="1.0" encoding="ASCII"?>
-<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
-  <modelGenerations>
-    <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-    <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
-    <classes xsi:type="app:Class" name="Party">
-      <properties name="id" type="//@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName="SQ_party"/>
-    </classes>
-  </modelGenerations>
-</app:ModelRoot>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
+  <app:ModelRoot>
+    <modelGenerations>
+      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+      <classes xsi:type="app:Class" name="Party">
+        <properties name="id" type="/0/@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName="SQ_party"/>
+        <properties name="street" type="/0/@modelGenerations.0/@classes.1"/>
+        <properties name="city" type="/0/@modelGenerations.0/@classes.1"/>
+      </classes>
+      <classes xsi:type="app:Class" name="LegalPerson" parent="/0/@modelGenerations.0/@classes.2">
+        <properties name="regNo" type="/0/@modelGenerations.0/@classes.0"/>
+        <properties name="busName" type="/0/@modelGenerations.0/@classes.1"/>
+      </classes>
+      <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.2">
+        <properties name="name" type="/0/@modelGenerations.0/@classes.1"/>
+        <properties name="surname" type="/0/@modelGenerations.0/@classes.1"/>
+      </classes>
+    </modelGenerations>
+  </app:ModelRoot>
+  <app:Property name="id" type="/0/@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName="SQ_legalperson"/>
+  <app:Property name="id" type="/0/@modelGenerations.0/@classes.0" lowerBound="1" isID="true" sequenceName="SQ_naturalperson"/>
+</xmi:XMI>

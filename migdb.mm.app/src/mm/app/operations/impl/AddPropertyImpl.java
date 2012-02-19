@@ -147,7 +147,7 @@ public class AddPropertyImpl extends ModelOperationImpl implements AddProperty {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int UPPER_BOUND_EDEFAULT = 0;
+	protected static final int UPPER_BOUND_EDEFAULT = 1;
 
 	/**
 	 * The cached value of the '{@link #getUpperBound() <em>Upper Bound</em>}' attribute.

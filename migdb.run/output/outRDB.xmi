@@ -4,14 +4,20 @@
     <schemas name="public">
       <tables name="party">
         <columns name="id" type="int"/>
+        <columns name="street"/>
+        <columns name="city"/>
         <constraints xsi:type="rdb:PrimaryKey" name="PK_party" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
       </tables>
       <tables name="legalperson">
         <columns name="id" type="int"/>
+        <columns name="regno"/>
+        <columns name="busname"/>
         <constraints xsi:type="rdb:PrimaryKey" name="PK_legalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
       </tables>
       <tables name="naturalperson">
         <columns name="id" type="int"/>
+        <columns name="name"/>
+        <columns name="surname"/>
         <constraints xsi:type="rdb:PrimaryKey" name="PK_naturalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.2"/>
       </tables>
       <sequences name="seq_global" startValue="1"/>

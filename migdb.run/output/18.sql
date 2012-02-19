@@ -1,2 +1,3 @@
-ALTER TABLE public.child
-	ALTER COLUMN name SET NOT NULL;
+ALTER TABLE public.naturalperson
+	ADD CONSTRAINT PK_naturalperson
+	PRIMARY KEY (id);
