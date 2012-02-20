@@ -329,11 +329,11 @@ mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inou
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
-	return self.classes![name = eName];
+	return self.classes->selectOne(name = eName);
 }
 
 query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsKindOf(APP::PrimitiveClass);
+	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
 query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
@@ -400,7 +400,7 @@ query APP::ModelGeneration::findAncestors(cName : String) : Set(String) {
 	var a : Set(String);
 	var c : APP::Class := self.findClass(cName);
 	if (c <> null and c.parent <> null) then {
-		a += c.parent.name;
+		a += c.parent.name.toLower();
 		a += self.findAncestors(c.parent.name);
 	} endif;
 	return a;

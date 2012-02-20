@@ -23,7 +23,7 @@ main() {
 		} endif;
 	};
 
-	root.operations := root.operations->reject(true);
+	// root.operations := root.operations->reject(true);
 }
 
 abstract query RDB::operations::ModelOperation::
