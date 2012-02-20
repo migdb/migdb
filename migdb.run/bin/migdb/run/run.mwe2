@@ -48,7 +48,7 @@ Workflow {
 	}
 /**/
 	component = QVTOExecutor {
-		inputSlot = "buildModelAPP"
+		inputSlot = "generationModelAPP"
 		inOutSlot = "buildModelRDB"
 		transformationFile = "../migdb.qvto/transforms/orm/orm_operations.qvto"
 	}
@@ -77,7 +77,7 @@ Workflow {
 /**/	
 	component = CodeGenComponent {
 		withoutModel = false
-		slot = "buildModelRDB"
+		slot = "generationModelRDB"
 		generator = Generator {}
 		outputPath = "output/"
 	}

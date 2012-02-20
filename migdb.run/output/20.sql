@@ -1,2 +1,2 @@
 ALTER TABLE public.naturalperson
-	ADD COLUMN surname boolean;
+	ADD COLUMN surname char;

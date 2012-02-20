@@ -1,2 +1,2 @@
 ALTER TABLE public.legalperson
-	ADD COLUMN regno boolean;
+	ADD COLUMN regno int;

@@ -1,2 +1,2 @@
 ALTER TABLE public.party
-	ADD COLUMN street boolean;
+	ADD COLUMN street char;
