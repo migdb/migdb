@@ -36,11 +36,22 @@ public interface MoveProperty extends ModelOperation {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Owning Class Name</em>' attribute.
+	 * @see #setOwningClassName(String)
 	 * @see mm.app.operations.OperationsPackage#getMoveProperty_OwningClassName()
-	 * @model required="true" changeable="false"
+	 * @model required="true"
 	 * @generated
 	 */
 	String getOwningClassName();
+
+	/**
+	 * Sets the value of the '{@link mm.app.operations.MoveProperty#getOwningClassName <em>Owning Class Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Owning Class Name</em>' attribute.
+	 * @see #getOwningClassName()
+	 * @generated
+	 */
+	void setOwningClassName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.

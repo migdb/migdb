@@ -146,6 +146,18 @@ public class MovePropertyImpl extends ModelOperationImpl implements MoveProperty
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public void setOwningClassName(String newOwningClassName) {
+		String oldOwningClassName = owningClassName;
+		owningClassName = newOwningClassName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.MOVE_PROPERTY__OWNING_CLASS_NAME, oldOwningClassName, owningClassName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getName() {
 		return name;
 	}
@@ -232,6 +244,9 @@ public class MovePropertyImpl extends ModelOperationImpl implements MoveProperty
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
+			case OperationsPackage.MOVE_PROPERTY__OWNING_CLASS_NAME:
+				setOwningClassName((String)newValue);
+				return;
 			case OperationsPackage.MOVE_PROPERTY__NAME:
 				setName((String)newValue);
 				return;
@@ -253,6 +268,9 @@ public class MovePropertyImpl extends ModelOperationImpl implements MoveProperty
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
+			case OperationsPackage.MOVE_PROPERTY__OWNING_CLASS_NAME:
+				setOwningClassName(OWNING_CLASS_NAME_EDEFAULT);
+				return;
 			case OperationsPackage.MOVE_PROPERTY__NAME:
 				setName(NAME_EDEFAULT);
 				return;

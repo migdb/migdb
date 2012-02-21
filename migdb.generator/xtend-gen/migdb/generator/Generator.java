@@ -248,8 +248,16 @@ public class Generator extends BaseCodeGenerator {
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(" ");
-    PrimitiveType _type = operation.getType();
-    _builder.append(_type, "	");
+    {
+      PrimitiveType _type = operation.getType();
+      String _string = _type.toString();
+      boolean _equals = _string.equals("char");
+      if (_equals) {
+        _builder.append("character ");} else {
+        PrimitiveType _type_1 = operation.getType();
+        _builder.append(_type_1, "	");
+      }
+    }
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -732,7 +740,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(schema, "");
     _builder.append(".");
     _builder.append(targetTable, "");
-    _builder.append(" (id) VALUES");
+    _builder.append(" (id)");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("SELECT id FROM ");

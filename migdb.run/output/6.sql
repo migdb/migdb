@@ -1,3 +1,3 @@
 ALTER TABLE public.party
-	ADD CONSTRAINT PK_party
-	PRIMARY KEY (id);
+	ADD CONSTRAINT FK_party_address
+	FOREIGN KEY (address_id) REFERENCES public.party (id);

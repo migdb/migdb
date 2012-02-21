@@ -32,12 +32,14 @@ Workflow {
 	}	
 /**/
 	component = QVTOExecutor {
-		transformationFile = "qvto/buildAPP.qvto"
+		//transformationFile = "qvto/buildAPP.qvto"
+		transformationFile = "qvto/cgAPP.qvto"
 		outputSlot = "buildModelAPP"
 	}
 /**/
 	component = QVTOExecutor {
-		transformationFile = "qvto/buildRDB.qvto"
+		//transformationFile = "qvto/buildRDB.qvto"
+		transformationFile = "qvto/cgRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
 /**/

@@ -159,7 +159,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD COLUMN «operation.name» «operation.type»;
+			ADD COLUMN «operation.name» «IF operation.type.toString().equals("char")»character «ELSE»«operation.type»«ENDIF»;
 	'''
 	
 	/**
@@ -410,7 +410,7 @@ class Generator extends BaseCodeGenerator {
 	 * @return SQL
 	 */
 	def addInstancesToTabble(String schema, String sourceTable, String targetTable)'''
-		INSERT INTO «schema».«targetTable» (id) VALUES
+		INSERT INTO «schema».«targetTable» (id)
 			SELECT id FROM «schema».«sourceTable»;
 	'''
 	

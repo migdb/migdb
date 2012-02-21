@@ -1193,7 +1193,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getCopyProperty_Type(), this.getMergeType(), "type", null, 1, 1, CopyProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(movePropertyEClass, MoveProperty.class, "MoveProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getMoveProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMoveProperty_OwningClassName(), ecorePackage.getEString(), "owningClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveProperty_Type(), this.getMergeType(), "type", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

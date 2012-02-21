@@ -1,2 +1,3 @@
-ALTER TABLE public.party
-	ADD COLUMN id int;
+ALTER TABLE public.address
+	ADD CONSTRAINT PK_address
+	PRIMARY KEY (id);

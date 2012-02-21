@@ -1,2 +1,2 @@
-CREATE INDEX IX_party_id
-	ON public.party (id);
+ALTER TABLE public.party
+	ADD COLUMN address_id int;
