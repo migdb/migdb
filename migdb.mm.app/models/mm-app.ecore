@@ -217,6 +217,14 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
             eType="#//app/operations/MergeType"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractClass" eSuperTypes="#//app/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractPropertiesNames"
+            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="MergeType">
         <eLiterals name="strict"/>
         <eLiterals name="force" value="1"/>

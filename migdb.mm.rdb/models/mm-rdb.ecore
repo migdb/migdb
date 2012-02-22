@@ -320,6 +320,18 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetTableNames" lowerBound="1"
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="InsertInstances" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetTableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceColumnsNames"
+            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetColumnsNames"
+            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="dml" nsURI="http://www.collectionspro.eu/jam/mm/rdb-dml" nsPrefix="rdb-dml">
       <eClassifiers xsi:type="ecore:EClass" name="Query">

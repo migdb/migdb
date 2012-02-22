@@ -377,6 +377,45 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 	o.properties := o.properties->excluding(p);
 }
 
+query APP::operations::ExtractClass::isValid(gen : APP::ModelGeneration) : Boolean {
+	return gen.isClassInGeneration(self.sourceClassName)
+		   and not gen.isClassInGeneration(self.extractClassName)
+		   and gen.arePropertiesInClass(self.sourceClassName, self.extractPropertiesNames); 
+}
+
+mapping APP::operations::ExtractClass::apply(inout gen : APP::ModelGeneration) {
+	
+	gen.modelRoot.operations += object APP::operations::AddClass {
+		name := self.extractClassName;
+	}.xmap apply(gen);
+	
+	self.extractPropertiesNames->forEach(pName) {
+		var p : APP::Property := gen.findProperty(self.sourceClassName, pName);
+		gen.modelRoot.operations += object APP::operations::AddProperty {
+			owningClassName := self.extractClassName;
+			name := p.name;
+			type := p.type.name;
+			defaultValue := p.defaultValue;
+			lowerBound := p.lowerBound;
+			upperBound := p.upperBound;
+		}.xmap apply(gen);
+		
+		gen.modelRoot.operations += object APP::operations::RemoveProperty {
+			owningClassName := self.sourceClassName;
+			name := p.name;			
+		}.xmap apply(gen);
+	};
+	
+	gen.modelRoot.operations += object APP::operations::AddProperty {
+			owningClassName := self.sourceClassName;
+			name := self.extractClassName.toLower();
+			type := self.extractClassName;
+			lowerBound := 1;
+			upperBound := 1;
+	}.xmap apply(gen);
+}
+
+
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
@@ -405,6 +444,14 @@ query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractCla
 
 query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
 	return self.findAbstractClass(cName).properties->exists(name = pName);
+}
+
+query APP::ModelGeneration::isPropertyInClass(cName : String, pName : String) : Boolean {
+	return self.findClass(cName).properties->exists(name = pName);
+}
+
+query APP::ModelGeneration::arePropertiesInClass(cName : String, pNames : OrderedSet(String)) : Boolean {
+	return pNames->forAll(name | self.isPropertyInClass(cName, name));
 }
 
 query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::Property {

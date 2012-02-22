@@ -180,7 +180,6 @@ mapping RDB::operations::AddForeignKey::apply(inout gen : RDB::ModelGeneration) 
 }
 
 query RDB::operations::AddNotNullConstraint::isValid(gen : RDB::ModelGeneration) : Boolean {
-	// pro dani sloupec neexistuje omezeni stejneho nazvu
 	return not gen.isConstraintForColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name);	   
 }
 
@@ -373,6 +372,14 @@ query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Bool
 }
 
 mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
+}
+
+query RDB::operations::InsertInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
+	return true;
+}
+
+mapping RDB::operations::InsertInstances::apply(inout gen : RDB::ModelGeneration) {
+
 }
 
 /**

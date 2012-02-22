@@ -185,8 +185,8 @@ when { self.lowerBound = 1 }
 	// addition of a notNull constraint to the column
 	rdbRoot.operations += object RDB::operations::AddNotNullConstraint {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName;
-		owningColumnName := self.name;
+		owningTableName := self.owningClassName.toLower();
+		owningColumnName := self.name.toLower();
 		name := "NN_" + self.name.toLower();
 	};
 }
@@ -325,6 +325,88 @@ mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inou
 	};
 }
 
+query APP::operations::ExtractClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+	return true;
+}
+
+mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+	
+	rdbRoot.operations += object RDB::operations::AddTable {
+		owningSchemaName := "public";
+		name := self.extractClassName.toLower();
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.extractClassName.toLower();
+		name := "id";
+		type := RDB::PrimitiveType::int;
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddIndex {
+		owningSchemaName := "public";
+		owningTableName := self.extractClassName.toLower();
+		name := "IX_" + self.extractClassName.toLower() + "_id";
+		columnsNames := OrderedSet {"id"};
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
+		owningSchemaName := "public";
+		owningTableName := self.extractClassName.toLower();
+		columnName := "id";
+		name := "PK_" + self.extractClassName.toLower();
+		underlyingIndexName := "IX_" + self.extractClassName.toLower() + "_id";
+	};
+	
+	self.extractPropertiesNames->forEach(pName) {
+		rdbRoot.operations += object RDB::operations::AddColumn {
+			owningSchemaName := "public";
+			owningTableName := self.extractClassName.toLower();
+			name := pName.toLower();
+			type := appGen.findPrimitiveTypeInRdb(pName.toLower());
+		};
+	};
+	
+	rdbRoot.operations += object RDB::operations::InsertInstances {
+		owningSchemaName := "public";
+		sourceTableName := self.sourceClassName.toLower();
+		targetTableName := self.extractClassName.toLower();
+		sourceColumnsNames := self.extractPropertiesNames.toLower();
+		targetColumnsNames := self.extractPropertiesNames.toLower();
+	};
+	
+	self.extractPropertiesNames->forEach(pName) {		
+		rdbRoot.operations += object RDB::operations::RemoveColumn {
+			owningSchemaName := "public";
+			owningTableName := self.sourceClassName.toLower();
+			name := pName.toLower();
+		};
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.sourceClassName.toLower();
+		name := self.extractClassName.toLower() + "_id";
+		type := RDB::PrimitiveType::int;
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.sourceClassName.toLower();
+		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
+		targetTableName := self.extractClassName.toLower();
+		constrainedColumnName := self.extractClassName.toLower() + "_id";
+	};
+	
+	rdbRoot.operations += object RDB::operations::CopyInstances {
+		owningSchemaName := "public";
+		owningTableName := self.extractClassName.toLower();
+		sourceColumnName := "id";
+		targetTableName := self.sourceClassName.toLower();
+		targetColumnName := self.extractClassName.toLower() + "_id";
+		type := RDB::operations::MergeType::strict;
+	};
+}
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
@@ -340,6 +422,10 @@ query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveC
 	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
+query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
+	return self.findEntity(cName).oclAsType(APP::AbstractClass);
+}
+
 query APP::ModelGeneration::isEmbeddedClassInGeneration(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::EmbeddedClass);
 }
@@ -350,6 +436,10 @@ query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
 
 query APP::ModelGeneration::findClass(cName : String) : APP::Class {
 	return self.findEntity(cName).oclAsType(APP::Class);
+}
+
+query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::Property {
+	return self.findAbstractClass(cName).properties![name = pName];
 }
 
 query APP::ModelGeneration::findPrimitiveTypeInApp(pName : String) : APP::PrimitiveType {
