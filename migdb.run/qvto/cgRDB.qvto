@@ -92,7 +92,7 @@ main() {
 	};		
 	
 	var tableNaturalPerson : RDB::Table := object RDB::Table {
-		name := "party";
+		name := "naturalperson";
 		columns := Set{columnIdNaturalPerson, columnName, columnSurname};
 		constraints := Set{pkNaturalPerson};
 	};		

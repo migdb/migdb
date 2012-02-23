@@ -361,8 +361,8 @@ mapping RDB::operations::RemoveDefaultValue::apply(inout gen : RDB::ModelGenerat
  * strict -> Can not transfer data if a tables have different number of instances (rows).
  * force -> Delete rows if there is more instancef in source table. If source table has less number
  * of instances add default value or null.
- * @restriction : column with @sourceColumnName must exists in generation
- * @restriction : target column with @targetColumnName must exists in generation
+ * @restriction : column with @sourceColumnName must exists in table
+ * @restriction : target column with @targetColumnName must exists in table
  * @restriction : target and source column type must be same
  */
 query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
@@ -374,8 +374,17 @@ query RDB::operations::CopyInstances::isValid(gen : RDB::ModelGeneration) : Bool
 mapping RDB::operations::CopyInstances::apply(inout gen : RDB::ModelGeneration){
 }
 
+/**
+ * INSERT INSTANCES
+ * This operation copy data from collection of columns.
+ * @restriction : columns with @sourceColumnNames must exists in source table
+ * @restriction : columns with @targetColumnNames must exists in target table
+ * @restriction : columns must have same name and column type
+ */
 query RDB::operations::InsertInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
-	return true;
+	return gen.areColumnsInTable(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames)
+		   and gen.areColumnsInTable(self.owningSchemaName, self.targetTableName, self.targetColumnsNames)
+		   and gen.areSameColumnsTypes(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, self.targetTableName, self.targetColumnsNames);
 }
 
 mapping RDB::operations::InsertInstances::apply(inout gen : RDB::ModelGeneration) {
@@ -582,10 +591,27 @@ query RDB::ModelGeneration::createPrimitiveType (type : String) : RDB::Primitive
 	return null;
 }
 
+query RDB::ModelGeneration::isSameColumnName(sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(sName, tNameA, cNameA).name = self.findColumn(sName, tNameB, cNameB).name;
+}
+
 /**
- * IS SAME COLUMN TYPE
- * Query tested type of columns. 
+ * COLUMN TYPE
+ * Querries test type of columns. 
  */
 query RDB::ModelGeneration::isSameColumnType (sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
 	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
+}
+
+query RDB::ModelGeneration::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String, cNameB : OrderedSet(String)) : Boolean {
+	var b : Boolean := true;
+	cNameA->forEach(nameA){
+		cNameB->forEach(nameB){
+			if(self.isSameColumnName(sName, tNameA, nameA, tNameB, nameB) 
+				and not self.isSameColumnType(sName, tNameA, nameA, tNameB, nameB)) then {
+				b := false;
+			} endif;
+		};
+	};
+	return b;
 }

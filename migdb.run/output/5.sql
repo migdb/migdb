@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN address_id int;
+ALTER TABLE public.address
+	ADD COLUMN street boolean;

@@ -1,1 +1,2 @@
-CREATE TABLE public.legalperson ();
+ALTER TABLE public.party 
+	DROP COLUMN city;

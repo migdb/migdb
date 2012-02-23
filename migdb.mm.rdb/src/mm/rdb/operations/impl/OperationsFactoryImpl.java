@@ -85,6 +85,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.HAS_NO_OWN_INSTANCES: return createHasNoOwnInstances();
 			case OperationsPackage.HAS_NO_INSTANCES: return createHasNoInstances();
 			case OperationsPackage.ADD_INSTANCES: return createAddInstances();
+			case OperationsPackage.INSERT_INSTANCES: return createInsertInstances();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -358,6 +359,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public AddInstances createAddInstances() {
 		AddInstancesImpl addInstances = new AddInstancesImpl();
 		return addInstances;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public InsertInstances createInsertInstances() {
+		InsertInstancesImpl insertInstances = new InsertInstancesImpl();
+		return insertInstances;
 	}
 
 	/**

@@ -15,6 +15,7 @@ import mm.app.operations.AddEmbeddedClass;
 import mm.app.operations.AddPrimitiveClass;
 import mm.app.operations.AddProperty;
 import mm.app.operations.CopyProperty;
+import mm.app.operations.ExtractClass;
 import mm.app.operations.MergeType;
 import mm.app.operations.ModelOperation;
 import mm.app.operations.MoveProperty;
@@ -172,6 +173,13 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass movePropertyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass extractClassEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -926,6 +934,42 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getExtractClass() {
+		return extractClassEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getExtractClass_SourceClassName() {
+		return (EAttribute)extractClassEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getExtractClass_ExtractPropertiesNames() {
+		return (EAttribute)extractClassEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getExtractClass_ExtractClassName() {
+		return (EAttribute)extractClassEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getMergeType() {
 		return mergeTypeEEnum;
 	}
@@ -1051,6 +1095,11 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(movePropertyEClass, MOVE_PROPERTY__TARGET_CLASS_NAME);
 		createEAttribute(movePropertyEClass, MOVE_PROPERTY__TYPE);
 
+		extractClassEClass = createEClass(EXTRACT_CLASS);
+		createEAttribute(extractClassEClass, EXTRACT_CLASS__SOURCE_CLASS_NAME);
+		createEAttribute(extractClassEClass, EXTRACT_CLASS__EXTRACT_PROPERTIES_NAMES);
+		createEAttribute(extractClassEClass, EXTRACT_CLASS__EXTRACT_CLASS_NAME);
+
 		// Create enums
 		mergeTypeEEnum = createEEnum(MERGE_TYPE);
 	}
@@ -1103,6 +1152,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		setUniqueEClass.getESuperTypes().add(this.getModelOperation());
 		copyPropertyEClass.getESuperTypes().add(this.getModelOperation());
 		movePropertyEClass.getESuperTypes().add(this.getModelOperation());
+		extractClassEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1197,6 +1247,11 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getMoveProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveProperty_TargetClassName(), ecorePackage.getEString(), "targetClassName", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getMoveProperty_Type(), this.getMergeType(), "type", null, 1, 1, MoveProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(extractClassEClass, ExtractClass.class, "ExtractClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getExtractClass_SourceClassName(), ecorePackage.getEString(), "sourceClassName", null, 1, 1, ExtractClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getExtractClass_ExtractPropertiesNames(), ecorePackage.getEString(), "extractPropertiesNames", null, 1, -1, ExtractClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getExtractClass_ExtractClassName(), ecorePackage.getEString(), "extractClassName", null, 1, 1, ExtractClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");

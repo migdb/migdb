@@ -1069,6 +1069,61 @@ public interface OperationsPackage extends EPackage {
 	int MOVE_PROPERTY_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
 
 	/**
+	 * The meta object id for the '{@link mm.app.operations.impl.ExtractClassImpl <em>Extract Class</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.app.operations.impl.ExtractClassImpl
+	 * @see mm.app.operations.impl.OperationsPackageImpl#getExtractClass()
+	 * @generated
+	 */
+	int EXTRACT_CLASS = 18;
+
+	/**
+	 * The feature id for the '<em><b>Model Root</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTRACT_CLASS__MODEL_ROOT = MODEL_OPERATION__MODEL_ROOT;
+
+	/**
+	 * The feature id for the '<em><b>Source Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTRACT_CLASS__SOURCE_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Extract Properties Names</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTRACT_CLASS__EXTRACT_PROPERTIES_NAMES = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Extract Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTRACT_CLASS__EXTRACT_CLASS_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Extract Class</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EXTRACT_CLASS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
 	 * The meta object id for the '{@link mm.app.operations.MergeType <em>Merge Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1076,7 +1131,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.app.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 18;
+	int MERGE_TYPE = 19;
 
 
 	/**
@@ -1887,6 +1942,49 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getMoveProperty_Type();
 
 	/**
+	 * Returns the meta object for class '{@link mm.app.operations.ExtractClass <em>Extract Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Extract Class</em>'.
+	 * @see mm.app.operations.ExtractClass
+	 * @generated
+	 */
+	EClass getExtractClass();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.ExtractClass#getSourceClassName <em>Source Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Source Class Name</em>'.
+	 * @see mm.app.operations.ExtractClass#getSourceClassName()
+	 * @see #getExtractClass()
+	 * @generated
+	 */
+	EAttribute getExtractClass_SourceClassName();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link mm.app.operations.ExtractClass#getExtractPropertiesNames <em>Extract Properties Names</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Extract Properties Names</em>'.
+	 * @see mm.app.operations.ExtractClass#getExtractPropertiesNames()
+	 * @see #getExtractClass()
+	 * @generated
+	 */
+	EAttribute getExtractClass_ExtractPropertiesNames();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.app.operations.ExtractClass#getExtractClassName <em>Extract Class Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Extract Class Name</em>'.
+	 * @see mm.app.operations.ExtractClass#getExtractClassName()
+	 * @see #getExtractClass()
+	 * @generated
+	 */
+	EAttribute getExtractClass_ExtractClassName();
+
+	/**
 	 * Returns the meta object for enum '{@link mm.app.operations.MergeType <em>Merge Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2553,6 +2651,40 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MOVE_PROPERTY__TYPE = eINSTANCE.getMoveProperty_Type();
+
+		/**
+		 * The meta object literal for the '{@link mm.app.operations.impl.ExtractClassImpl <em>Extract Class</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.app.operations.impl.ExtractClassImpl
+		 * @see mm.app.operations.impl.OperationsPackageImpl#getExtractClass()
+		 * @generated
+		 */
+		EClass EXTRACT_CLASS = eINSTANCE.getExtractClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Source Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EXTRACT_CLASS__SOURCE_CLASS_NAME = eINSTANCE.getExtractClass_SourceClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Extract Properties Names</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EXTRACT_CLASS__EXTRACT_PROPERTIES_NAMES = eINSTANCE.getExtractClass_ExtractPropertiesNames();
+
+		/**
+		 * The meta object literal for the '<em><b>Extract Class Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EXTRACT_CLASS__EXTRACT_CLASS_NAME = eINSTANCE.getExtractClass_ExtractClassName();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.operations.MergeType <em>Merge Type</em>}' enum.

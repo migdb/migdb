@@ -18,6 +18,7 @@ import mm.rdb.operations.impl.AddUniqueIndexImpl;
 import mm.rdb.operations.impl.CopyInstancesImpl;
 import mm.rdb.operations.impl.HasNoInstancesImpl;
 import mm.rdb.operations.impl.HasNoOwnInstancesImpl;
+import mm.rdb.operations.impl.InsertInstancesImpl;
 import mm.rdb.operations.impl.ModelOperationImpl;
 import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
 import mm.rdb.operations.impl.RemoveColumnImpl;
@@ -682,7 +683,7 @@ public class Generator extends BaseCodeGenerator {
           _builder.append(".");
           String _targetTableName_1 = operation.getTargetTableName();
           _builder.append(_targetTableName_1, "");
-          _builder.append(" AS target SET ");
+          _builder.append(" SET ");
           String _targetColumnName = operation.getTargetColumnName();
           _builder.append(_targetColumnName, "");
           _builder.append(" = ");
@@ -697,7 +698,7 @@ public class Generator extends BaseCodeGenerator {
           _builder.append(".");
           String _owningTableName_1 = operation.getOwningTableName();
           _builder.append(_owningTableName_1, "							");
-          _builder.append(" AS source WHERE target.id = source.id );");
+          _builder.append(");");
           return _builder;
         }
       }
@@ -712,7 +713,7 @@ public class Generator extends BaseCodeGenerator {
         _builder_1.append(".");
         String _targetTableName_2 = operation.getTargetTableName();
         _builder_1.append(_targetTableName_2, "");
-        _builder_1.append(" AS target SET ");
+        _builder_1.append(" SET ");
         String _targetColumnName_1 = operation.getTargetColumnName();
         _builder_1.append(_targetColumnName_1, "");
         _builder_1.append(" = ");
@@ -727,11 +728,56 @@ public class Generator extends BaseCodeGenerator {
         _builder_1.append(".");
         String _owningTableName_2 = operation.getOwningTableName();
         _builder_1.append(_owningTableName_2, "							");
-        _builder_1.append(" AS source WHERE target.id = source.id );");
+        _builder_1.append(");");
         return _builder_1;
       }
       return "";
     }
+  }
+  
+  protected CharSequence _genOperation(final InsertInstancesImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("INSERT INTO ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _targetTableName = operation.getTargetTableName();
+    _builder.append(_targetTableName, "");
+    _builder.append(" (id,");
+    {
+      EList<String> _targetColumnsNames = operation.getTargetColumnsNames();
+      boolean hasAnyElements = false;
+      for(final String col : _targetColumnsNames) {
+        if (!hasAnyElements) {
+          hasAnyElements = true;
+        } else {
+          _builder.appendImmediate(",", "");
+        }
+        _builder.append(col, "");
+      }
+    }
+    _builder.append(")");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t\t");
+    _builder.append("SELECT nextval(\'seq_global\'), ");
+    {
+      EList<String> _sourceColumnsNames = operation.getSourceColumnsNames();
+      boolean hasAnyElements_1 = false;
+      for(final String col_1 : _sourceColumnsNames) {
+        if (!hasAnyElements_1) {
+          hasAnyElements_1 = true;
+        } else {
+          _builder.appendImmediate(",", "				");
+        }
+        _builder.append(col_1, "				");
+      }
+    }
+    _builder.append(" FROM ");
+    String _sourceTableName = operation.getSourceTableName();
+    _builder.append(_sourceTableName, "				");
+    _builder.append(";");
+    _builder.newLineIfNotEmpty();
+    return _builder;
   }
   
   public StringConcatenation addInstancesToTabble(final String schema, final String sourceTable, final String targetTable) {
@@ -763,6 +809,17 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     _builder.append(table2, "");
     _builder.append(") THEN TRUE ELSE FALSE END;");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  public StringConcatenation hasNoInstances(final String schema, final String table) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("SELECT COUNT(1) > 0 FROM ");
+    _builder.append(schema, "");
+    _builder.append(".");
+    _builder.append(table, "");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -879,6 +936,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((HasNoInstancesImpl)operation);
     } else if ((operation instanceof HasNoOwnInstancesImpl)) {
       return _genOperation((HasNoOwnInstancesImpl)operation);
+    } else if ((operation instanceof InsertInstancesImpl)) {
+      return _genOperation((InsertInstancesImpl)operation);
     } else if ((operation instanceof RemoveColumnConstraintImpl)) {
       return _genOperation((RemoveColumnConstraintImpl)operation);
     } else if ((operation instanceof RemoveColumnImpl)) {

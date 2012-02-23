@@ -242,6 +242,15 @@ public interface OperationsFactory extends EFactory {
 	AddInstances createAddInstances();
 
 	/**
+	 * Returns a new object of class '<em>Insert Instances</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Insert Instances</em>'.
+	 * @generated
+	 */
+	InsertInstances createInsertInstances();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

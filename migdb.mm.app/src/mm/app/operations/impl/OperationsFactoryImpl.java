@@ -78,6 +78,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.SET_UNIQUE: return createSetUnique();
 			case OperationsPackage.COPY_PROPERTY: return createCopyProperty();
 			case OperationsPackage.MOVE_PROPERTY: return createMoveProperty();
+			case OperationsPackage.EXTRACT_CLASS: return createExtractClass();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -281,6 +282,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public MoveProperty createMoveProperty() {
 		MovePropertyImpl moveProperty = new MovePropertyImpl();
 		return moveProperty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ExtractClass createExtractClass() {
+		ExtractClassImpl extractClass = new ExtractClassImpl();
+		return extractClass;
 	}
 
 	/**

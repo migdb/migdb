@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson
-	ADD COLUMN regno int;
+UPDATE public.party SET address_id = 
+							(SELECT id FROM public.address);

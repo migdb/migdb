@@ -375,15 +375,15 @@ class Generator extends BaseCodeGenerator {
     '''    
     
 	/**
-	 * COPY INSTANCES
+	 * COPY INSTANCES IN HIERARCHI
 	 * This operation copy data from one column to another. 
  	 * Target and source column can be in the same table.
  	 * MergeType:
  	 * strict -> Can not transfer data if a tables have different number of instances (rows).
  	 * force -> Delete rows if there is more instancef in source table. If source table has less number
  	 * of instances add default value or null.
-	 * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
-	 */
+	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
+	 *
 	def dispatch genOperation(CopyInstancesImpl operation){
 		if(operation.type.toString().equals("strict")){
 			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
@@ -396,7 +396,40 @@ class Generator extends BaseCodeGenerator {
 		}
 		return "";
 	}
+	*/
+	
+	/**
+	 * COPY INSTANCES
+	 * This operation copy data from one column to another. 
+ 	 * Target and source column can be in the same table.
+	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
+	 *
+	 */
+	def dispatch genOperation(CopyInstancesImpl operation){
+		if(operation.type.toString().equals("strict")){
+			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName»);''';
+		}
+		if(operation.type.toString().equals("force")){
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName»);''';
+		}
+		return "";
+	}	
 
+	/**
+	 * INSERT INSTANCES
+	 * This operation copy data from source columns to target columns. 
+ 	 * Target and source column must have same name antd data type.
+ 	 * Target table must not have instances.
+	 * @param InsertInstancesImpl operation : operation of type InsertInstancesImpl
+	 */
+	def dispatch genOperation(InsertInstancesImpl operation)'''
+		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» (id,«FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
+						SELECT nextval('seq_global'), «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
+	'''
+	
 	
 	
 	/** 		 QUERRIES	 		**/
@@ -424,6 +457,17 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def isSameTableSize(String schema, String table1, String table2)'''
 		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
+	'''
+
+	/**
+	 * HAS NO INSTANCES
+	 * This query check if is table empty
+	 * @param String schema : schema
+	 * @param String table : table to check
+	 * @return boolean : t - is empty; f - has instances
+	 */	
+	def hasNoInstances(String schema, String table)'''
+		SELECT COUNT(1) > 0 FROM «schema».«table»;
 	'''
 	
 	

@@ -195,6 +195,13 @@ public class OperationsSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case OperationsPackage.EXTRACT_CLASS: {
+				ExtractClass extractClass = (ExtractClass)theEObject;
+				T result = caseExtractClass(extractClass);
+				if (result == null) result = caseModelOperation(extractClass);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -466,6 +473,21 @@ public class OperationsSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseMoveProperty(MoveProperty object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Extract Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Extract Class</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseExtractClass(ExtractClass object) {
 		return null;
 	}
 

@@ -76,7 +76,7 @@ Workflow {
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
-/**/	
+/**/
 	component = CodeGenComponent {
 		withoutModel = false
 		slot = "generationModelRDB"

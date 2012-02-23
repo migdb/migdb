@@ -3,31 +3,13 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation build_model(inout inoutModel : APP);
 
 
-main() {	
-
-	// operace, ktere chci udelat s modelem
-	var createClassAddress : APP::operations::AddClass := object APP::operations::AddClass {
-		name := "Address";
-		inheritanceType := InheritanceType::joined;
-	};			
+main() {			
 	
-	var movePropertyStreet : APP::operations::MoveProperty := object APP::operations::MoveProperty {
-		name := "street";
-		targetClassName := "Address";
-		type := APP::operations::MergeType::strict;
-	};
-	
-	var movePropertyCity : APP::operations::MoveProperty := object APP::operations::MoveProperty {
-		name := "city";
-		targetClassName := "Address";
-		type := APP::operations::MergeType::strict;
-	};	
-	
-	var createColumnContact : APP::operations::AddProperty := object APP::operations::AddProperty {
-		owningClassName := "Party";
-		name := "contact";
-		type := "Address";
-	};									  
+	var extractClass : APP::operations::ExtractClass := object APP::operations::ExtractClass {
+		sourceClassName := "Party";
+		extractPropertiesNames := OrderedSet{"street", "city"};
+		extractClassName := "Address";
+	};								  
 		
 	var integer : APP::PrimitiveClass := object APP::PrimitiveClass {
 		name := "Integer";
@@ -92,8 +74,5 @@ main() {
 		};
 	 };
 	 
-	 model.operations += createClassAddress;
-	 model.operations += movePropertyStreet;
-	 model.operations += movePropertyCity;
-	 model.operations += createColumnContact;
+	 model.operations += extractClass;
 }

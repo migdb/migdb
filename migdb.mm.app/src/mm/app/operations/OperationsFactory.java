@@ -179,6 +179,15 @@ public interface OperationsFactory extends EFactory {
 	MoveProperty createMoveProperty();
 
 	/**
+	 * Returns a new object of class '<em>Extract Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Extract Class</em>'.
+	 * @generated
+	 */
+	ExtractClass createExtractClass();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

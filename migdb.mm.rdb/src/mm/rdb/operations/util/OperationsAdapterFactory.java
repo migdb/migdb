@@ -172,6 +172,10 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createAddInstancesAdapter();
 			}
 			@Override
+			public Adapter caseInsertInstances(InsertInstances object) {
+				return createInsertInstancesAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -538,6 +542,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createAddInstancesAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.rdb.operations.InsertInstances <em>Insert Instances</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.rdb.operations.InsertInstances
+	 * @generated
+	 */
+	public Adapter createInsertInstancesAdapter() {
 		return null;
 	}
 

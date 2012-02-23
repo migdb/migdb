@@ -144,6 +144,10 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 				return createMovePropertyAdapter();
 			}
 			@Override
+			public Adapter caseExtractClass(ExtractClass object) {
+				return createExtractClassAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -412,6 +416,20 @@ public class OperationsAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMovePropertyAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link mm.app.operations.ExtractClass <em>Extract Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see mm.app.operations.ExtractClass
+	 * @generated
+	 */
+	public Adapter createExtractClassAdapter() {
 		return null;
 	}
 

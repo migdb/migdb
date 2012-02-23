@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN city char;
+ALTER TABLE public.party 
+	DROP COLUMN street;

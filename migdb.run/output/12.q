@@ -1,0 +1,1 @@
+SELECT CASE WHEN (SELECT COUNT(*) FROM public.address) = (SELECT COUNT(*) FROM public.party) THEN TRUE ELSE FALSE END;
