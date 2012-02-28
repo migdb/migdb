@@ -359,12 +359,18 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 	};
 	
 	self.extractPropertiesNames->forEach(pName) {
+		var p : APP::Property := appGen.findProperty(self.extractClassName, pName);
+		
+		p.xmap primitivePropertyToRdb(appGen, rdbRoot);
+		p.xmap complexPropertyToRdb(appGen, rdbRoot);
+		
+		/*
 		rdbRoot.operations += object RDB::operations::AddColumn {
 			owningSchemaName := "public";
 			owningTableName := self.extractClassName.toLower();
-			name := pName.toLower();
-			type := appGen.findPrimitiveTypeInRdb(pName.toLower());
-		};
+			name := p.name.toLower();
+			type := appGen.findPrimitiveTypeInRdb(p.type.name.toLower());
+		}; */
 	};
 	
 	rdbRoot.operations += object RDB::operations::InsertInstances {
@@ -408,10 +414,45 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 	};
 }
 
+mapping APP::Property::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.isPrimitiveClassInGeneration(self.type.name); }
+{
+	log('hej');
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClass.name.toLower();
+		name := self.name.toLower();
+		type := appGen.findPrimitiveTypeInRdb(self.type.name);
+		defaultValue := self.defaultValue;
+	};
+}
+
+mapping APP::Property::complexPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+when { appGen.isClassInGeneration(self.type.name) and self.upperBound <> -1; }
+{
+	// addition of a column to the table
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClass.name.toLower();
+		name := self.name.toLower() + "_id";
+		type := RDB::PrimitiveType::int;
+		defaultValue := self.defaultValue;
+	};
+	
+	// addition of a foreign key to the table
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.owningClass.name.toLower();
+		name := "FK_" + self.owningClass.name.toLower() + "_" + self.type.name.toLower();
+		targetTableName := self.type.name.toLower();
+		constrainedColumnName := self.type.name.toLower() + "_id";
+	};
+}
+
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
-	return self.classes->selectOne(name = eName);
+	return self.classes![name = eName];
 }
 
 query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
