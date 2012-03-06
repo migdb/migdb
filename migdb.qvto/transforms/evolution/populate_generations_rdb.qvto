@@ -253,6 +253,15 @@ mapping RDB::operations::SetColumnDefaultValue::apply(inout gen : RDB::ModelGene
 	c.defaultValue := self.newDefaultValue;
 }
 
+query RDB::operations::UpdateColumnConstraint::isValid(gen : RDB::ModelGeneration) : Boolean {
+	return gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName).constraints->size() > 0;	
+}
+	
+mapping RDB::operations::UpdateColumnConstraint::apply(inout gen : RDB::ModelGeneration) {
+	
+}
+
+
 
 /********************************************************************************
  *							 REMOVE OPERATIONS									*
