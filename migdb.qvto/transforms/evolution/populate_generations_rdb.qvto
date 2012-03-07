@@ -175,7 +175,7 @@ mapping RDB::operations::AddForeignKey::apply(inout gen : RDB::ModelGeneration) 
 	t.constraints += object RDB::ForeignKey {
 		name := self.name;
 		targetTable := gen.findTable(self.owningSchemaName, self.targetTableName);
-		constrainedColumn := gen.findColumn(self.owningSchemaName, self.targetTableName, self.constrainedColumnName);
+		constrainedColumn := gen.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
 	}
 }
 
@@ -303,8 +303,9 @@ mapping RDB::operations::RemoveColumn::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
 	t.constraints->forEach(r) {
-		if (r.oclAsType(RDB::ForeignKey).constrainedColumn = c.name) then {
-				t.constraints := t.constraints->excluding(r);
+		if (r.oclAsType(RDB::ForeignKey).constrainedColumn.name = c.name.toLower()) then {
+			log(r.name);
+			t.constraints := t.constraints->excluding(r);
 		} endif;
 	};
 	// odstraneni sloupce
