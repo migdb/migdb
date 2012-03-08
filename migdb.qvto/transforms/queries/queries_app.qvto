@@ -60,7 +60,7 @@ query app::Class::hasOneIDProperty():Boolean{
 	zjisti, jestli ma trida implicitni InheritanceType
 **/
 query app::Class::hasImplicitInheritanceType():Boolean{
-	return self.hasInheritanceType(app::InheritanceType::__not_defined);	
+	return self.hasInheritanceType(app::InheritanceType::joined);	
 } 
 
 /**

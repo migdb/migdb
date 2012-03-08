@@ -30,7 +30,7 @@ class Generator extends BaseCodeGenerator {
  	  */
 	override doGenerate(EObject model) {
 		var operations = new ArrayList<ModelOperationImpl>();
-		this.counter = 0; // set counter to default value
+		this.counter = 100; // set counter to default value
 		
 		for (Object arg : model.eContents) {			
 			if(arg instanceof ModelOperationImpl){
@@ -159,7 +159,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD COLUMN «operation.name» «IF operation.type.toString().equals("char")»character «ELSE»«operation.type»«ENDIF»;
+			ADD COLUMN «operation.name» «IF operation.type.toString().equals("char")»character(30) «ELSE»«operation.type»«ENDIF»;
 	'''
 	
 	/**

@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Qvto Plug-in
+Bundle-Name: migdbqvto
 Bundle-SymbolicName: migdb.qvto
 Bundle-Version: 1.0.0
 Bundle-Vendor: 

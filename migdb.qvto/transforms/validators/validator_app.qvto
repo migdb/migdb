@@ -38,10 +38,10 @@ query app::ModelRoot::isModelValid():Boolean{
 		log("Model invalid - ambigous class names in generation");
 		validity := false;
 	}endif;
-	if(not self.modelGenerations->classes[app::Class]->properties->forAll(hasUniqueNameInHierarchy())) then {
+	/**if(not self.modelGenerations->classes[app::Class]->properties->forAll(hasUniqueNameInHierarchy())) then {
 		log("Model invalid - ambigous property names in class");
 		validity := false;
-	}endif;
+	}endif;**/
 	if(self.modelGenerations ->forAll(gen | gen.containsCycle())) then {
 		log("Model invalid - generations containing cycled hierarchies");
 		validity := false;
@@ -96,7 +96,7 @@ query app::ModelGeneration::containsNonleafTPCAssociation():Boolean{
 
 
 query app::Class::assertIDCondition() : Boolean{
-	if(self.isEmbedded or (self.properties->select(isID)->size() = 1 and self.parent = null)
+	if((self.properties->select(isID)->size() = 1 and self.parent = null)
 	 or (self.parent <> null and self.properties->select(isID)->size() = 0))then{
 		return true;
 	}endif;
@@ -106,7 +106,7 @@ query app::Class::assertIDCondition() : Boolean{
 
 query app::ModelGeneration::areEmbeddedArritiesCorrectlySet():Boolean{
 	var validity : Boolean := true;
-	self.classes[app::Class]->properties -> forEach( prop | prop.type.oclIsKindOf(app::Class) and prop.type![app::Class].isEmbedded and (prop.upperBound <> 1 or 
+	self.classes[app::Class]->properties -> forEach( prop | prop.type.oclIsKindOf(app::Class) and (prop.upperBound <> 1 or 
 	not(prop.lowerBound = 1 or prop.lowerBound = 0))){
 		log("arrity of embedded property " + prop.name + " in generation " + self.repr() + " not correctly set");
 		validity = false;
@@ -116,7 +116,7 @@ query app::ModelGeneration::areEmbeddedArritiesCorrectlySet():Boolean{
 
 query app::ModelGeneration::areEmbeddedPropertiesInNameCollision():Boolean{
 	var validity : Boolean := false;
-	self.classes[app::Class]->properties ->forEach(prop | prop.type![app::Class].isEmbedded and prop.isInCollission()){
+	self.classes[app::Class]->properties ->forEach(prop | prop.isInCollission()){
 		log("property " + prop.name + " name is in collision with owningClass propertyb");
 		validity := true;
 	};
@@ -136,7 +136,7 @@ query app::Property::isCorrectlySet():Boolean{
 	return false;
 }
 
-query app::AbstractClass::hasUniqueName():Boolean{
+query app::Entity::hasUniqueName():Boolean{
 	var validity : Boolean := true;
 	self.owningModel->classes->forEach(cls | cls.name = self.name and cls <> self){
 		log("ambigous Class name " + cls.name);
@@ -145,7 +145,7 @@ query app::AbstractClass::hasUniqueName():Boolean{
 	return validity;
 }
 
-/****/
+/**
 query app::Property::hasUniqueNameInHierarchy():Boolean{
 	self.owningClass.getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
 		log("ambigous Property name " + prop.name);
@@ -153,6 +153,8 @@ query app::Property::hasUniqueNameInHierarchy():Boolean{
 	};
 	return true;	
 }
+**/
+
 
 /** 
 	Vraci false, pokud model neobsahuje cykly hierarchii dedicnosti, jinak true

@@ -85,14 +85,14 @@ mapping app::ModelGeneration::toSchema() : rdb::Schema {
 
 		// namapovani vazeb unidirectional 1-1, bidirectional 1-1, 1-M unidirectional, 1-M bidirectional
 		// v nynejsi verzi 1-1 unidirectional nikdy nenastane
-		self.classes[app::Class]->properties->forEach(prop | not prop.type![app::Class].isEmbedded and (prop.isOneToOneUnidirectional() 
+		self.classes[app::Class]->properties->forEach(prop | (prop.isOneToOneUnidirectional() 
 		or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
 		prop.isOneToManyBidirectional())){
 				prop.map toAssociationColumn();
 		};
 	
 		//namapovani vazeb M-N unidirectional a M-N bidirectional
-		self.classes[app::Class]->properties->forEach(prop | not prop.type![app::Class].isEmbedded and (prop.isManyToManyUnidirectional() 
+		self.classes[app::Class]->properties->forEach(prop |(prop.isManyToManyUnidirectional() 
 		or prop.isManyToManyBidirectional())){
 				result.tables += prop.map toAssociationTable();
 		};
@@ -239,7 +239,7 @@ mapping Set(app::Property)::toColumns(inout table : rdb::Table):Set(rdb::Column)
 	Namapuje property embedded trid na sloupce reprezentantu property
 **/
 mapping app::Property::embeddedToColumns(inout table : rdb::Table) : Set(rdb::Column)
-when {self.type![app::Class].isEmbedded and self.oppositeProperty = null and self.upperBound = 1 and (self.lowerBound = 0 or self.lowerBound = 1)}
+when { self.oppositeProperty = null and self.upperBound = 1 and (self.lowerBound = 0 or self.lowerBound = 1)}
 {
 	log("toEmbeddedColumn section "+ self.name + " " + self.type.name);
 	self.type![app::Class].properties ->forEach(prop){

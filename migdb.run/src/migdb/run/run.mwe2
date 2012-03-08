@@ -28,18 +28,22 @@ Workflow {
 	}
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output"
+		directory = "output_sql"
+	}	
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "output_xmi"
 	}	
 /**/
 	component = QVTOExecutor {
-		//transformationFile = "qvto/buildAPP.qvto"
-		transformationFile = "qvto/cgAPP.qvto"
+		transformationFile = "../migdb.qvto/transforms/codeGeneration/buildAPP.qvto"
+		//transformationFile = "../migdb.qvto/transforms/codeGeneration/cgAPP.qvto"
 		outputSlot = "buildModelAPP"
 	}
 /**/
 	component = QVTOExecutor {
-		//transformationFile = "qvto/buildRDB.qvto"
-		transformationFile = "qvto/cgRDB.qvto"
+		transformationFile = "../migdb.qvto/transforms/codeGeneration/buildRDB.qvto"
+		//transformationFile = "../migdb.qvto/transforms/codeGeneration/cgRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
 /**/
@@ -63,16 +67,14 @@ Workflow {
 /**/
 	component = Writer {
 		modelSlot = "generationModelAPP"
-		uri = "output/outAPP.xmi"
-		
+		uri = "output_xmi/outAPP.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
 /**/
 	component = Writer {
 		modelSlot = "generationModelRDB"
-		uri = "output/outRDB.xmi"
-		
+		uri = "output_xmi/outRDB.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -81,12 +83,11 @@ Workflow {
 		withoutModel = false
 		slot = "generationModelRDB"
 		generator = Generator {}
-		outputPath = "output/"
+		outputPath = "output_sql/"
 	}
 /**
 	component = CommandLineExec{
-		command = ""
-		//command = "java migdb_sql/Main [cesta] [ovladac]"
+		command = "ruby ../migdb.ruby.sql/skript.rb output_sql postgres postgres 123456"
 	}		
 /**/
 }

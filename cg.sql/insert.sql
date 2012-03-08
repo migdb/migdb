@@ -1,3 +1,5 @@
+﻿INSERT INTO country VALUES(nextval('seq_global'), 'Ceska republika');
+
 INSERT INTO party VALUES (nextval('seq_global'), 'Decinska', 'Decin');
 INSERT INTO naturalperson VALUES (currval('seq_global'),'Petr','Tarant');
 

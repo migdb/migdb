@@ -1,0 +1,97 @@
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation build_model(inout inoutModel : APP);
+
+
+main() {			
+	
+	var extractClass : APP::operations::ExtractClass := object APP::operations::ExtractClass {
+		sourceClassName := "Party";
+		extractPropertiesNames := OrderedSet{"street", "city", "zip"};
+		extractClassName := "Address";
+	};								  
+		
+	var integer : APP::PrimitiveClass := object APP::PrimitiveClass {
+		name := "Integer";
+		primitiveType := PrimitiveType::int;
+	};
+	
+	var string : APP::PrimitiveClass := object APP::PrimitiveClass {
+		name := "String";
+		primitiveType := PrimitiveType::char;
+	};	
+	
+	var country : APP::Class := object APP::Class {
+		name := "Country";
+		properties += Set{
+							object APP::Property{
+								name := "id";
+								type := integer;
+								isID := true;
+							},
+							object APP::Property{
+								name := "name";
+								type := string;
+							}
+					   };		
+	};								  																				  									  												  												  									  	
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{
+							integer,string,country,
+							object APP::Class {
+								name := "Party";
+								properties += Set{
+													object APP::Property{
+														name := "id";
+														type := integer;
+														isID := true;
+													},
+													object APP::Property{
+														name := "street";
+														type := string;
+													},
+													object APP::Property{
+														name := "city";
+														type := string;													
+													},
+													object APP::Property{
+														name := "zip";
+														type := country;													
+													}
+											  };
+							},
+							object APP::Class {
+								name := "LegalPerson";
+								properties += Set{
+													object APP::Property{
+														name := "regNo";
+														type := integer;
+													},
+													object APP::Property{
+														name := "busName";
+														type := string;													
+													}
+											  };							
+							},
+							object APP::Class {
+								name := "NaturalPerson";
+								properties += Set{
+													object APP::Property{
+														name := "name";
+														type := string;
+													},
+													object APP::Property{
+														name := "surname";
+														type := string;													
+													}
+											  };							
+							}
+						};
+		};
+	 };
+	 
+	 model.operations += extractClass;
+}

@@ -62,7 +62,7 @@ public interface ForeignKey extends TableConstraint {
 	 * @return the value of the '<em>Constrained Column</em>' reference.
 	 * @see #setConstrainedColumn(Column)
 	 * @see mm.rdb.RdbPackage#getForeignKey_ConstrainedColumn()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	Column getConstrainedColumn();

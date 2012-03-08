@@ -47,7 +47,7 @@ public class Generator extends BaseCodeGenerator {
     {
       ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
       ArrayList<ModelOperationImpl> operations = _arrayList;
-      this.counter = 0;
+      this.counter = 100;
       EList<EObject> _eContents = model.eContents();
       for (final Object arg : _eContents) {
         if ((arg instanceof mm.rdb.operations.impl.ModelOperationImpl)) {
@@ -254,7 +254,7 @@ public class Generator extends BaseCodeGenerator {
       String _string = _type.toString();
       boolean _equals = _string.equals("char");
       if (_equals) {
-        _builder.append("character ");} else {
+        _builder.append("character(30) ");} else {
         PrimitiveType _type_1 = operation.getType();
         _builder.append(_type_1, "	");
       }
