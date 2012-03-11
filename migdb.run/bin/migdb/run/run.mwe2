@@ -36,14 +36,14 @@ Workflow {
 	}	
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/codeGeneration/buildAPP.qvto"
-		//transformationFile = "../migdb.qvto/transforms/codeGeneration/cgAPP.qvto"
+		transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
+		//transformationFile = "../migdb.qvto/transforms/builders/cgAPP.qvto"
 		outputSlot = "buildModelAPP"
 	}
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/codeGeneration/buildRDB.qvto"
-		//transformationFile = "../migdb.qvto/transforms/codeGeneration/cgRDB.qvto"
+		transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
+		//transformationFile = "../migdb.qvto/transforms/builders/cgRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
 /**/
@@ -87,7 +87,7 @@ Workflow {
 	}
 /**
 	component = CommandLineExec{
-		command = "ruby ../migdb.ruby.sql/skript.rb output_sql postgres postgres 123456"
+		command = "ruby ../migdb.ruby.sql/script.rb output_sql postgres postgres 123456"
 	}		
 /**/
 }

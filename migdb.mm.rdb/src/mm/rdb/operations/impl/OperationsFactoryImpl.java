@@ -86,6 +86,7 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 			case OperationsPackage.HAS_NO_INSTANCES: return createHasNoInstances();
 			case OperationsPackage.ADD_INSTANCES: return createAddInstances();
 			case OperationsPackage.INSERT_INSTANCES: return createInsertInstances();
+			case OperationsPackage.GENERATE_SEQUENCE_NUMBERS: return createGenerateSequenceNumbers();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -369,6 +370,16 @@ public class OperationsFactoryImpl extends EFactoryImpl implements OperationsFac
 	public InsertInstances createInsertInstances() {
 		InsertInstancesImpl insertInstances = new InsertInstancesImpl();
 		return insertInstances;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public GenerateSequenceNumbers createGenerateSequenceNumbers() {
+		GenerateSequenceNumbersImpl generateSequenceNumbers = new GenerateSequenceNumbersImpl();
+		return generateSequenceNumbers;
 	}
 
 	/**

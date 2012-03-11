@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: migdbqvto
-Bundle-SymbolicName: migdb.qvto
+Bundle-SymbolicName: migdb.qvto;singleton:=true
 Bundle-Version: 1.0.0
 Bundle-Vendor: 

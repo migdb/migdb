@@ -333,6 +333,16 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetColumnsNames"
             lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="GenerateSequenceNumbers" eSuperTypes="#//rdb/operations/ModelOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tableName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="columnName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
     </eSubpackages>
     <eSubpackages name="dml" nsURI="http://www.collectionspro.eu/jam/mm/rdb-dml" nsPrefix="rdb-dml">
       <eClassifiers xsi:type="ecore:EClass" name="Query">

@@ -16,6 +16,7 @@ import mm.rdb.operations.impl.AddSequenceImpl;
 import mm.rdb.operations.impl.AddTableImpl;
 import mm.rdb.operations.impl.AddUniqueIndexImpl;
 import mm.rdb.operations.impl.CopyInstancesImpl;
+import mm.rdb.operations.impl.GenerateSequenceNumbersImpl;
 import mm.rdb.operations.impl.HasNoInstancesImpl;
 import mm.rdb.operations.impl.HasNoOwnInstancesImpl;
 import mm.rdb.operations.impl.InsertInstancesImpl;
@@ -590,6 +591,25 @@ public class Generator extends BaseCodeGenerator {
     }
   }
   
+  protected CharSequence _genOperation(final GenerateSequenceNumbersImpl operation) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("UPDATE ");
+    String _owningSchemaName = operation.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _tableName = operation.getTableName();
+    _builder.append(_tableName, "");
+    _builder.append(" SET ");
+    String _columnName = operation.getColumnName();
+    _builder.append(_columnName, "");
+    _builder.append(" = nextval(\'");
+    String _sequenceName = operation.getSequenceName();
+    _builder.append(_sequenceName, "");
+    _builder.append("\');");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
   protected CharSequence _genOperation(final AddInstancesImpl operation) {
     {
       EList<String> _targetTableNames = operation.getTargetTableNames();
@@ -759,7 +779,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(")");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t\t\t");
-    _builder.append("SELECT nextval(\'seq_global\'), ");
+    _builder.append("SELECT ");
     {
       EList<String> _sourceColumnsNames = operation.getSourceColumnsNames();
       boolean hasAnyElements_1 = false;
@@ -932,6 +952,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddUniqueIndexImpl)operation);
     } else if ((operation instanceof CopyInstancesImpl)) {
       return _genOperation((CopyInstancesImpl)operation);
+    } else if ((operation instanceof GenerateSequenceNumbersImpl)) {
+      return _genOperation((GenerateSequenceNumbersImpl)operation);
     } else if ((operation instanceof HasNoInstancesImpl)) {
       return _genOperation((HasNoInstancesImpl)operation);
     } else if ((operation instanceof HasNoOwnInstancesImpl)) {

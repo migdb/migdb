@@ -15,12 +15,12 @@
         <properties name="zip" type="/0/@modelGenerations.0/@classes.2"/>
       </classes>
       <classes xsi:type="app:Class" name="LegalPerson" parent="/0/@modelGenerations.0/@classes.3">
-        <properties name="regNo" type="/0/@modelGenerations.0/@classes.0"/>
         <properties name="busName" type="/0/@modelGenerations.0/@classes.1"/>
+        <properties name="regNo" type="/0/@modelGenerations.0/@classes.0"/>
       </classes>
       <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.3">
-        <properties name="surname" type="/0/@modelGenerations.0/@classes.1"/>
         <properties name="name" type="/0/@modelGenerations.0/@classes.1"/>
+        <properties name="surname" type="/0/@modelGenerations.0/@classes.1"/>
       </classes>
     </modelGenerations>
     <operations xsi:type="app-ops:AddPrimitiveClass" name="Integer" primitiveType="int"/>

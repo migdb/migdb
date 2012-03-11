@@ -331,6 +331,16 @@ class Generator extends BaseCodeGenerator {
  	 * This operations do not change context of models.
      * This operations just work with instances (rows) in database.
      */
+       
+     /**
+     * GENERATE SEQUENCE NUMBERS
+     * This operation generate new sequence numbers to column
+     *  
+     * @param GenerateSequenceNumbers operation : operation of type GenerateSequenceNumbers 
+     */     
+    def dispatch genOperation(GenerateSequenceNumbersImpl operation)'''
+    	UPDATE «operation.owningSchemaName».«operation.tableName» SET «operation.columnName» = nextval('«operation.sequenceName»');
+    '''
     
      /**
      * ADD INSTANCES
@@ -427,7 +437,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(InsertInstancesImpl operation)'''
 		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» (id,«FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-						SELECT nextval('seq_global'), «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
+						SELECT «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
 	'''
 	
 	

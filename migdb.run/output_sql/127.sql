@@ -1,2 +1,2 @@
 ALTER TABLE public.naturalperson
-	ADD COLUMN surname character ;
+	ADD COLUMN surname character(30) ;

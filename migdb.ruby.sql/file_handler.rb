@@ -1,31 +1,27 @@
-#zpracuje jednotlivé query
+#handle each file containing a SQL query
 
 class File_handler
-  
-  def initialize (dbname, user, password)
-      @dbname = dbname
-      @user = user
-      @password = password
+
+  def initialize database_name, user, password
+    @database_connection = PG.connect( :host => 'localhost',
+                                                :dbname => database_name,
+                                                :user => user,
+                                                :password => password )
+    @database_connection.trace(STDOUT)
   end
-  
-  def connect
-    @database_connection = PG.connect( :host => 'localhost', 
-                                        :dbname => @dbname, 
-                                        :user => @user, 
-                                        :password => @password )
-  end
-  
+
   def sql_file query
-    connect()
-    @database_connection.send_query(query)
+    puts query
+    @database_connection.exec(query)   if !query.nil?
+  end
+
+  def q_file query
+    puts query
+    @database_connection.exec(query)  if !query.nil?
+  end
+
+  def close
     @database_connection.finish
   end
-  
-  def q_file query
-    connect()
-    @database_connection.exec(query)
-  end
 
-
-  
 end

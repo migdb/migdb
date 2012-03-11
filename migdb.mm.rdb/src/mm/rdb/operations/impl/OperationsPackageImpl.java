@@ -25,6 +25,7 @@ import mm.rdb.operations.AddSequence;
 import mm.rdb.operations.AddTable;
 import mm.rdb.operations.AddUniqueIndex;
 import mm.rdb.operations.CopyInstances;
+import mm.rdb.operations.GenerateSequenceNumbers;
 import mm.rdb.operations.HasNoInstances;
 import mm.rdb.operations.HasNoOwnInstances;
 import mm.rdb.operations.InsertInstances;
@@ -239,6 +240,13 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * @generated
 	 */
 	private EClass insertInstancesEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass generateSequenceNumbersEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1347,6 +1355,51 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getGenerateSequenceNumbers() {
+		return generateSequenceNumbersEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenerateSequenceNumbers_OwningSchemaName() {
+		return (EAttribute)generateSequenceNumbersEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenerateSequenceNumbers_TableName() {
+		return (EAttribute)generateSequenceNumbersEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenerateSequenceNumbers_ColumnName() {
+		return (EAttribute)generateSequenceNumbersEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenerateSequenceNumbers_SequenceName() {
+		return (EAttribute)generateSequenceNumbersEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getMergeType() {
 		return mergeTypeEEnum;
 	}
@@ -1519,6 +1572,12 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		createEAttribute(insertInstancesEClass, INSERT_INSTANCES__SOURCE_COLUMNS_NAMES);
 		createEAttribute(insertInstancesEClass, INSERT_INSTANCES__TARGET_COLUMNS_NAMES);
 
+		generateSequenceNumbersEClass = createEClass(GENERATE_SEQUENCE_NUMBERS);
+		createEAttribute(generateSequenceNumbersEClass, GENERATE_SEQUENCE_NUMBERS__OWNING_SCHEMA_NAME);
+		createEAttribute(generateSequenceNumbersEClass, GENERATE_SEQUENCE_NUMBERS__TABLE_NAME);
+		createEAttribute(generateSequenceNumbersEClass, GENERATE_SEQUENCE_NUMBERS__COLUMN_NAME);
+		createEAttribute(generateSequenceNumbersEClass, GENERATE_SEQUENCE_NUMBERS__SEQUENCE_NAME);
+
 		// Create enums
 		mergeTypeEEnum = createEEnum(MERGE_TYPE);
 	}
@@ -1579,6 +1638,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		hasNoInstancesEClass.getESuperTypes().add(this.getModelOperation());
 		addInstancesEClass.getESuperTypes().add(this.getModelOperation());
 		insertInstancesEClass.getESuperTypes().add(this.getModelOperation());
+		generateSequenceNumbersEClass.getESuperTypes().add(this.getModelOperation());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelOperationEClass, ModelOperation.class, "ModelOperation", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1720,6 +1780,12 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEAttribute(getInsertInstances_TargetTableName(), ecorePackage.getEString(), "targetTableName", null, 1, 1, InsertInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInsertInstances_SourceColumnsNames(), ecorePackage.getEString(), "sourceColumnsNames", null, 1, -1, InsertInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getInsertInstances_TargetColumnsNames(), ecorePackage.getEString(), "targetColumnsNames", null, 1, -1, InsertInstances.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(generateSequenceNumbersEClass, GenerateSequenceNumbers.class, "GenerateSequenceNumbers", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getGenerateSequenceNumbers_OwningSchemaName(), ecorePackage.getEString(), "owningSchemaName", null, 1, 1, GenerateSequenceNumbers.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGenerateSequenceNumbers_TableName(), ecorePackage.getEString(), "tableName", null, 1, 1, GenerateSequenceNumbers.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGenerateSequenceNumbers_ColumnName(), ecorePackage.getEString(), "columnName", null, 1, 1, GenerateSequenceNumbers.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getGenerateSequenceNumbers_SequenceName(), ecorePackage.getEString(), "sequenceName", null, 1, 1, GenerateSequenceNumbers.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(mergeTypeEEnum, MergeType.class, "MergeType");

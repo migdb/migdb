@@ -1,0 +1,17 @@
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+library builder_rdb;
+
+helper addSchema(_name : String) : RDB::operations::AddSchema {
+	return object RDB::operations::AddSchema {
+		name := _name;
+	}
+}
+
+helper addSequence(_owningSchemaName : String, _name : String, _startValue : Integer) : RDB::operations::AddSequence {
+	return object RDB::operations::AddSequence {
+		owningSchemaName :=_owningSchemaName ;
+		name := _name;
+		startValue := _startValue;
+		
+	}
+}

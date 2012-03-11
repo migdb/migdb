@@ -1,5 +1,5 @@
-library builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+library builder_app;
 
 /********************************************
  *				CLASS HELPERS			 	*

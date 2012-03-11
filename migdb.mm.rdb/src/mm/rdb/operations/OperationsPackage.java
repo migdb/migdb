@@ -1346,6 +1346,61 @@ public interface OperationsPackage extends EPackage {
 	int INSERT_INSTANCES_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 5;
 
 	/**
+	 * The meta object id for the '{@link mm.rdb.operations.impl.GenerateSequenceNumbersImpl <em>Generate Sequence Numbers</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see mm.rdb.operations.impl.GenerateSequenceNumbersImpl
+	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getGenerateSequenceNumbers()
+	 * @generated
+	 */
+	int GENERATE_SEQUENCE_NUMBERS = 26;
+
+	/**
+	 * The feature id for the '<em><b>Owning Schema Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERATE_SEQUENCE_NUMBERS__OWNING_SCHEMA_NAME = MODEL_OPERATION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Table Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERATE_SEQUENCE_NUMBERS__TABLE_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Column Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERATE_SEQUENCE_NUMBERS__COLUMN_NAME = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Sequence Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERATE_SEQUENCE_NUMBERS__SEQUENCE_NAME = MODEL_OPERATION_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Generate Sequence Numbers</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERATE_SEQUENCE_NUMBERS_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 4;
+
+	/**
 	 * The meta object id for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1353,7 +1408,7 @@ public interface OperationsPackage extends EPackage {
 	 * @see mm.rdb.operations.impl.OperationsPackageImpl#getMergeType()
 	 * @generated
 	 */
-	int MERGE_TYPE = 26;
+	int MERGE_TYPE = 27;
 
 
 	/**
@@ -2585,6 +2640,60 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getInsertInstances_TargetColumnsNames();
 
 	/**
+	 * Returns the meta object for class '{@link mm.rdb.operations.GenerateSequenceNumbers <em>Generate Sequence Numbers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Generate Sequence Numbers</em>'.
+	 * @see mm.rdb.operations.GenerateSequenceNumbers
+	 * @generated
+	 */
+	EClass getGenerateSequenceNumbers();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.GenerateSequenceNumbers#getOwningSchemaName <em>Owning Schema Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Owning Schema Name</em>'.
+	 * @see mm.rdb.operations.GenerateSequenceNumbers#getOwningSchemaName()
+	 * @see #getGenerateSequenceNumbers()
+	 * @generated
+	 */
+	EAttribute getGenerateSequenceNumbers_OwningSchemaName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.GenerateSequenceNumbers#getTableName <em>Table Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Table Name</em>'.
+	 * @see mm.rdb.operations.GenerateSequenceNumbers#getTableName()
+	 * @see #getGenerateSequenceNumbers()
+	 * @generated
+	 */
+	EAttribute getGenerateSequenceNumbers_TableName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.GenerateSequenceNumbers#getColumnName <em>Column Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Column Name</em>'.
+	 * @see mm.rdb.operations.GenerateSequenceNumbers#getColumnName()
+	 * @see #getGenerateSequenceNumbers()
+	 * @generated
+	 */
+	EAttribute getGenerateSequenceNumbers_ColumnName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link mm.rdb.operations.GenerateSequenceNumbers#getSequenceName <em>Sequence Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Sequence Name</em>'.
+	 * @see mm.rdb.operations.GenerateSequenceNumbers#getSequenceName()
+	 * @see #getGenerateSequenceNumbers()
+	 * @generated
+	 */
+	EAttribute getGenerateSequenceNumbers_SequenceName();
+
+	/**
 	 * Returns the meta object for enum '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3579,6 +3688,48 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute INSERT_INSTANCES__TARGET_COLUMNS_NAMES = eINSTANCE.getInsertInstances_TargetColumnsNames();
+
+		/**
+		 * The meta object literal for the '{@link mm.rdb.operations.impl.GenerateSequenceNumbersImpl <em>Generate Sequence Numbers</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see mm.rdb.operations.impl.GenerateSequenceNumbersImpl
+		 * @see mm.rdb.operations.impl.OperationsPackageImpl#getGenerateSequenceNumbers()
+		 * @generated
+		 */
+		EClass GENERATE_SEQUENCE_NUMBERS = eINSTANCE.getGenerateSequenceNumbers();
+
+		/**
+		 * The meta object literal for the '<em><b>Owning Schema Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute GENERATE_SEQUENCE_NUMBERS__OWNING_SCHEMA_NAME = eINSTANCE.getGenerateSequenceNumbers_OwningSchemaName();
+
+		/**
+		 * The meta object literal for the '<em><b>Table Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute GENERATE_SEQUENCE_NUMBERS__TABLE_NAME = eINSTANCE.getGenerateSequenceNumbers_TableName();
+
+		/**
+		 * The meta object literal for the '<em><b>Column Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute GENERATE_SEQUENCE_NUMBERS__COLUMN_NAME = eINSTANCE.getGenerateSequenceNumbers_ColumnName();
+
+		/**
+		 * The meta object literal for the '<em><b>Sequence Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute GENERATE_SEQUENCE_NUMBERS__SEQUENCE_NAME = eINSTANCE.getGenerateSequenceNumbers_SequenceName();
 
 		/**
 		 * The meta object literal for the '{@link mm.rdb.operations.MergeType <em>Merge Type</em>}' enum.

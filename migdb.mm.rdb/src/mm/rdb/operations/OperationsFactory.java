@@ -251,6 +251,15 @@ public interface OperationsFactory extends EFactory {
 	InsertInstances createInsertInstances();
 
 	/**
+	 * Returns a new object of class '<em>Generate Sequence Numbers</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Generate Sequence Numbers</em>'.
+	 * @generated
+	 */
+	GenerateSequenceNumbers createGenerateSequenceNumbers();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
