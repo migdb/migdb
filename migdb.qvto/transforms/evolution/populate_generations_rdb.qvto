@@ -398,6 +398,21 @@ mapping RDB::operations::InsertInstances::apply(inout gen : RDB::ModelGeneration
 }
 
 /**
+ * GENERATE SEQUENCE NUMBERS
+ * This operation generate new sequence numbers to defined columns.
+ * @restriction : column with @columnName must exists in defined table
+ * @restriction : sequence with @sequenceName must exists in schema
+ */
+query RDB::operations::GenerateSequenceNumbers::isValid(gen : RDB::ModelGeneration) : Boolean {
+	return gen.isColumnInTable(self.owningSchemaName, self.tableName, self.columnName)
+		   and gen.isSequenceInSchema(self.owningSchemaName,self.sequenceName);
+}
+
+mapping RDB::operations::GenerateSequenceNumbers::apply(inout gen : RDB::ModelGeneration) {
+
+}
+
+/**
  * HAS NO OWN INSTANCES
  * This operation check if table has some own rows.
  * @restriction : table with @tableName must exists in generation

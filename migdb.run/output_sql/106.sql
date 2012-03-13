@@ -1,3 +1,1 @@
-ALTER TABLE public.country
-	ADD CONSTRAINT PK_country
-	PRIMARY KEY (id);
+UPDATE public.party SET address = nextval('seq_global');

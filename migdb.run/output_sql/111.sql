@@ -1,3 +1,2 @@
-ALTER TABLE public.party
-	ADD CONSTRAINT PK_party
-	PRIMARY KEY (id);
+INSERT INTO public.address (id,street,city,zip)
+				SELECT address, street,city,zip FROM party;

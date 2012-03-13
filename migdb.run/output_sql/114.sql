@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN zip int;
+ALTER TABLE public.party 
+	DROP COLUMN zip;

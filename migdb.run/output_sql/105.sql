@@ -1,2 +1,2 @@
-CREATE INDEX IX_country_id
-	ON public.country (id);
+ALTER TABLE public.party
+	ADD COLUMN address int;

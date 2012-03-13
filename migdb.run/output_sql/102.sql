@@ -1,1 +1,2 @@
-CREATE SEQUENCE public.seq_global START 1;
+ALTER TABLE public.address
+	ADD COLUMN id int;

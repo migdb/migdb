@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN id int;
+ALTER TABLE public.address
+	ADD COLUMN zip int;

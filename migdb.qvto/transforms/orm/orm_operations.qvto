@@ -422,19 +422,19 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 		type := RDB::PrimitiveType::int;
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddForeignKey {
-		owningSchemaName := "public";
-		owningTableName := self.sourceClassName.toLower();
-		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
-		targetTableName := self.extractClassName.toLower();
-		constrainedColumnName := self.extractClassName.toLower();
-	};
+//	rdbRoot.operations += object RDB::operations::AddForeignKey {
+//		owningSchemaName := "public";
+//		owningTableName := self.sourceClassName.toLower();
+//		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
+//		targetTableName := self.extractClassName.toLower();
+//		constrainedColumnName := self.extractClassName.toLower();
+//	};
 	
 	rdbRoot.operations += object RDB::operations::GenerateSequenceNumbers {
 		owningSchemaName := "public";
 		tableName := self.sourceClassName.toLower();
 		columnName := self.extractClassName.toLower();
-		sequenceName := "serial"; // ???
+		sequenceName := "seq_global"; // seq_global je v nasem pripade.
 	};
 	
 	self.extractPropertiesNames->forEach(pName) {
@@ -461,6 +461,14 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 			name := pName.toLower();
 		};
 	};
+	
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.sourceClassName.toLower();
+		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
+		targetTableName := self.extractClassName.toLower();
+		constrainedColumnName := self.extractClassName.toLower();
+	};	
 }
 
 query RDB::ModelGeneration::findSchema(sName : String) : RDB::Schema {

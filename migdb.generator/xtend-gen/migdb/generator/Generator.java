@@ -166,8 +166,8 @@ public class Generator extends BaseCodeGenerator {
     String _owningSchemaName_1 = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName_1, "	");
     _builder.append(".");
-    String _owningTableName_1 = operation.getOwningTableName();
-    _builder.append(_owningTableName_1, "	");
+    String _targetTableName = operation.getTargetTableName();
+    _builder.append(_targetTableName, "	");
     _builder.append(" (id);");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -779,7 +779,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(")");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t\t\t");
-    _builder.append("SELECT ");
+    _builder.append("SELECT address, ");
     {
       EList<String> _sourceColumnsNames = operation.getSourceColumnsNames();
       boolean hasAnyElements_1 = false;

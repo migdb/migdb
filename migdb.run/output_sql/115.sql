@@ -1,3 +1,3 @@
 ALTER TABLE public.party
-	ADD CONSTRAINT FK_party_country
-	FOREIGN KEY (zip) REFERENCES public.party (id);
+	ADD CONSTRAINT FK_party_address
+	FOREIGN KEY (address) REFERENCES public.address (id);

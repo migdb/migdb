@@ -123,7 +123,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.owningTableName» (id);
+			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id);
 	'''		
 
 	/**
@@ -437,7 +437,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(InsertInstancesImpl operation)'''
 		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» (id,«FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-						SELECT «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
+						SELECT address, «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
 	'''
 	
 	

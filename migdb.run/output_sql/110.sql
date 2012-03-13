@@ -1,2 +1,3 @@
-CREATE INDEX IX_party_id
-	ON public.party (id);
+ALTER TABLE public.address
+	ADD CONSTRAINT FK_address_country
+	FOREIGN KEY (zip) REFERENCES public.country (id);
