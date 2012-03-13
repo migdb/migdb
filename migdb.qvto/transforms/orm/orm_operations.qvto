@@ -415,6 +415,28 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 		underlyingIndexName := "IX_" + self.extractClassName.toLower() + "_id";
 	};
 	
+	rdbRoot.operations += object RDB::operations::AddColumn {
+		owningSchemaName := "public";
+		owningTableName := self.sourceClassName.toLower();
+		name := self.extractClassName.toLower();
+		type := RDB::PrimitiveType::int;
+	};
+	
+	rdbRoot.operations += object RDB::operations::AddForeignKey {
+		owningSchemaName := "public";
+		owningTableName := self.sourceClassName.toLower();
+		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
+		targetTableName := self.extractClassName.toLower();
+		constrainedColumnName := self.extractClassName.toLower();
+	};
+	
+	rdbRoot.operations += object RDB::operations::GenerateSequenceNumbers {
+		owningSchemaName := "public";
+		tableName := self.sourceClassName.toLower();
+		columnName := self.extractClassName.toLower();
+		sequenceName := "serial"; // ???
+	};
+	
 	self.extractPropertiesNames->forEach(pName) {
 		var p : APP::Property := appGen.findProperty(self.extractClassName, pName);
 		
@@ -438,30 +460,6 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 			owningTableName := self.sourceClassName.toLower();
 			name := pName.toLower();
 		};
-	};
-	
-	rdbRoot.operations += object RDB::operations::AddColumn {
-		owningSchemaName := "public";
-		owningTableName := self.sourceClassName.toLower();
-		name := self.extractClassName.toLower();
-		type := RDB::PrimitiveType::int;
-	};
-	
-	rdbRoot.operations += object RDB::operations::AddForeignKey {
-		owningSchemaName := "public";
-		owningTableName := self.sourceClassName.toLower();
-		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
-		targetTableName := self.extractClassName.toLower();
-		constrainedColumnName := self.extractClassName.toLower();
-	};
-	
-	rdbRoot.operations += object RDB::operations::CopyInstances {
-		owningSchemaName := "public";
-		owningTableName := self.extractClassName.toLower();
-		sourceColumnName := "id";
-		targetTableName := self.sourceClassName.toLower();
-		targetColumnName := self.extractClassName.toLower();
-		type := RDB::operations::MergeType::strict;
 	};
 }
 
