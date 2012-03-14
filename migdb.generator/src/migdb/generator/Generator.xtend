@@ -437,7 +437,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(InsertInstancesImpl operation)'''
 		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» (id,«FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-						SELECT address, «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
+						SELECT «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
 	'''
 	
 	

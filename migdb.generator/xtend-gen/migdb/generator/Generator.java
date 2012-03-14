@@ -779,7 +779,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(")");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t\t\t");
-    _builder.append("SELECT address, ");
+    _builder.append("SELECT ");
     {
       EList<String> _sourceColumnsNames = operation.getSourceColumnsNames();
       boolean hasAnyElements_1 = false;
