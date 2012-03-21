@@ -91,7 +91,7 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
-		name := "id";
+		name := "id_" + self.name.toLower();
 		type := RDB::PrimitiveType::int;
 		// defaultValue := "0";
 	};
@@ -101,14 +101,14 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
 		name := "IX_" + self.name.toLower() + "_id";
-		columnsNames := OrderedSet {"id"};
+		columnsNames := OrderedSet {"id_" + self.name.toLower()};
 	};
 	
 	// addition of a primary key to the table
 	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
-		columnName := "id";
+		columnName := "id_" + self.name.toLower();
 		name := "PK_" + self.name.toLower();
 		underlyingIndexName := "IX_" + self.name.toLower() + "_id";
 	};
@@ -331,23 +331,32 @@ mapping APP::operations::SetParent::toRdb(appGen : APP::ModelGeneration, inout r
 
 // inheritanceType = joined
 mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
-	
-	var targets : Set(String);
-	targets += self.parentName.toLower();
-	targets += appGen.findAncestors(self.parentName);
-	
-	if (appGen.hasAnyColumns(targets)) then {
-		rdbRoot.operations += object RDB::operations::HasNoInstances {
+
+	var targets : OrderedSet(String);
+		targets += self.parentName.toLower();
+		targets += appGen.findAncestors(self.parentName);
+
+			
+		if (appGen.hasAnyColumns(targets)) then {
+			rdbRoot.operations += object RDB::operations::HasNoInstances {
+				owningSchemaName := "public";
+				tableName := self.name.toLower();			
+			};
+		} else {
+			rdbRoot.operations += object RDB::operations::AddInstances {
+				owningSchemaName := "public";
+				sourceTableName := self.name.toLower();
+				targetTableNames := targets;
+			};
+		} endif;
+		
+		rdbRoot.operations += object RDB::operations::RenameColumn {
 			owningSchemaName := "public";
-			tableName := self.name.toLower();			
+			owningTableName := self.name.toLower();
+			name := "id_" + self.name.toLower();
+			newName := "id_" + targets->last();
 		};
-	} else {
-		rdbRoot.operations += object RDB::operations::AddInstances {
-			owningSchemaName := "public";
-			sourceTableName := self.name.toLower();
-			targetTableNames := targets;
-		};
-	} endif;
+	
 }
 
 mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
@@ -418,14 +427,14 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 	rdbRoot.operations += object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.sourceClassName.toLower();
-		name := self.extractClassName.toLower();
+		name := "id_" + self.extractClassName.toLower();
 		type := RDB::PrimitiveType::int;
 	};
 	
 	rdbRoot.operations += object RDB::operations::GenerateSequenceNumbers {
 		owningSchemaName := "public";
 		tableName := self.sourceClassName.toLower();
-		columnName := self.extractClassName.toLower();
+		columnName := "id_" + self.extractClassName.toLower();
 		sequenceName := "seq_global";
 	};
 	
@@ -442,7 +451,7 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 		owningSchemaName := "public";
 		sourceTableName := self.sourceClassName.toLower();
 		targetTableName := self.extractClassName.toLower();
-		sourceColumnsNames := self.extractClassName.toLower();
+		sourceColumnsNames := "id_" + self.extractClassName.toLower();
 		sourceColumnsNames += self.extractPropertiesNames.toLower();
 		targetColumnsNames := self.extractPropertiesNames.toLower();
 	};
@@ -458,9 +467,9 @@ mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inou
 	rdbRoot.operations += object RDB::operations::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := self.sourceClassName.toLower();
-		name := "FK_" + self.sourceClassName.toLower() + "_" + self.extractClassName.toLower();
+		name := "FK_" + self.sourceClassName.toLower() + "_" + "id_" + self.extractClassName.toLower();
 		targetTableName := self.extractClassName.toLower();
-		constrainedColumnName := self.extractClassName.toLower();
+		constrainedColumnName := "id_" + self.extractClassName.toLower();
 	};	
 }
 
