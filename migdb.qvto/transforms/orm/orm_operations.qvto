@@ -308,6 +308,18 @@ when { self.isOrdered }
 
 // unique collection
 
+query APP::operations::RemoveProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+	return true;
+}
+
+mapping APP::operations::RemoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+	rdbRoot.operations += object RDB::operations::RemoveColumn {
+		owningSchemaName := "public";
+		owningTableName := self.owningClassName.toLower();
+		name := self.name.toLower();
+	};
+}
+
 query APP::operations::SetAbstract::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
@@ -332,12 +344,31 @@ mapping APP::operations::SetParent::toRdb(appGen : APP::ModelGeneration, inout r
 // inheritanceType = joined
 mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 
+	if (not self.properties->isEmpty()) then {
+		rdbRoot.operations += object RDB::operations::InsertInstances {
+			owningSchemaName := "public";
+			sourceTableName := self.name.toLower();
+			targetTableName := self.parentName.toLower();
+			sourceColumnsNames := self.properties->toLower();
+			sourceColumnsNames += "id_" + self.name.toLower();
+			targetColumnsNames := self.properties->toLower();
+			targetColumnsNames += "id_" + self.parentName.toLower();
+		};
+		
+		self.properties->forEach(pName) {
+			rdbRoot.operations += object RDB::operations::RemoveColumn {
+				owningSchemaName := "public";
+				owningTableName := self.name.toLower();
+				name := pName.toLower();
+			};
+		};
+	} endif;
+
 	var targets : OrderedSet(String);
 		targets += self.parentName.toLower();
 		targets += appGen.findAncestors(self.parentName);
-
 			
-		if (appGen.hasAnyColumns(targets)) then {
+/*		if (appGen.hasAnyColumns(targets)) then {
 			rdbRoot.operations += object RDB::operations::HasNoInstances {
 				owningSchemaName := "public";
 				tableName := self.name.toLower();			
@@ -348,7 +379,7 @@ mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout 
 				sourceTableName := self.name.toLower();
 				targetTableNames := targets;
 			};
-		} endif;
+		} endif; */
 		
 		rdbRoot.operations += object RDB::operations::RenameColumn {
 			owningSchemaName := "public";
@@ -356,7 +387,6 @@ mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout 
 			name := "id_" + self.name.toLower();
 			newName := "id_" + targets->last();
 		};
-	
 }
 
 mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
