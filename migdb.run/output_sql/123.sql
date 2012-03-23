@@ -1,2 +1,2 @@
 ALTER TABLE public.address
-	ADD COLUMN id int;
+	ADD COLUMN id_address int;

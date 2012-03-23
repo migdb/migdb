@@ -1,3 +1,3 @@
 ALTER TABLE public.address
-	ADD CONSTRAINT FK_address_country
-	FOREIGN KEY (id_country) REFERENCES public.country (id_country);
+	ADD CONSTRAINT FK_country_id_country
+	FOREIGN KEY (country) REFERENCES public.country (id_country);

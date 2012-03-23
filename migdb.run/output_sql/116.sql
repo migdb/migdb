@@ -1,2 +1,2 @@
-INSERT INTO public.party (street,city,zip,id_country,id_party)
-				SELECT street,city,zip,id_country,id_naturalperson FROM naturalperson;
+INSERT INTO public.party (id_party,street,city,zip,country)
+				SELECT id_naturalperson,street,city,zip,country FROM naturalperson;

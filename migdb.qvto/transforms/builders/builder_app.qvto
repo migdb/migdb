@@ -87,10 +87,11 @@ helper setAbstract(_name : String, _isAbstract : Boolean) : APP::operations::Set
 	}
 }
 
-helper setParent(_name : String, _parentName : String) : APP::operations::SetParent {
+helper setParent(_name : String, _parentName : String, _properties : OrderedSet(String)) : APP::operations::SetParent {
 	return object APP::operations::SetParent {
 		name := _name;
 		parentName := _parentName;
+		properties := _properties;
 	}
 }
 
@@ -156,3 +157,29 @@ helper extractClass(_sourceClassName : String, _extractPropertiesNames : Ordered
 		extractClassName := _extractClassName;
 	}
 }
+
+/********************************************
+ *				BUILD MODEL				 	*
+ ********************************************/
+ 
+ helper _property(_name : String, _type : Entity) : Property {
+ 	return object Property {
+ 		name := _name;
+ 		type := type;
+ 	}
+ }
+ 
+ helper _property(_name : String, _type : Entity, _isID : Boolean) : Property {
+ 	return object Property {
+ 		name := _name;
+ 		type := _type;
+ 		isID := _isID;
+ 	}
+ }
+ 
+  helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
+ 	return object PrimitiveClass {
+ 		name := _name;
+ 		primitiveType := _primitiveType;
+ 	}
+ }

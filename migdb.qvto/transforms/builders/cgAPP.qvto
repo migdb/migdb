@@ -1,35 +1,14 @@
+import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-
 transformation build_model(inout inoutModel : APP);
 
 
 main() {	
-
-								  
-		
-	var integer : APP::PrimitiveClass := object APP::PrimitiveClass {
-		name := "Integer";
-		primitiveType := PrimitiveType::int;
-	};
-	
-	var string : APP::PrimitiveClass := object APP::PrimitiveClass {
-		name := "String";
-		primitiveType := PrimitiveType::char;
-	};	
-	
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var country : APP::Class := object APP::Class {
 		name := "Country";
-		properties += Set{
-							object APP::Property{
-								name := "id";
-								type := integer;
-								isID := true;
-							},
-							object APP::Property{
-								name := "name";
-								type := string;
-							}
-					   };		
+		properties += Set{ _property("id",integer,true), _property("name", string)};		
 	};								  																				  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
@@ -39,120 +18,26 @@ main() {
 							integer,string,country,
 							object APP::Class {
 								name := "LegalPerson";
-								properties += Set{
-													object APP::Property{
-														name := "regNo";
-														type := integer;
-													},
-													object APP::Property{
-														name := "busName";
-														type := string;													
-													},
-													object APP::Property{
-														name := "street";
-														type := string;
-													},
-													object APP::Property{
-														name := "city";
-														type := string;													
-													},
-													object APP::Property{
-														name := "zip";
-														type := string;													
-													},
-													object APP::Property{
-														name := "id_country";
-														type := country;													
-													}
-											  };							
+								properties += Set{ _property("id",integer,true),_property("regNo", integer), _property("busName", string), _property("street", string),
+													_property("city", string), _property("zip", string), _property("country", country)};							
 							},
 							object APP::Class {
 								name := "NaturalPerson";
-								properties += Set{
-													object APP::Property{
-														name := "name";
-														type := string;
-													},
-													object APP::Property{
-														name := "surname";
-														type := string;													
-													},
-													object APP::Property{
-														name := "street";
-														type := string;
-													},
-													object APP::Property{
-														name := "city";
-														type := string;													
-													},
-													object APP::Property{
-														name := "zip";
-														type := string;													
-													},
-													object APP::Property{
-														name := "id_country";
-														type := country;													
-													}
-											  };							
+								properties += Set{ _property("id",integer,true),_property("name", integer), _property("surname", string), _property("street", string),
+													_property("city", string), _property("zip", string), _property("country", country)};							
 							}
 						};
 		};
 	 };
 	 
-	 var addClassParty : APP::operations::AddClass := object APP::operations::AddClass {
-		name := "Party";
-		isAbstract := false;
-		inheritanceType := InheritanceType::joined;
-	};
-	
-	var addPropertyStreet : APP::operations::AddProperty := object APP::operations::AddProperty {
-		owningClassName := "Party";
-		name := "street";
-		type := "String";
-	};
-	
-	var addPropertyCity : APP::operations::AddProperty := object APP::operations::AddProperty {
-		owningClassName := "Party";
-		name := "city";
-		type := "String";
-	};
-	
-	var addPropertyZip : APP::operations::AddProperty := object APP::operations::AddProperty {
-		owningClassName := "Party";
-		name := "zip";
-		type := "String";
-	};
-	
-	var addPropertyCountry : APP::operations::AddProperty := object APP::operations::AddProperty {
-		owningClassName := "Party";
-		name := "id_country";
-		type := "Country";
-	};			
-
-	var setParentLegal : APP::operations::SetParent := object APP::operations::SetParent {
-		name := "LegalPerson";
-		parentName := "Party";
-		properties := OrderedSet{"street", "city", "zip", "id_country"};
-	};
-	
-	var setParentNatural : APP::operations::SetParent := object APP::operations::SetParent {
-		name := "NaturalPerson";
-		parentName := "Party";
-		properties := OrderedSet{"street", "city", "zip", "id_country"};
-	};			
-	
-	var extractClass : APP::operations::ExtractClass := object APP::operations::ExtractClass {
-		sourceClassName := "Party";
-		extractPropertiesNames := OrderedSet{"street", "city","zip", "id_country"};
-		extractClassName := "Address";
-	};
-	 
-	 model.operations += addClassParty;
-	 model.operations += addPropertyStreet;
-	 model.operations += addPropertyCity;
-	 model.operations += addPropertyZip;
-	 model.operations += addPropertyCountry;
-	 model.operations += setParentLegal;
-	 model.operations += setParentNatural;
-	 model.operations += extractClass;
+	 model.operations += addClass("Party", false, InheritanceType::joined);
+	 model.operations += addProperty("Party", "street", "String");
+	 model.operations += addProperty("Party", "city", "String");
+	 model.operations += addProperty("Party", "zip", "String");
+	 model.operations += addProperty("Party", "country", "Country");
+	 model.operations += setParent("LegalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 model.operations += setParent("NaturalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 model.operations += extractClass("Party", OrderedSet{"street", "city","zip", "country"}, "Address");
+	 model.operations += renameProperty("Party", "address", "residentialAddress");
+	 model.operations += addProperty("Party", "contactAddress", "Country");
 }

@@ -23,7 +23,7 @@ main() {
 	model.operations += addProperty("LegalPerson", "street", "String");
 	model.operations += addProperty("LegalPerson", "city", "String");
 	model.operations += addProperty("LegalPerson", "zip", "String");
-	model.operations += addProperty("LegalPerson", "id_country", "Country");	
+	model.operations += addProperty("LegalPerson", "country", "Country");	
 		
 	model.operations += addClass("NaturalPerson", false,  APP::InheritanceType::joined);
 	model.operations += addProperty("NaturalPerson", "name", "String");
@@ -31,5 +31,5 @@ main() {
 	model.operations += addProperty("NaturalPerson", "street", "String");
 	model.operations += addProperty("NaturalPerson", "city", "String");
 	model.operations += addProperty("NaturalPerson", "zip", "String");
-	model.operations += addProperty("NaturalPerson", "id_country", "Country");
+	model.operations += addProperty("NaturalPerson", "country", "Country");
 }

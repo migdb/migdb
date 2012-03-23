@@ -70,24 +70,24 @@ main() {
 	};
 	
 	var columnCountry1 : RDB::Column := object RDB::Column {
-		name := "id_country";
+		name := "country";
 		type := PrimitiveType::int;
 	};
 	
 	
 	var columnCountry2 : RDB::Column := object RDB::Column {
-		name := "id_country";
+		name := "country";
 		type := PrimitiveType::int;
 	};		
 	
 	var fkLegalCountry : RDB::ForeignKey := object RDB::ForeignKey {
-		name := "FK_legalperson_country";
+		name := "FK_country_id_country";
 		targetTable := tableCountry;
 		constrainedColumn := columnCountry1;
 	};
 	
 	var fkNaturalCountry : RDB::ForeignKey := object RDB::ForeignKey {
-		name := "FK_naturalperson_country";
+		name := "FK_country_id_country";
 		targetTable := tableCountry;
 		constrainedColumn := columnCountry2;
 	};	

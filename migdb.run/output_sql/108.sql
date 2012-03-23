@@ -1,2 +1,2 @@
 ALTER TABLE public.party
-	ADD COLUMN id_country int;
+	ADD COLUMN country int;

@@ -1,2 +1,2 @@
-CREATE INDEX IX_party_id
+CREATE INDEX IX_party_id_party
 	ON public.party (id_party);

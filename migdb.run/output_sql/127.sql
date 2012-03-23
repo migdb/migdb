@@ -1,1 +1,1 @@
-UPDATE public.party SET id_address = nextval('seq_global');
+UPDATE public.party SET address = nextval('seq_global');
