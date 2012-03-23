@@ -1,3 +1,2 @@
-ALTER TABLE public.address
-	ADD CONSTRAINT FK_address_country
-	FOREIGN KEY (zip) REFERENCES public.country (id);
+INSERT INTO public.party (street,city,zip,id_country,id_party)
+				SELECT street,city,zip,id_country,id_legalperson FROM legalperson;

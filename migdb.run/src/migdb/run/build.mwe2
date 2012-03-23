@@ -1,4 +1,4 @@
-module migb.run.run
+module migdb.run.build
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -29,21 +29,21 @@ Workflow {
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_sql"
-	}		
+	}	
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_xmi"
-	}		
+	}	
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/cgAPP.qvto"
+		transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
 		outputSlot = "buildModelAPP"
-	}	
+	}
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/cgRDB.qvto"
+		transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
 		outputSlot = "buildModelRDB"
-	}	
+	}
 /**/
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
@@ -64,14 +64,14 @@ Workflow {
 	}
 /**/
 	component = Writer {
-		modelSlot = "buildModelAPP"
+		modelSlot = "generationModelAPP"
 		uri = "output_xmi/outAPP.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
 /**/
 	component = Writer {
-		modelSlot = "buildModelRDB"
+		modelSlot = "generationModelRDB"
 		uri = "output_xmi/outRDB.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
@@ -87,5 +87,5 @@ Workflow {
 	component = CommandLineExec{
 		command = "ruby ../migdb.ruby.sql/script.rb output_sql postgres postgres 123456"
 	}		
-/**/
+/**/	
 }

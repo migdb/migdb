@@ -168,7 +168,10 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _targetTableName = operation.getTargetTableName();
     _builder.append(_targetTableName, "	");
-    _builder.append(" (id);");
+    _builder.append(" (id_");
+    String _targetTableName_1 = operation.getTargetTableName();
+    _builder.append(_targetTableName_1, "	");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -763,7 +766,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _targetTableName = operation.getTargetTableName();
     _builder.append(_targetTableName, "");
-    _builder.append(" (id,");
+    _builder.append(" (");
     {
       EList<String> _targetColumnsNames = operation.getTargetColumnsNames();
       boolean hasAnyElements = false;

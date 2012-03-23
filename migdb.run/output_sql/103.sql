@@ -1,2 +1,2 @@
-CREATE INDEX IX_address_id
-	ON public.address (id);
+CREATE INDEX IX_party_id
+	ON public.party (id_party);

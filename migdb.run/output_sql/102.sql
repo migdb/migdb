@@ -1,2 +1,2 @@
-ALTER TABLE public.address
-	ADD COLUMN id int;
+ALTER TABLE public.party
+	ADD COLUMN id_party int;

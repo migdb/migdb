@@ -6,6 +6,7 @@
  */
 package mm.app.operations;
 
+import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -17,6 +18,7 @@ package mm.app.operations;
  * <ul>
  *   <li>{@link mm.app.operations.SetParent#getName <em>Name</em>}</li>
  *   <li>{@link mm.app.operations.SetParent#getParentName <em>Parent Name</em>}</li>
+ *   <li>{@link mm.app.operations.SetParent#getProperties <em>Properties</em>}</li>
  * </ul>
  * </p>
  *
@@ -76,5 +78,21 @@ public interface SetParent extends ModelOperation {
 	 * @generated
 	 */
 	void setParentName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Properties</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Properties</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Properties</em>' attribute list.
+	 * @see mm.app.operations.OperationsPackage#getSetParent_Properties()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getProperties();
 
 } // SetParent

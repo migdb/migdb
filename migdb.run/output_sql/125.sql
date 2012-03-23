@@ -1,3 +1,3 @@
-ALTER TABLE public.naturalperson
-	ADD CONSTRAINT PK_naturalperson
+ALTER TABLE public.address
+	ADD CONSTRAINT PK_address
 	PRIMARY KEY (id);

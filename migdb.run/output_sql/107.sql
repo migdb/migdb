@@ -1,2 +1,2 @@
-ALTER TABLE public.address
-	ADD COLUMN street character(30) ;
+ALTER TABLE public.party
+	ADD COLUMN zip character(30) ;

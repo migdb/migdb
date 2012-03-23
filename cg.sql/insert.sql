@@ -1,16 +1,8 @@
 ﻿INSERT INTO country VALUES(nextval('seq_global'), 'Ceska republika');
 
-INSERT INTO party VALUES (nextval('seq_global'), 'Decinska', 'Decin', 1);
-INSERT INTO naturalperson VALUES (currval('seq_global'),'Petr','Tarant');
+INSERT INTO naturalperson VALUES (nextval('seq_global'),'Petr','Tarant', 'Decinska', 'Decin', '405 02',1);
+INSERT INTO naturalperson VALUES (nextval('seq_global'),'Jiri','Jezek', 'Jicinska', 'Jicin', '406 03', 1);
+INSERT INTO naturalperson VALUES (nextval('seq_global'),'Ondrej','Macek', 'Prazska', 'Praha', '110 00', 1);
 
-INSERT INTO party VALUES (nextval('seq_global'), 'Jicinska', 'Jicin', 1);
-INSERT INTO naturalperson VALUES (currval('seq_global'),'Jiri','Jezek');
-
-INSERT INTO party VALUES (nextval('seq_global'), 'Prazska', 'Praha', 1);
-INSERT INTO naturalperson VALUES (currval('seq_global'),'Ondrej','Macek');
-
-INSERT INTO party VALUES (nextval('seq_global'), 'Brnenska', 'Brno', 1);
-INSERT INTO legalperson VALUES (currval('seq_global'),1234,'Google');
-
-INSERT INTO party VALUES (nextval('seq_global'), 'Plzenska', 'Plzen', 1);
-INSERT INTO legalperson VALUES (currval('seq_global'),5678,'Microsoft');
+INSERT INTO legalperson VALUES (nextval('seq_global'),1234,'Google', 'Brnenska', 'Brno', '120 00', 1);
+INSERT INTO legalperson VALUES (nextval('seq_global'),5678,'Microsoft', 'Plzenska', 'Plzen', '123 45',1);

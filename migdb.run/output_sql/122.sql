@@ -1,1 +1,1 @@
-CREATE TABLE public.naturalperson ();
+CREATE TABLE public.address ();

@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson
-	ADD COLUMN regno int;
+ALTER TABLE public.naturalperson 
+	DROP COLUMN id_country;

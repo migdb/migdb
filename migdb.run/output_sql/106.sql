@@ -1,1 +1,2 @@
-UPDATE public.party SET address = nextval('seq_global');
+ALTER TABLE public.party
+	ADD COLUMN city character(30) ;

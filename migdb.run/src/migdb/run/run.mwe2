@@ -29,23 +29,21 @@ Workflow {
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_sql"
-	}	
+	}		
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_xmi"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/builders/cgAPP.qvto"
+		outputSlot = "buildModelAPP"
 	}	
 /**/
 	component = QVTOExecutor {
-		//transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
-		transformationFile = "../migdb.qvto/transforms/builders/cgAPP.qvto"
-		outputSlot = "buildModelAPP"
-	}
-/**/
-	component = QVTOExecutor {
-		//transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
 		transformationFile = "../migdb.qvto/transforms/builders/cgRDB.qvto"
 		outputSlot = "buildModelRDB"
-	}
+	}	
 /**/
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
@@ -66,14 +64,14 @@ Workflow {
 	}
 /**/
 	component = Writer {
-		modelSlot = "generationModelAPP"
+		modelSlot = "buildModelAPP"
 		uri = "output_xmi/outAPP.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
 /**/
 	component = Writer {
-		modelSlot = "generationModelRDB"
+		modelSlot = "buildModelRDB"
 		uri = "output_xmi/outRDB.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true

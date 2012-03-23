@@ -1,2 +1,2 @@
-ALTER TABLE public.party 
-	DROP COLUMN city;
+ALTER TABLE public.legalperson 
+	DROP COLUMN zip;

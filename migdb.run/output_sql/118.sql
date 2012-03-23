@@ -1,2 +1,2 @@
-CREATE INDEX IX_legalperson_id
-	ON public.legalperson (id);
+ALTER TABLE public.naturalperson 
+	DROP COLUMN city;

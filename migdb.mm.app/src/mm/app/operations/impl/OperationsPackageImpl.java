@@ -421,6 +421,15 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getSetParent_Properties() {
+		return (EAttribute)setParentEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getSetAbstract() {
 		return setAbstractEClass;
 	}
@@ -1025,6 +1034,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		setParentEClass = createEClass(SET_PARENT);
 		createEAttribute(setParentEClass, SET_PARENT__NAME);
 		createEAttribute(setParentEClass, SET_PARENT__PARENT_NAME);
+		createEAttribute(setParentEClass, SET_PARENT__PROPERTIES);
 
 		setAbstractEClass = createEClass(SET_ABSTRACT);
 		createEAttribute(setAbstractEClass, SET_ABSTRACT__NAME);
@@ -1178,6 +1188,7 @@ public class OperationsPackageImpl extends EPackageImpl implements OperationsPac
 		initEClass(setParentEClass, SetParent.class, "SetParent", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSetParent_Name(), ecorePackage.getEString(), "name", null, 1, 1, SetParent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSetParent_ParentName(), ecorePackage.getEString(), "parentName", null, 1, 1, SetParent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSetParent_Properties(), ecorePackage.getEString(), "properties", null, 0, -1, SetParent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(setAbstractEClass, SetAbstract.class, "SetAbstract", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSetAbstract_Name(), ecorePackage.getEString(), "name", null, 1, 1, SetAbstract.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

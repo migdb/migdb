@@ -1,2 +1,2 @@
-INSERT INTO public.party (id)
-	SELECT id FROM public.legalperson;
+ALTER TABLE public.address
+	ADD COLUMN street character(30) ;
