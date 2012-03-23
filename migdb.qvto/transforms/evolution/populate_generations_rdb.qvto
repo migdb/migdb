@@ -87,7 +87,7 @@ query RDB::operations::AddIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
 mapping RDB::operations::AddIndex::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
 	s.indexes += object RDB::Index {
-		name := self.name;		
+		name := self.name;			
 		columns += gen.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames);
 	}
 }
@@ -216,7 +216,13 @@ query RDB::operations::RenameColumn::isValid(gen : RDB::ModelGeneration) : Boole
 }
 
 mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
+	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
+	t.constraints->forEach(r) {
+		if (r.oclAsType(RDB::ForeignKey).constrainedColumn.name = c.name.toLower()) then {
+			r.oclAsType(RDB::ForeignKey).name := r.oclAsType(RDB::ForeignKey).name.replace("_" + self.name + "_", "_" + self.newName + "_");
+		} endif;
+	};
 	// zmena hodnoty atributu name
 	c.name := self.newName;
 }

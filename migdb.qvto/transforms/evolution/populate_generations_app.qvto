@@ -25,10 +25,11 @@
 
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 
-transformation APP_To_Rdb(in inModel : APP, out outModel : APP);
+	transformation APPEVO(in inModel : APP, out outModel : APP);
+
 main() {
-	assert(inModel.rootObjects()->size() = 1);
-	assert(inModel.rootObjects()->forAll(oclIsKindOf(APP::ModelRoot)));
+	//assert(inModel.rootObjects()->size() = 1);
+	//assert(inModel.rootObjects()->forAll(oclIsKindOf(APP::ModelRoot)));
 	
 	log("transformation started...");
 	
@@ -38,8 +39,6 @@ main() {
 	var gen0 : APP::ModelGeneration = root.modelGenerations->first();
 	
 	root.operations->forEach(op) {
-		log("gen0 " + gen0.repr());
-		log("root " + root.repr());
 		log("	iterating over operation " + op.repr());
 		if (op.isValid(gen0)) then {
 			log("	operation is valid " + op.repr());
@@ -49,8 +48,6 @@ main() {
 			break;
 		} endif;
 	};
-	
-	// root.operations := root.operations->reject(true);
 }
 
 // a verification of an operation
@@ -69,9 +66,13 @@ query APP::operations::AddPrimitiveClass::isValid(gen : APP::ModelGeneration) : 
 }
 
 mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGeneration) {
-	gen.classes += object APP::PrimitiveClass {
-		name := self.name;
-		primitiveType := self.primitiveType;
+	gen.classes += gen.AddPrimitiveClass(self);
+}
+
+helper APP::ModelGeneration::AddPrimitiveClass(op : APP::operations::AddPrimitiveClass) : APP::PrimitiveClass {
+	return object APP::PrimitiveClass {
+		name := op.name;
+		primitiveType := op.primitiveType;
 	};
 }
 
@@ -80,8 +81,12 @@ query APP::operations::AddEmbeddedClass::isValid(gen : APP::ModelGeneration) : B
 }
 
 mapping APP::operations::AddEmbeddedClass::apply(inout gen : APP::ModelGeneration) {
-	gen.classes += object APP::EmbeddedClass {
-		name := self.name;
+	gen.classes += gen.AddEmbeddedClass(self);
+}
+
+helper APP::ModelGeneration::AddEmbeddedClass(op : APP::operations::AddEmbeddedClass) : APP::EmbeddedClass {
+	return object APP::EmbeddedClass {
+		name := op.name;
 	};
 }
 
@@ -91,18 +96,18 @@ query APP::operations::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
 }
 
 mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {	
-	gen.classes += object APP::Class {
-		name := self.name;
-		parent := null;
-		isAbstract := self.isAbstract;
-		inheritanceType := self.inheritanceType;
+	gen.classes += gen.AddClass(self);
+}
+
+helper APP::ModelGeneration::AddClass(op : APP::operations::AddClass) : APP::Class {
+	return object APP::Class {
+		name := op.name;
 		properties += object APP::Property {
 			name := "id";
-			type := gen.findEntity("Integer"); // gen0 has to contain a primitive class called "Integer"
+			type := self.findEntity("Integer"); // gen0 has to contain a primitive class called "Integer"
 			lowerBound := 1;
 			upperBound := 1;
 			isID := true;
-			sequenceName := "SQ_" + self.name.toLower();
 		};
 	};
 }
@@ -263,6 +268,13 @@ mapping APP::operations::SetParent::apply(inout gen : APP::ModelGeneration) {
 		c.properties := c.properties->excluding(c.properties->selectOne(isID = true));
 		
 	} endif;
+	
+	self.properties->forEach(pName) {
+		gen.modelRoot.operations += object APP::operations::RemoveProperty {
+			owningClassName := self.name;
+			name := pName;
+		}.xmap apply(gen);
+	};
 }
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
