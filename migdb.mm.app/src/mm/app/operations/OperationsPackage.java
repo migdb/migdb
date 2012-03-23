@@ -319,13 +319,22 @@ public interface OperationsPackage extends EPackage {
 	int SET_PARENT__PARENT_NAME = MODEL_OPERATION_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Properties</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SET_PARENT__PROPERTIES = MODEL_OPERATION_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Set Parent</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SET_PARENT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 2;
+	int SET_PARENT_FEATURE_COUNT = MODEL_OPERATION_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link mm.app.operations.impl.SetAbstractImpl <em>Set Abstract</em>}' class.
@@ -1327,6 +1336,17 @@ public interface OperationsPackage extends EPackage {
 	EAttribute getSetParent_ParentName();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link mm.app.operations.SetParent#getProperties <em>Properties</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Properties</em>'.
+	 * @see mm.app.operations.SetParent#getProperties()
+	 * @see #getSetParent()
+	 * @generated
+	 */
+	EAttribute getSetParent_Properties();
+
+	/**
 	 * Returns the meta object for class '{@link mm.app.operations.SetAbstract <em>Set Abstract</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2171,6 +2191,14 @@ public interface OperationsPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SET_PARENT__PARENT_NAME = eINSTANCE.getSetParent_ParentName();
+
+		/**
+		 * The meta object literal for the '<em><b>Properties</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SET_PARENT__PROPERTIES = eINSTANCE.getSetParent_Properties();
 
 		/**
 		 * The meta object literal for the '{@link mm.app.operations.impl.SetAbstractImpl <em>Set Abstract</em>}' class.

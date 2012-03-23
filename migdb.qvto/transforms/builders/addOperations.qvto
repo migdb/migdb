@@ -1,0 +1,15 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation addOperations(inout inoutModel : APP);
+
+main() {
+
+	log("Add operations...");
+	var appRoot : APP::ModelRoot = inoutModel.rootObjects()![APP::ModelRoot];
+	appRoot.xmap Build(appRoot);
+
+}
+
+mapping APP::ModelRoot::Build(inout app : APP::ModelRoot) {
+	app.operations += addClass("Party", false, APP::InheritanceType::joined);
+}

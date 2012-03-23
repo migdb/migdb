@@ -1,2 +1,2 @@
-ALTER TABLE public.naturalperson
+ALTER TABLE public.address
 	ADD COLUMN id int;

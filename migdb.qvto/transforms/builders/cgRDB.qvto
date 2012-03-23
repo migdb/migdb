@@ -28,48 +28,6 @@ main() {
 		columns := Set{columnIdCountry, columnNameCountry};
 		constraints := Set{pkCountry};
 	};
-
-	var columnIdParty : RDB::Column := object RDB::Column {
-		name := "id";
-		type := PrimitiveType::int;
-	};
-	
-	var indexParty : RDB::Index := object RDB::Index {
-		name := "IX_party_id";
-		columns := Set{columnIdParty};
-	};
-	
-	var pkParty : RDB::PrimaryKey := object RDB::PrimaryKey {
-		name := "PK_party";
-		underlyingIndex := indexParty;
-	};
-	
-	var columnCity : RDB::Column := object RDB::Column {
-		name := "city";
-		type := PrimitiveType::char;
-	};	
-	
-	var columnStreet : RDB::Column := object RDB::Column {
-		name := "street";
-		type := PrimitiveType::char;
-	};
-	
-	var columnZip : RDB::Column := object RDB::Column {
-		name := "zip";
-		type := PrimitiveType::int;
-	};	
-	
-	var fkZip : RDB::ForeignKey := object RDB::ForeignKey {
-		name := "FK_party_country";
-		targetTable := tableCountry;
-		constrainedColumn := columnZip;
-	};
-
-	var tableParty : RDB::Table := object RDB::Table {
-		name := "party";
-		columns := Set{columnIdParty, columnStreet, columnCity, columnZip};
-		constraints := Set{pkParty, fkZip};
-	};
 	
 	var columnIdLegalPerson : RDB::Column := object RDB::Column {
 		name := "id";
@@ -78,7 +36,7 @@ main() {
 	
 	var indexLegalPerson : RDB::Index := object RDB::Index {
 		name := "IX_legalperson_id";
-		columns := Set{columnIdParty};
+		columns := Set{columnIdLegalPerson};
 	};
 	
 	var pkLegalPerson : RDB::PrimaryKey := object RDB::PrimaryKey {
@@ -96,11 +54,43 @@ main() {
 		type := PrimitiveType::char;
 	};	
 	
-	var tableLegalPerson : RDB::Table := object RDB::Table {
-		name := "legalperson";
-		columns := Set{columnIdLegalPerson, columnRegNo, columnBusName};
-		constraints := Set{pkLegalPerson};
+		var columnCity : RDB::Column := object RDB::Column {
+		name := "city";
+		type := PrimitiveType::char;
+	};	
+	
+	var columnStreet : RDB::Column := object RDB::Column {
+		name := "street";
+		type := PrimitiveType::char;
 	};
+	
+	var columnZip : RDB::Column := object RDB::Column {
+		name := "zip";
+		type := PrimitiveType::char;
+	};
+	
+	var columnCountry1 : RDB::Column := object RDB::Column {
+		name := "id_country";
+		type := PrimitiveType::int;
+	};
+	
+	
+	var columnCountry2 : RDB::Column := object RDB::Column {
+		name := "id_country";
+		type := PrimitiveType::int;
+	};		
+	
+	var fkLegalCountry : RDB::ForeignKey := object RDB::ForeignKey {
+		name := "FK_legalperson_country";
+		targetTable := tableCountry;
+		constrainedColumn := columnCountry1;
+	};
+	
+	var fkNaturalCountry : RDB::ForeignKey := object RDB::ForeignKey {
+		name := "FK_naturalperson_country";
+		targetTable := tableCountry;
+		constrainedColumn := columnCountry2;
+	};	
 	
 	var columnIdNaturalPerson : RDB::Column := object RDB::Column {
 		name := "id";
@@ -125,19 +115,25 @@ main() {
 	var columnSurname : RDB::Column := object RDB::Column {
 		name := "surname";
 		type := PrimitiveType::char;
+	};	
+	
+	var tableLegalPerson : RDB::Table := object RDB::Table {
+		name := "legalperson";
+		columns := Set{columnIdLegalPerson, columnRegNo, columnBusName, columnStreet, columnCity, columnZip, columnCountry1};
+		constraints := Set{pkLegalPerson, fkLegalCountry};
 	};		
 	
 	var tableNaturalPerson : RDB::Table := object RDB::Table {
 		name := "naturalperson";
-		columns := Set{columnIdNaturalPerson, columnName, columnSurname};
-		constraints := Set{pkNaturalPerson};
+		columns := Set{columnIdNaturalPerson, columnName, columnSurname, columnStreet, columnCity, columnZip, columnCountry2};
+		constraints := Set{pkNaturalPerson, fkNaturalCountry};
 	};		
 	
 	var schema : RDB::Schema := object RDB::Schema {
 		name := "public";
-		tables := Set{tableCountry, tableParty, tableLegalPerson, tableNaturalPerson};
+		tables := Set{tableCountry, tableLegalPerson, tableNaturalPerson};
 		sequences := Set{ object RDB::Sequence{name := "seq_global"; startValue := 1;}};
-		indexes:= Set{indexCountry, indexParty, indexLegalPerson, indexNaturalPerson};
+		indexes:= Set{indexCountry, indexLegalPerson, indexNaturalPerson};
 	};
 	
 	var model : RDB::ModelRoot := object ModelRoot {

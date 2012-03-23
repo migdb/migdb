@@ -1,1 +1,1 @@
-CREATE TABLE public.address ();
+CREATE TABLE public.party ();

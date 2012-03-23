@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson
-	ADD COLUMN busname character(30) ;
+ALTER TABLE public.naturalperson 
+	RENAME COLUMN id_naturalperson TO id_party;

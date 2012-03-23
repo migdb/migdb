@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson
-	ADD COLUMN id int;
+ALTER TABLE public.naturalperson 
+	DROP COLUMN street;

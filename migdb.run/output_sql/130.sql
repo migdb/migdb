@@ -1,2 +1,2 @@
-INSERT INTO public.party (id)
-	SELECT id FROM public.naturalperson;
+ALTER TABLE public.address
+	ADD COLUMN zip character(30) ;

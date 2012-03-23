@@ -1,2 +1,2 @@
 ALTER TABLE public.party
-	ADD COLUMN address int;
+	ADD COLUMN street character(30) ;

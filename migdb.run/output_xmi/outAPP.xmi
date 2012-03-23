@@ -1,44 +1,50 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
-  <app:ModelRoot>
-    <modelGenerations>
-      <classes xsi:type="app:Class" name="NaturalPerson">
-        <properties name="name" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="surname" type="/0/@modelGenerations.0/@classes.3"/>
-      </classes>
-      <classes xsi:type="app:Class" name="LegalPerson">
-        <properties name="busName" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="regNo" type="/0/@modelGenerations.0/@classes.2"/>
-      </classes>
-      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
-      <classes xsi:type="app:Class" name="Country">
-        <properties name="name" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="id" type="/0/@modelGenerations.0/@classes.2" isID="true"/>
-      </classes>
-      <classes xsi:type="app:Class" name="Party">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.2" isID="true"/>
-        <properties name="address" type="/0/@modelGenerations.0/@classes.6" lowerBound="1"/>
-      </classes>
-      <classes xsi:type="app:Class" name="Address">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.2" lowerBound="1" isID="true" sequenceName="SQ_address"/>
-        <properties name="street" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="city" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="zip" type="/0/@modelGenerations.0/@classes.4"/>
-      </classes>
-    </modelGenerations>
-    <operations xsi:type="app-ops:ExtractClass" sourceClassName="Party" extractClassName="Address">
-      <extractPropertiesNames>street</extractPropertiesNames>
-      <extractPropertiesNames>city</extractPropertiesNames>
-      <extractPropertiesNames>zip</extractPropertiesNames>
-    </operations>
-  </app:ModelRoot>
-  <app-ops:AddClass name="Address"/>
-  <app-ops:AddProperty owningClassName="Address" name="street" type="String"/>
-  <app-ops:RemoveProperty owningClassName="Party" name="street"/>
-  <app-ops:AddProperty owningClassName="Address" name="city" type="String"/>
-  <app-ops:RemoveProperty owningClassName="Party" name="city"/>
-  <app-ops:AddProperty owningClassName="Address" name="zip" type="Country"/>
-  <app-ops:RemoveProperty owningClassName="Party" name="zip"/>
-  <app-ops:AddProperty owningClassName="Party" name="address" type="Address" lowerBound="1"/>
-</xmi:XMI>
+<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
+  <modelGenerations>
+    <classes xsi:type="app:Class" name="Country">
+      <properties name="id" type="//@modelGenerations.0/@classes.1" isID="true"/>
+      <properties name="name" type="//@modelGenerations.0/@classes.4"/>
+    </classes>
+    <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+    <classes xsi:type="app:Class" name="LegalPerson">
+      <properties name="street" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="city" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="busName" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="id_country" type="//@modelGenerations.0/@classes.0"/>
+      <properties name="regNo" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="zip" type="//@modelGenerations.0/@classes.4"/>
+    </classes>
+    <classes xsi:type="app:Class" name="NaturalPerson">
+      <properties name="name" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="surname" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="id_country" type="//@modelGenerations.0/@classes.0"/>
+      <properties name="city" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="zip" type="//@modelGenerations.0/@classes.4"/>
+      <properties name="street" type="//@modelGenerations.0/@classes.4"/>
+    </classes>
+    <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+  </modelGenerations>
+  <operations xsi:type="app-ops:AddClass" name="Party"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="street" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="city" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="zip" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="id_country" type="Country"/>
+  <operations xsi:type="app-ops:SetParent" name="LegalPerson" parentName="Party">
+    <properties>street</properties>
+    <properties>city</properties>
+    <properties>zip</properties>
+    <properties>id_country</properties>
+  </operations>
+  <operations xsi:type="app-ops:SetParent" name="NaturalPerson" parentName="Party">
+    <properties>street</properties>
+    <properties>city</properties>
+    <properties>zip</properties>
+    <properties>id_country</properties>
+  </operations>
+  <operations xsi:type="app-ops:ExtractClass" sourceClassName="Party" extractClassName="Address">
+    <extractPropertiesNames>street</extractPropertiesNames>
+    <extractPropertiesNames>city</extractPropertiesNames>
+    <extractPropertiesNames>zip</extractPropertiesNames>
+    <extractPropertiesNames>id_country</extractPropertiesNames>
+  </operations>
+</app:ModelRoot>

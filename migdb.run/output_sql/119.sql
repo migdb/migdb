@@ -1,3 +1,2 @@
-ALTER TABLE public.legalperson
-	ADD CONSTRAINT PK_legalperson
-	PRIMARY KEY (id);
+ALTER TABLE public.naturalperson 
+	DROP COLUMN zip;

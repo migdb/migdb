@@ -1,2 +1,1 @@
-ALTER TABLE public.naturalperson
-	ADD COLUMN surname character(30) ;
+UPDATE public.party SET id_address = nextval('seq_global');

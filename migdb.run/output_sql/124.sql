@@ -1,2 +1,2 @@
-CREATE INDEX IX_naturalperson_id
-	ON public.naturalperson (id);
+CREATE INDEX IX_address_id
+	ON public.address (id);

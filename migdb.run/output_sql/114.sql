@@ -1,2 +1,2 @@
-ALTER TABLE public.party 
-	DROP COLUMN zip;
+ALTER TABLE public.legalperson 
+	DROP COLUMN id_country;
