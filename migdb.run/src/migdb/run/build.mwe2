@@ -16,12 +16,12 @@ import eu.collectionspro.mwe.*
 import migdb.generator.*
 
 Workflow {
-/**/
+/* Define of APP metamodel */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-/**/
+/* Define of RDB metamodel */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"

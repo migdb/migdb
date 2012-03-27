@@ -1,0 +1,32 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation firstAPP(inout inoutModel : APP);
+
+
+main() {	
+	log("DEMO 1");
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});							  																				  									  												  												  									  	
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{integer,string,country,
+							_class("LegalPerson",OrderedSet{ _property("id",integer,true),_property("regNo", integer), _property("bisName", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)}),
+							_class("NaturalPerson",OrderedSet{ _property("id",integer,true),_property("name", string), _property("surname", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)})
+						};
+		};
+	 };
+	 
+	 model.operations += addClass("Party", false, InheritanceType::joined);
+	 model.operations += addProperty("Party", "street", "String");
+	 model.operations += addProperty("Party", "city", "String");
+	 model.operations += addProperty("Party", "zip", "String");
+	 model.operations += addProperty("Party", "country", "Country");
+	 model.operations += setParent("LegalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 model.operations += setParent("NaturalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 //model.operations += extractClass("Party", OrderedSet{"street", "city", "zip", "country"}, "Address");
+	 //model.operations += renameProperty("Party", "address", "residentialAddress");
+	 //model.operations += addProperty("Party", "contactAddress", "Address");
+}

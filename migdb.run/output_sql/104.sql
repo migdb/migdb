@@ -1,3 +1,2 @@
-ALTER TABLE public.party
-	ADD CONSTRAINT PK_party
-	PRIMARY KEY (id_party);
+ALTER TABLE public.country
+	ADD COLUMN id_country int;

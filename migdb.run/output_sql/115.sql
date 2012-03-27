@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson 
-	RENAME COLUMN id_legalperson TO id_party;
+ALTER TABLE public.legalperson
+	ADD COLUMN city character(30) ;

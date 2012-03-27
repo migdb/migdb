@@ -1,4 +1,4 @@
-module migdb.run.build
+module migb.run.second
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -21,71 +21,83 @@ Workflow {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
+	
 /* Define of RDB metamodel */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
-/**/
+	
+/* Clean SQL direcotry - cleaning from old SQL files */
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_sql"
-	}	
-/**/
+	}
+			
+/* Clean XMI directory - cleaning from old XMI models */
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_xmi"
-	}	
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
-		outputSlot = "buildModelAPP"
 	}
-/**/
+			
+/* Definition of default APP model - add first operation */
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
+		transformationFile = "../migdb.qvto/transforms/builders/secondAPP.qvto"
+		outputSlot = "buildModelAPP"
+	}	
+	
+/* Definition of default RDB model */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/builders/secondRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
-/**/
+		
+/* APP evolution of model */
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_app.qvto"
 		outputSlot = "generationModelAPP"
 	}
-/**/
+	
+/* ORM mapping  */
 	component = QVTOExecutor {
 		inputSlot = "generationModelAPP"
 		inOutSlot = "buildModelRDB"
 		transformationFile = "../migdb.qvto/transforms/orm/orm_operations.qvto"
 	}
-/**/
+	
+/* RDB evolution of model */
 	component = QVTOExecutor {
 		inputSlot = "buildModelRDB"
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
 		outputSlot = "generationModelRDB"
 	}
-/**/
+	
+/* Write final APP model to XMI file  */
 	component = Writer {
 		modelSlot = "generationModelAPP"
 		uri = "output_xmi/outAPP.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
-/**/
+	
+/* Write final RDB model to XMI file */
 	component = Writer {
 		modelSlot = "generationModelRDB"
 		uri = "output_xmi/outRDB.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
-/**/
+	
+/* Generate SQL files */
 	component = CodeGenComponent {
 		withoutModel = false
 		slot = "generationModelRDB"
 		generator = Generator {}
 		outputPath = "output_sql/"
 	}
-/**/
+	
+/* Send SQL to database */
 	component = CommandLineExec{
 		command = "ruby ../migdb.ruby.sql/script.rb output_sql postgres postgres 123456"
 	}		
-/**/	
+/**/
 }

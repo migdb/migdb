@@ -1,2 +1,3 @@
-ALTER TABLE public.legalperson 
-	DROP COLUMN street;
+ALTER TABLE public.legalperson
+	ADD CONSTRAINT PK_legalperson
+	PRIMARY KEY (id_legalperson);

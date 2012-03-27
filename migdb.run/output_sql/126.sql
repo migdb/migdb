@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN address int;
+ALTER TABLE public.naturalperson
+	ADD COLUMN city character(30) ;

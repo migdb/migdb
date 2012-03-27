@@ -1,2 +1,2 @@
-ALTER TABLE public.naturalperson 
-	DROP COLUMN street;
+ALTER TABLE public.legalperson
+	ADD COLUMN country int;

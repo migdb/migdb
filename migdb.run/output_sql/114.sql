@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson 
-	DROP COLUMN country;
+ALTER TABLE public.legalperson
+	ADD COLUMN street character(30) ;

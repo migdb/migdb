@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson 
-	DROP COLUMN zip;
+ALTER TABLE public.legalperson
+	ADD COLUMN busname character(30) ;

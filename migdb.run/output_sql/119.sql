@@ -1,2 +1,1 @@
-ALTER TABLE public.naturalperson 
-	DROP COLUMN zip;
+CREATE TABLE public.naturalperson ();

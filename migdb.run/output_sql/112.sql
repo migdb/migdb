@@ -1,2 +1,2 @@
-ALTER TABLE public.legalperson 
-	DROP COLUMN city;
+ALTER TABLE public.legalperson
+	ADD COLUMN regno int;

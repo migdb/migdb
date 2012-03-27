@@ -1,3 +1,2 @@
-ALTER TABLE public.address
-	ADD CONSTRAINT PK_address
-	PRIMARY KEY (id_address);
+ALTER TABLE public.naturalperson
+	ADD COLUMN street character(30) ;

@@ -1,2 +1,2 @@
-ALTER TABLE public.party
-	ADD COLUMN zip character(30) ;
+ALTER TABLE public.country
+	ADD COLUMN name character(30) ;

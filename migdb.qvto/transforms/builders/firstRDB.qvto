@@ -1,0 +1,42 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation firstRDB(inout inoutModel : RDB);
+
+main() {
+	// Country Table
+	var columnIdCountry : Column = _column("id_country", PrimitiveType::int);
+	var indexCountry : RDB::Index := _index("IX_country_id_country", OrderedSet{columnIdCountry});
+	var pkCountry : RDB::PrimaryKey := _primaryKey("PK_country", indexCountry);
+	var tableCountry : RDB::Table := _table("country", OrderedSet{columnIdCountry, _column("name", PrimitiveType::char)}, OrderedSet{pkCountry});
+	
+	//LegalPerson Table
+	var columnIdLegalPerson : RDB::Column := _column("id_legalperson", PrimitiveType::int);
+	var columnLegalCountry : RDB::Column := _column("country", PrimitiveType::int);				
+	var indexLegalPerson : RDB::Index := _index("IX_legalperson_id_legalperson", OrderedSet{columnIdLegalPerson});
+	var pkLegalPerson : RDB::PrimaryKey := _primaryKey("PK_legalperson", indexLegalPerson);
+	var fkLegalCountry : RDB::ForeignKey := _foreignKey("FK_country_id_country", tableCountry, columnLegalCountry);
+	var tableLegalPerson : RDB::Table := _table("legalperson",OrderedSet{columnIdLegalPerson,_column("regno", PrimitiveType::int), _column("bisname", PrimitiveType::char),_column("city", PrimitiveType::char),_column("street", PrimitiveType::char),_column("zip", PrimitiveType::char),columnLegalCountry }, OrderedSet{pkLegalPerson, fkLegalCountry});
+
+	//NaturalPerson
+	var columnIdNaturalPerson : RDB::Column := _column("id_naturalperson", PrimitiveType::int);
+	var columnNaturalCountry : RDB::Column := _column("country", PrimitiveType::int);				
+	var indexNaturalPerson : RDB::Index := _index("IX_naturalperson_id_naturalperson", OrderedSet{columnIdNaturalPerson});
+	var pkNaturalPerson : RDB::PrimaryKey := _primaryKey("PK_naturalperson", indexNaturalPerson);
+	var fkNaturalCountry : RDB::ForeignKey := _foreignKey("FK_country_id_country", tableCountry, columnNaturalCountry);
+	var tableNaturalPerson : RDB::Table := _table("naturalperson",OrderedSet{columnIdNaturalPerson,_column("name", PrimitiveType::char), _column("surname", PrimitiveType::char),_column("city", PrimitiveType::char),_column("street", PrimitiveType::char),_column("zip", PrimitiveType::char),columnNaturalCountry }, OrderedSet{pkNaturalPerson, fkNaturalCountry});	
+	
+	var schema : RDB::Schema := object RDB::Schema {
+		name := "public";
+		tables := Set{tableCountry, tableLegalPerson, tableNaturalPerson};
+		sequences := Set{ _sequence("seq_global", 1)};
+		indexes:= Set{indexCountry, indexLegalPerson, indexNaturalPerson};
+	};
+	
+	var model : RDB::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			schemas += Set{schema};
+		};
+	 };
+
+}

@@ -1,2 +1,2 @@
-ALTER TABLE public.naturalperson 
-	DROP COLUMN country;
+ALTER TABLE public.naturalperson
+	ADD COLUMN id_naturalperson int;

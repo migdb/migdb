@@ -162,24 +162,39 @@ helper extractClass(_sourceClassName : String, _extractPropertiesNames : Ordered
  *				BUILD MODEL				 	*
  ********************************************/
  
- helper _property(_name : String, _type : Entity) : Property {
+helper _property(_name : String, _type : Entity) : Property {
  	return object Property {
  		name := _name;
- 		type := type;
+ 		type := _type;
  	}
- }
+}
  
- helper _property(_name : String, _type : Entity, _isID : Boolean) : Property {
+helper _property(_name : String, _type : Entity, _isID : Boolean) : Property {
  	return object Property {
  		name := _name;
  		type := _type;
  		isID := _isID;
  	}
- }
+}
+
+helper _class(_name : String, _properties : OrderedSet(Property)) : Class {
+ 	return object Class {
+ 		name := _name;
+ 		properties := _properties;
+ 	}
+}
+
+helper _class(_name : String, _parent : Class, _properties : OrderedSet(Property)) : Class {
+ 	return object Class {
+ 		name := _name;
+ 		properties := _properties;
+ 		parent := _parent;
+ 	}
+}
  
-  helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
+helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	return object PrimitiveClass {
  		name := _name;
  		primitiveType := _primitiveType;
  	}
- }
+}

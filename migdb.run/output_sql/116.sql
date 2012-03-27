@@ -1,2 +1,2 @@
-INSERT INTO public.party (id_party,street,city,zip,country)
-				SELECT id_naturalperson,street,city,zip,country FROM naturalperson;
+ALTER TABLE public.legalperson
+	ADD COLUMN zip character(30) ;

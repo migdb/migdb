@@ -1,2 +1,3 @@
-ALTER TABLE public.party
-	ADD COLUMN city character(30) ;
+ALTER TABLE public.country
+	ADD CONSTRAINT PK_country
+	PRIMARY KEY (id_country);

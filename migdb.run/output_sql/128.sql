@@ -1,2 +1,2 @@
-ALTER TABLE public.address
-	ADD COLUMN street character(30) ;
+ALTER TABLE public.naturalperson
+	ADD COLUMN country int;
