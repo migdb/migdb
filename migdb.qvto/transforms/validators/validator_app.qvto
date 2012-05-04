@@ -32,6 +32,11 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 /*
 	Validacni query app modelu
 */
+query app::ModelRoot::testID() : Boolean {
+  var classes : Sequence(app::Class) :=  self.modelGenerations->classes[app::Class];
+  return not classes->forAll(cls|cls.assertIDCondition());
+}
+
 query app::ModelRoot::isModelValid():Boolean{
 	var validity : Boolean := true; 
 	if(not self.modelGenerations->classes->forAll(hasUniqueName())) then {
@@ -58,7 +63,7 @@ query app::ModelRoot::isModelValid():Boolean{
 		log("Model invalid - Embedded property in name collision");
 		validity := false;
 	}endif;
-	if(not self.modelGenerations->classes[app::Class]->forAll(cls |cls.assertIDCondition()))then{
+	if(self.testID())then{
 		log("Model invalid - uncorrect ID count in classes");
 		validity := false;
 	}endif;

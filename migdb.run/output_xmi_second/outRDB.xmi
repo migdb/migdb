@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="ASCII"?>
+<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xmlns:rdb-ops="http://www.collectionspro.eu/jam/mm/rdb-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage http://www.collectionspro.eu/jam/mm/rdb-ops java://mm.rdb.operations.OperationsPackage">
+  <modelGenerations>
+    <schemas name="public">
+      <tables name="party">
+        <columns name="id_party" type="int"/>
+        <columns name="residentialaddress" type="int"/>
+        <columns name="contactaddress" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_party" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.2"/>
+        <constraints xsi:type="rdb:ForeignKey" name="FK_residentialaddress_id_address" targetTable="//@modelGenerations.0/@schemas.0/@tables.4" constrainedColumn="//@modelGenerations.0/@schemas.0/@tables.0/@columns.1"/>
+        <constraints xsi:type="rdb:ForeignKey" name="FK_contactaddress_id_country" targetTable="//@modelGenerations.0/@schemas.0/@tables.3" constrainedColumn="//@modelGenerations.0/@schemas.0/@tables.0/@columns.2"/>
+      </tables>
+      <tables name="naturalperson">
+        <columns name="id_party" type="int"/>
+        <columns name="name" type="char"/>
+        <columns name="surname" type="char"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_naturalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
+      </tables>
+      <tables name="legalperson">
+        <columns name="id_party" type="int"/>
+        <columns name="regno" type="int"/>
+        <columns name="bisname" type="char"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_legalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
+      </tables>
+      <tables name="country">
+        <columns name="id_country" type="int"/>
+        <columns name="name" type="char"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_country" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.3"/>
+      </tables>
+      <tables name="address">
+        <columns name="id_address" type="int"/>
+        <columns name="street" type="char"/>
+        <columns name="city" type="char"/>
+        <columns name="zip" type="char"/>
+        <columns name="country" type="int"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_address" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.4"/>
+        <constraints xsi:type="rdb:ForeignKey" name="FK_country_id_country" targetTable="//@modelGenerations.0/@schemas.0/@tables.3" constrainedColumn="//@modelGenerations.0/@schemas.0/@tables.4/@columns.4"/>
+      </tables>
+      <sequences name="seq_global" startValue="1"/>
+      <indexes name="IX_naturalperson_id_naturalperson" columns="//@modelGenerations.0/@schemas.0/@tables.1/@columns.0"/>
+      <indexes name="IX_legalperson_id_legalperson" columns="//@modelGenerations.0/@schemas.0/@tables.2/@columns.0"/>
+      <indexes name="IX_party_id_party" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>
+      <indexes name="IX_country_id_country" columns="//@modelGenerations.0/@schemas.0/@tables.3/@columns.0"/>
+      <indexes name="IX_address_id_address" columns="//@modelGenerations.0/@schemas.0/@tables.4/@columns.0"/>
+    </schemas>
+  </modelGenerations>
+  <operations xsi:type="rdb-ops:AddTable" owningSchemaName="public" name="address"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="address" name="id_address" type="int"/>
+  <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="address" name="IX_address_id_address">
+    <columnsNames>id_address</columnsNames>
+  </operations>
+  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="address" name="PK_address" underlyingIndexName="IX_address_id_address" columnName="id_address"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="party" name="address" type="int"/>
+  <operations xsi:type="rdb-ops:GenerateSequenceNumbers" owningSchemaName="public" tableName="party" columnName="address" sequenceName="seq_global"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="address" name="street" type="char"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="address" name="city" type="char"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="address" name="zip" type="char"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="address" name="country" type="int"/>
+  <operations xsi:type="rdb-ops:AddForeignKey" owningSchemaName="public" owningTableName="address" name="FK_country_id_country" targetTableName="country" constrainedColumnName="country"/>
+  <operations xsi:type="rdb-ops:InsertInstances" owningSchemaName="public" sourceTableName="party" targetTableName="address">
+    <sourceColumnsNames>address</sourceColumnsNames>
+    <sourceColumnsNames>street</sourceColumnsNames>
+    <sourceColumnsNames>city</sourceColumnsNames>
+    <sourceColumnsNames>zip</sourceColumnsNames>
+    <sourceColumnsNames>country</sourceColumnsNames>
+    <targetColumnsNames>id_address</targetColumnsNames>
+    <targetColumnsNames>street</targetColumnsNames>
+    <targetColumnsNames>city</targetColumnsNames>
+    <targetColumnsNames>zip</targetColumnsNames>
+    <targetColumnsNames>country</targetColumnsNames>
+  </operations>
+  <operations xsi:type="rdb-ops:RemoveColumn" owningSchemaName="public" owningTableName="party" name="street"/>
+  <operations xsi:type="rdb-ops:RemoveColumn" owningSchemaName="public" owningTableName="party" name="city"/>
+  <operations xsi:type="rdb-ops:RemoveColumn" owningSchemaName="public" owningTableName="party" name="zip"/>
+  <operations xsi:type="rdb-ops:RemoveColumn" owningSchemaName="public" owningTableName="party" name="country"/>
+  <operations xsi:type="rdb-ops:AddForeignKey" owningSchemaName="public" owningTableName="party" name="FK_address_id_address" targetTableName="address" constrainedColumnName="address"/>
+  <operations xsi:type="rdb-ops:RenameColumn" owningSchemaName="public" owningTableName="party" name="address" newName="residentialaddress"/>
+  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="party" name="contactaddress" type="int"/>
+  <operations xsi:type="rdb-ops:AddForeignKey" owningSchemaName="public" owningTableName="party" name="FK_contactaddress_id_country" targetTableName="country" constrainedColumnName="contactaddress"/>
+</rdb:ModelRoot>

@@ -30,12 +30,12 @@ Workflow {
 	
 /* Clean SQL direcotry - cleaning from old SQL files */
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output_sql"
+		directory = "output_sql_second"
 	}
 			
 /* Clean XMI directory - cleaning from old XMI models */
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output_xmi"
+		directory = "output_xmi_second"
 	}
 			
 /* Definition of default APP model - add first operation */
@@ -74,7 +74,7 @@ Workflow {
 /* Write final APP model to XMI file  */
 	component = Writer {
 		modelSlot = "generationModelAPP"
-		uri = "output_xmi/outAPP.xmi"
+		uri = "output_xmi_second/outAPP.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -82,7 +82,7 @@ Workflow {
 /* Write final RDB model to XMI file */
 	component = Writer {
 		modelSlot = "generationModelRDB"
-		uri = "output_xmi/outRDB.xmi"
+		uri = "output_xmi_second/outRDB.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -92,12 +92,12 @@ Workflow {
 		withoutModel = false
 		slot = "generationModelRDB"
 		generator = Generator {}
-		outputPath = "output_sql/"
+		outputPath = "output_sql_second/"
 	}
 	
 /* Send SQL to database */
 	component = CommandLineExec{
-		command = "ruby ../migdb.ruby.sql/script.rb output_sql postgres postgres 123456"
+		command = "ruby ../migdb.ruby.sql/script.rb output_sql_second postgres postgres 123456"
 	}		
 /**/
 }

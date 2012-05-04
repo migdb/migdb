@@ -19,7 +19,7 @@ main() {
 
 	model.operations += addClass("LegalPerson", false,  APP::InheritanceType::joined);	
 	model.operations += addProperty("LegalPerson", "regNo", "Integer");
-	model.operations += addProperty("LegalPerson", "busName", "String");
+	model.operations += addProperty("LegalPerson", "bizName", "String");
 	model.operations += addProperty("LegalPerson", "street", "String");
 	model.operations += addProperty("LegalPerson", "city", "String");
 	model.operations += addProperty("LegalPerson", "zip", "String");
