@@ -19,7 +19,7 @@
           <a id="forkme_banner" href="https://github.com/migdb/migdb">View on GitHub</a>
 
           <h1 id="project_title">Migdb</h1>
-          <h2 id="project_tagline">database migration</h2>
+          <h2 id="project_tagline">Database Migration</h2>
 
             <section id="downloads">
               <a class="zip_download_link" href="https://github.com/migdb/migdb/zipball/master">Download this project as a .zip file</a>
@@ -31,32 +31,54 @@
     <!-- MAIN CONTENT -->
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
-        <h3>Welcome to GitHub Pages.</h3>
+        <h3>Welcome</h3>
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+<p>The vision of our project is to create a system which transforms the 
+database model (and the database itself) on the basis of changes in the application 
+model and that without loss of any data in the database (all at full operation).</p>
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
+<p>From the one point of view, it is actually a automatization (evolution) of the 
+object-relational mapping (The object-relational mapping is a common software development 
+approach, which can speed up the creation of software).</p>
+
+<p>Nowadays there are a lot of software applications, which are 
+created using object-relation mapping (ORM), this approach speeds up the development a lot, 
+on the other hand most of current ORM frameworks focus only at software creation, not on 
+software evolution.</p>
+
+<h3>Spuštění ukázkové aplikace</h3>
+
+<p>Před vlastním spuštěním je třeba si připravit pracovní prostředí. Je nutné, 
+aby byla aplikace testována pouze v operačních systémech Linux, nebo iOS. 
+<a href="http://www.eclipse.org/downloads/packages/eclipse-modeling-tools/indigosr2" class="user-mention">Eclipse Modeling Tools</a> pro svůj 
+chod potřebuje v systému podporu jazyka <a href="http://java.com/en/download/index.jsp" class="user-mention">JAVA</a>. 
+Dále je třeba mít nainstalovanou podporu <a href="http://www.ruby-lang.org/en/downloads/" class="user-mention">Ruby</a>, 
+pod kterým nám běží naše komunikující aplikace. Jako databázový 
+systém jsme zvolili <a href="http://www.postgresql.org/download/" class="user-mention">PostgreSQL</a>, 
+kterému jsme také přizpůsobili syntaxi generovaných SQL příkazů, proto je nutné mít 
+nainstalovaný právě tento databázový systém.</p>
+
+<p>Aby celý projekt fungoval, je třeba stáhnout projekt <a href="https://github.com/migdb/mwe-components" class="user-mention">mwe-components</a>, který 
+  obsahuje sadu komponent pro pracovní tok aplikace.
+</p>
+
+<p>Po stažení obou repozitářů je třeba nahrát modely ze složky <code>plugins</code> do <code>eclipse/dropins/</code></p> 
+
+<p>Nyní je třeba naimportovat všechny projekty do prostředí Eclipse.</p>
+
+<p>Než pustíme pracovní toky, je třeba v každém spouštěcím mwe2 v projektu <code>migdb.run/src</code> změnit databázové
+  informace komponenty CommandLineExec.
+</p>
+<pre><code>
+command = "ruby ../migdb.ruby.sql/script.rb output_sql_[type_of_project] [database_name] [user_name] [user_password]"
 </code></pre>
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+<p>
+  Nyní už se mohou sputit pracovní toky v pořadí <code>build</code>, <code>first</code> a <code>second</code>. Mezi
+  <code>build</code> a <code>fistr</code> je třeba si vytvořenou databázi zaplnit testovacími daty. SQL s připravenou
+  sadou dat je v souboru <code>cg.sql/insert.sql</code>
+</p>
 
-<h3>Designer Templates</h3>
-
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
-
-<h3>Rather Drive Stick?</h3>
-
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
-
-<h3>Authors and Contributors</h3>
-
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
-
-<h3>Support or Contact</h3>
-
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
       </section>
     </div>
 
