@@ -24,7 +24,7 @@
  */
 library ValidatorDB;
 
-import queries.queries_rdb;
+import queries_rdb;
 
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 

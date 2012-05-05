@@ -24,7 +24,7 @@
  */
 library validator_app;
 
-import queries.queries_app;
+import queries_app;
 	
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
