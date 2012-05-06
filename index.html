@@ -8,7 +8,7 @@
 
     <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
 
-    <title>Migdb</title>
+    <title>MigDB</title>
   </head>
 
   <body>
@@ -16,9 +16,10 @@
     <!-- HEADER -->
     <div id="header_wrap" class="outer">
         <header class="inner">
+	  <a id="forkme_banner_blog" href="http://mdsd.cs.felk.cvut.cz/">Check our blog!</a>
           <a id="forkme_banner" href="https://github.com/migdb/migdb">View on GitHub</a>
 
-          <h1 id="project_title">Migdb</h1>
+          <h1 id="project_title">MigDB</h1>
           <h2 id="project_tagline">Database Migration</h2>
 
             <section id="downloads">
@@ -46,8 +47,7 @@ created using object-relation mapping (ORM), this approach speeds up the develop
 on the other hand most of current ORM frameworks focus only at software creation, not on 
 software evolution.</p>
 
-<h3>Návody</h3>
-<h4>Spuštění ukázkové aplikace</h4>
+<h3>Spuštění ukázkového příkladu</h3>
 
 <p>Před vlastním spuštěním je třeba si připravit pracovní prostředí. Je nutné, 
 aby byla aplikace testována pouze v operačních systémech Linux, nebo iOS. 
@@ -70,15 +70,44 @@ nainstalovaný právě tento databázový systém.</p>
 <p>Než pustíme pracovní toky, je třeba v každém spouštěcím mwe2 v projektu <code>migdb.run/src</code> změnit databázové
   informace komponenty CommandLineExec.
 </p>
-<pre><code>
-command = "ruby ../migdb.ruby.sql/script.rb output_sql_[type_of_project] [database_name] [user_name] [user_password]"
+<pre><code>"ruby ../migdb.ruby.sql/script.rb output_sql_[mwe2] [database] [name] [pass]"
 </code></pre>
 
 <p>
   Nyní už se mohou sputit pracovní toky v pořadí <code>build</code>, <code>first</code> a <code>second</code>. Mezi
-  <code>build</code> a <code>fistr</code> je třeba si vytvořenou databázi zaplnit testovacími daty. SQL s připravenou
+  <code>build</code> a <code>first</code> je třeba si vytvořenou databázi zaplnit testovacími daty. SQL s připravenou
   sadou dat je v souboru <code>cg.sql/insert.sql</code>
 </p>
+
+<h3>Výstupy</h3>
+<h4>Sestavení modelu</h4>
+<p>První pracovní tok sestavý ukázkový aplikační a databázový model. Jejich XMI podoby jsou v adresáři 
+<code>migdb.run/output_xmi_build</code>. Aby jsme podle vygenerovaného modelu myhli vytvořit reálnou
+databázi, vygenerovali jsem sadu SQL <code>migdb.run/output_sql_build</code></p>
+
+<p>Vytvoříme situaci, kdy máme třídy <code>LegalPerson</code> a <code>NaturalPerson</code> zjevně
+přetížené duplicitou kódu (adresní informace se nachází v obou tabulkách). </p>
+
+<img src="images/build.jpg" alt="build model" style="width:315px; heigth:237px; left:150px" />
+
+<h4>První transformace</h4>
+<p>Druhý pracovní tok udělá první změny v aplikačním modelu. Aplikační i databázový model po změně je k
+nahlédnutí v <code>migdb.run/output_xmi_first</code>. Vygenerovaná SQL pak v <code>migdb.run/output_sql_first</code>
+</p>
+
+<p>První úpravou je zbavení se duplicit ze tříd <code>LegalPerson</code> a <code>NaturalPerson</code> tím, že 
+adresní informace přeneseme do společného předka <code>Party</code></p>.
+
+<img src="images/first.jpg" alt="build model" style="width:355px; heigth:238px; left:130px" />
+
+<h4>Druhá transformace</h4>
+<p>Druhý pracovní tok zařídí poslední úpravy modelu. Aplikační a databázový model po úpravách jsou k nahlédnutí v 
+<code>migdb.run/output_xmi_second</code>. Vygenerovaná SQL pak v <code>migdb.run/output_sql_second</code></p>
+
+<p>První úpravou je zbavení se duplicit ze tříd <code>LegalPerson</code> a <code>NaturalPerson</code> tím, že 
+adresní informace přeneseme do společného předka <code>Party</code></p>.
+
+<img src="images/second.jpg" alt="build model" style="width:434px; heigth:277px; left:90px" />
 
       </section>
     </div>
