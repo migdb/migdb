@@ -1,13 +1,36 @@
 package migdb.generator
 
 import eu.collectionspro.mwe.BaseCodeGenerator
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.emf.ecore.EStructuralFeature
-import java.util.List
 import java.util.ArrayList
-import mm.rdb.operations.impl.*
-import mm.rdb.operations.*
-import com.sun.org.apache.xalan.internal.xsltc.compiler.ForEach
+import mm.rdb.operations.impl.AddColumnImpl
+import mm.rdb.operations.impl.AddForeignKeyImpl
+import mm.rdb.operations.impl.AddIndexImpl
+import mm.rdb.operations.impl.AddInstancesImpl
+import mm.rdb.operations.impl.AddNotNullConstraintImpl
+import mm.rdb.operations.impl.AddPrimaryKeyImpl
+import mm.rdb.operations.impl.AddSchemaImpl
+import mm.rdb.operations.impl.AddSequenceImpl
+import mm.rdb.operations.impl.AddTableImpl
+import mm.rdb.operations.impl.AddUniqueIndexImpl
+import mm.rdb.operations.impl.CopyInstancesImpl
+import mm.rdb.operations.impl.GenerateSequenceNumbersImpl
+import mm.rdb.operations.impl.HasNoInstancesImpl
+import mm.rdb.operations.impl.HasNoOwnInstancesImpl
+import mm.rdb.operations.impl.InsertInstancesImpl
+import mm.rdb.operations.impl.ModelOperationImpl
+import mm.rdb.operations.impl.RemoveColumnConstraintImpl
+import mm.rdb.operations.impl.RemoveColumnImpl
+import mm.rdb.operations.impl.RemoveDefaultValueImpl
+import mm.rdb.operations.impl.RemoveIndexImpl
+import mm.rdb.operations.impl.RemoveSequenceImpl
+import mm.rdb.operations.impl.RemoveTableConstraintImpl
+import mm.rdb.operations.impl.RemoveTableImpl
+import mm.rdb.operations.impl.RenameColumnImpl
+import mm.rdb.operations.impl.RenameTableImpl
+import mm.rdb.operations.impl.SetColumnDefaultValueImpl
+import mm.rdb.operations.impl.SetColumnTypeImpl
+import org.eclipse.emf.ecore.EObject
+
 
 
 class Generator extends BaseCodeGenerator {
