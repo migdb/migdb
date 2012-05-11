@@ -524,16 +524,8 @@ query RDB::ModelGeneration::findIndex(sName : String, iName : String) : RDB::Ind
 }
 
 query RDB::ModelGeneration::isIndexUsed(sName : String, iName : String) : Boolean {
-	var bool : Boolean := false;
-	self.findSchema(sName).tables.constraints->forEach(c) {
-		if(c.oclIsKindOf(RDB::PrimaryKey) or c.oclIsKindOf(RDB::UniqueIndex)) then {
-			if ((c.oclAsType(RDB::PrimaryKey).underlyingIndex.name = iName) 
-				or (c.oclAsType(RDB::UniqueIndex).underlyingIndex.name = iName)) then {
-				bool := true;
-			} endif;
-		} endif;
-	};
-	return bool;
+return self.findSchema(sName).tables.constraints->select(c | c.oclIsKindOf(RDB::PrimaryKey)).oclAsType(RDB::PrimaryKey)->exists(underlyingIndex.name = iName)
+	or self.findSchema(sName).tables.constraints->select(c | c.oclIsKindOf(RDB::UniqueIndex)).oclAsType(RDB::UniqueIndex)->exists(underlyingIndex.name = iName);
 }
 
 
@@ -588,39 +580,16 @@ query RDB::ModelGeneration::findTableConstraint(sName : String, tName : String, 
 }
 
 query RDB::ModelGeneration::isUnique(sName : String, tName : String, cName : String) : Boolean {
-	var bool : Boolean := false;
-	self.findTable(sName, tName).constraints->forEach(c) {
-		if(c.oclIsKindOf(RDB::UniqueIndex)) then {
-			if (c.oclAsType(RDB::UniqueIndex).underlyingIndex.columns->exists(name = cName)) then {
-				bool := true;
-			} endif;
-		} endif;
-	};
-	return bool;
+return self.findTable(sName, tName).constraints->select(c | c.oclIsKindOf(RDB::UniqueIndex)).oclAsType(RDB::UniqueIndex)->exists(underlyingIndex.columns->exists(name = cName));
 }
 
 query RDB::ModelGeneration::isPrimaryKey(sName : String, tName : String, cName : String) : Boolean {
-	var bool : Boolean := false;
-	self.findTable(sName, tName).constraints->forEach(c) {
-		if(c.oclIsKindOf(RDB::PrimaryKey)) then {
-			if (c.oclAsType(RDB::PrimaryKey).underlyingIndex.columns->exists(name = cName)) then {
-				bool := true;
-			} endif;
-		} endif;
-	};
-	return bool;
+	return self.findTable(sName, tName).constraints->select(c | c.oclIsKindOf(RDB::PrimaryKey)).oclAsType(RDB::PrimaryKey)->exists(underlyingIndex.columns->exists(name = cName));
+
 }
 
 query RDB::ModelGeneration::isForeignKey(sName : String, tName : String, cName : String) : Boolean {
-	var bool : Boolean := false;
-	self.findTable(sName, tName).constraints->forEach(c) {
-		if(c.oclIsKindOf(RDB::ForeignKey)) then {
-			if (c.oclAsType(RDB::ForeignKey).constrainedColumn.name = cName) then {
-				bool := true;
-			} endif;
-		} endif;
-	};
-	return bool;
+	return self.findTable(sName, tName).constraints->select(c | c.oclIsKindOf(RDB::ForeignKey)).oclAsType(RDB::ForeignKey)->exists(constrainedColumn.name = cName);
 }
 
 
