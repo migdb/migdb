@@ -20,7 +20,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://www.collectionspro.eu/jam/mm/app-ops"
-            class="mm.app.operations.OperationsPackage"
+            class="mm.app.ops.OperationsPackage"
             genModel="models/mm-app.genmodel"/>
    </extension>
 

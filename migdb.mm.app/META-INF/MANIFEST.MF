@@ -12,7 +12,7 @@ Require-Bundle: org.eclipse.core.runtime,
 Bundle-ActivationPolicy: lazy
 Export-Package: mm.app,
  mm.app.impl,
- mm.app.operations,
- mm.app.operations.impl,
- mm.app.operations.util,
+ mm.app.ops,
+ mm.app.ops.impl,
+ mm.app.ops.util,
  mm.app.util
