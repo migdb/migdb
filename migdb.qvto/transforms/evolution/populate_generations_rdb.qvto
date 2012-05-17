@@ -173,10 +173,12 @@ mapping RDB::operations::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) 
  * Create foreign key constraint on defined column.
  * @restriction : in the table must not be a constraint with the same @name.
  * @restriction : column with @constrainedColumnName must exists in table
+ * @restriction : table with @targetTableName must exists in schema.
  */
 query RDB::operations::AddForeignKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
+	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName)
+	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName);
 }
 
 mapping RDB::operations::AddForeignKey::apply(inout gen : RDB::ModelGeneration) {
