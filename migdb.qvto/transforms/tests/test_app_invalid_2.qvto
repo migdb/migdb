@@ -1,0 +1,22 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+main() {
+	log("TEST_APP_3 - invalid : Property name");	
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string), _property("name", integer)});
+	var party : APP::Class := _class("Party", OrderedSet{ _property("id",integer,true),_property("street", string),_property("city", string), _property("zip", string), _property("country", country)});																		  									  												  												  									  	
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{integer,string,country,party,
+							_class("LegalPerson", party, OrderedSet{_property("regNo", integer), _property("bisName", string)}),
+							_class("NaturalPerson",party, OrderedSet{_property("name", string), _property("surname", string)})
+			};
+		};
+	 };
+	 
+}

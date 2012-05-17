@@ -1,0 +1,4702 @@
+commit 68b9148c1654ad7bc064160515e3a237c6329421
+Author: jezekji1 <jezekji1@gmail.com>
+Date:   Sat Nov 26 15:44:59 2011 +0100
+
+    ÃšplnÄ› ÃºplnÃ¡ kompletnÃ­ zmÄ›na struktury.
+
+diff --git a/migdb.mm.app/models/mm-app.emf b/migdb.mm.app/models/mm-app.emf
+new file mode 100644
+index 0000000..1d2a689
+--- /dev/null
++++ b/migdb.mm.app/models/mm-app.emf
+@@ -0,0 +1,189 @@
++@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
++package mm;
++
++@namespace(uri="http://www.collectionspro.eu/jam/mm/app", prefix="app")
++package app {
++  class ModelRoot {
++    val ModelGeneration[+]#modelRoot modelGenerations;
++    val operations.ModelOperation[*]#modelRoot operations;
++  }
++
++  class ModelGeneration {
++    readonly derived ref ModelRoot[1]#modelGenerations modelRoot;
++    attr boolean[1] isMissing = false;
++    !ordered val AbstractClass[*]#owningModel classes;
++  }
++
++  class AbstractClass {
++    readonly derived ref ModelGeneration[1]#classes owningModel;
++    attr String[1] name;
++  }
++
++  class PrimitiveClass extends AbstractClass {
++    attr PrimitiveType[1] primitiveType;
++  }
++
++  class Class extends AbstractClass {
++    ref Class parent;
++    attr boolean isAbstract = false;
++    attr boolean isEmbedded = false;
++    attr String tableName;
++    attr InheritanceType[1] inheritanceType;
++    !ordered val Property[*]#owningClass properties;
++  }
++
++  enum InheritanceType {
++    __not_defined = 0;
++    singleTable = 1;
++    tablePerClass = 2;
++    joined = 3;
++  }
++
++  enum PrimitiveType {
++    boolean = 0;
++    char = 1;
++    int = 2;
++  }
++
++  class Property {
++    readonly derived ref Class[1]#properties owningClass;
++    attr String[1] name;
++    ref AbstractClass[1] type;
++    attr String defaultValue;
++    ref Property oppositeProperty;
++    attr int lowerBound = 0;
++    attr int upperBound = 1;
++    attr boolean isOrdered = false;
++    attr boolean isUnique = false;
++    attr boolean isID = false;
++    !unique attr String columnName;
++    attr String columnNamePattern;
++    attr String sequenceName;
++  }
++
++  @namespace(uri="http://www.collectionspro.eu/jam/mm/app-ops", prefix="app-ops")
++  package operations {
++    abstract class ModelOperation {
++      readonly derived ref ModelRoot[1]#operations modelRoot;
++    }
++
++    class AddClass extends ModelOperation {
++      attr String[1] name;
++      attr String parent;
++      attr boolean isAbstract;
++      attr boolean isEmbedded;
++      attr String tableName;
++      attr InheritanceType[1] inheritanceType;
++    }
++
++    class RenameClass extends ModelOperation {
++      attr String[1] name;
++      attr String[1] newName;
++    }
++
++    class SetParent extends ModelOperation {
++      attr String[1] name;
++      attr String[1] parentName;
++    }
++
++    class SetAbstract extends ModelOperation {
++      attr String[1] name;
++      attr boolean[1] isAbstract;
++    }
++
++    class SetEmbedded extends ModelOperation {
++      attr String[1] name;
++      attr boolean[1] isEmbedded;
++    }
++
++    class RemoveClass extends ModelOperation {
++      attr String[1] name;
++    }
++
++    class AddProperty extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr String[1] type;
++      attr String defaultValue;
++      attr int lowerBound;
++      attr int upperBound;
++      attr boolean isOrdered;
++      attr boolean isUnique;
++      attr String columnName;
++      attr String columnNamePattern;
++      attr String sequenceName;
++    }
++
++    class RenameProperty extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr String[1] newName;
++    }
++
++    class SetType extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr String[1] type;
++    }
++
++    class SetOpposite extends ModelOperation {
++      attr String[1] firstClassName;
++      attr String[1] firstPropertyName;
++      attr String[1] secondClassName;
++      attr String[1] secondPropertyName;
++      attr boolean[1] isOpposite;
++    }
++
++    class SetBoundries extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr int[1] lowerBound;
++      attr int[1] upperBound;
++    }
++
++    class SetOrdered extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr boolean[1] isOrdered;
++    }
++
++    class SetUnique extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++      attr boolean[1] isUnique;
++    }
++
++    class RemoveProperty extends ModelOperation {
++      attr String[1] owningClassName;
++      attr String[1] name;
++    }
++
++    class CopyProperty extends ModelOperation {
++      readonly attr String[1] owningClassName;
++      attr String[1] propertyName;
++      attr String[1] targetClassName;
++      attr boolean[1] endInOwerload;
++      attr boolean[1] addValueNull;
++    }
++
++    class MoveProperty extends ModelOperation {
++      readonly attr String[1] owningClassName;
++      attr String[1] propertyName;
++      attr String[1] targetClassName;
++      attr boolean[1] endInOwerload;
++      attr boolean[1] addValueNull;
++    }
++
++    class AddPrimitiveClass extends ModelOperation {
++      attr String[1] name;
++      attr PrimitiveType[1] primitiveType;
++    }
++
++    class RemovePrimitiveClass extends ModelOperation {
++      attr String[1] name;
++    }
++
++  }
++
++}
++
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumn.class b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumn.class
+new file mode 100644
+index 0000000..6974946
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumn.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumnConstraint.class b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumnConstraint.class
+new file mode 100644
+index 0000000..6d39d7a
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveColumnConstraint.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RemoveIndex.class b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveIndex.class
+new file mode 100644
+index 0000000..e60ee54
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveIndex.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTable.class b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTable.class
+new file mode 100644
+index 0000000..1614fc4
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTable.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTableConstraint.class b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTableConstraint.class
+new file mode 100644
+index 0000000..c9dc740
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RemoveTableConstraint.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RenameColumn.class b/migdb.mm.rdb/bin/mm/rdb/operations/RenameColumn.class
+new file mode 100644
+index 0000000..68349ae
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RenameColumn.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/RenameTable.class b/migdb.mm.rdb/bin/mm/rdb/operations/RenameTable.class
+new file mode 100644
+index 0000000..d645da6
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/RenameTable.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnConstraintImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnConstraintImpl.class
+new file mode 100644
+index 0000000..bf4dcd1
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnConstraintImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnImpl.class
+new file mode 100644
+index 0000000..97f0e8a
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveColumnImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveIndexImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveIndexImpl.class
+new file mode 100644
+index 0000000..1b76bfe
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveIndexImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableConstraintImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableConstraintImpl.class
+new file mode 100644
+index 0000000..f0b24ee
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableConstraintImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableImpl.class
+new file mode 100644
+index 0000000..e8838f7
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RemoveTableImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameColumnImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameColumnImpl.class
+new file mode 100644
+index 0000000..1f70b74
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameColumnImpl.class differ
+diff --git a/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameTableImpl.class b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameTableImpl.class
+new file mode 100644
+index 0000000..9c421a7
+Binary files /dev/null and b/migdb.mm.rdb/bin/mm/rdb/operations/impl/RenameTableImpl.class differ
+diff --git a/migdb.mm.rdb/models/mm-rdb.emf b/migdb.mm.rdb/models/mm-rdb.emf
+new file mode 100644
+index 0000000..6444968
+--- /dev/null
++++ b/migdb.mm.rdb/models/mm-rdb.emf
+@@ -0,0 +1,209 @@
++@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
++package mm;
++
++@namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="rdb")
++package rdb {
++  class ModelRoot {
++    val ModelGeneration[+]#modelRoot modelGenerations;
++    val operations.ModelOperation[*] operations;
++  }
++
++  class ModelGeneration {
++    ref ModelRoot[1]#modelGenerations modelRoot;
++    attr boolean[1] isMissing;
++    !ordered val Schema[*]#owningModel schemas;
++  }
++
++  class Schema {
++    derived ref ModelGeneration[1]#schemas owningModel;
++    attr String[1] name;
++    !ordered val Table[*]#owningSchema tables;
++    !ordered val Sequence[*]#owningSchema sequences;
++    !ordered val Index[*]#owningSchema indexes;
++  }
++
++  class Sequence {
++    readonly derived ref Schema[1]#sequences owningSchema;
++    attr String[1] name;
++    attr int cacheSize;
++  }
++
++  class Index {
++    readonly derived ref Schema[1]#indexes owningSchema;
++    attr String[1] name;
++    !ordered ref Column[+] columns;
++  }
++
++  class Table {
++    readonly derived ref Schema[1]#tables owningSchema;
++    attr String[1] name;
++    ref PrimaryKey primaryKey;
++    !ordered val Column[*]#owningTable columns;
++    !ordered val TableConstraint[*]#owningTable constraints;
++  }
++
++  class Column {
++    readonly derived ref Table[1]#columns owningTable;
++    attr String[1] name;
++    attr PrimitiveType[1] type;
++    attr String defaultValue;
++    !ordered val ColumnConstraint[*]#owningColumn constraints;
++  }
++
++  abstract class Constraint {
++    attr String[1] name;
++  }
++
++  abstract class TableConstraint extends Constraint {
++    readonly derived ref Table[1]#constraints owningTable;
++  }
++
++  class UniqueIndex extends TableConstraint {
++    ref Index[1] underlyingIndex;
++  }
++
++  class PrimaryKey extends UniqueIndex {
++  }
++
++  class ForeignKey extends TableConstraint {
++    ref Table[1] targetTable;
++    ref Column constrainedColumn;
++  }
++
++  abstract class ColumnConstraint extends Constraint {
++    readonly derived ref Column[1]#constraints owningColumn;
++  }
++
++  class NotNullConstraint extends ColumnConstraint {
++  }
++
++  enum PrimitiveType {
++    boolean = 0;
++    char = 1;
++    int = 2;
++  }
++
++  @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-ops", prefix="rdb-ops")
++  package operations {
++    abstract class ModelOperation {
++    }
++
++    class AddSchema extends ModelOperation {
++      attr String[1] name;
++    }
++
++    class AddSequence extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] name;
++      attr int cacheSize;
++    }
++
++    class AddIndex extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr String[+] columnsNames;
++    }
++
++    class AddTable extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] name;
++    }
++
++    class RenameTable extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] name;
++      attr String[1] newName;
++    }
++
++    class RemoveTable extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] name;
++    }
++
++    class AddColumn extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr PrimitiveType[1] type;
++      attr String defaultValue;
++    }
++
++    class RenameColumn extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr String[1] newName;
++    }
++
++    class RemoveColumn extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++    }
++
++    class AddUniqueIndex extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr String[1] underlyingIndexName;
++    }
++
++    class AddPrimaryKey extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr String[1] underlyingIndexName;
++    }
++
++    class AddForeignKey extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++      attr String[1] targetTableName;
++      attr String[1] constrainedColumnName;
++    }
++
++    class AddNotNullConstraint extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] owningColumnName;
++      attr String[1] name;
++    }
++
++    class RemoveTableConstraint extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] name;
++    }
++
++    class RemoveColumnConstraint extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] owningTableName;
++      attr String[1] owningColumnName;
++      attr String[1] name;
++    }
++
++    class RemoveIndex extends ModelOperation {
++      attr String[1] owningSchemaName;
++      attr String[1] name;
++    }
++
++  }
++
++  @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-dml", prefix="rdb-dml")
++  package dml {
++    class Query {
++
++      @DVU(subsets="self.columns")
++      val ColumnReference[+] columnReferences;
++    }
++
++    class ColumnReference {
++      ref Column[1] reference;
++    }
++
++  }
++
++}
++
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumn.java b/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumn.java
+new file mode 100644
+index 0000000..09b19b7
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumn.java
+@@ -0,0 +1,107 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Remove Column</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RemoveColumn#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveColumn#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveColumn#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRemoveColumn()
++ * @model
++ * @generated
++ */
++public interface RemoveColumn extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumn_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumn#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Owning Table Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Table Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #setOwningTableName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumn_OwningTableName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningTableName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumn#getOwningTableName <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #getOwningTableName()
++	 * @generated
++	 */
++	void setOwningTableName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumn_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumn#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++} // RemoveColumn
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumnConstraint.java b/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumnConstraint.java
+new file mode 100644
+index 0000000..77c03f7
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RemoveColumnConstraint.java
+@@ -0,0 +1,134 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Remove Column Constraint</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RemoveColumnConstraint#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveColumnConstraint#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveColumnConstraint#getOwningColumnName <em>Owning Column Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveColumnConstraint#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRemoveColumnConstraint()
++ * @model
++ * @generated
++ */
++public interface RemoveColumnConstraint extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumnConstraint_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Owning Table Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Table Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #setOwningTableName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumnConstraint_OwningTableName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningTableName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningTableName <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #getOwningTableName()
++	 * @generated
++	 */
++	void setOwningTableName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Owning Column Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Column Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Column Name</em>' attribute.
++	 * @see #setOwningColumnName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumnConstraint_OwningColumnName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningColumnName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumnConstraint#getOwningColumnName <em>Owning Column Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Column Name</em>' attribute.
++	 * @see #getOwningColumnName()
++	 * @generated
++	 */
++	void setOwningColumnName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveColumnConstraint_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveColumnConstraint#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++} // RemoveColumnConstraint
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RemoveIndex.java b/migdb.mm.rdb/src/mm/rdb/operations/RemoveIndex.java
+new file mode 100644
+index 0000000..c2ad1dc
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RemoveIndex.java
+@@ -0,0 +1,80 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Remove Index</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RemoveIndex#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveIndex#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRemoveIndex()
++ * @model
++ * @generated
++ */
++public interface RemoveIndex extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveIndex_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveIndex#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveIndex_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveIndex#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++} // RemoveIndex
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RemoveTable.java b/migdb.mm.rdb/src/mm/rdb/operations/RemoveTable.java
+new file mode 100644
+index 0000000..6393266
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RemoveTable.java
+@@ -0,0 +1,80 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Remove Table</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RemoveTable#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveTable#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRemoveTable()
++ * @model
++ * @generated
++ */
++public interface RemoveTable extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveTable_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveTable#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveTable_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveTable#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++} // RemoveTable
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RemoveTableConstraint.java b/migdb.mm.rdb/src/mm/rdb/operations/RemoveTableConstraint.java
+new file mode 100644
+index 0000000..8b3e376
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RemoveTableConstraint.java
+@@ -0,0 +1,107 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Remove Table Constraint</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RemoveTableConstraint#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveTableConstraint#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RemoveTableConstraint#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRemoveTableConstraint()
++ * @model
++ * @generated
++ */
++public interface RemoveTableConstraint extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveTableConstraint_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveTableConstraint#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Owning Table Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Table Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #setOwningTableName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveTableConstraint_OwningTableName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningTableName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveTableConstraint#getOwningTableName <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #getOwningTableName()
++	 * @generated
++	 */
++	void setOwningTableName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRemoveTableConstraint_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RemoveTableConstraint#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++} // RemoveTableConstraint
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RenameColumn.java b/migdb.mm.rdb/src/mm/rdb/operations/RenameColumn.java
+new file mode 100644
+index 0000000..553403d
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RenameColumn.java
+@@ -0,0 +1,134 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Rename Column</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RenameColumn#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RenameColumn#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RenameColumn#getName <em>Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RenameColumn#getNewName <em>New Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRenameColumn()
++ * @model
++ * @generated
++ */
++public interface RenameColumn extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameColumn_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameColumn#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Owning Table Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Table Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #setOwningTableName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameColumn_OwningTableName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningTableName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameColumn#getOwningTableName <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Table Name</em>' attribute.
++	 * @see #getOwningTableName()
++	 * @generated
++	 */
++	void setOwningTableName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameColumn_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameColumn#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>New Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>New Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>New Name</em>' attribute.
++	 * @see #setNewName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameColumn_NewName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getNewName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameColumn#getNewName <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>New Name</em>' attribute.
++	 * @see #getNewName()
++	 * @generated
++	 */
++	void setNewName(String value);
++
++} // RenameColumn
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/RenameTable.java b/migdb.mm.rdb/src/mm/rdb/operations/RenameTable.java
+new file mode 100644
+index 0000000..491bd07
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/RenameTable.java
+@@ -0,0 +1,107 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations;
++
++
++/**
++ * <!-- begin-user-doc -->
++ * A representation of the model object '<em><b>Rename Table</b></em>'.
++ * <!-- end-user-doc -->
++ *
++ * <p>
++ * The following features are supported:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.RenameTable#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RenameTable#getName <em>Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.RenameTable#getNewName <em>New Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @see mm.rdb.operations.OperationsPackage#getRenameTable()
++ * @model
++ * @generated
++ */
++public interface RenameTable extends ModelOperation {
++	/**
++	 * Returns the value of the '<em><b>Owning Schema Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Owning Schema Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #setOwningSchemaName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameTable_OwningSchemaName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getOwningSchemaName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameTable#getOwningSchemaName <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Owning Schema Name</em>' attribute.
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 */
++	void setOwningSchemaName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>Name</em>' attribute.
++	 * @see #setName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameTable_Name()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameTable#getName <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>Name</em>' attribute.
++	 * @see #getName()
++	 * @generated
++	 */
++	void setName(String value);
++
++	/**
++	 * Returns the value of the '<em><b>New Name</b></em>' attribute.
++	 * <!-- begin-user-doc -->
++	 * <p>
++	 * If the meaning of the '<em>New Name</em>' attribute isn't clear,
++	 * there really should be more of a description here...
++	 * </p>
++	 * <!-- end-user-doc -->
++	 * @return the value of the '<em>New Name</em>' attribute.
++	 * @see #setNewName(String)
++	 * @see mm.rdb.operations.OperationsPackage#getRenameTable_NewName()
++	 * @model required="true"
++	 * @generated
++	 */
++	String getNewName();
++
++	/**
++	 * Sets the value of the '{@link mm.rdb.operations.RenameTable#getNewName <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @param value the new value of the '<em>New Name</em>' attribute.
++	 * @see #getNewName()
++	 * @generated
++	 */
++	void setNewName(String value);
++
++} // RenameTable
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnConstraintImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnConstraintImpl.java
+new file mode 100644
+index 0000000..0d74b94
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnConstraintImpl.java
+@@ -0,0 +1,328 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RemoveColumnConstraint;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Remove Column Constraint</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl#getOwningColumnName <em>Owning Column Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnConstraintImpl#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RemoveColumnConstraintImpl extends ModelOperationImpl implements RemoveColumnConstraint {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_TABLE_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningTableName = OWNING_TABLE_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getOwningColumnName() <em>Owning Column Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningColumnName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_COLUMN_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningColumnName() <em>Owning Column Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningColumnName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningColumnName = OWNING_COLUMN_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RemoveColumnConstraintImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.REMOVE_COLUMN_CONSTRAINT;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningTableName() {
++		return owningTableName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningTableName(String newOwningTableName) {
++		String oldOwningTableName = owningTableName;
++		owningTableName = newOwningTableName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME, oldOwningTableName, owningTableName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningColumnName() {
++		return owningColumnName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningColumnName(String newOwningColumnName) {
++		String oldOwningColumnName = owningColumnName;
++		owningColumnName = newOwningColumnName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME, oldOwningColumnName, owningColumnName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN_CONSTRAINT__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME:
++				return getOwningTableName();
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME:
++				return getOwningColumnName();
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__NAME:
++				return getName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME:
++				setOwningTableName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME:
++				setOwningColumnName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__NAME:
++				setName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME:
++				setOwningTableName(OWNING_TABLE_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME:
++				setOwningColumnName(OWNING_COLUMN_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_TABLE_NAME:
++				return OWNING_TABLE_NAME_EDEFAULT == null ? owningTableName != null : !OWNING_TABLE_NAME_EDEFAULT.equals(owningTableName);
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__OWNING_COLUMN_NAME:
++				return OWNING_COLUMN_NAME_EDEFAULT == null ? owningColumnName != null : !OWNING_COLUMN_NAME_EDEFAULT.equals(owningColumnName);
++			case OperationsPackage.REMOVE_COLUMN_CONSTRAINT__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", owningTableName: ");
++		result.append(owningTableName);
++		result.append(", owningColumnName: ");
++		result.append(owningColumnName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RemoveColumnConstraintImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnImpl.java
+new file mode 100644
+index 0000000..d139554
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveColumnImpl.java
+@@ -0,0 +1,274 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RemoveColumn;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Remove Column</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnImpl#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveColumnImpl#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RemoveColumnImpl extends ModelOperationImpl implements RemoveColumn {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_TABLE_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningTableName = OWNING_TABLE_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RemoveColumnImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.REMOVE_COLUMN;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningTableName() {
++		return owningTableName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningTableName(String newOwningTableName) {
++		String oldOwningTableName = owningTableName;
++		owningTableName = newOwningTableName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN__OWNING_TABLE_NAME, oldOwningTableName, owningTableName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_COLUMN__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.REMOVE_COLUMN__OWNING_TABLE_NAME:
++				return getOwningTableName();
++			case OperationsPackage.REMOVE_COLUMN__NAME:
++				return getName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_COLUMN__OWNING_TABLE_NAME:
++				setOwningTableName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_COLUMN__NAME:
++				setName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_COLUMN__OWNING_TABLE_NAME:
++				setOwningTableName(OWNING_TABLE_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_COLUMN__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_COLUMN__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.REMOVE_COLUMN__OWNING_TABLE_NAME:
++				return OWNING_TABLE_NAME_EDEFAULT == null ? owningTableName != null : !OWNING_TABLE_NAME_EDEFAULT.equals(owningTableName);
++			case OperationsPackage.REMOVE_COLUMN__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", owningTableName: ");
++		result.append(owningTableName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RemoveColumnImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveIndexImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveIndexImpl.java
+new file mode 100644
+index 0000000..a22385b
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveIndexImpl.java
+@@ -0,0 +1,220 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RemoveIndex;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Remove Index</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RemoveIndexImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveIndexImpl#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RemoveIndexImpl extends ModelOperationImpl implements RemoveIndex {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RemoveIndexImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.REMOVE_INDEX;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_INDEX__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_INDEX__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_INDEX__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.REMOVE_INDEX__NAME:
++				return getName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_INDEX__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_INDEX__NAME:
++				setName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_INDEX__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_INDEX__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_INDEX__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.REMOVE_INDEX__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RemoveIndexImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableConstraintImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableConstraintImpl.java
+new file mode 100644
+index 0000000..62a30e3
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableConstraintImpl.java
+@@ -0,0 +1,274 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RemoveTableConstraint;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Remove Table Constraint</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RemoveTableConstraintImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveTableConstraintImpl#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveTableConstraintImpl#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RemoveTableConstraintImpl extends ModelOperationImpl implements RemoveTableConstraint {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_TABLE_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningTableName = OWNING_TABLE_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RemoveTableConstraintImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.REMOVE_TABLE_CONSTRAINT;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningTableName() {
++		return owningTableName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningTableName(String newOwningTableName) {
++		String oldOwningTableName = owningTableName;
++		owningTableName = newOwningTableName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME, oldOwningTableName, owningTableName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_TABLE_CONSTRAINT__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME:
++				return getOwningTableName();
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__NAME:
++				return getName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME:
++				setOwningTableName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__NAME:
++				setName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME:
++				setOwningTableName(OWNING_TABLE_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__OWNING_TABLE_NAME:
++				return OWNING_TABLE_NAME_EDEFAULT == null ? owningTableName != null : !OWNING_TABLE_NAME_EDEFAULT.equals(owningTableName);
++			case OperationsPackage.REMOVE_TABLE_CONSTRAINT__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", owningTableName: ");
++		result.append(owningTableName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RemoveTableConstraintImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableImpl.java
+new file mode 100644
+index 0000000..cb3becb
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RemoveTableImpl.java
+@@ -0,0 +1,220 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RemoveTable;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Remove Table</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RemoveTableImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RemoveTableImpl#getName <em>Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RemoveTableImpl extends ModelOperationImpl implements RemoveTable {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RemoveTableImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.REMOVE_TABLE;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_TABLE__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.REMOVE_TABLE__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.REMOVE_TABLE__NAME:
++				return getName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.REMOVE_TABLE__NAME:
++				setName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.REMOVE_TABLE__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.REMOVE_TABLE__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.REMOVE_TABLE__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RemoveTableImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameColumnImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameColumnImpl.java
+new file mode 100644
+index 0000000..73bee0e
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameColumnImpl.java
+@@ -0,0 +1,328 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RenameColumn;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Rename Column</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RenameColumnImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RenameColumnImpl#getOwningTableName <em>Owning Table Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RenameColumnImpl#getName <em>Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RenameColumnImpl#getNewName <em>New Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RenameColumnImpl extends ModelOperationImpl implements RenameColumn {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_TABLE_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningTableName() <em>Owning Table Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningTableName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningTableName = OWNING_TABLE_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getNewName() <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getNewName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NEW_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getNewName() <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getNewName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String newName = NEW_NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RenameColumnImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.RENAME_COLUMN;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_COLUMN__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningTableName() {
++		return owningTableName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningTableName(String newOwningTableName) {
++		String oldOwningTableName = owningTableName;
++		owningTableName = newOwningTableName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_COLUMN__OWNING_TABLE_NAME, oldOwningTableName, owningTableName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_COLUMN__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getNewName() {
++		return newName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setNewName(String newNewName) {
++		String oldNewName = newName;
++		newName = newNewName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_COLUMN__NEW_NAME, oldNewName, newName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_COLUMN__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.RENAME_COLUMN__OWNING_TABLE_NAME:
++				return getOwningTableName();
++			case OperationsPackage.RENAME_COLUMN__NAME:
++				return getName();
++			case OperationsPackage.RENAME_COLUMN__NEW_NAME:
++				return getNewName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_COLUMN__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.RENAME_COLUMN__OWNING_TABLE_NAME:
++				setOwningTableName((String)newValue);
++				return;
++			case OperationsPackage.RENAME_COLUMN__NAME:
++				setName((String)newValue);
++				return;
++			case OperationsPackage.RENAME_COLUMN__NEW_NAME:
++				setNewName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_COLUMN__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.RENAME_COLUMN__OWNING_TABLE_NAME:
++				setOwningTableName(OWNING_TABLE_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.RENAME_COLUMN__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++			case OperationsPackage.RENAME_COLUMN__NEW_NAME:
++				setNewName(NEW_NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_COLUMN__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.RENAME_COLUMN__OWNING_TABLE_NAME:
++				return OWNING_TABLE_NAME_EDEFAULT == null ? owningTableName != null : !OWNING_TABLE_NAME_EDEFAULT.equals(owningTableName);
++			case OperationsPackage.RENAME_COLUMN__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++			case OperationsPackage.RENAME_COLUMN__NEW_NAME:
++				return NEW_NAME_EDEFAULT == null ? newName != null : !NEW_NAME_EDEFAULT.equals(newName);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", owningTableName: ");
++		result.append(owningTableName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(", newName: ");
++		result.append(newName);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RenameColumnImpl
+diff --git a/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameTableImpl.java b/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameTableImpl.java
+new file mode 100644
+index 0000000..7102a1f
+--- /dev/null
++++ b/migdb.mm.rdb/src/mm/rdb/operations/impl/RenameTableImpl.java
+@@ -0,0 +1,274 @@
++/**
++ * <copyright>
++ * </copyright>
++ *
++ * $Id$
++ */
++package mm.rdb.operations.impl;
++
++import mm.rdb.operations.OperationsPackage;
++import mm.rdb.operations.RenameTable;
++
++import org.eclipse.emf.common.notify.Notification;
++
++import org.eclipse.emf.ecore.EClass;
++
++import org.eclipse.emf.ecore.impl.ENotificationImpl;
++
++/**
++ * <!-- begin-user-doc -->
++ * An implementation of the model object '<em><b>Rename Table</b></em>'.
++ * <!-- end-user-doc -->
++ * <p>
++ * The following features are implemented:
++ * <ul>
++ *   <li>{@link mm.rdb.operations.impl.RenameTableImpl#getOwningSchemaName <em>Owning Schema Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RenameTableImpl#getName <em>Name</em>}</li>
++ *   <li>{@link mm.rdb.operations.impl.RenameTableImpl#getNewName <em>New Name</em>}</li>
++ * </ul>
++ * </p>
++ *
++ * @generated
++ */
++public class RenameTableImpl extends ModelOperationImpl implements RenameTable {
++	/**
++	 * The default value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String OWNING_SCHEMA_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getOwningSchemaName() <em>Owning Schema Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getOwningSchemaName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String owningSchemaName = OWNING_SCHEMA_NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String name = NAME_EDEFAULT;
++
++	/**
++	 * The default value of the '{@link #getNewName() <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getNewName()
++	 * @generated
++	 * @ordered
++	 */
++	protected static final String NEW_NAME_EDEFAULT = null;
++
++	/**
++	 * The cached value of the '{@link #getNewName() <em>New Name</em>}' attribute.
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @see #getNewName()
++	 * @generated
++	 * @ordered
++	 */
++	protected String newName = NEW_NAME_EDEFAULT;
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	protected RenameTableImpl() {
++		super();
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	protected EClass eStaticClass() {
++		return OperationsPackage.Literals.RENAME_TABLE;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getOwningSchemaName() {
++		return owningSchemaName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setOwningSchemaName(String newOwningSchemaName) {
++		String oldOwningSchemaName = owningSchemaName;
++		owningSchemaName = newOwningSchemaName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_TABLE__OWNING_SCHEMA_NAME, oldOwningSchemaName, owningSchemaName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getName() {
++		return name;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setName(String newName) {
++		String oldName = name;
++		name = newName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_TABLE__NAME, oldName, name));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public String getNewName() {
++		return newName;
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	public void setNewName(String newNewName) {
++		String oldNewName = newName;
++		newName = newNewName;
++		if (eNotificationRequired())
++			eNotify(new ENotificationImpl(this, Notification.SET, OperationsPackage.RENAME_TABLE__NEW_NAME, oldNewName, newName));
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public Object eGet(int featureID, boolean resolve, boolean coreType) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_TABLE__OWNING_SCHEMA_NAME:
++				return getOwningSchemaName();
++			case OperationsPackage.RENAME_TABLE__NAME:
++				return getName();
++			case OperationsPackage.RENAME_TABLE__NEW_NAME:
++				return getNewName();
++		}
++		return super.eGet(featureID, resolve, coreType);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eSet(int featureID, Object newValue) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_TABLE__OWNING_SCHEMA_NAME:
++				setOwningSchemaName((String)newValue);
++				return;
++			case OperationsPackage.RENAME_TABLE__NAME:
++				setName((String)newValue);
++				return;
++			case OperationsPackage.RENAME_TABLE__NEW_NAME:
++				setNewName((String)newValue);
++				return;
++		}
++		super.eSet(featureID, newValue);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public void eUnset(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_TABLE__OWNING_SCHEMA_NAME:
++				setOwningSchemaName(OWNING_SCHEMA_NAME_EDEFAULT);
++				return;
++			case OperationsPackage.RENAME_TABLE__NAME:
++				setName(NAME_EDEFAULT);
++				return;
++			case OperationsPackage.RENAME_TABLE__NEW_NAME:
++				setNewName(NEW_NAME_EDEFAULT);
++				return;
++		}
++		super.eUnset(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public boolean eIsSet(int featureID) {
++		switch (featureID) {
++			case OperationsPackage.RENAME_TABLE__OWNING_SCHEMA_NAME:
++				return OWNING_SCHEMA_NAME_EDEFAULT == null ? owningSchemaName != null : !OWNING_SCHEMA_NAME_EDEFAULT.equals(owningSchemaName);
++			case OperationsPackage.RENAME_TABLE__NAME:
++				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
++			case OperationsPackage.RENAME_TABLE__NEW_NAME:
++				return NEW_NAME_EDEFAULT == null ? newName != null : !NEW_NAME_EDEFAULT.equals(newName);
++		}
++		return super.eIsSet(featureID);
++	}
++
++	/**
++	 * <!-- begin-user-doc -->
++	 * <!-- end-user-doc -->
++	 * @generated
++	 */
++	@Override
++	public String toString() {
++		if (eIsProxy()) return super.toString();
++
++		StringBuffer result = new StringBuffer(super.toString());
++		result.append(" (owningSchemaName: ");
++		result.append(owningSchemaName);
++		result.append(", name: ");
++		result.append(name);
++		result.append(", newName: ");
++		result.append(newName);
++		result.append(')');
++		return result.toString();
++	}
++
++} //RenameTableImpl
+diff --git a/migdb.qvto/transforms/evolution/populate_generations_rdb.qvto b/migdb.qvto/transforms/evolution/populate_generations_rdb.qvto
+new file mode 100644
+index 0000000..d1063b8
+--- /dev/null
++++ b/migdb.qvto/transforms/evolution/populate_generations_rdb.qvto
+@@ -0,0 +1,409 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++
++modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
++
++transformation DB_To_Rdb(in inModel : RDB, out outModel : RDB);
++main() {
++	assert(inModel.rootObjects()->size() = 1);
++	assert(inModel.rootObjects()->forAll(oclIsKindOf(RDB::ModelRoot)));
++	
++	log("transformation started...");
++	
++	inModel.rootObjects().deepclone();
++
++	var root : RDB::ModelRoot = outModel.rootObjects()![RDB::ModelRoot];
++	var gen0 : RDB::ModelGeneration = root.modelGenerations->first();
++	
++	root.operations->forEach(op) {
++		log("	iterating over operation " + op.repr());
++		if (op.isValid(gen0)) then {
++			log("	operation is valid " + op.repr());
++			op.xmap apply(gen0);
++		} else {
++			log("	operation is invalid " + op.repr());
++		} endif;
++	};
++	
++	root.operations = root.operations->reject(true);
++}
++
++// kontroluje validitu operace
++abstract query RDB::operations::ModelOperation::
++	isValid(gen : RDB::ModelGeneration) : Boolean;
++
++// namapuje danou operaci
++abstract mapping RDB::operations::ModelOperation::
++	apply(inout gen : RDB::ModelGeneration);
++
++
++/* ++++++++++ ADD OPERATIONS ++++++++++++++++++++ */
++
++query RDB::operations::AddSchema::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// v dané generaci neexistuje schéma stejného názvu
++	return not gen.isSchemaInGeneration(self.name);
++}
++
++// pøidá schéma do generace
++mapping RDB::operations::AddSchema::apply(inout gen : RDB::ModelGeneration) {
++	gen.schemas += object RDB::Schema {
++		name := self.name;
++	}
++}
++
++query RDB::operations::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// v daném schématu neexistuje sekvence stejného názvu
++	return not gen.isSequenceInSchema(self.owningSchemaName, self.name);
++}
++
++// pøidá sekvenci do schématu
++mapping RDB::operations::AddSequence::apply(inout gen : RDB::ModelGeneration) {
++	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
++	s.sequences += object RDB::Sequence {
++		name := self.name;
++		cacheSize := self.cacheSize;
++	}
++}
++
++query RDB::operations::AddIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// v daném schématu neexistuje index stejného názvu
++	return not gen.isIndexInSchema(self.owningSchemaName, self.name)
++	// v dané tabulce existují dané sloupce
++		   and gen.areColumnsInTable(self.owningSchemaName, self.owningTableName, self.columnsNames);
++}
++
++// pøidá index do schématu
++mapping RDB::operations::AddIndex::apply(inout gen : RDB::ModelGeneration) {
++	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
++	s.indexes += object RDB::Index {
++		name := self.name;		
++		columns += gen.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames);
++	}
++}
++
++query RDB::operations::AddTable::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// v daném schématu neexistuje tabulka stejného názvu
++	return not gen.isTableInSchema(self.owningSchemaName, self.name);
++}
++
++// pøidá tabulku do schématu
++mapping RDB::operations::AddTable::apply(inout gen : RDB::ModelGeneration) {
++	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
++	s.tables += object RDB::Table {
++		name := self.name;
++	};
++}
++
++query RDB::operations::AddColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// v dané tabulce neexistuje sloupec stejného názvu
++	return not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name);
++}
++
++// pøidá sloupec do tabulky
++mapping RDB::operations::AddColumn::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	t.columns += object RDB::Column {
++		name := self.name;
++		type := self.type;
++		defaultValue := self.defaultValue;
++	}
++}
++
++query RDB::operations::AddUniqueIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// pro danou tabulku neexistuje omezení stejného názvu
++	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
++	// v daném schématu existuje daný index
++	and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName);
++}
++
++// pøidá omezení 'UniqueIndex' pro tabulku
++mapping RDB::operations::AddUniqueIndex::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	t.constraints += object RDB::UniqueIndex {
++		name := self.name;
++		underlyingIndex := gen.findIndex(self.owningSchemaName, self.underlyingIndexName);
++	}
++}
++
++query RDB::operations::AddPrimaryKey::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// pro danou tabulku neexistuje omezení stejného názvu
++	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
++	// v daném schématu existuje daný index
++	and gen.isIndexInSchema(self.owningSchemaName, self.underlyingIndexName);
++}
++
++// pøidá omezení 'PrimaryKey' pro tabulku
++mapping RDB::operations::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	t.constraints += object RDB::PrimaryKey {
++		name := self.name;
++		underlyingIndex := gen.findIndex(self.owningSchemaName, self.underlyingIndexName);
++	}
++}
++
++query RDB::operations::AddForeignKey::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// pro danou tabulku neexistuje omezení stejného názvu
++	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
++	// v daném schématu existuje cílová tabulka
++	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName)
++	// v cílové tabulce existují dané sloupce
++	and gen.isColumnInTable(self.owningSchemaName, self.targetTableName, self.constrainedColumnName);
++}
++
++// pøidá omezení 'ForeignKey' pro tabulku
++mapping RDB::operations::AddForeignKey::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	t.constraints += object RDB::ForeignKey {
++		name := self.name;
++		targetTable := gen.findTable(self.owningSchemaName, self.targetTableName);
++		constrainedColumn := gen.findColumn(self.owningSchemaName, self.targetTableName, self.constrainedColumnName);
++	}
++}
++
++query RDB::operations::AddNotNullConstraint::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// pro daný sloupec neexistuje omezení stejného názvu
++	return not gen.isConstraintForColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name);	   
++}
++
++// pøidá omezení 'NotNull' pro sloupec
++mapping RDB::operations::AddNotNullConstraint::apply(inout gen : RDB::ModelGeneration) {
++	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
++	c.constraints += object RDB::NotNullConstraint {
++		name := self.name;
++	}
++}
++
++/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
++
++query RDB::operations::RenameTable::isValid( gen : RDB::ModelGeneration) : Boolean {
++	// tabulka s názvem @name existuje ve schématu
++	return gen.isTableInSchema(self.owningSchemaName, self.name)
++	// tabulka s názvem @newName neexistuje ve schématu
++		   and not gen.isTableInSchema(self.owningSchemaName, self.newName);
++}
++
++mapping RDB::operations::RenameTable::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.name);
++	// zmìna hodnoty atributu name
++	t.name := self.newName;
++}
++
++query RDB::operations::RenameColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// sloupec s názvem @name existuje v tabulce
++	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
++	// sloupec s názvem @newName neexistuje v tabulce
++		   and not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.newName);
++}
++
++mapping RDB::operations::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
++	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
++	// zmìna hodnoty atributu name
++	c.name := self.newName;
++}
++
++
++/* ++++++++++ REMOVE OPERATIONS ++++++++++++++++++++ */
++
++query RDB::operations::RemoveTable::isValid(gen : RDB::ModelGeneration) : Boolean {
++	// tabulka existuje v daném schématu
++	return gen.isTableInSchema(self.owningSchemaName, self.name)
++	// v tabulce existuje pouze identifikaèní sloupec
++		   and gen.findTable(self.owningSchemaName, self.name).columns->size() = 1;
++}
++
++// odstraní tabulku z daného schématu
++mapping RDB::operations::RemoveTable::apply(inout gen : RDB::ModelGeneration) {
++	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
++	// odstranìní tabulky
++	s.tables := s.tables->excluding(gen.findTable(self.owningSchemaName, self.name));
++}
++
++query RDB::operations::RemoveColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
++    // sloupec existuje v dané tabulce
++	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
++	// daný sloupec nemá žádná omezení
++		   and gen.findColumn(self.owningSchemaName, self.owningTableName, self.name).constraints->size() = 0
++	// pro daný sloupec neexistuje tabulkové omezení 'Unique'
++		   and not gen.isUnique(self.owningSchemaName, self.owningTableName, self.name)
++	// pro daný sloupec neexistuje tabulkové omezení 'PrimaryKey'
++		   and not gen.isPrimaryKey(self.owningSchemaName, self.owningTableName, self.name)
++	// pro daný sloupec neexistuje tabulkové omezení 'ForeignKey'
++		   and not gen.isForeignKey(self.owningSchemaName, self.owningTableName, self.name);
++}
++
++// odstraní atribut z dané tøídy
++mapping RDB::operations::RemoveColumn::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	// odstranìní sloupce
++	t.columns := t.columns->excluding(gen.findColumn(self.owningSchemaName, self.owningTableName, self.name));
++}
++
++query RDB::operations::RemoveTableConstraint::isValid(gen : RDB::ModelGeneration) : Boolean {
++    // omezení existuje pro danou tabulku
++	return gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name);
++}
++
++// odstraní omezení pro danou tabulku
++mapping RDB::operations::RemoveTableConstraint::apply(inout gen : RDB::ModelGeneration) {
++	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
++	// odstranìní omezení
++	t.constraints := t.constraints->excluding(gen.findTableConstraint(self.owningSchemaName, self.owningTableName, self.name));
++}
++
++query RDB::operations::RemoveColumnConstraint::isValid(gen : RDB::ModelGeneration) : Boolean {
++    // omezení existuje pro daný sloupec
++	return gen.isConstraintForColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name);
++}
++
++// odstraní omezení pro daný sloupec
++mapping RDB::operations::RemoveColumnConstraint::apply(inout gen : RDB::ModelGeneration) {
++	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
++	// odstranìní omezení
++	c.constraints := c.constraints->excluding(gen.findColumnConstraint(self.owningSchemaName, self.owningTableName, self.owningColumnName, self.name));
++}
++
++query RDB::operations::RemoveIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
++    // index existuje v daném schématu
++	return gen.isIndexInSchema(self.owningSchemaName, self.name);
++}
++
++// odstraní index z daného schématu
++mapping RDB::operations::RemoveIndex::apply(inout gen : RDB::ModelGeneration) {
++	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
++	// odstranìní index
++	s.indexes := s.indexes->excluding(gen.findIndex(self.owningSchemaName, self.name));
++}
++
++/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
++
++// ovìøí, zda-li existuje schéma v generaci
++query RDB::ModelGeneration::isSchemaInGeneration(sName : String) : Boolean {
++	return self.schemas->exists(name = sName);
++}
++
++// vrátí schéma z generace
++query RDB::ModelGeneration::findSchema(sName : String) : RDB::Schema {
++	return self.schemas->selectOne(name = sName);
++}
++
++// ovìøí, zda-li existuje sekvence ve schématu
++query RDB::ModelGeneration::isSequenceInSchema(sName : String, qName : String) : Boolean {
++	return self.findSchema(sName).sequences->exists(name = qName);
++}
++
++// ovìøí, zda-li existuje index ve schématu
++query RDB::ModelGeneration::isIndexInSchema(sName : String, iName : String) : Boolean {
++	return self.findSchema(sName).indexes->exists(name = iName);
++}
++
++// vrátí index ze schéma
++query RDB::ModelGeneration::findIndex(sName : String, iName : String) : RDB::Index {
++	return self.findSchema(sName).indexes->selectOne(name = iName);
++}
++
++// ovìøí, zda-li existuje tabulka ve schématu
++query RDB::ModelGeneration::isTableInSchema(sName : String, tName : String) : Boolean {
++	return self.findSchema(sName).tables->exists(name = tName);
++}
++
++// vrátí tabulku ze schéma
++query RDB::ModelGeneration::findTable(sName : String, tName : String) : RDB::Table {
++	return self.findSchema(sName).tables->selectOne(name = tName);
++}
++
++// ovìøí, zda-li existuje sloupec v tabulce
++query RDB::ModelGeneration::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
++	return self.findTable(sName, tName).columns->exists(name = cName);
++}
++
++// ovìøí, zda-li existují sloupce v tabulce
++query RDB::ModelGeneration::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
++	var b : Boolean := true;
++	cNames->forEach(cName) {
++		b = b and self.isColumnInTable(sName, tName, cName);
++	};
++	return b;
++}
++
++// vrátí sloupec z tabulky
++query RDB::ModelGeneration::findColumn(sName : String, tName : String, cName : String) : RDB::Column {
++	return self.findTable(sName, tName).columns->selectOne(name = cName);
++}
++
++// vrátí seøazenou množinu sloupcù z tabulky
++query RDB::ModelGeneration::findColumns(sName : String, tName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
++	var columns : OrderedSet(RDB::Column);
++	cNames->forEach(cName) {
++		columns += self.findColumn(sName, tName, cName);
++	};
++	return columns;
++}
++
++// ovìøí, zda-li existuje omezení pro tabulku
++query RDB::ModelGeneration::isConstraintForTable(sName : String, tName : String, rName : String) : Boolean {
++	return self.findTable(sName, tName).constraints->exists(name = rName);
++}
++
++// ovìøí, zda-li existuje omezení pro sloupec 
++query RDB::ModelGeneration::isConstraintForColumn(sName : String, tName : String, cName : String, rName : String) : Boolean {
++	return self.findColumn(sName, tName, cName).constraints->exists(name = rName);
++}
++
++// vrátí omezení dané tabulky
++query RDB::ModelGeneration::findTableConstraint(sName : String, tName : String, rName : String) : RDB::TableConstraint {
++	return self.findTable(sName, tName).constraints->selectOne(name = rName);
++}
++
++// vrátí omezení daného sloupce
++query RDB::ModelGeneration::findColumnConstraint(sName : String, tName : String, cName : String, rName : String) : RDB::ColumnConstraint {
++	return self.findColumn(sName, tName, cName).constraints->selectOne(name = rName);
++}
++
++// ovìøí, zda-li existuje pro sloupec tabulkové omezení 'Unique'
++query RDB::ModelGeneration::isUnique(sName : String, tName : String, cName : String) : Boolean {
++	// vybere omezení typu 'Unique'
++	self.findTable(sName, tName).constraints.oclAsType(RDB::UniqueIndex)->forEach(r) {
++		return r.underlyingIndex.columns->exists(name = cName);
++	};
++	return false;
++}
++
++// ovìøí, zda-li existuje pro sloupce tabulkové omezení 'PrimaryKey'
++query RDB::ModelGeneration::isPrimaryKey(sName : String, tName : String, cName : String) : Boolean {
++	// vybere omezení typu 'PrimaryKey'
++	self.findTable(sName, tName).constraints.oclAsType(RDB::PrimaryKey)->forEach(r) {
++		return r.underlyingIndex.columns->exists(name = cName);
++	};
++	return false;
++}
++
++// ovìøí, zda-li existuje pro sloupec tabulkové omezení 'ForeignKey'
++query RDB::ModelGeneration::isForeignKey(sName : String, tName : String, cName : String) : Boolean {
++	// vybere omezení typu 'ForeignKey'
++	self.findTable(sName, tName).constraints.oclAsType(RDB::ForeignKey)->forEach(r) {
++		return r.constrainedColumn.name = cName;
++	};
++	return false;
++}
+diff --git a/migdb.qvto/transforms/orm/orm_operations.qvto b/migdb.qvto/transforms/orm/orm_operations.qvto
+new file mode 100644
+index 0000000..44345a6
+--- /dev/null
++++ b/migdb.qvto/transforms/orm/orm_operations.qvto
+@@ -0,0 +1,33 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++ 
++modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
++modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
++
++transformation app_to_rdb(in inModel : APP, out outModel : RDB);
++
++main() {
++
++}
+diff --git a/migdb.qvto/transforms/queries/queries_app.qvto b/migdb.qvto/transforms/queries/queries_app.qvto
+new file mode 100644
+index 0000000..294c0d1
+--- /dev/null
++++ b/migdb.qvto/transforms/queries/queries_app.qvto
+@@ -0,0 +1,240 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++library APP_queries;
++
++modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
++modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
++/**
++ 	query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen 
++ 	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
++**/
++query app::Class::isSerializable():Boolean{
++	if(not self.hasOneIDProperty() or self.isEmbedded) then {
++		//log(self.name + " prim:" + self.isPrimitive.repr() + " ID:" + self.hasOneIDProperty().repr() + " Emb:" + self.isEmbedded.repr());
++		return false;
++	}endif;
++	
++	return true;
++}
++
++/**
++	validace existence prave jedne Property PK v stromu dedicnosti
++**/
++query app::Class::hasOneIDProperty():Boolean{
++	var idCount : Integer := 0;
++	var rootPath : OrderedSet(app::Class) := self.getPathToRoot();
++	
++	rootPath -> forEach(_class){
++		idCount:= idCount + _class.properties->select(prop | prop.isID)->size();
++	};
++	//log(self.name + " IDcount " + idCount.repr() + " rclass" + self.getRootClass().name + " " + self.getRootClass().properties->select(prop | prop.isID)->size().repr());
++	if(idCount <> 1 or self.getRootClass().properties->select(prop | prop.isID)->size() <> 1) then { 
++		return false; 
++	}endif;
++		return true;	
++}
++
++/**
++	zjisti, jestli ma trida implicitni InheritanceType
++**/
++query app::Class::hasImplicitInheritanceType():Boolean{
++	return self.hasInheritanceType(app::InheritanceType::__not_defined);	
++} 
++
++/**
++	zjisti, jestli ma trida InheritanceType SingleTable
++**/
++query app::Class::hasSingleTableInheritanceType():Boolean{
++	return self.hasInheritanceType(app::InheritanceType::singleTable);	
++}
++
++/**
++	zjisti, jestli ma trida InheritanceType TablePerClass
++**/
++query app::Class::hasTablePerClassInheritanceType():Boolean{
++	return self.hasInheritanceType(app::InheritanceType::tablePerClass);	
++}
++
++/**
++	zjisti, jestli ma trida InheritanceType Joined
++**/
++query app::Class::hasJoinedInheritanceType():Boolean{
++	return self.hasInheritanceType(app::InheritanceType::joined);	
++}
++
++/**
++	zjisti, jestli ma trida InheritanceType z parametru
++**/
++query app::Class::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
++	var temp:app::Class = self;
++	while(temp.parent <> null ){
++		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
++			return false;
++		}endif;
++		temp := temp.parent;
++	};
++	return true;
++}
++
++/**
++	vrati serializovatelnou root Class
++**/
++query app::Class::getRootClass():app::Class{
++	var path : OrderedSet(app::Class) := self.getPathToRoot();
++	if(path->size() = 0 ) then{
++		log("Class is in cycle. Root doesn't exist");
++		return null;
++	}endif;
++	return path->selectOne(cls | cls.parent = null);	
++}
++
++/**
++	Overuje, ze dana trida ma id Property
++**/	
++query app::Class::hasId(): Boolean{
++	return self->properties->select(prop | prop.isID)->size() > 0;
++}
++
++/**
++ 	zjisti, jestli je dana Property primitivni typ proiterovanim vsech primitivnich trid 
++ 	a porovnanim jmena techto trid s jmenem typu property
++**/
++query app::Property::isPrimitive():Boolean{
++	self.owningClass.owningModel.classes->forOne(cl | cl.name = self.type.name){
++			return true;
++	};
++	return false;
++}
++
++
++query app::Class::getPathToRoot():OrderedSet(app::Class){
++	var precedessors : OrderedSet(app::Class) := OrderedSet{};
++	if(not self.containsCycle(precedessors)) then{
++			return self.getPath(precedessors);
++		}endif;
++	return OrderedSet{};	
++		
++}
++
++query app::Class::getPath(collection : OrderedSet(app::Class)):OrderedSet(app::Class){
++	if(self.parent = null)then{
++		return collection->append(self);
++	}endif;
++	return self.parent.getPath(collection->append(self));
++}
++
++/**
++	Overuje, jestli dana Property reprezentuje bidirectional (oboustranne navigabilni) vazbu 1-1
++**/
++query app::Property::isOneToOneBidirectional():Boolean{
++	return not self.isPrimitive() and self.upperBound = 1 and 
++	not self.oppositeProperty.isPrimitive() and self.oppositeProperty.oppositeProperty = self
++	and self.oppositeProperty.upperBound = 1;
++}
++
++/**
++	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-M
++**/	
++query app::Property::isOneToManyUnidirectional():Boolean{
++	return not self.isPrimitive() and self.upperBound = 1 and self.oppositeProperty = null and 
++	not self.owningClass.isNonleafTPCHierarchy() and not self.type![app::Class].isNonleafTPCHierarchy();
++}
++
++/**
++	Overuje, jestli dana Property reprezentuje bidirectional (oboustranne navigabilni) vazbu 1-M
++**/
++query app::Property::isOneToManyBidirectional():Boolean{	
++	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
++	self.oppositeProperty.upperBound = 1 and not self.owningClass.isNonleafTPCHierarchy() and 
++	not self.type![app::Class].isNonleafTPCHierarchy();
++}
++
++/**
++	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu M-N
++**/	
++query app::Property::isManyToManyUnidirectional():Boolean{
++	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty = null and 
++	not self.owningClass.isNonleafTPCHierarchy() and not self.type![app::Class].isNonleafTPCHierarchy();
++}
++
++/**
++	Overuje, jestli dana Property reprezentuje bidirectional (oboustranne navigabilni) vazbu M-N
++**/
++query app::Property::isManyToManyBidirectional():Boolean{
++	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
++	self.oppositeProperty.upperBound = -1 and not self.owningClass.isNonleafTPCHierarchy() and 
++	not self.type![app::Class].isNonleafTPCHierarchy();
++}
++
++/**
++	Toto query vraci true, pokud ma trida inheritanceType TablePerClass  a ma potomka, jinak false. 
++	Je pouzivane k odstraneni slozitych mapovani vazeb mezi nelistovymi Classy s inheritanceType
++	TablePerClass.
++**/
++query app::Class::isNonleafTPCHierarchy():Boolean{
++	if(self.inheritanceType = app::InheritanceType::tablePerClass and 
++	self.owningModel.classes->exists(cls | cls![app::Class].parent = self))then{
++		return true;
++	}endif;
++	return false;
++}
++
++/** 
++	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cykly v hierarchii dedicnosti. 
++	Inout parametr addedClasses 
++**/
++query app::Class::containsCycle(inout addedClasses : Set(app::Class)) :Boolean{
++	if(addedClasses->includes(self)) then {
++		return true;
++	} endif;
++
++	if(self.parent = null) then {
++		return false;
++	}endif;
++
++	return self.parent.containsCycle(addedClasses->including(self));
++}
++
++query getPostgresqlType(type : app::PrimitiveType):rdb::PrimitiveType{
++	
++	if( type = app::PrimitiveType::boolean)then{
++		return rdb::PrimitiveType::boolean;
++	}endif;
++
++	if( type = app::PrimitiveType::int)then{
++		return rdb::PrimitiveType::int;
++	}endif;
++	
++		if( type = app::PrimitiveType::char)then{
++		return rdb::PrimitiveType::char;
++	}endif;
++	
++	return null;
++}
++
++
++query getDBPrimitiveType(type : app::PrimitiveType):rdb::PrimitiveType{
++	return getPostgresqlType(type);
++}
+\ No newline at end of file
+diff --git a/migdb.qvto/transforms/queries/queries_rdb.qvto b/migdb.qvto/transforms/queries/queries_rdb.qvto
+new file mode 100644
+index 0000000..5ad08ba
+--- /dev/null
++++ b/migdb.qvto/transforms/queries/queries_rdb.qvto
+@@ -0,0 +1,51 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++library QueriesDB;
++
++modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';	
++
++query rdb::Table::getPKColumn():rdb::Column{
++	return self.constraints![rdb::PrimaryKey].underlyingIndex.columns->any(true);
++}
++
++	
++/*
++	Overuje, jestli tabulka obsahuje diskriminacni sloupec
++*/
++query rdb::Table::containsDiscriminator():Boolean{
++	return self.columns->select(col | col.name ="discriminator")->size()=1;
++}
++
++query rdb::Schema::getFirstAvailableFKName(in firstName:String, in secondName:String):String{
++	var potencialIndex:Integer := 0;	
++	while(true){
++		potencialIndex := potencialIndex+1;
++		if(not self->tables->constraints[rdb::ForeignKey]->exists(fk | fk.name = "FK_" + firstName +"_" + secondName +"_" + potencialIndex.toString() ))then{		
++			break;
++		}endif;
++	};
++	
++	return "FK_" + firstName + "_" + secondName + "_" + potencialIndex.toString();
++}
+diff --git a/migdb.qvto/transforms/validators/validator_app.qvto b/migdb.qvto/transforms/validators/validator_app.qvto
+new file mode 100644
+index 0000000..d431d97
+--- /dev/null
++++ b/migdb.qvto/transforms/validators/validator_app.qvto
+@@ -0,0 +1,162 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++library ValidatorAPP;
++
++import queries.queries_app;
++	
++modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
++
++///////////////---------------------------------Validacni query --------------------------------///////////
++/*
++	Validacni query app modelu
++*/
++query app::ModelRoot::isModelValid():Boolean{
++	var validity : Boolean := true; 
++	if(not self.modelGenerations->classes->forAll(hasUniqueName())) then {
++		log("Model invalid - ambigous class names in generation");
++		validity := false;
++	}endif;
++	if(not self.modelGenerations->classes[app::Class]->properties->forAll(hasUniqueNameInHierarchy())) then {
++		log("Model invalid - ambigous property names in class");
++		validity := false;
++	}endif;
++	if(self.modelGenerations ->forAll(gen | gen.containsCycle())) then {
++		log("Model invalid - generations containing cycled hierarchies");
++		validity := false;
++	}endif;
++	if(not self.modelGenerations->classes[app::Class]->properties->forAll(prop | prop.isCorrectlySet()))then{
++		log("Model invalid - properties and oppositeProperties are not correctly set");
++		validity := false;
++	}endif;
++	if(not self.modelGenerations->forAll(gen | gen.areEmbeddedArritiesCorrectlySet()))then{
++		log("Model invalid - Embedded property arities are not correctly set");
++		validity := false;
++	}endif;
++	if(self.modelGenerations->exists(areEmbeddedPropertiesInNameCollision()))then{
++		log("Model invalid - Embedded property in name collision");
++		validity := false;
++	}endif;
++	if(not self.modelGenerations->classes[app::Class]->forAll(cls |cls.assertIDCondition()))then{
++		log("Model invalid - uncorrect ID count in classes");
++		validity := false;
++	}endif;
++	if(not self.modelGenerations->forAll(assertTPCCondition()))then{
++		log("Model invalid - contains TPC expansion");
++		validity := false;
++	}endif;
++	return validity;
++}
++
++query app::ModelGeneration::assertTPCCondition():Boolean{
++	var validity : Boolean := true;
++	self.classes[app::Class]->forEach(cls |not (cls.isNonleafTPCHierarchy() or cls.properties->forAll(prop | prop.upperBound = 1 and 
++	(prop.lowerBound = 0 or prop.lowerBound = 1)))){
++		log(self.modelRoot.modelGenerations->indexOf(self).repr() + "generation contains TPC hierarchy causing table expansion");
++		validity := false;
++	};
++	return validity;
++}
++
++/*
++	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-1,
++	ktera v nynejsi verzi neni vytvoritelna
++*/
++query app::Property::isOneToOneUnidirectional():Boolean{
++	return false;
++}
++
++
++query app::ModelGeneration::containsNonleafTPCAssociation():Boolean{
++	return self.classes[app::Class]->properties->exists( prop | not prop.isPrimitive() and prop.owningClass.isNonleafTPCHierarchy() and 
++	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
++	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
++}
++
++
++query app::Class::assertIDCondition() : Boolean{
++	if(self.isEmbedded or (self.properties->select(isID)->size() = 1 and self.parent = null)
++	 or (self.parent <> null and self.properties->select(isID)->size() = 0))then{
++		return true;
++	}endif;
++	log("class " + self.name + " has incorrect ID properties count:" + self.properties->select(isID)->size().repr());
++	return false;
++}
++
++query app::ModelGeneration::areEmbeddedArritiesCorrectlySet():Boolean{
++	var validity : Boolean := true;
++	self.classes[app::Class]->properties -> forEach( prop | prop.type.oclIsKindOf(app::Class) and prop.type![app::Class].isEmbedded and (prop.upperBound <> 1 or 
++	not(prop.lowerBound = 1 or prop.lowerBound = 0))){
++		log("arrity of embedded property " + prop.name + " in generation " + self.repr() + " not correctly set");
++		validity = false;
++	};	
++	return validity;
++}
++
++query app::ModelGeneration::areEmbeddedPropertiesInNameCollision():Boolean{
++	var validity : Boolean := false;
++	self.classes[app::Class]->properties ->forEach(prop | prop.type![app::Class].isEmbedded and prop.isInCollission()){
++		log("property " + prop.name + " name is in collision with owningClass propertyb");
++		validity := true;
++	};
++	return validity;
++}
++
++query app::Property::isInCollission() :Boolean{
++	return self.owningClass->properties->forAll(prop | prop.name = self.name + "_" + self.type.name);
++}
++
++query app::Property::isCorrectlySet():Boolean{
++	if((self.isPrimitive() and self.oppositeProperty <> null) or self.oppositeProperty = null or 
++	self.oppositeProperty.oppositeProperty = self )then{
++		return true;
++	}endif;
++	log("property " + self.name);
++	return false;
++}
++
++query app::AbstractClass::hasUniqueName():Boolean{
++	var validity : Boolean := true;
++	self.owningModel->classes->forEach(cls | cls.name = self.name and cls <> self){
++		log("ambigous Class name " + cls.name);
++		validity := false;
++	};
++	return validity;
++}
++
++/****/
++query app::Property::hasUniqueNameInHierarchy():Boolean{
++	self.owningClass.getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
++		log("ambigous Property name " + prop.name);
++		return false;
++	};
++	return true;	
++}
++
++/** 
++	Vraci false, pokud model neobsahuje cykly hierarchii dedicnosti, jinak true
++**/
++query app::ModelGeneration::containsCycle():Boolean{
++		return not self.classes[app::Class]->forAll(cls | not cls.containsCycle(OrderedSet{}));
++};
+\ No newline at end of file
+diff --git a/migdb.qvto/transforms/validators/validator_postgresql.qvto b/migdb.qvto/transforms/validators/validator_postgresql.qvto
+new file mode 100644
+index 0000000..0882298
+--- /dev/null
++++ b/migdb.qvto/transforms/validators/validator_postgresql.qvto
+@@ -0,0 +1,538 @@
++/*
++ * The MIT License
++ * 
++ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
++ * 
++ * Permission is hereby granted, free of charge, to any person obtaining a copy
++ * of this software and associated documentation files (the "Software"), to deal
++ * in the Software without restriction, including without limitation the rights
++ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
++ * copies of the Software, and to permit persons to whom the Software is
++ * furnished to do so, subject to the following conditions:
++ * 
++ * The above copyright notice and this permission notice shall be included in
++ * all copies or substantial portions of the Software.
++ * 
++ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
++ * THE SOFTWARE.
++ * 
++ */
++library ValidatorDB;
++
++import queries.queries_rdb;
++
++modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
++
++query rdb::ModelRoot::isModelValid():Boolean{
++	var valid : Boolean := true;
++	//kontrola identifikatoru schematu
++	self->modelGenerations->schemas->forEach(schema){
++		if(not schema.hasUniqueName())then{
++			log( "Model invalid - " + schema.repr() + " collision in schema names" );
++			valid := false;
++		}endif;	
++		if(not isValidIdentifier(schema.name))then{
++			valid:= false;
++		}endif;
++	};
++	//kontrola identifikatoru tabulky
++	self->modelGenerations->schemas->tables->forEach(table){
++		if(not table.hasUniqueName())then{
++			log("Model invalid - " + "duplicit table name - " + table.repr() );
++			valid := false;
++		}endif;
++		if(not isValidIdentifier(table.name))then{
++			valid:= false;
++		}endif;
++	};
++	
++	//kontrola identifikatoru sloupce
++	self->modelGenerations->schemas->tables->columns->forEach(column){
++		if(not column.hasUniqueName())then{
++			log("Model invalid - " + "duplicit column name " + column.repr() );
++			valid := false;
++		}endif;
++		if(not isValidIdentifier(column.name))then{
++			valid:= false;
++		}endif;
++	};
++	
++	
++	
++	
++	return valid;
++}
++
++
++
++query isValidIdentifier(identifier : String):Boolean{
++	var valid : Boolean := true;
++	if(not beginsWithChar(identifier))then{
++			log("Model invalid - identifier " + identifier + " not begins with char");
++			valid := false;
++		}endif;
++		if(isKeyWord(identifier))then{
++			log("Model invalid - identifier " + identifier + " is Postgresql keyWord");
++			valid := false;
++		}endif;
++		if(not containsAllowedChars(identifier))then{
++			log("Model invalid - identifier " + identifier + " contains unallowed characters");		
++			valid := false;
++		}endif;
++		return valid;
++}
++
++query beginsWithChar(identifier : String ):Boolean{
++	var firstChar: String  := identifier.substring(0,1).toLower() ;
++	return isLatinCharacter(firstChar);
++}
++
++query isLatinCharacter(char : String):Boolean{
++	if(char = "a" or char = "b" or char = "c" or char = "d" or char = "e" or 
++		char = "f" or char = "g" or char = "h" or char = "i" or char = "j" or
++		 char = "k" or char = "l" or char = "m" or char = "n" or char = "o" or
++		 char = "p" or char = "q" or char = "r" or char = "s" or char = "t" or
++		  char = "u" or char = "v" or char = "w" or char = "x" or char = "y" or
++		   char = "z")then{
++		return true;
++	}endif;
++	return false;
++}
++
++query isDigit(char : String) : Boolean{
++	if(char = "0" or char = "1" or char = "2" or char = "3" or char = "4" or 
++		char = "5" or char = "6" or char = "7" or char = "8" or char = "9")then{
++		return true;
++	}endif;
++	return false;
++}
++
++query containsAllowedChars(identifier : String):Boolean{
++	var position:Integer := 0;
++	var lowerIdentifier := identifier.toLower();
++	while(position < lowerIdentifier.size()){
++		var char:String := lowerIdentifier.substring(position, position+1);
++		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
++			return false;
++		}endif;
++		position = position + 1;
++	};
++	return true;
++}
++
++query rdb::Schema::hasUniqueName() : Boolean{
++	return self.owningModel->schemas->exist(schema | schema.name.toLower() = self.name.toLower() and schema <> self);
++}
++
++query rdb::Table::hasUniqueName() : Boolean{
++	return not self.owningSchema->tables->exists(table | table.name.toLower() = self.name.toLower() and table <> self);
++}
++
++query rdb::Column::hasUniqueName() : Boolean{
++	return not self.owningTable->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self);
++}
++
++query isKeyWord(name: String ):Boolean{
++	var keyList:List(String) = List {"ABORT",
++"ABSOLUTE",
++"ACCESS",
++"ACTION",
++"ADD",
++"ADMIN",
++"AFTER",
++"AGGREGATE",
++"ALL",
++"ALSO",
++"ALTER",
++"ALWAYS",
++"ANALYSE",
++"ANALYZE",
++"AND",
++"ANY",
++"ARRAY",
++"AS",
++"ASC",
++"ASSERTION",
++"ASSIGNMENT",
++"ASYMMETRIC",
++"AT",
++"AUTHORIZATION",
++"BACKWARD",
++"BEFORE",
++"BEGIN",
++"BETWEEN",
++"BIGINT",
++"BINARY",
++"BIT",
++"BOOLEAN",
++"BOTH",
++"BY",
++"CACHE",
++"CALLED",
++"CASCADE",
++"CASCADED",
++"CASE",
++"CAST",
++"CATALOG",
++"CHAIN",
++"CHAR",
++"CHARACTER",
++"CHARACTERISTICS",
++"CHECK",
++"CHECKPOINT",
++"CLASS",
++"CLOSE",
++"CLUSTER",
++"COALESCE",
++"COLLATE",
++"COLUMN",
++"COMMENT",
++"COMMENTS",
++"COMMIT",
++"COMMITTED",
++"CONCURRENTLY",
++"CONFIGURATION",
++"CONNECTION",
++"CONSTRAINT",
++"CONSTRAINTS",
++"CONTENT",
++"CONTINUE",
++"CONVERSION",
++"COPY",
++"COST",
++"CREATE",
++"CREATEDB",
++"CREATEROLE",
++"CREATEUSER",
++"CROSS",
++"CSV",
++"CURRENT",
++"CURRENT_CATALOG",
++"CURRENT_DATE",
++"CURRENT_ROLE",
++"CURRENT_SCHEMA",
++"CURRENT_TIME",
++"CURRENT_TIMESTAMP",
++"CURRENT_USER",
++"CURSOR",
++"CYCLE",
++"DATA",
++"DATABASE",
++"DAY",
++"DEALLOCATE",
++"DEC",
++"DECIMAL",
++"DECLARE",
++"DEFAULT",
++"DEFAULTS",
++"DEFERRABLE",
++"DEFERRED",
++"DEFINER",
++"DELETE",
++"DELIMITER",
++"DELIMITERS",
++"DESC",
++"DICTIONARY",
++"DISABLE",
++"DISCARD",
++"DISTINCT",
++"DO",
++"DOCUMENT",
++"DOMAIN",
++"DOUBLE",
++"DROP",
++"EACH",
++"ELSE",
++"ENABLE",
++"ENCODING",
++"ENCRYPTED",
++"END",
++"ENUM",
++"ESCAPE",
++"EXCEPT",
++"EXCLUDE",
++"EXCLUDING",
++"EXCLUSIVE",
++"EXECUTE",
++"EXISTS",
++"EXPLAIN",
++"EXTERNAL",
++"EXTRACT",
++"FALSE",
++"FAMILY",
++"FETCH",
++"FIRST",
++"FLOAT",
++"FOLLOWING",
++"FOR",
++"FORCE",
++"FOREIGN",
++"FORWARD",
++"FREEZE",
++"FROM",
++"FULL",
++"FUNCTION",
++"FUNCTIONS",
++"GLOBAL",
++"GRANT",
++"GRANTED",
++"GREATEST",
++"GROUP",
++"HANDLER",
++"HAVING",
++"HEADER",
++"HOLD",
++"HOUR",
++"IDENTITY",
++"IF",
++"ILIKE",
++"IMMEDIATE",
++"IMMUTABLE",
++"IMPLICIT",
++"IN",
++"INCLUDING",
++"INCREMENT",
++"INDEX",
++"INDEXES",
++"INHERIT",
++"INHERITS",
++"INITIALLY",
++"INLINE",
++"INNER",
++"INOUT",
++"INPUT",
++"INSENSITIVE",
++"INSERT",
++"INSTEAD",
++"INT",
++"INTEGER",
++"INTERSECT",
++"INTERVAL",
++"INTO",
++"INVOKER",
++"IS",
++"ISNULL",
++"ISOLATION",
++"JOIN",
++"KEY",
++"LANGUAGE",
++"LARGE",
++"LAST",
++"LC_COLLATE",
++"LC_CTYPE",
++"LEADING",
++"LEAST",
++"LEFT",
++"LEVEL",
++"LIKE",
++"LIMIT",
++"LISTEN",
++"LOAD",
++"LOCAL",
++"LOCALTIME",
++"LOCALTIMESTAMP",
++"LOCATION",
++"LOCK",
++"LOGIN",
++"MAPPING",
++"MATCH",
++"MAXVALUE",
++"MINUTE",
++"MINVALUE",
++"MODE",
++"MONTH",
++"MOVE",
++"NAME",
++"NAMES",
++"NATIONAL",
++"NATURAL",
++"NCHAR",
++"NEXT",
++"NO",
++"NOCREATEDB",
++"NOCREATEROLE",
++"NOCREATEUSER",
++"NOINHERIT",
++"NOLOGIN",
++"NONE",
++"NOSUPERUSER",
++"NOT",
++"NOTHING",
++"NOTIFY",
++"NOTNULL",
++"NOWAIT",
++"NULL",
++"NULLIF",
++"NULLS",
++"NUMERIC",
++"OBJECT",
++"OF",
++"OFF",
++"OFFSET",
++"OIDS",
++"ON",
++"ONLY",
++"OPERATOR",
++"OPTION",
++"OPTIONS",
++"OR",
++"ORDER",
++"OUT",
++"OUTER",
++"OVER",
++"OVERLAPS",
++"OVERLAY",
++"OWNED",
++"OWNER",
++"PARSER",
++"PARTIAL",
++"PARTITION",
++"PASSWORD",
++"PLACING",
++"PLANS",
++"POSITION",
++"PRECEDING",
++"PRECISION",
++"PREPARE",
++"PREPARED",
++"PRESERVE",
++"PRIMARY",
++"PRIOR",
++"PRIVILEGES",
++"PROCEDURAL",
++"PROCEDURE",
++"QUOTE",
++"RANGE",
++"READ",
++"REAL",
++"REASSIGN",
++"RECHECK",
++"RECURSIVE",
++"REFERENCES",
++"REINDEX",
++"RELATIVE",
++"RELEASE",
++"RENAME",
++"REPEATABLE",
++"REPLACE",
++"REPLICA",
++"RESET",
++"RESTART",
++"RESTRICT",
++"RETURNING",
++"RETURNS",
++"REVOKE",
++"RIGHT",
++"ROLE",
++"ROLLBACK",
++"ROW",
++"ROWS",
++"RULE",
++"SAVEPOINT",
++"SCHEMA",
++"SCROLL",
++"SEARCH",
++"SECOND",
++"SECURITY",
++"SELECT",
++"SEQUENCE",
++"SEQUENCES",
++"SERIALIZABLE",
++"SERVER",
++"SESSION",
++"SESSION_USER",
++"SET",
++"SETOF",
++"SHARE",
++"SHOW",
++"SIMILAR",
++"SIMPLE",
++"SMALLINT",
++"SOME",
++"STABLE",
++"STANDALONE",
++"START",
++"STATEMENT",
++"STATISTICS",
++"STDIN",
++"STDOUT",
++"STORAGE",
++"STRICT",
++"STRIP",
++"SUBSTRING",
++"SUPERUSER",
++"SYMMETRIC",
++"SYSID",
++"SYSTEM",
++"TABLE",
++"TABLES",
++"TABLESPACE",
++"TEMP",
++"TEMPLATE",
++"TEMPORARY",
++"TEXT",
++"THEN",
++"TIME",
++"TIMESTAMP",
++"TO",
++"TRAILING",
++"TRANSACTION",
++"TREAT",
++"TRIGGER",
++"TRIM",
++"TRUE",
++"TRUNCATE",
++"TRUSTED",
++"TYPE",
++"UNBOUNDED",
++"UNCOMMITTED",
++"UNENCRYPTED",
++"UNION",
++"UNIQUE",
++"UNKNOWN",
++"UNLISTEN",
++"UNTIL",
++"UPDATE",
++"USER",
++"USING",
++"VACUUM",
++"VALID",
++"VALIDATOR",
++"VALUE",
++"VALUES",
++"VARCHAR",
++"VARIADIC",
++"VARYING",
++"VERBOSE",
++"VERSION",
++"VIEW",
++"VOLATILE",
++"WHEN",
++"WHERE",
++"WHITESPACE",
++"WINDOW",
++"WITH",
++"WITHOUT",
++"WORK",
++"WRAPPER",
++"WRITE",
++"XML",
++"XMLATTRIBUTES",
++"XMLCONCAT",
++"XMLELEMENT",
++"XMLFOREST",
++"XMLPARSE",
++"XMLPI",
++"XMLROOT",
++"XMLSERIALIZE",
++"YEAR",
++"YES",
++"ZONE"}; 
++	return keyList->exists(str | str = name);
++}
++
+diff --git a/plugins/migdb.mm.app_1.0.0.201111241830.jar b/plugins/migdb.mm.app_1.0.0.201111241830.jar
+new file mode 100644
+index 0000000..96db6a6
+Binary files /dev/null and b/plugins/migdb.mm.app_1.0.0.201111241830.jar differ
+diff --git a/plugins/migdb.mm.rdb_1.0.0.201111241836.jar b/plugins/migdb.mm.rdb_1.0.0.201111241836.jar
+new file mode 100644
+index 0000000..4164bb2
+Binary files /dev/null and b/plugins/migdb.mm.rdb_1.0.0.201111241836.jar differ

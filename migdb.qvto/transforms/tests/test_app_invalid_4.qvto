@@ -1,0 +1,32 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+main() {
+	log("TEST_APP_5 - invalid : oppositeProperty");	
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	var money : APP::Class := _class("money", OrderedSet{ _property("id",integer,true), _property("name", string)});
+	
+	var country : APP::Class := _class("Country", OrderedSet{ _property("name", string)});
+	
+	var idPropCountry : APP::Property = _property("id", integer, true);
+	var propCountry : APP::Property := _property("currency", money);
+	var propMoney : APP::Property := _property("owningCountry", country);
+	propMoney.oppositeProperty := idPropCountry;
+	propCountry.oppositeProperty := propMoney;
+	
+	country.properties += propCountry;
+	country.properties += idPropCountry;
+	money.properties += propMoney;
+
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{integer,string,country, money
+			};
+		};
+	 };
+	 
+}

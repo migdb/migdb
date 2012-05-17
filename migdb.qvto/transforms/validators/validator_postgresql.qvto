@@ -22,49 +22,64 @@
  * THE SOFTWARE.
  * 
  */
-library ValidatorDB;
 
 import queries_rdb;
 
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
+transformation POSTGRESQL_VALIDATE(in inModel : RDB);
+
+main() {	
+	log("Postgresql validation of model started...");
+	if(inModel.rootObjects()![RDB::ModelRoot].isModelValid())then{
+		log("Model valid");
+	}endif;
+}
 
 query rdb::ModelRoot::isModelValid():Boolean{
+	var validityString : String;
 	var valid : Boolean := true;
 	//kontrola identifikatoru schematu
 	self->modelGenerations->schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{
-			log( "Model invalid - " + schema.repr() + " collision in schema names" );
+			validityString= validityString + "Model invalid - " + schema.repr() + " collision in schema names";
 			valid := false;
 		}endif;	
 		if(not isValidIdentifier(schema.name))then{
 			valid:= false;
+			validityString= validityString + "Unvalid schema identifier " + schema.name;
 		}endif;
 	};
 	//kontrola identifikatoru tabulky
 	self->modelGenerations->schemas->tables->forEach(table){
 		if(not table.hasUniqueName())then{
-			log("Model invalid - " + "duplicit table name - " + table.repr() );
+			validityString= validityString + "Model invalid - " + "duplicit table name - " + table.repr();
 			valid := false;
 		}endif;
 		if(not isValidIdentifier(table.name))then{
+		validityString= validityString + "Unvalid identifier " + table.name;
 			valid:= false;
+			validityString= validityString + "Unvalid table identifier " + table.name;
 		}endif;
 	};
 	
 	//kontrola identifikatoru sloupce
 	self->modelGenerations->schemas->tables->columns->forEach(column){
 		if(not column.hasUniqueName())then{
-			log("Model invalid - " + "duplicit column name " + column.repr() );
+			validityString = validityString + ("Model invalid - " + "duplicit column name " + column.repr()) ;
 			valid := false;
 		}endif;
 		if(not isValidIdentifier(column.name))then{
 			valid:= false;
+			validityString= validityString + "Unvalid column identifier " + column.name;
 		}endif;
 	};
 	
-	
-	
-	
+	self->modelGenerations->schemas->tables->forEach(constraint){
+		if(not constraint.hasUniqueName())then{
+			validityString = validityString + ("Model invalid - " + "duplicit constraint name " + constraint.repr()) ;
+			valid := false;
+		}endif;
+	};
 	return valid;
 }
 
@@ -136,6 +151,17 @@ query rdb::Table::hasUniqueName() : Boolean{
 query rdb::Column::hasUniqueName() : Boolean{
 	return not self.owningTable->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self);
 }
+
+query rdb::ColumnConstraint::hasUniqueName() : Boolean{
+	return not (self.owningColumn->owningTable->owningSchema->tables->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self) or 
+	self.owningColumn->owningTable->owningSchema->tables->constraints->exists(const | const.name.toLower() = self.name.toLower() and const <> self));	
+}
+
+query rdb::TableConstraint::hasUniqueName() : Boolean{
+	return not (self->owningTable->owningSchema->tables->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self) or 
+	self.owningTable->owningSchema->tables->constraints->exists(const | const.name.toLower() = self.name.toLower() and const <> self));	
+}
+
 
 query isKeyWord(name: String ):Boolean{
 	var keyList:List(String) = List {"ABORT",

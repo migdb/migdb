@@ -1,0 +1,159 @@
+module migb.run.first
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+Workflow {
+/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+	
+			
+/* Test1 app*/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app1.qvto"
+		outputSlot = "TEST1_APP"
+	}	
+	
+		
+/* Validate test1 */
+	component = QVTOExecutor {
+		inputSlot = "TEST1_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+/* Test2 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_1.qvto"
+		outputSlot = "TEST2_APP"
+	}	
+	
+		
+/* Validate test2 */
+	component = QVTOExecutor {
+		inputSlot = "TEST2_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+/* Test3 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_2.qvto"
+		outputSlot = "TEST3_APP"
+	}	
+	
+		
+/* Validate test3 */
+	component = QVTOExecutor {
+		inputSlot = "TEST3_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+/* Test4 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_3.qvto"
+		outputSlot = "TEST4_APP"
+	}	
+	
+		
+/* Validate test4 */
+	component = QVTOExecutor {
+		inputSlot = "TEST4_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+/* Test5 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_4.qvto"
+		outputSlot = "TEST5_APP"
+	}	
+	
+		
+/* Validate test5 */
+	component = QVTOExecutor {
+		inputSlot = "TEST5_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+/* Test6 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_5.qvto"
+		outputSlot = "TEST6_APP"
+	}	
+	
+		
+/* Validate test6 */
+	component = QVTOExecutor {
+		inputSlot = "TEST6_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+/* Test7 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_6.qvto"
+		outputSlot = "TEST7_APP"
+	}	
+	
+		
+/* Validate test7 */
+	component = QVTOExecutor {
+		inputSlot = "TEST7_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+/* Test8 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_7.qvto"
+		outputSlot = "TEST8_APP"
+	}	
+	
+		
+/* Validate test8 */
+	component = QVTOExecutor {
+		inputSlot = "TEST8_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}		
+
+
+/* Test9 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/test_app_invalid_8.qvto"
+		outputSlot = "TEST9_APP"
+	}	
+	
+		
+/* Validate test9 */
+	component = QVTOExecutor {
+		inputSlot = "TEST9_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}		
+/* 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "tests"
+	}
+	
+	component = Writer {
+		modelSlot = "TEST5_APP"
+		uri = "tests/outRDB.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+*/
+}

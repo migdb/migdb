@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ASCII"?>
+<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
+  <modelGenerations>
+    <classes xsi:type="app:Class" name="money">
+      <properties name="id" type="//@modelGenerations.0/@classes.3" isID="true"/>
+      <properties name="name" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="owningCountry" type="//@modelGenerations.0/@classes.2" oppositeProperty="//@modelGenerations.0/@classes.2/@properties.2"/>
+    </classes>
+    <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+    <classes xsi:type="app:Class" name="Country">
+      <properties name="name" type="//@modelGenerations.0/@classes.1"/>
+      <properties name="currency" type="//@modelGenerations.0/@classes.0" oppositeProperty="//@modelGenerations.0/@classes.0/@properties.2"/>
+      <properties name="id" type="//@modelGenerations.0/@classes.3" isID="true"/>
+    </classes>
+    <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+  </modelGenerations>
+</app:ModelRoot>
