@@ -7,12 +7,12 @@ main() {
 	log("DEMO 1");
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});							  																				  									  												  												  									  	
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});							  																				  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,country,
+			entities += Set{integer,string,country,
 							_class("LegalPerson",OrderedSet{ _property("id",integer,true),_property("regNo", integer), _property("bisName", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)}),
 							_class("NaturalPerson",OrderedSet{ _property("id",integer,true),_property("name", string), _property("surname", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)})
 						};

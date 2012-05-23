@@ -50,37 +50,37 @@ main() {
 }
 
 // a mapping of a given operation
-abstract mapping APP::operations::ModelOperation::
+abstract mapping APP::ops::ModelOperation::
 	toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot);
 	
 // is a mapping valid
-abstract query APP::operations::ModelOperation::
+abstract query APP::ops::ModelOperation::
 	isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) : Boolean;
 
 
 /* ++++++++++ OPERATIONS ++++++++++++++++++++ */
 
-query APP::operations::AddPrimitiveClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::AddPrimitiveClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::AddPrimitiveClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::AddPrimitiveClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	// this operation is not mapped to RDB
 }
 
-query APP::operations::AddEmbeddedClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::AddEmbeddedClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::AddEmbeddedClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::AddEmbeddedClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	// this operation is not mapped to RDB
 }
 
-query APP::operations::AddClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::AddClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	// addition of a table to the schema
 	rdbRoot.operations += object RDB::operations::AddTable {
 		owningSchemaName := "public";
@@ -114,11 +114,11 @@ mapping APP::operations::AddClass::toRdb(appGen : APP::ModelGeneration, inout rd
 	};
 }
 
-query APP::operations::AddProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::AddProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::AddProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::AddProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	self.xmap primitivePropertyToRdb(appGen, rdbRoot);
 	self.xmap embeddedPropertyToRdb(appGen, rdbRoot);
 	self.xmap complexPropertyToRdb(appGen, rdbRoot);	
@@ -126,14 +126,14 @@ mapping APP::operations::AddProperty::toRdb(appGen : APP::ModelGeneration, inout
 	self.xmap collectionToRdb(appGen, rdbRoot);
 }
 
-mapping APP::operations::AddProperty::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::primitivePropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { appGen.isPrimitiveClassInGeneration(self.type); }
 {
 	// adds a column of a primitve type to a table
 	rdbRoot.operations += appGen.AddColumnOfPrimitiveType(self, appGen.findPrimitiveTypeInRdb(self.type));
 }
 
-mapping APP::operations::AddProperty::embeddedPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::embeddedPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { appGen.isEmbeddedClassInGeneration(self.type); }
 {
 	// for each property from an embedded class
@@ -143,7 +143,7 @@ when { appGen.isEmbeddedClassInGeneration(self.type); }
 	};
 }
 
-mapping APP::operations::AddProperty::complexPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::complexPropertyToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { appGen.isClassInGeneration(self.type) and self.upperBound <> -1; }
 {
 	// adds a column of an integer type to a table
@@ -152,7 +152,7 @@ when { appGen.isClassInGeneration(self.type) and self.upperBound <> -1; }
 	rdbRoot.operations += appGen.AddForeignKeyToColumn(self);
 }
 
-mapping APP::operations::AddProperty::notNullToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::notNullToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { self.lowerBound = 1 }
 {
 	// adds a not null constraint to a column
@@ -185,7 +185,7 @@ when { self.lowerBound = 1 }
 /* ++++++++++ HELPERS_FOR_A_CREATION_OF_OPERATIONS ++++++++++++++++++++ */
 
 // the universal helper for an addition of a column of a primitive type t <- {boolean, int, char, float}
-helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::operations::AddProperty, t : RDB::PrimitiveType) : RDB::operations::AddColumn {		
+helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty, t : RDB::PrimitiveType) : RDB::operations::AddColumn {		
 	return object RDB::operations::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
@@ -199,7 +199,7 @@ helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::operations::AddP
 helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB::PrimitiveType) : RDB::operations::AddColumn {		
 	return object RDB::operations::AddColumn {
 		owningSchemaName := "public";
-		owningTableName := p.owningClass.name.toLower();
+		owningTableName := p.owningGeneralClass.name.toLower();
 		name := p.name.toLower();
 		type := t; // ???
 		defaultValue := p.defaultValue;
@@ -207,7 +207,7 @@ helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB
 }
 
 // the helper for an addition of a foreign key to a table
-helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::operations::AddProperty) : RDB::operations::AddForeignKey {
+helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::ops::AddProperty) : RDB::operations::AddForeignKey {
 	return object RDB::operations::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
@@ -220,7 +220,7 @@ helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::operations::AddProp
 helper APP::ModelGeneration::AddForeignKeyToColumn(p : APP::Property) : RDB::operations::AddForeignKey {
 	return object RDB::operations::AddForeignKey {
 		owningSchemaName := "public";
-		owningTableName := p.owningClass.name.toLower();
+		owningTableName := p.owningGeneralClass.name.toLower();
 		constrainedColumnName := p.name.toLower(); // todo: fix a order
 		name := "FK_" + p.name.toLower() + "_id_" + p.type.name.toLower();
 		targetTableName := p.type.name.toLower();
@@ -228,7 +228,7 @@ helper APP::ModelGeneration::AddForeignKeyToColumn(p : APP::Property) : RDB::ope
 }
 
 // the helper for an addition of a not null constraint to a column
-helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::operations::AddProperty) : RDB::operations::AddNotNullConstraint {
+helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::ops::AddProperty) : RDB::operations::AddNotNullConstraint {
 	return object RDB::operations::AddNotNullConstraint {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
@@ -240,7 +240,7 @@ helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::operations::
 helper APP::ModelGeneration::AddNotNullConstraintToColumn(p : APP::Property) : RDB::operations::AddNotNullConstraint {
 	return object RDB::operations::AddNotNullConstraint {
 		owningSchemaName := "public";
-		owningTableName := p.owningClass.name.toLower();
+		owningTableName := p.owningGeneralClass.name.toLower();
 		owningColumnName := p.name.toLower();
 		name := "NN_" + p.name.toLower();
 	}
@@ -248,7 +248,7 @@ helper APP::ModelGeneration::AddNotNullConstraintToColumn(p : APP::Property) : R
 
 /* ++++++++++ THE_END_OF_THIS_BLOCK ++++++++++++++++++++ */
 
-mapping APP::operations::AddProperty::collectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::collectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { self.upperBound = -1 }
 {
 	self.xmap generalCollectionToRdb(appGen, rdbRoot);
@@ -256,7 +256,7 @@ when { self.upperBound = -1 }
 }
 
 // 0..1 * {unique?}
-mapping APP::operations::AddProperty::generalCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::generalCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { true; }
 {
 	// addition of a column to the table
@@ -278,7 +278,7 @@ when { true; }
 }
 
 // 0..1 * {ordered, unique?}
-mapping APP::operations::AddProperty::orderedCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
+mapping APP::ops::AddProperty::orderedCollectionToRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot)
 when { self.isOrdered }
 {
 	// addition of a column to the table
@@ -308,11 +308,11 @@ when { self.isOrdered }
 
 // unique collection
 
-query APP::operations::RenameProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::RenameProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::RenameProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::RenameProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	rdbRoot.operations += object RDB::operations::RenameColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
@@ -321,11 +321,11 @@ mapping APP::operations::RenameProperty::toRdb(appGen : APP::ModelGeneration, in
 	};
 }
 
-query APP::operations::RemoveProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::RemoveProperty::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::RemoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::RemoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	rdbRoot.operations += object RDB::operations::RemoveColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
@@ -333,11 +333,11 @@ mapping APP::operations::RemoveProperty::toRdb(appGen : APP::ModelGeneration, in
 	};
 }
 
-query APP::operations::SetAbstract::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::SetAbstract::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::SetAbstract::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::SetAbstract::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	
 	rdbRoot.operations += object RDB::operations::HasNoOwnInstances {
 		owningSchemaName := "public";
@@ -346,16 +346,16 @@ mapping APP::operations::SetAbstract::toRdb(appGen : APP::ModelGeneration, inout
 	};
 }
 
-query APP::operations::SetParent::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::SetParent::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::SetParent::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::SetParent::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	self.xmap joined(appGen, rdbRoot);
 }
 
 // inheritanceType = joined
-mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 
 	if (not self.properties->isEmpty()) then {
 		rdbRoot.operations += object RDB::operations::InsertInstances {
@@ -402,7 +402,7 @@ mapping APP::operations::SetParent::joined(appGen : APP::ModelGeneration, inout 
 		};
 }
 
-mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 
 	rdbRoot.operations += object RDB::operations::RenameColumn {
 		owningSchemaName := "public";
@@ -434,11 +434,11 @@ mapping APP::operations::MoveProperty::toRdb(appGen : APP::ModelGeneration, inou
 	};
 }
 
-query APP::operations::ExtractClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
+query APP::ops::ExtractClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot): Boolean {
 	return true;
 }
 
-mapping APP::operations::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
+mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	
 	rdbRoot.operations += object RDB::operations::AddTable {
 		owningSchemaName := "public";
@@ -531,8 +531,8 @@ query RDB::ModelGeneration::findColumn(sName : String, tName : String, cName : S
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
-query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
-	return self.classes![name = eName];
+query APP::ModelGeneration::findEntity(eName : String) : APP::ModelEntity {
+	return self.entities![name = eName];
 }
 
 query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
@@ -543,8 +543,8 @@ query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveC
 	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
-query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
-	return self.findEntity(cName).oclAsType(APP::AbstractClass);
+query APP::ModelGeneration::findAbstractClass(cName : String) : APP::GeneralClass {
+	return self.findEntity(cName).oclAsType(APP::GeneralClass);
 }
 
 query APP::ModelGeneration::isEmbeddedClassInGeneration(cName : String) : Boolean {
@@ -556,11 +556,11 @@ query APP::ModelGeneration::findEmbeddedClass(cName : String) : APP::EmbeddedCla
 }
 
 query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsTypeOf(APP::Class);
+	return self.findEntity(cName).oclIsTypeOf(APP::StandardClass);
 }
 
-query APP::ModelGeneration::findClass(cName : String) : APP::Class {
-	return self.findEntity(cName).oclAsType(APP::Class);
+query APP::ModelGeneration::findClass(cName : String) : APP::StandardClass {
+	return self.findEntity(cName).oclAsType(APP::StandardClass);
 }
 
 query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::Property {
@@ -584,16 +584,16 @@ query APP::ModelGeneration::findMergeTypeInApp(pName : String) : APP::PrimitiveT
 	return self.findEntity(pName).oclAsType(APP::PrimitiveClass).primitiveType;
 }
 
-query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::operations::MergeType) : RDB::operations::MergeType {
+query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::ops::MergeType) : RDB::operations::MergeType {
 	switch {
-		case (type = APP::operations::MergeType::strict) return RDB::operations::MergeType::strict;
-		case (type = APP::operations::MergeType::force) return RDB::operations::MergeType::force;
-		case (type = APP::operations::MergeType::tolerant) return RDB::operations::MergeType::tolerant;
+		case (type = APP::ops::MergeType::strict) return RDB::operations::MergeType::strict;
+		case (type = APP::ops::MergeType::force) return RDB::operations::MergeType::force;
+		case (type = APP::ops::MergeType::tolerant) return RDB::operations::MergeType::tolerant;
 	};
 	return null;
 }
 
-query APP::Class::isDescendantOf(cName : String) : Boolean {
+query APP::StandardClass::isDescendantOf(cName : String) : Boolean {
 	if (self.parent <> null) then {
 		if (self.parent.name = cName) then return true
 		else return self.parent.isDescendantOf(cName) endif;
@@ -603,7 +603,7 @@ query APP::Class::isDescendantOf(cName : String) : Boolean {
 
 query APP::ModelGeneration::findDescendants(cName : String) : Set(String) {
 	var d : Set(String);
-	self.classes->oclAsType(APP::Class)->forEach(c) {
+	self.entities->oclAsType(APP::StandardClass)->forEach(c) {
 		if (c.isDescendantOf(cName)) then {
 			d += c.name.toLower();
 		} endif;
@@ -613,7 +613,7 @@ query APP::ModelGeneration::findDescendants(cName : String) : Set(String) {
 
 query APP::ModelGeneration::findAncestors(cName : String) : Set(String) {
 	var a : Set(String);
-	var c : APP::Class := self.findClass(cName);
+	var c : APP::StandardClass := self.findClass(cName);
 	if (c <> null and c.parent <> null) then {
 		a += c.parent.name.toLower();
 		a += self.findAncestors(c.parent.name);
@@ -621,9 +621,9 @@ query APP::ModelGeneration::findAncestors(cName : String) : Set(String) {
 	return a;
 }
 
-query APP::ModelGeneration::hasAnyColumns(classes : Set(String)) : Boolean {
+query APP::ModelGeneration::hasAnyColumns(entities : Set(String)) : Boolean {
 	var b : Boolean := false;
-	classes->forEach(cName) {
+	entities->forEach(cName) {
 		b := b or self.findClass(cName).properties->size() <> 1;
 	};
 	return b;

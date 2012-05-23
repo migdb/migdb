@@ -51,56 +51,56 @@ main() {
 }
 
 // a verification of an operation
-abstract query APP::operations::ModelOperation::
+abstract query APP::ops::ModelOperation::
 	isValid(gen : APP::ModelGeneration) : Boolean;
 
 // a mapping of an operation
-abstract mapping APP::operations::ModelOperation::
+abstract mapping APP::ops::ModelOperation::
 	apply(inout gen : APP::ModelGeneration);
 
 
 /* ++++++++++ BASIC OPERATIONS ++++++++++++++++++++ */
 
-query APP::operations::AddPrimitiveClass::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::AddPrimitiveClass::isValid(gen : APP::ModelGeneration) : Boolean {
 	return not gen.isEntityInGeneration(self.name);
 }
 
-mapping APP::operations::AddPrimitiveClass::apply(inout gen : APP::ModelGeneration) {
-	gen.classes += gen.AddPrimitiveClass(self);
+mapping APP::ops::AddPrimitiveClass::apply(inout gen : APP::ModelGeneration) {
+	gen.entities += gen.AddPrimitiveClass(self);
 }
 
-helper APP::ModelGeneration::AddPrimitiveClass(op : APP::operations::AddPrimitiveClass) : APP::PrimitiveClass {
+helper APP::ModelGeneration::AddPrimitiveClass(op : APP::ops::AddPrimitiveClass) : APP::PrimitiveClass {
 	return object APP::PrimitiveClass {
 		name := op.name;
 		primitiveType := op.primitiveType;
 	};
 }
 
-query APP::operations::AddEmbeddedClass::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::AddEmbeddedClass::isValid(gen : APP::ModelGeneration) : Boolean {
 	return not gen.isEntityInGeneration(self.name);
 }
 
-mapping APP::operations::AddEmbeddedClass::apply(inout gen : APP::ModelGeneration) {
-	gen.classes += gen.AddEmbeddedClass(self);
+mapping APP::ops::AddEmbeddedClass::apply(inout gen : APP::ModelGeneration) {
+	gen.entities += gen.AddEmbeddedClass(self);
 }
 
-helper APP::ModelGeneration::AddEmbeddedClass(op : APP::operations::AddEmbeddedClass) : APP::EmbeddedClass {
+helper APP::ModelGeneration::AddEmbeddedClass(op : APP::ops::AddEmbeddedClass) : APP::EmbeddedClass {
 	return object APP::EmbeddedClass {
 		name := op.name;
 	};
 }
 
-query APP::operations::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::AddClass::isValid(gen : APP::ModelGeneration) : Boolean {
 	return not gen.isEntityInGeneration(self.name)
 		   and gen.isPrimitiveClassInGeneration("Integer");
 }
 
-mapping APP::operations::AddClass::apply(inout gen : APP::ModelGeneration) {	
-	gen.classes += gen.AddClass(self);
+mapping APP::ops::AddClass::apply(inout gen : APP::ModelGeneration) {	
+	gen.entities += gen.AddClass(self);
 }
 
-helper APP::ModelGeneration::AddClass(op : APP::operations::AddClass) : APP::Class {
-	return object APP::Class {
+helper APP::ModelGeneration::AddClass(op : APP::ops::AddClass) : APP::StandardClass {
+	return object APP::StandardClass {
 		name := op.name;
 		properties += object APP::Property {
 			name := "id";
@@ -112,63 +112,63 @@ helper APP::ModelGeneration::AddClass(op : APP::operations::AddClass) : APP::Cla
 	};
 }
 
-query APP::operations::RenameEntity::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::RenameEntity::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isEntityInGeneration(self.name)
 		   and not gen.isEntityInGeneration(self.newName);
 }
 
-mapping APP::operations::RenameEntity::apply(inout gen : APP::ModelGeneration) {
-	var e : APP::Entity := gen.findEntity(self.name);
+mapping APP::ops::RenameEntity::apply(inout gen : APP::ModelGeneration) {
+	var e : APP::ModelEntity := gen.findEntity(self.name);
 	e.name := self.newName;
 }
 
-query APP::operations::RemoveEntity::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::RemoveEntity::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isEntityInGeneration(self.name)
 		   and gen.findEntity(self.name).isRemoveable(gen);
 }
 
-query  APP::Entity::isRemoveable(gen : APP::ModelGeneration) : Boolean {
+query  APP::ModelEntity::isRemoveable(gen : APP::ModelGeneration) : Boolean {
 	return false;
 }
 
 query APP::PrimitiveClass::isRemoveable(gen : APP::ModelGeneration) : Boolean {
-	return not gen.classes->oclAsType(APP::AbstractClass).properties->exists(type = self);
+	return not gen.entities->oclAsType(APP::GeneralClass).properties->exists(type = self);
 }
 
 query APP::EmbeddedClass::isRemoveable(gen : APP::ModelGeneration) : Boolean {
-	return not gen.classes->oclAsType(APP::Class).properties->exists(type = self)
+	return not gen.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
 		   and self.properties->isEmpty();
 }
 
-query APP::Class::isRemoveable(gen : APP::ModelGeneration) : Boolean {
-	return not gen.classes->oclAsType(APP::Class).properties->exists(type = self)
+query APP::StandardClass::isRemoveable(gen : APP::ModelGeneration) : Boolean {
+	return not gen.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
 		   and (self.properties->isEmpty() or self.properties->forAll(isID = true))
-		   and not gen.classes->oclAsType(APP::Class)->exists(parent = self);
+		   and not gen.entities->oclAsType(APP::StandardClass)->exists(parent = self);
 }
 
-mapping APP::operations::RemoveEntity::apply(inout gen : APP::ModelGeneration) {
-	gen.classes := gen.classes->excluding(gen.findEntity(self.name));
+mapping APP::ops::RemoveEntity::apply(inout gen : APP::ModelGeneration) {
+	gen.entities := gen.entities->excluding(gen.findEntity(self.name));
 }
 
-query APP::operations::AddProperty::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::AddProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and not gen.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   and gen.findAbstractClass(self.owningClassName).isTypeValid(gen, self.type)
 		   and gen.areBoundsValid(self.lowerBound, self.upperBound);
 }
 
-query APP::AbstractClass::isTypeValid(gen : APP::ModelGeneration, type : String) : Boolean {
+query APP::GeneralClass::isTypeValid(gen : APP::ModelGeneration, type : String) : Boolean {
 	if (self.oclIsTypeOf(APP::EmbeddedClass)) then {
 		return gen.isPrimitiveClassInGeneration(type);
 	} endif;
-	if (self.oclIsTypeOf(APP::Class)) then {
+	if (self.oclIsTypeOf(APP::StandardClass)) then {
 		return gen.isPrimitiveClassInGeneration(type) or gen.isAbstractClassInGeneration(type);
 	} endif;
 	return false;
 }
 
-mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::AbstractClass := gen.findAbstractClass(self.owningClassName);		
+mapping APP::ops::AddProperty::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::GeneralClass := gen.findAbstractClass(self.owningClassName);		
 	c.properties += object APP::Property {
 		name := self.name;
 		type := gen.findEntity(self.type);
@@ -181,28 +181,28 @@ mapping APP::operations::AddProperty::apply(inout gen : APP::ModelGeneration) {
 	};
 }
 
-query APP::operations::RenameProperty::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::RenameProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   and not gen.isPropertyInAbstractClass(self.owningClassName, self.newName);
 }
 
-mapping APP::operations::RenameProperty::apply(inout gen : APP::ModelGeneration) {
+mapping APP::ops::RenameProperty::apply(inout gen : APP::ModelGeneration) {
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	p.name := self.newName;
 }
 
-query APP::operations::RemoveProperty::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::RemoveProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   and gen.findProperty(self.owningClassName, self.name).isID = false
 		   and gen.findProperty(self.owningClassName, self.name).oppositeProperty = null;
 }
 
-mapping APP::operations::RemoveProperty::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::AbstractClass := gen.findAbstractClass(self.owningClassName);
+mapping APP::ops::RemoveProperty::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::GeneralClass := gen.findAbstractClass(self.owningClassName);
 	c.properties := c.properties->excluding(gen.findProperty(self.owningClassName, self.name));
 }
 
-query APP::operations::SetOpposite::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetOpposite::isValid(gen : APP::ModelGeneration) : Boolean {
 	var pre : Boolean := gen.isPropertyInAbstractClass(self.firstClassName, self.firstPropertyName)
 						 and gen.isPropertyInAbstractClass(self.secondClassName, self.secondPropertyName);
 	if (self.isOpposite = true) then {
@@ -219,7 +219,7 @@ query APP::operations::SetOpposite::isValid(gen : APP::ModelGeneration) : Boolea
 	return null;
 }
 
-mapping APP::operations::SetOpposite::apply(inout gen : APP::ModelGeneration) {
+mapping APP::ops::SetOpposite::apply(inout gen : APP::ModelGeneration) {
 	var p1 : APP::Property := gen.findProperty(self.firstClassName, self.firstPropertyName);
 	var p2 : APP::Property := gen.findProperty(self.secondClassName, self.secondPropertyName);
 	if (self.isOpposite = true) then {
@@ -231,22 +231,22 @@ mapping APP::operations::SetOpposite::apply(inout gen : APP::ModelGeneration) {
 	} endif;	
 }
 
-query APP::operations::SetAbstract::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetAbstract::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.name);
 }
 
-mapping APP::operations::SetAbstract::apply(inout gen : APP::ModelGeneration) {
+mapping APP::ops::SetAbstract::apply(inout gen : APP::ModelGeneration) {
 	gen.findClass(self.name).isAbstract := self.isAbstract;
 }
 
-query APP::operations::SetParent::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetParent::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.name)
 		   and gen.isClassInGeneration(self.parentName)
 		   and not gen.findClass(self.parentName).isDescendantOf(self.name);
 }
 
-mapping APP::operations::SetParent::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findClass(self.name);
+mapping APP::ops::SetParent::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::StandardClass := gen.findClass(self.name);
 	
 	// tridu odebirame z hierarchie
 	if (self.parentName = null) then {
@@ -270,7 +270,7 @@ mapping APP::operations::SetParent::apply(inout gen : APP::ModelGeneration) {
 	} endif;
 	
 	self.properties->forEach(pName) {
-		gen.modelRoot.operations += object APP::operations::RemoveProperty {
+		gen.modelRoot.operations += object APP::ops::RemoveProperty {
 			owningClassName := self.name;
 			name := pName;
 		}.xmap apply(gen);
@@ -279,19 +279,19 @@ mapping APP::operations::SetParent::apply(inout gen : APP::ModelGeneration) {
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 
-query APP::operations::SetType::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetType::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   and gen.isAbstractClassInGeneration(self.type);
 }
 
-mapping APP::operations::SetType::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
+mapping APP::ops::SetType::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::StandardClass := gen.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	p.type := gen.findAbstractClass(self.type); // null
 }
 
-query APP::operations::SetBoundries::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetBoundries::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   // overi, zda-li jsou hranice nastaveny smysluplne
@@ -299,8 +299,8 @@ query APP::operations::SetBoundries::isValid(gen : APP::ModelGeneration) : Boole
 }
 
 // nastavi hranice atributu
-mapping APP::operations::SetBoundries::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
+mapping APP::ops::SetBoundries::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::StandardClass := gen.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	// nastavi dolni hranici atributu
 	p.lowerBound := self.lowerBound;
@@ -308,24 +308,24 @@ mapping APP::operations::SetBoundries::apply(inout gen : APP::ModelGeneration) {
 	p.upperBound := self.upperBound;
 }
 
-query APP::operations::SetOrdered::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetOrdered::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
-mapping APP::operations::SetOrdered::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
+mapping APP::ops::SetOrdered::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::StandardClass := gen.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	p.isOrdered := self.isOrdered;
 }
 
-query APP::operations::SetUnique::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::SetUnique::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isAbstractClassInGeneration(self.owningClassName)
 		   and gen.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
-mapping APP::operations::SetUnique::apply(inout gen : APP::ModelGeneration) {
-	var c : APP::Class := gen.findAbstractClass(self.owningClassName).oclAsType(APP::Class);
+mapping APP::ops::SetUnique::apply(inout gen : APP::ModelGeneration) {
+	var c : APP::StandardClass := gen.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	p.isUnique := self.isUnique;
 }
@@ -339,7 +339,7 @@ mapping APP::operations::SetUnique::apply(inout gen : APP::ModelGeneration) {
 
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
-query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::CopyProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isPropertyInAbstractClass(self.owningClassName, self.name) 
 		   and gen.isClassInGeneration(self.targetClassName)
 		   and not gen.isPropertyInAbstractClass(self.targetClassName, self.name)
@@ -347,8 +347,8 @@ query APP::operations::CopyProperty::isValid(gen : APP::ModelGeneration) : Boole
 		   		or gen.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-mapping APP::operations::CopyProperty::apply(inout gen : APP::ModelGeneration){
-	var c : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
+mapping APP::ops::CopyProperty::apply(inout gen : APP::ModelGeneration){
+	var c : APP::GeneralClass := gen.findAbstractClass(self.targetClassName);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	
 	c.properties += object APP::Property {
@@ -362,7 +362,7 @@ mapping APP::operations::CopyProperty::apply(inout gen : APP::ModelGeneration){
 	};
 }
 
-query APP::operations::MoveProperty::isValid(gen : APP::ModelGeneration) : Boolean{
+query APP::ops::MoveProperty::isValid(gen : APP::ModelGeneration) : Boolean{
 	return gen.isPropertyInAbstractClass(self.owningClassName, self.name) 
 		   and gen.isClassInGeneration(self.targetClassName)
 		   and not gen.isPropertyInAbstractClass(self.targetClassName, self.name)
@@ -371,9 +371,9 @@ query APP::operations::MoveProperty::isValid(gen : APP::ModelGeneration) : Boole
 }
 
 
-mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
-	var t : APP::AbstractClass := gen.findAbstractClass(self.targetClassName);
-	var o : APP::AbstractClass := gen.findAbstractClass(self.owningClassName);
+mapping APP::ops::MoveProperty::apply(inout gen : APP::ModelGeneration){
+	var t : APP::GeneralClass := gen.findAbstractClass(self.targetClassName);
+	var o : APP::GeneralClass := gen.findAbstractClass(self.owningClassName);
 	var p : APP::Property := gen.findProperty(self.owningClassName, self.name);
 	
 	t.properties += object APP::Property {
@@ -389,21 +389,21 @@ mapping APP::operations::MoveProperty::apply(inout gen : APP::ModelGeneration){
 	o.properties := o.properties->excluding(p);
 }
 
-query APP::operations::ExtractClass::isValid(gen : APP::ModelGeneration) : Boolean {
+query APP::ops::ExtractClass::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isClassInGeneration(self.sourceClassName)
 		   and not gen.isClassInGeneration(self.extractClassName)
 		   and gen.arePropertiesInClass(self.sourceClassName, self.extractPropertiesNames); 
 }
 
-mapping APP::operations::ExtractClass::apply(inout gen : APP::ModelGeneration) {
+mapping APP::ops::ExtractClass::apply(inout gen : APP::ModelGeneration) {
 	
-	gen.modelRoot.operations += object APP::operations::AddClass {
+	gen.modelRoot.operations += object APP::ops::AddClass {
 		name := self.extractClassName;
 	}.xmap apply(gen);
 	
 	self.extractPropertiesNames->forEach(pName) {
 		var p : APP::Property := gen.findProperty(self.sourceClassName, pName);
-		gen.modelRoot.operations += object APP::operations::AddProperty {
+		gen.modelRoot.operations += object APP::ops::AddProperty {
 			owningClassName := self.extractClassName;
 			name := p.name;
 			type := p.type.name;
@@ -412,13 +412,13 @@ mapping APP::operations::ExtractClass::apply(inout gen : APP::ModelGeneration) {
 			upperBound := p.upperBound;
 		}.xmap apply(gen);
 		
-		gen.modelRoot.operations += object APP::operations::RemoveProperty {
+		gen.modelRoot.operations += object APP::ops::RemoveProperty {
 			owningClassName := self.sourceClassName;
 			name := p.name;			
 		}.xmap apply(gen);
 	};
 	
-	gen.modelRoot.operations += object APP::operations::AddProperty {
+	gen.modelRoot.operations += object APP::ops::AddProperty {
 			owningClassName := self.sourceClassName;
 			name := self.extractClassName.toLower();
 			type := self.extractClassName;
@@ -431,11 +431,11 @@ mapping APP::operations::ExtractClass::apply(inout gen : APP::ModelGeneration) {
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
 query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
-	return self.classes->exists(name = eName);
+	return self.entities->exists(name = eName);
 }
 
-query APP::ModelGeneration::findEntity(eName : String) : APP::Entity {
-	return self.classes![name = eName];
+query APP::ModelGeneration::findEntity(eName : String) : APP::ModelEntity {
+	return self.entities![name = eName];
 }
 
 query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
@@ -447,11 +447,11 @@ query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveC
 }
 
 query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsKindOf(APP::AbstractClass);
+	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
 }
 
-query APP::ModelGeneration::findAbstractClass(cName : String) : APP::AbstractClass {
-	return self.findEntity(cName).oclAsType(APP::AbstractClass);
+query APP::ModelGeneration::findAbstractClass(cName : String) : APP::GeneralClass {
+	return self.findEntity(cName).oclAsType(APP::GeneralClass);
 }
 
 query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
@@ -471,11 +471,11 @@ query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::
 }
 
 query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsTypeOf(APP::Class);
+	return self.findEntity(cName).oclIsTypeOf(APP::StandardClass);
 }
 
-query APP::ModelGeneration::findClass(cName : String) : APP::Class {
-	return self.findEntity(cName).oclAsType(APP::Class);
+query APP::ModelGeneration::findClass(cName : String) : APP::StandardClass {
+	return self.findEntity(cName).oclAsType(APP::StandardClass);
 }
 
 query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
@@ -484,7 +484,7 @@ query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : In
 
 
 // overime, zda-li je trida potomkem tridy cName
-query APP::Class::isDescendantOf(cName : String) : Boolean {
+query APP::StandardClass::isDescendantOf(cName : String) : Boolean {
 	if (self.parent <> null) then {
 		if (self.parent.name = cName) then return true
 		else return self.parent.isDescendantOf(cName) endif;
@@ -494,7 +494,7 @@ query APP::Class::isDescendantOf(cName : String) : Boolean {
 
 // overi, zda-li je trida sClass rodicem tridy fClass
 query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
-	var ourClass : APP::Class := self.findAbstractClass(fClass).oclAsType(APP::Class);
+	var ourClass : APP::StandardClass := self.findAbstractClass(fClass).oclAsType(APP::StandardClass);
 	if(ourClass <> null) then {
 		if (ourClass.parent <> null and ourClass.parent = sClass) then {
 			return true;
@@ -509,9 +509,9 @@ query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Bo
 // overi, zda-li v hierarchii existuje atribut se stejnem nazvem
 query APP::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
 	// pro kazdy atribut se stejnym nazvem...
-	self.classes->oclAsType(APP::Class).properties->forEach(p | p.name = pName) {
+	self.entities->oclAsType(APP::StandardClass).properties->forEach(p | p.name = pName) {
 		// ...overime, zda-li se tridy, kterym tyto atributy nalezi, nachazi ve stejne hierarchii
-		if (self.isInHierarchy(cName, p.owningClass.name) = true or self.isInHierarchy(p.owningClass.name, cName) = true) then {
+		if (self.isInHierarchy(cName, p.owningGeneralClass.name) = true or self.isInHierarchy(p.owningGeneralClass.name, cName) = true) then {
 			return true;
 		} endif;
 	};
