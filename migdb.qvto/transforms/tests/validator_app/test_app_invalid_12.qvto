@@ -1,0 +1,19 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+main() {
+	log("TEST_APP_INVALID_12 - invalid : ID upperBound ");	
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	
+	var person : APP::Class := _class("Person", OrderedSet{ _property("age", integer), _property("id", integer, 1, -1, true)});
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{integer,person
+			};
+		};
+	 };
+	 
+}

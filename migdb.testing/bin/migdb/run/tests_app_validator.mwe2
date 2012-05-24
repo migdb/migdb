@@ -1,0 +1,354 @@
+module migb.testing.run.first
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+Workflow{
+		
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "output-tests"
+	}
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+	
+	/* Create Test01 app*/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"
+		outputSlot = "TEST_01_APP"
+	}
+	
+	/*Save test01 */	
+	component = Writer {
+		modelSlot = "TEST_01_APP"
+		uri = "output-tests/validator_app/test_01_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test01 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_01_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+	/* Create Test02 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_02.qvto"
+		outputSlot = "TEST_02_APP"
+	}	
+	
+	/*Save test02 */	
+	component = Writer {
+		modelSlot = "TEST_02_APP"
+		uri = "output-tests/validator_app/test_02_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test02 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_02_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+	/* Create Test_invalid_01 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_01.qvto"
+		outputSlot = "TEST_INVALID_01_APP"
+	}	
+	
+	/*Save test_invalid_01 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_01_APP"
+		uri = "output-tests/validator_app/test_invalid_01_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_01 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_01_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+
+	/* Create Test_invalid_02 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_02.qvto"
+		outputSlot = "TEST_INVALID_02_APP"
+	}	
+	
+	/*Save test_invalid_02 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_02_APP"
+		uri = "output-tests/validator_app/test_invalid_02_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_02 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_02_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+		/* Create Test_invalid_03 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_03.qvto"
+		outputSlot = "TEST_INVALID_03_APP"
+	}	
+	
+	/*Save test_invalid_03 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_03_APP"
+		uri = "output-tests/validator_app/test_invalid_03_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_03 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_03_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+		/* Create Test_invalid_04 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_04.qvto"
+		outputSlot = "TEST_INVALID_04_APP"
+	}	
+	
+	/*Save test_invalid_04 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_04_APP"
+		uri = "output-tests/validator_app/test_invalid_04_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_04 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_04_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+	/* Create Test_invalid_05 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_05.qvto"
+		outputSlot = "TEST_INVALID_05_APP"
+	}	
+	
+	/*Save test_invalid_05 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_05_APP"
+		uri = "output-tests/validator_app/test_invalid_05_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_05 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_05_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+		/* Create Test_invalid_06 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_06.qvto"
+		outputSlot = "TEST_INVALID_06_APP"
+	}	
+	
+	/*Save test_invalid_06 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_06_APP"
+		uri = "output-tests/validator_app/test_invalid_06_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_06 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_06_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+			
+	/* Create Test_invalid_07 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_07.qvto"
+		outputSlot = "TEST_INVALID_07_APP"
+	}	
+	
+	/*Save test_invalid_07 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_07_APP"
+		uri = "output-tests/validator_app/test_invalid_07_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+		
+	/* Validate test_invalid_07 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_07_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+	
+	/* Create Test_invalid_08 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_08.qvto"
+		outputSlot = "TEST_INVALID_08_APP"
+	}	
+		
+	/* Validate test_invalid_08 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_08_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_08 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_08_APP"
+		uri = "output-tests/validator_app/test_invalid_08_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	/* Create Test_invalid_09 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_09.qvto"
+		outputSlot = "TEST_INVALID_09_APP"
+	}	
+		
+	/* Validate test_invalid_09 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_09_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_09 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_09_APP"
+		uri = "output-tests/validator_app/test_invalid_09_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+
+	/* Create Test_invalid_10 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_10.qvto"
+		outputSlot = "TEST_INVALID_10_APP"
+	}	
+		
+	/* Validate test_invalid_10 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_10_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_10 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_10_APP"
+		uri = "output-tests/validator_app/test_invalid_10_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+	
+	/* Create Test_invalid_11 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_11.qvto"
+		outputSlot = "TEST_INVALID_11_APP"
+	}	
+		
+	/* Validate test_invalid_11 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_11_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_11 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_11_APP"
+		uri = "output-tests/validator_app/test_invalid_11_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	/* Create Test_invalid_12 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_12.qvto"
+		outputSlot = "TEST_INVALID_12_APP"
+	}	
+		
+	/* Validate test_invalid_12 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_12_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_12 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_12_APP"
+		uri = "output-tests/validator_app/test_invalid_12_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	/* Create Test_invalid_13 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_13.qvto"
+		outputSlot = "TEST_INVALID_13_APP"
+	}	
+		
+	/* Validate test_invalid_13 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_13_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_13 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_13_APP"
+		uri = "output-tests/validator_app/test_invalid_13_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	/* Create Test_invalid_14 app */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_14.qvto"
+		outputSlot = "TEST_INVALID_14_APP"
+	}	
+		
+	/* Validate test_invalid_14 */
+	component = QVTOExecutor {
+		inputSlot = "TEST_INVALID_14_APP"
+		transformationFile = "../migdb.qvto/transforms/validators/validator_app.qvto"
+	}
+		
+	/*Save test_invalid_14 */	
+	component = Writer {
+		modelSlot = "TEST_INVALID_14_APP"
+		uri = "output-tests/validator_app/test_invalid_14_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}						
+}

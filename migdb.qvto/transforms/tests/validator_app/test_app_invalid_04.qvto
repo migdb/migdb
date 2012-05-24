@@ -3,7 +3,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_5 - invalid : oppositeProperty");	
+	log("TEST_APP_INVALID_04 - invalid : oppositeProperty");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var money : APP::Class := _class("money", OrderedSet{ _property("id",integer,true), _property("name", string)});

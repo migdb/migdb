@@ -176,6 +176,16 @@ helper _property(_name : String, _type : Entity, _lowerBound : Integer, _upperBo
  		upperBound := _upperBound;
  	}
 }
+
+helper _property(_name : String, _type : Entity, _lowerBound : Integer, _upperBound : Integer, _isID : Boolean) : Property {
+ 	return object Property {
+ 		name := _name;
+ 		type := _type;
+ 		lowerBound := _lowerBound;
+ 		upperBound := _upperBound;
+ 		isID := _isID;
+ 	}
+}
  
 helper _property(_name : String, _type : Entity) : Property {
  	return object Property {
@@ -189,6 +199,8 @@ helper _property(_name : String, _type : Entity, _isID : Boolean) : Property {
  		name := _name;
  		type := _type;
  		isID := _isID;
+ 		lowerBound := 1;
+ 		upperBound := 1;
  	}
 }
 

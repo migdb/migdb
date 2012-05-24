@@ -195,14 +195,14 @@ query app::Property::isManyToManyBidirectional():Boolean{
 **/
 query app::AbstractClass::isNonleafTPCClass():Boolean{
 		if(self.oclIsTypeOf(Class) and self.oclAsType(Class).inheritanceType = app::InheritanceType::tablePerClass and 
-			self.owningModel.classes->exists(cls | cls![app::Class].parent = self))then{
+			self.owningModel.classes[app::Class]->exists(cls | cls.parent = self))then{
 			return true;
 		}endif;
 	return false;
 }
 
 /** 
-	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cykly v hierarchii dedicnosti. 
+	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cyklu v hierarchii dedicnosti. 
 	Inout parametr addedClasses 
 **/
 query app::Class::containsCycle(inout addedClasses : Set(app::Class)) :Boolean{

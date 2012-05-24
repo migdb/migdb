@@ -1,0 +1,22 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+main() {
+	log("TEST_APP_INVALID_14 - invalid : property name in hierarchy 2");	
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	
+	var person : APP::Class := _class("Person", OrderedSet{ _property("name", string), _property("id", integer, true)});
+	var teacher : APP::Class := _class("Teacher", person, OrderedSet{ _property("name", string)});
+	var elf : APP::Class := _class("Elf", teacher, OrderedSet{_property("name", string)});
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			classes += Set{integer,string,person, teacher, elf
+			};
+		};
+	 };
+	 
+}

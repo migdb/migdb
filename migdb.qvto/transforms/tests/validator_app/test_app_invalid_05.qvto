@@ -3,12 +3,12 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_7 - invalid : embedded property name collision");	
+	log("TEST_APP_INVALID_05 - invalid : embedded arrity");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("id",integer,true), _property("name", string), _property("currency", string)});
+	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("id",integer,true), _property("name", string)});
 	
-	var country : APP::Class := _class("Country", OrderedSet{ _property("name", string), _property("id", integer, true), _property("currency", money, 0, 1), _property("currency_money", string)});
+	var country : APP::Class := _class("Country", OrderedSet{ _property("name", string), _property("id", integer, true), _property("currency", money, 0, -1)});
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
