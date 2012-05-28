@@ -2,25 +2,25 @@
 <xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
   <app:ModelRoot>
     <modelGenerations>
-      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
-      <classes xsi:type="app:Class" name="Country">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.0" isID="true"/>
-        <properties name="name" type="/0/@modelGenerations.0/@classes.1"/>
+      <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.5">
+        <properties name="name" type="/0/@modelGenerations.0/@classes.4"/>
+        <properties name="surname" type="/0/@modelGenerations.0/@classes.4"/>
       </classes>
       <classes xsi:type="app:Class" name="LegalPerson" parent="/0/@modelGenerations.0/@classes.5">
-        <properties name="bisName" type="/0/@modelGenerations.0/@classes.1"/>
-        <properties name="regNo" type="/0/@modelGenerations.0/@classes.0"/>
+        <properties name="bisName" type="/0/@modelGenerations.0/@classes.4"/>
+        <properties name="regNo" type="/0/@modelGenerations.0/@classes.3"/>
       </classes>
-      <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.5">
-        <properties name="name" type="/0/@modelGenerations.0/@classes.1"/>
-        <properties name="surname" type="/0/@modelGenerations.0/@classes.1"/>
+      <classes xsi:type="app:Class" name="Country">
+        <properties name="id" type="/0/@modelGenerations.0/@classes.3" isID="true"/>
+        <properties name="name" type="/0/@modelGenerations.0/@classes.4"/>
       </classes>
+      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
       <classes xsi:type="app:Class" name="Party">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.0" lowerBound="1" isID="true"/>
-        <properties name="street" type="/0/@modelGenerations.0/@classes.1"/>
-        <properties name="city" type="/0/@modelGenerations.0/@classes.1"/>
-        <properties name="zip" type="/0/@modelGenerations.0/@classes.1"/>
+        <properties name="id" type="/0/@modelGenerations.0/@classes.3" lowerBound="1" isID="true"/>
+        <properties name="street" type="/0/@modelGenerations.0/@classes.4"/>
+        <properties name="city" type="/0/@modelGenerations.0/@classes.4"/>
+        <properties name="zip" type="/0/@modelGenerations.0/@classes.4"/>
         <properties name="country" type="/0/@modelGenerations.0/@classes.2"/>
       </classes>
     </modelGenerations>

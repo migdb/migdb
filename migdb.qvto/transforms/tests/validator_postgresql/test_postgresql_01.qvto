@@ -1,0 +1,10 @@
+import builder_rdb;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+
+main() {
+	log("TEST_RDB_01: valid");	
+	
+	 
+}

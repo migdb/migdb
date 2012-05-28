@@ -159,7 +159,7 @@ query app::Property::isOneToOneBidirectional():Boolean{
 **/	
 query app::Property::isOneToManyUnidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = 1 and self.oppositeProperty = null and 
-	not self.owningClass.isNonleafTPCHierarchy() and not self.type![app::Class].isNonleafTPCHierarchy();
+	not self.owningClass.isNonleafTPCClass() and not self.type![app::Class].isNonleafTPCClass();
 }
 
 /**
@@ -167,8 +167,8 @@ query app::Property::isOneToManyUnidirectional():Boolean{
 **/
 query app::Property::isOneToManyBidirectional():Boolean{	
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
-	self.oppositeProperty.upperBound = 1 and not self.owningClass.isNonleafTPCHierarchy() and 
-	not self.type![app::Class].isNonleafTPCHierarchy();
+	self.oppositeProperty.upperBound = 1 and not self.owningClass.isNonleafTPCClass() and 
+	not self.type![app::Class].isNonleafTPCClass();
 }
 
 /**
@@ -176,7 +176,7 @@ query app::Property::isOneToManyBidirectional():Boolean{
 **/	
 query app::Property::isManyToManyUnidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty = null and 
-	not self.owningClass.isNonleafTPCHierarchy() and not self.type![app::Class].isNonleafTPCHierarchy();
+	not self.owningClass.isNonleafTPCClass() and not self.type![app::Class].isNonleafTPCClass();
 }
 
 /**
@@ -184,8 +184,8 @@ query app::Property::isManyToManyUnidirectional():Boolean{
 **/
 query app::Property::isManyToManyBidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
-	self.oppositeProperty.upperBound = -1 and not self.owningClass.isNonleafTPCHierarchy() and 
-	not self.type![app::Class].isNonleafTPCHierarchy();
+	self.oppositeProperty.upperBound = -1 and not self.owningClass.isNonleafTPCClass() and 
+	not self.type![app::Class].isNonleafTPCClass();
 }
 
 /**
@@ -193,18 +193,16 @@ query app::Property::isManyToManyBidirectional():Boolean{
 	Je pouzivane k odstraneni slozitych mapovani vazeb mezi nelistovymi Classy s inheritanceType
 	TablePerClass.
 **/
-query app::AbstractClass::isNonleafTPCHierarchy():Boolean{
-	if(self.oclIsKindOf(app::Class)) then {
-		if(self![app::Class].inheritanceType = app::InheritanceType::tablePerClass and 
-		self.owningModel.classes->exists(cls | cls![app::Class].parent = self))then{
+query app::AbstractClass::isNonleafTPCClass():Boolean{
+		if(self.oclIsTypeOf(Class) and self.oclAsType(Class).inheritanceType = app::InheritanceType::tablePerClass and 
+			self.owningModel.classes[app::Class]->exists(cls | cls.parent = self))then{
 			return true;
 		}endif;
-	}endif;
 	return false;
 }
 
 /** 
-	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cykly v hierarchii dedicnosti. 
+	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cyklu v hierarchii dedicnosti. 
 	Inout parametr addedClasses 
 **/
 query app::Class::containsCycle(inout addedClasses : Set(app::Class)) :Boolean{

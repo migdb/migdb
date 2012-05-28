@@ -1,0 +1,67 @@
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+library builder_rdb;
+
+helper addSchema(_name : String) : RDB::operations::AddSchema {
+	return object RDB::operations::AddSchema {
+		name := _name;
+	}
+}
+
+helper addSequence(_owningSchemaName : String, _name : String, _startValue : Integer) : RDB::operations::AddSequence {
+	return object RDB::operations::AddSequence {
+		owningSchemaName :=_owningSchemaName ;
+		name := _name;
+		startValue := _startValue;
+		
+	}
+}
+
+/********************************************
+ *				BUILD MODEL			 	*
+ ********************************************/
+ 
+ helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(TableConstraint) ) : Table {
+ 	return object Table {
+ 		name := _name;
+ 		columns := _columns;
+ 		constraints := _constraints;
+ 	}
+ }
+ 
+ helper _index(_name : String, _columns : OrderedSet(Column)) : Index {
+ 	return object Index {
+ 		name := _name;
+ 		columns := _columns;
+ 	}
+ }
+ 
+ helper _primaryKey(_name : String, _underlineIndex : Index) : PrimaryKey {
+ 	return object PrimaryKey {
+ 		name := _name;
+ 		underlyingIndex := _underlineIndex;
+ 	}
+ }
+ 
+ helper _foreignKey(_name : String, _table : Table, _constrainedColumn : Column) : ForeignKey {
+ 	return object ForeignKey {
+ 		name := _name;
+ 		targetTable := _table;
+ 		constrainedColumn := _constrainedColumn;
+ 	}
+ }
+ 
+ helper _column(_name : String, _type : PrimitiveType) : Column {
+ 	return object Column {
+ 		name := _name;
+ 		type := _type;
+ 	}
+ }
+ 
+ helper _sequence(_name : String, _startValue : Integer) : RDB::Sequence {
+ 	return object RDB::Sequence {
+ 		name := _name;
+ 		startValue := _startValue;
+ 	}
+ }
+ 
+ 
