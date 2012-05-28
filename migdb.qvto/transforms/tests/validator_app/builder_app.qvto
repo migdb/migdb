@@ -204,6 +204,16 @@ helper _property(_name : String, _type : Entity, _isID : Boolean) : Property {
  	}
 }
 
+helper _property(_name : String, _type : Entity, _isID : Boolean, _lowerBound : Integer, _upperBound : Integer) : Property {
+ 	return object Property {
+ 		name := _name;
+ 		type := _type;
+ 		isID := _isID;
+ 		lowerBound := _lowerBound;
+ 		upperBound := _upperBound;
+ 	}
+}
+
 helper _class(_name : String, _properties : OrderedSet(Property)) : Class {
  	return object Class {
  		name := _name;

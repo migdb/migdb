@@ -3,15 +3,26 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_11 - invalid : ID lowerBound ");	
+	log("TEST_APP_INVALID_11 - invalid : TPC M-N associations ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::Class := _class("Person", OrderedSet{ _property("age", integer), _property("id", integer, 0, 1, true)});
+	var thing : APP::Class := _class("Thing", OrderedSet{ _property("name", string), _property("id", integer, true)});
+	var person : APP::Class := _class("Person", OrderedSet{ _property("name", string), _property("id", integer, true), _property("ownedThings", thing, 0, -1)});
+	var teacher : APP::Class := _class("Teacher", person, OrderedSet{ _property("nickName", string)});
+	
+	var syntheticThing : APP::Class := _class("SynteticThing", thing, OrderedSet{ _property("mineral", string)});
+	
+	teacher.inheritanceType := app::InheritanceType::tablePerClass;
+	person.inheritanceType := app::InheritanceType::tablePerClass;
+	thing.inheritanceType := app::InheritanceType::tablePerClass;
+	syntheticThing.inheritanceType := app::InheritanceType::tablePerClass;
+	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,person
+			classes += Set{integer,string,person, teacher, thing, syntheticThing
 			};
 		};
 	 };

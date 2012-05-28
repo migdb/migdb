@@ -3,7 +3,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_07 - invalid : ambigous id count");	
+	log("TEST_APP_INVALID_07 - invalid : Non root ID");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	

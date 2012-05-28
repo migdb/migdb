@@ -30,19 +30,10 @@ transformation APP_VALIDATE(in inModel : APP);
 
 main() {	
 	log("Validation aplication model started...");
-	if(inModel.rootObjects()![APP::ModelRoot].isModelValid())then{
-		log("Model valid");
-	}endif;
+	inModel.rootObjects()![APP::ModelRoot].isModelValid();
 	log("");
 }
 ///////////////---------------------------------Validacni query --------------------------------///////////
-/*
-	Validacni query app modelu
-*/
-query app::ModelRoot::testID() : Boolean {
-  var classes : Sequence(app::Class) :=  self.modelGenerations->classes[app::Class];
-  return not classes->forAll(cls|cls.assertIDCondition());
-}
 
 /** 
 	Vraci false, pokud model neobsahuje cykly hierarchii dedicnosti, jinak true
@@ -52,60 +43,94 @@ query app::ModelGeneration::containsCycle():Boolean{
 };
 */
 query app::ModelRoot::isModelValid():Boolean{
-	var validity : Boolean := true;
 	var classUniqueName : Boolean := true; 
 	var propUniqueName : Boolean := true;
 	var notCycledHierarchies : Boolean := true;
 	var oppositeProperty := true;
 	var embeddedBounds := true;
+	var notHasNonRootId := true;
+	var idBounds := true;
+	var idTypes := true;
+	var notTpcExpansion := true;
+	var rootsId := true;
+	var notOppositePrimitive := true;
 	//classes leading to cycle
 	var cycles : Set(Class) := Set{};
 	self.modelGenerations->classes->forEach(cls | not cls.hasUniqueName()) {
+		log("Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + " contains " +
+		 "ambigous Class name \"" + cls.name + "\"");		
 		classUniqueName := false;
-		log("ambigous Class name " + cls.name);		
 	};
 	self.modelGenerations->classes[app::Class]->properties->forEach(prop | not prop.hasUniqueNameInHierarchy()) {
-		log("ambigous property name " + prop.name + " in class " + prop.owningClass.name);
+		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + 
+		" contains ambigous property name \"" + prop.name + "\" in class \"" + prop.owningClass.name + "\"");
 		propUniqueName := false;		
 	};
 	self.modelGenerations ->classes[Class]->forEach(cls | cls.containsCycle(OrderedSet{}) and not cycles->includes(cls)) {
 		var  iterateClass : Class := cls;  
-		var output : String := "Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + "contains cycled hierarchy:" + cls.name;
+		var output : String := "Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + 
+		" contains cycled hierarchy:\"" + cls.name+"\"";
 		while(not cycles->includes(iterateClass)){
 			cycles += iterateClass;
 			iterateClass := iterateClass.parent;
-			output := output + ", " + iterateClass.name;					
+			output := output + ", \"" + iterateClass.name+"\"";					
 		};
-		log(output);
+		log(output + "...");
 		notCycledHierarchies := false;
 	};
-	self.modelGenerations->classes[app::Class]->properties->forEach(prop | not prop.isOppositeCorrectlySet()){
-		oppositeProperty := false;
-		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + " containst property " + prop.name+ " property of " + prop.owningClass.name + " not correctly set");
+	self.modelGenerations->classes[Class]->properties->forEach(prop | not prop.isOppositeCorrectlySet()){
+		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + " contains property \""
+		 + prop.name + "\" property in class \"" + prop.owningClass.name + "\" opposite not correctly set");
+		 oppositeProperty := false;
 	};
-	self.modelGenerations->classes[app::Class]->properties->forEach(prop | not prop.areEmbeddedArritiesCorrectlySet()){
-		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + " containst embedded property " + prop.name + " of type " + prop.type.name + " with bounds not correctly set");
-		embeddedBounds :=false;
+	self.modelGenerations->classes[Class]->properties->forEach(prop | prop.oppositeProperty <> null
+	 and not prop.oppositeProperty.type.oclIsTypeOf(Class)){
+		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + " contains property \""
+		 + prop.name + "\" property in class \"" + prop.owningClass.name + "\" with embedded or primitive opposite");
+		 notOppositePrimitive := false;
 	};
-	if(self.modelGenerations->exists(areEmbeddedPropertiesInNameCollision()))then{
-		log("Model invalid - Embedded property in name collision");
-		validity := false;
-	}endif;
-	if(self.testID())then{
-		log("Model invalid - ambiguous IDs in classes");
-		validity := false;
-	}endif;
-	if(not self.modelGenerations->forAll(assertTPCCondition()))then{
-		log("Model invalid - contains TPC expansion");
-		validity := false;
-	}endif;
+	self.modelGenerations->classes[EmbeddedClass]->properties->forEach(prop | not prop.areEmbeddedArritiesCorrectlySet()){
+		log("Generation " + self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() +
+		 " contains embedded property \"" + prop.name +"\" in class \"" + prop.owningClass.name + 
+		 "\" with bounds not correctly set");
+		embeddedBounds := false;
+	};
+    self.modelGenerations->classes[app::Class]->forEach(cls | cls.hasNonRootId()){
+    	log("Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + " contains Non-root class \"" 
+    	+ cls.name + "\" contains id property.");
+    	notHasNonRootId := false;
+    };
+	self.modelGenerations->classes[app::Class]->forEach(cls | not cls.areIDBoundsCorrectlySet()){
+		log("Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + " contains class \"" + cls.name + 
+		"\" with id bounds not correctly set");
+		idBounds := false;
+	};
+	self.modelGenerations->classes[app::Class]->forEach(cls | not cls.areIDTypesCorrectlySet()){
+	    log("Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + " contains class \"" +
+	     cls.name + "\" with id not according primitive Integer");
+	     idTypes := false;
+	};
 	
+	self.modelGenerations->classes[app::Class]->forEach(cls | not cls.isIDRootCountCorrectlySet()){
+		rootsId := false;
+		log("Generation " + self.modelGenerations->indexOf(cls.owningModel).repr() + " contains class \"" +
+	    cls.name + "\" with invalid id count:" + cls.properties->select(prop | prop.isID)->size().repr());	
+	};
 	
+	self.modelGenerations->classes[app::Class]->properties->forEach(prop | (prop.owningClass.isNonleafTPCClass() and
+	  (prop.upperBound > 1 or prop.upperBound = -1))){
+		log(self.modelGenerations->indexOf(prop.owningClass.owningModel).repr() + ". generation contains TPC" + 
+		" hierarchy causing table expansion class \"" + prop.owningClass.name + "\" property\"" + prop.name + "\"");
+		notTpcExpansion := false;
+	};
 	if(not classUniqueName)then{
 		log("Model invalid - ambigous class names in generation");
 	}endif;
 	if(not propUniqueName)then{
 		log("Model invalid - ambigous property names in class hierarchy");
+		}endif;
+	if(not notCycledHierarchies)then{
+		log("Model invalid - cycled class hierarchy");
 		}endif;
 	if(not oppositeProperty)then{
 		log("Model invalid - properties and oppositeProperties are not correctly set");
@@ -113,19 +138,30 @@ query app::ModelRoot::isModelValid():Boolean{
 	if(not embeddedBounds)then{
 		log("Model invalid - Embedded property bounds are not correctly set");
 	}endif;	
-	return  ;
-}
-
-query app::ModelGeneration::assertTPCCondition():Boolean{
-	var validity : Boolean := true;
-	
-	self.classes[app::Class]->properties->forEach(prop | (prop.owningClass.isNonleafTPCClass() and
-	  (prop.upperBound > 1 or prop.upperBound = -1))){
-		log(self.modelRoot.modelGenerations->indexOf(self).repr() + ". generation contains TPC hierarchy causing table expansion "+
-		" class " + prop.owningClass.name + " property:" + prop.repr());
-		validity := false;
-	};
-	return validity;
+	if(not notHasNonRootId)then{
+		log("Model invalid - nonRoot classes with ID");
+	}endif;
+	if(not idBounds)then{
+		log("Model invalid - id property with wrong arrities");
+	}endif;
+	if(not idTypes)then{
+		log("Model invalid - wrong id types");
+	}endif;
+	if(not notTpcExpansion)then{
+		log("Model invalid - TPC expansion");
+	}endif;
+	if(not rootsId)then{
+		log("Model invalid - invalid roots count");
+	}endif;
+	if(not 	notOppositePrimitive)then{
+		log("Model invalid - contains primitive or embedded primitive class");
+	}endif;
+	var valid : Boolean := classUniqueName and propUniqueName and notCycledHierarchies and oppositeProperty and embeddedBounds
+	and notHasNonRootId and idBounds and idTypes and notTpcExpansion and rootsId;
+	if(valid) then{
+		log("Model is valid");
+	}endif;
+	return  valid;
 }
 
 /*
@@ -136,6 +172,10 @@ query app::Property::isOneToOneUnidirectional():Boolean{
 	return false;
 }
 
+query Class::isIDRootCountCorrectlySet():Boolean{
+	return (self.parent = null and self.properties->select(prop | prop.isID)->size() = 1) or self.parent <> null;
+}
+
 
 query app::ModelGeneration::containsNonleafTPCAssociation():Boolean{
 	return self.classes[app::Class]->properties->exists( prop | not prop.isPrimitive() and prop.owningClass.isNonleafTPCClass() and 
@@ -143,31 +183,8 @@ query app::ModelGeneration::containsNonleafTPCAssociation():Boolean{
 	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
 }
 
-
-query app::Class::assertIDCondition() : Boolean{
-    if(self.hasNonRootId())then{
-    	log("Non-root class " + self.name + " contains id property.");
-    	return false;
-    }endif;
-
-	if(not self.areIDBoundsCorrectlySet())then{
-		log("Id bounds in class " + self.name + " not correctly set");
-		return false;
-	}endif;
-	if(not self.areIDTypesCorrectlySet())then{
-	    log("Id type in class " + self.name + " is not primitive Integer");
-		return false;
-	}endif;
-	return true;
-}
-
-
-
 query app::Class::hasNonRootId() : Boolean{
-	if(self.parent <> null and self.properties->select(prop | prop.isID)->size() != 0)then{
-		return true;
-	}endif;
-	return false;
+	return self.parent <> null and self.properties->select(prop | prop.isID)->size() != 0;
 }
 
 query app::Class::areIDTypesCorrectlySet() : Boolean{
@@ -180,37 +197,17 @@ query app::Class::areIDBoundsCorrectlySet() : Boolean{
 
 
 query app::Property::areEmbeddedArritiesCorrectlySet():Boolean{
-	return self.type.oclIsKindOf(app::EmbeddedClass) and (self.upperBound <> 1 or 
-	not(self.lowerBound = 1 or self.lowerBound = 0));		
-}
-
-query app::ModelGeneration::areEmbeddedPropertiesInNameCollision():Boolean{
-	var validity : Boolean := false;
-	self.classes[app::EmbeddedClass]->properties ->forEach(prop | prop.isEmbeddedInNameCollission()){
-		log("property " + prop.name + " name is in collision with owningClass property");
-		validity := true;
-	};
-	return validity;
-}
-
-query app::Property::isEmbeddedInNameCollission() :Boolean{
-	return self.owningClass->owningModel->classes[app::Class]->select(cls | cls.properties->exists(prop | self.owningClass = prop.type))->
-	properties->exists(prop | prop.name = self.type.name + "_" + self.name);
+    return not self.owningClass.oclIsKindOf(app::EmbeddedClass) or (self.upperBound = 1 and 
+	(self.lowerBound = 1 or self.lowerBound = 0));		
 }
 
 query app::Property::isOppositeCorrectlySet():Boolean{
-	if( self.oppositeProperty = null or self.oppositeProperty.oppositeProperty = self )then{
-		return true;
-	}endif;
-	return false;
+	return self.oppositeProperty = null or (self.oppositeProperty.oppositeProperty = self and 
+	self.type=self.oppositeProperty.owningClass and self.owningClass = self.oppositeProperty.type);
 }
 
 query app::Entity::hasUniqueName():Boolean{
-	var validity : Boolean := true;
-	self.owningModel->classes->forEach(cls | cls.name = self.name and cls <> self){
-		validity := false;
-	};
-	return validity;
+	return self.owningModel->classes->forAll(cls | cls.name <> self.name or cls = self);
 }
 
 
@@ -218,7 +215,7 @@ query app::Property::hasUniqueNameInHierarchy():Boolean{
     if(not self.owningClass.oclIsTypeOf(Class))then{
     	return false;
     }endif;
-	self.owningClass[Class].getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
+    self.owningClass[Class].getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
 		return false;
 	};
 	return true;	

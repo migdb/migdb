@@ -6,13 +6,17 @@ main() {
 	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
-	country.parent := country;
+	var cycle : APP::Class := _class("Cycle", OrderedSet{ _property("name", string)});
+	var cycle1 : APP::Class := _class("Cycle1", cycle, OrderedSet{});
+	var cycle2 : APP::Class := _class("Cycle2", cycle1, OrderedSet{});
+	var child : APP::Class := _class("OutOfCycle", cycle1, OrderedSet{});
+	cycle.parent := cycle2;
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,country};
+			classes += Set{integer,string,cycle, cycle1, cycle2, child
+			};
 		};
 	 };
 	 

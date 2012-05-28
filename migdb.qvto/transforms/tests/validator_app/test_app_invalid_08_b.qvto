@@ -3,7 +3,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_12 - invalid : ID upperBound ");	
+	log("TEST_APP_INVALID_08_b - invalid : ID upperBound ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	
 	var person : APP::Class := _class("Person", OrderedSet{ _property("age", integer), _property("id", integer, 1, -1, true)});
