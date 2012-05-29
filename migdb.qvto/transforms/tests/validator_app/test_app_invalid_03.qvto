@@ -1,4 +1,4 @@
-import builder_app;
+import builder_app_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -6,13 +6,13 @@ main() {
 	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
 	country.parent := country;
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,country};
+			entities += Set{integer,string,country};
 		};
 	 };
 	 

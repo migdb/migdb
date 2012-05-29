@@ -1,4 +1,4 @@
-import builder_app;
+import builder_app_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -7,11 +7,11 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::Class := _class("Person", OrderedSet{ _property("name", string), _property("id", integer, true)});
-	var thing : APP::Class := _class("Thing", OrderedSet{ _property("name", string), _property("id", integer, true)});
-	var teacher : APP::Class := _class("Teacher", person, OrderedSet{ _property("ownedThings", thing, 0, -1)});
+	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("name", string), _property("id", integer, true)});
+	var thing : APP::StandardClass := _class("Thing", OrderedSet{ _property("name", string), _property("id", integer, true)});
+	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _property("ownedThings", thing, 0, -1)});
 	
-	var syntheticThing : APP::Class := _class("SynteticThing", thing, OrderedSet{ _property("mineral", string)});
+	var syntheticThing : APP::StandardClass := _class("SynteticThing", thing, OrderedSet{ _property("mineral", string)});
 	
 	teacher.inheritanceType := app::InheritanceType::tablePerClass;
 	person.inheritanceType := app::InheritanceType::tablePerClass;
@@ -22,7 +22,7 @@ main() {
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,person, teacher, thing, syntheticThing
+			entities += Set{integer,string,person, teacher, thing, syntheticThing
 			};
 		};
 	 };

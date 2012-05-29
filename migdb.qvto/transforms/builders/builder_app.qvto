@@ -170,11 +170,23 @@ helper _property(_name : String, _type : ModelEntity) : Property {
 }
  
 helper _property(_name : String, _type : ModelEntity, _isID : Boolean) : Property {
- 	return object Property {
- 		name := _name;
- 		type := _type;
- 		isID := _isID;
- 	}
+	var prop : Property := _property(_name, _type);
+	prop.isID := _isID;
+	prop.lowerBound := 1;
+ 	return prop;
+}
+
+helper _property(_name : String, _type : ModelEntity, _lowerBound : Integer, _upperbound : Integer) : Property {
+	var prop : Property := _property(_name, _type);
+ 	prop.lowerBound := _lowerBound;
+ 	prop.upperBound := _upperbound;
+ 	return prop;
+}
+
+helper _property(_name : String, _type : ModelEntity, _oppositeProperty : Property, _isID : Boolean, _lowerBound : Integer, _upperbound : Integer) : Property {
+	var prop : Property := _property(_name, _type,_lowerBound, _upperbound);
+	prop.oppositeProperty := _oppositeProperty;
+	return prop;
 }
 
 helper _class(_name : String, _properties : OrderedSet(Property)) : StandardClass {
@@ -185,16 +197,21 @@ helper _class(_name : String, _properties : OrderedSet(Property)) : StandardClas
 }
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
- 	return object StandardClass {
- 		name := _name;
- 		properties := _properties;
- 		parent := _parent;
- 	}
+ 	var cls : StandardClass := _class(_name, _properties);
+ 	cls.parent := _parent;
+ 	return cls;
 }
  
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	return object PrimitiveClass {
  		name := _name;
  		primitiveType := _primitiveType;
+ 	}
+}
+
+helper _embeddedClass(_name : String, _properties : OrderedSet(Property)) : EmbeddedClass {
+ 	return object EmbeddedClass {
+ 		name := _name;
+ 		properties := _properties;
  	}
 }

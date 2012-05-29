@@ -1,4 +1,4 @@
-import builder_app;
+import builder_app_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -8,12 +8,12 @@ main() {
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("id",integer,true), _property("name", string, 1, -1)});
 	
-	var country : APP::Class := _class("Country", OrderedSet{ _property("name", string), _property("id", integer, true), _property("currency", money, 0, -1)});
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string), _property("id", integer, true), _property("currency", money, 0, -1)});
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,country, money
+			entities += Set{integer,string,country, money
 			};
 		};
 	 };

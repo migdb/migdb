@@ -1,4 +1,4 @@
-import builder_app;
+import builder_app_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -7,13 +7,14 @@ main() {
 	log("TEST_APP_INVALID_12 - invalid : Completely wrong model - 11 reasons");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::Class := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
-	var idProp : APP::Property := _property("id",integer,true, 0, 1);
-	var party : APP::Class := _class("Party", OrderedSet{ idProp,_property("name", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)});																		  									  												  												  									  	
-	var cycle : APP::Class := _class("Cycle", OrderedSet{ _property("name", string)});
-	var cycle1 : APP::Class := _class("Cycle1", cycle, OrderedSet{});
-	var cycle2 : APP::Class := _class("Cycle2", cycle1, OrderedSet{});
-	var child : APP::Class := _class("OutOfCycle", cycle1, OrderedSet{});
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
+	var idProp : APP::Property := _property("id",integer,true);
+	idProp.lowerBound := 1;
+	var party : APP::StandardClass := _class("Party", OrderedSet{ idProp,_property("name", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)});																		  									  												  												  									  	
+	var cycle : APP::StandardClass := _class("Cycle", OrderedSet{ _property("name", string)});
+	var cycle1 : APP::StandardClass := _class("Cycle1", cycle, OrderedSet{});
+	var cycle2 : APP::StandardClass := _class("Cycle2", cycle1, OrderedSet{});
+	var child : APP::StandardClass := _class("OutOfCycle", cycle1, OrderedSet{});
 	cycle.parent := cycle2;
 	
 	var prop := _property("pr", integer);
@@ -21,7 +22,7 @@ main() {
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
-			classes += Set{integer,string,country,party, cycle, cycle1, cycle2, child,
+			entities += Set{integer,string,country,party, cycle, cycle1, cycle2, child,
 							_class("LegalPerson", party, OrderedSet{_property("name", integer), _property("bisName", string)}),
 							_class("NaturalPerson",party, OrderedSet{ _property("surname", string)}),
 							_class("NaturalPerson", OrderedSet{_property("id", integer, true)}), 

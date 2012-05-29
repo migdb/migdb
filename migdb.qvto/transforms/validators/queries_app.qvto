@@ -30,7 +30,7 @@ modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
  	query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen 
  	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
 **/
-query app::Class::isSerializable():Boolean{
+query app::StandardClass::isSerializable():Boolean{
 	if(not self.hasOneIDProperty()) then {
 		//log(self.name + " prim:" + self.isPrimitive.repr() + " ID:" + self.hasOneIDProperty().repr() + " Emb:" + self.isEmbedded.repr());
 		return false;
@@ -42,9 +42,9 @@ query app::Class::isSerializable():Boolean{
 /**
 	validace existence prave jedne Property PK v stromu dedicnosti
 **/
-query app::Class::hasOneIDProperty():Boolean{
+query app::StandardClass::hasOneIDProperty():Boolean{
 	var idCount : Integer := 0;
-	var rootPath : OrderedSet(app::Class) := self.getPathToRoot();
+	var rootPath : OrderedSet(app::StandardClass) := self.getPathToRoot();
 	
 	rootPath -> forEach(_class){
 		idCount:= idCount + _class.properties->select(prop | prop.isID)->size();
@@ -59,36 +59,36 @@ query app::Class::hasOneIDProperty():Boolean{
 /**
 	zjisti, jestli ma trida implicitni InheritanceType
 **/
-query app::Class::hasImplicitInheritanceType():Boolean{
+query app::StandardClass::hasImplicitInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::joined);	
 } 
 
 /**
 	zjisti, jestli ma trida InheritanceType SingleTable
 **/
-query app::Class::hasSingleTableInheritanceType():Boolean{
+query app::StandardClass::hasSingleTableInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::singleTable);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType TablePerClass
 **/
-query app::Class::hasTablePerClassInheritanceType():Boolean{
+query app::StandardClass::hasTablePerClassInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::tablePerClass);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType Joined
 **/
-query app::Class::hasJoinedInheritanceType():Boolean{
+query app::StandardClass::hasJoinedInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::joined);	
 }
 
 /**
 	zjisti, jestli ma trida InheritanceType z parametru
 **/
-query app::Class::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
-	var temp:app::Class = self;
+query app::StandardClass::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
+	var temp:app::StandardClass = self;
 	while(temp.parent <> null ){
 		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
 			return false;
@@ -101,8 +101,8 @@ query app::Class::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
 /**
 	vrati serializovatelnou root Class
 **/
-query app::Class::getRootClass():app::Class{
-	var path : OrderedSet(app::Class) := self.getPathToRoot();
+query app::StandardClass::getRootClass():app::StandardClass{
+	var path : OrderedSet(app::StandardClass) := self.getPathToRoot();
 	if(path->size() = 0 ) then{
 		log("Class is in cycle. Root doesn't exist");
 		return null;
@@ -113,7 +113,7 @@ query app::Class::getRootClass():app::Class{
 /**
 	Overuje, ze dana trida ma id Property
 **/	
-query app::Class::hasId(): Boolean{
+query app::StandardClass::hasId(): Boolean{
 	return self->properties->select(prop | prop.isID)->size() > 0;
 }
 
@@ -122,15 +122,15 @@ query app::Class::hasId(): Boolean{
  	a porovnanim jmena techto trid s jmenem typu property
 **/
 query app::Property::isPrimitive():Boolean{
-	self.owningClass.owningModel.classes->forOne(cl | cl.name = self.type.name){
+	self.owningGeneralClass.owningGeneration.entities->forOne(cl | cl.name = self.type.name){
 			return true;
 	};
 	return false;
 }
 
 
-query app::Class::getPathToRoot():OrderedSet(app::Class){
-	var precedessors : OrderedSet(app::Class) := OrderedSet{};
+query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
+	var precedessors : OrderedSet(app::StandardClass) := OrderedSet{};
 	if(not self.containsCycle(precedessors)) then{
 			return self.getPath(precedessors);
 		}endif;
@@ -138,7 +138,7 @@ query app::Class::getPathToRoot():OrderedSet(app::Class){
 		
 }
 
-query app::Class::getPath(collection : OrderedSet(app::Class)):OrderedSet(app::Class){
+query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
 	if(self.parent = null)then{
 		return collection->append(self);
 	}endif;
@@ -159,7 +159,7 @@ query app::Property::isOneToOneBidirectional():Boolean{
 **/	
 query app::Property::isOneToManyUnidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = 1 and self.oppositeProperty = null and 
-	not self.owningClass.isNonleafTPCClass() and not self.type![app::Class].isNonleafTPCClass();
+	not self.owningGeneralClass.isNonleafTPCClass() and not self.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -167,8 +167,8 @@ query app::Property::isOneToManyUnidirectional():Boolean{
 **/
 query app::Property::isOneToManyBidirectional():Boolean{	
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
-	self.oppositeProperty.upperBound = 1 and not self.owningClass.isNonleafTPCClass() and 
-	not self.type![app::Class].isNonleafTPCClass();
+	self.oppositeProperty.upperBound = 1 and not self.owningGeneralClass.isNonleafTPCClass() and 
+	not self.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -176,7 +176,7 @@ query app::Property::isOneToManyBidirectional():Boolean{
 **/	
 query app::Property::isManyToManyUnidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty = null and 
-	not self.owningClass.isNonleafTPCClass() and not self.type![app::Class].isNonleafTPCClass();
+	not self.owningGeneralClass.isNonleafTPCClass() and not self.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -184,8 +184,8 @@ query app::Property::isManyToManyUnidirectional():Boolean{
 **/
 query app::Property::isManyToManyBidirectional():Boolean{
 	return not self.isPrimitive() and self.upperBound = -1 and self.oppositeProperty.oppositeProperty = self and
-	self.oppositeProperty.upperBound = -1 and not self.owningClass.isNonleafTPCClass() and 
-	not self.type![app::Class].isNonleafTPCClass();
+	self.oppositeProperty.upperBound = -1 and not self.owningGeneralClass.isNonleafTPCClass() and 
+	not self.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -193,9 +193,9 @@ query app::Property::isManyToManyBidirectional():Boolean{
 	Je pouzivane k odstraneni slozitych mapovani vazeb mezi nelistovymi Classy s inheritanceType
 	TablePerClass.
 **/
-query app::AbstractClass::isNonleafTPCClass():Boolean{
-		if(self.oclIsTypeOf(Class) and self.oclAsType(Class).inheritanceType = app::InheritanceType::tablePerClass and 
-			self.owningModel.classes[app::Class]->exists(cls | cls.parent = self))then{
+query app::GeneralClass::isNonleafTPCClass():Boolean{
+		if(self.oclIsTypeOf(StandardClass) and self.oclAsType(StandardClass).inheritanceType = app::InheritanceType::tablePerClass and 
+			self.owningGeneration.entities[app::StandardClass]->exists(cls | cls.parent = self))then{
 			return true;
 		}endif;
 	return false;
@@ -205,7 +205,7 @@ query app::AbstractClass::isNonleafTPCClass():Boolean{
 	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cyklu v hierarchii dedicnosti. 
 	Inout parametr addedClasses 
 **/
-query app::Class::containsCycle(inout addedClasses : Set(app::Class)) :Boolean{
+query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardClass)) :Boolean{
 	if(addedClasses->includes(self)) then {
 		return true;
 	} endif;
