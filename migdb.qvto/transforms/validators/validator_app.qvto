@@ -30,8 +30,12 @@ transformation APP_VALIDATE(in inModel : APP);
 
 main() {	
 	log("Validation aplication model started...");
-	inModel.rootObjects()![APP::ModelRoot].isModelValid();
-	log("");
+	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(APP::ModelRoot)))then{
+		inModel.rootObjects()![APP::ModelRoot].isModelValid();
+		log("");
+	}else{
+		log("modelRoots doesn't conform to APP::ModelRoot type");
+	}endif;
 }
 ///////////////---------------------------------Validacni query --------------------------------///////////
 

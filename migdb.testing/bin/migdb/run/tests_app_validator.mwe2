@@ -1,4 +1,4 @@
-module migb.testing.run.first
+module migb.testing.run.app
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -18,20 +18,14 @@ import migdb.generator.*
 Workflow{
 		
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests"
+		directory = "output-tests/validator_app/"
 	}
 	/* Define of APP metamodel */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-	
-	/* Define of RDB metamodel */
-	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
-		platformUri=".."
-		registerGeneratedEPackage = "mm.rdb.RdbPackage"
-	}
-	
+		
 	/* Create Test01 app*/
 	component = QVTOExecutor {
 		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"

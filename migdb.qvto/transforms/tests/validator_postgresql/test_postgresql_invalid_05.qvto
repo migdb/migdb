@@ -1,0 +1,15 @@
+import builder_rdb_link;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation secondAPP(out inoutModel : RDB);
+
+
+main() {
+	log("TEST_RDB_INVALID_05: redundant id");
+	var col : Column := _column("col_first_table", PrimitiveType::int);	
+	var pk1 : PrimaryKey := _primaryKey("pk1", _index("i1", OrderedSet{col}));
+	var pk2 : PrimaryKey := _primaryKey("pk2", _index("i2", OrderedSet{col}));
+	
+	var table1 : Table := _table("collision", OrderedSet{col}, OrderedSet{pk1, pk2});
+	
+	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table1})})});
+}

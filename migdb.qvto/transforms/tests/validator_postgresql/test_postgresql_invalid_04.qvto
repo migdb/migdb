@@ -1,0 +1,16 @@
+import builder_rdb_link;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation secondAPP(out inoutModel : RDB);
+
+
+main() {
+	log("TEST_RDB_INVALID_04: one table PK - FK name");	
+	var col : Column := _column("col", PrimitiveType::int);
+	var table : Table := _table("tab", OrderedSet{col});
+	var collisionFk : ForeignKey := _foreignKey("collision_constraint", table, col);
+	var collisionPk : PrimaryKey := _primaryKey("collision_constraint", _index("i1", OrderedSet{col}));
+	table.constraints += collisionFk;
+	table.constraints += collisionPk;
+	
+	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table})})});
+}

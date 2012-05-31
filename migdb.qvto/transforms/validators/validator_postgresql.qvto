@@ -24,87 +24,167 @@
  */
 
 import queries_rdb;
-
+import builder_rdb;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 transformation POSTGRESQL_VALIDATE(in inModel : RDB);
 
 main() {	
 	log("Postgresql validation of model started...");
-	if(inModel.rootObjects()![RDB::ModelRoot].isModelValid())then{
-		log("Model valid");
+	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::ModelRoot)))then{
+		var tab : rdb::Table := _table("col", OrderedSet{}); 
+		inModel.rootObjects()![RDB::ModelRoot].isModelValid();
+		log("");
+	}else{
+		log("modelRoots doesn't conform to RDB::ModelRoot type");
 	}endif;
 }
 
 query rdb::ModelRoot::isModelValid():Boolean{
-	var validityString : String;
-	var valid : Boolean := true;
+	var invalidityString : String := "";
+
+	var tableUnique : Boolean := true;
+	var schemaUnique : Boolean := true;
+	var columnUnique : Boolean := true;
+	var constraintUnique : Boolean := true;
+	var pkCount := true;
+	
+	var validIdentifiers : Boolean := true;
 	//kontrola identifikatoru schematu
 	self->modelGenerations->schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{
-			validityString= validityString + "Model invalid - " + schema.repr() + " collision in schema names";
-			valid := false;
+			invalidityString := invalidityString + "Schema \"" + schema.name + "\" has duplicit name as another schema in generation + \n";
+			schemaUnique := false;
 		}endif;	
 		if(not isValidIdentifier(schema.name))then{
-			valid:= false;
-			validityString= validityString + "Unvalid schema identifier " + schema.name;
+			invalidityString := invalidityString + "Invalid schema identifier \"" + schema.name + "\"\n";
+			validIdentifiers:= false;
 		}endif;
 	};
+	
 	//kontrola identifikatoru tabulky
 	self->modelGenerations->schemas->tables->forEach(table){
 		if(not table.hasUniqueName())then{
-			validityString= validityString + "Model invalid - " + "duplicit table name - " + table.repr();
-			valid := false;
+			invalidityString := invalidityString + "Schema \"" + table.owningSchema.name + "\" contains duplicit table name - \"" 
+			+ table.name + "\"\n";
+			tableUnique := false;
 		}endif;
 		if(not isValidIdentifier(table.name))then{
-		validityString= validityString + "Unvalid identifier " + table.name;
-			valid:= false;
-			validityString= validityString + "Unvalid table identifier " + table.name;
+			invalidityString := invalidityString + "Invalid table identifier \"" + table.name + "\"\n";
+			validIdentifiers:= false;			
 		}endif;
 	};
-	
 	//kontrola identifikatoru sloupce
 	self->modelGenerations->schemas->tables->columns->forEach(column){
 		if(not column.hasUniqueName())then{
-			validityString = validityString + ("Model invalid - " + "duplicit column name " + column.repr()) ;
-			valid := false;
+			invalidityString := invalidityString + ("Schema \"" + column.owningTable.owningSchema.name + "\" contains duplicit " 
+			+ "column name \"" + column.name + "\"\n") ;
+			columnUnique := false;
 		}endif;
 		if(not isValidIdentifier(column.name))then{
-			valid:= false;
-			validityString= validityString + "Unvalid column identifier " + column.name;
+			invalidityString := invalidityString + "Invalid column identifier \"" + column.name + "\"\n";
+			validIdentifiers:= false;
 		}endif;
 	};
 	
-	self->modelGenerations->schemas->tables->forEach(constraint){
+	self->modelGenerations->schemas->tables->constraints->forEach(constraint){
 		if(not constraint.hasUniqueName())then{
-			validityString = validityString + ("Model invalid - " + "duplicit constraint name " + constraint.repr()) ;
-			valid := false;
+			invalidityString := invalidityString + ("Schema \"" + constraint.owningTable.owningSchema.name + 
+			"\" contains constraint with duplicit name \"" + constraint.name + "\"\n") ;
+			constraintUnique := false;
+		}endif;
+		if(not isValidIdentifier(constraint.name))then{
+			invalidityString := invalidityString + "Invalid table constraint identifier \"" + constraint.name + "\"\n";
+			validIdentifiers := false;
 		}endif;
 	};
+	
+	self->modelGenerations->schemas->tables->columns->constraints->forEach(constraint){
+		if(not constraint.hasUniqueName())then{
+			invalidityString := invalidityString + ("Schema \"" + constraint.owningColumn.owningTable.owningSchema.name + 
+			" \" contains constraint with duplicit name \"" + constraint.name + "\"\n") ;
+			constraintUnique := false;
+		}endif;
+		if(not isValidIdentifier(constraint.name))then{
+			invalidityString := invalidityString + "Invalid column constraint identifier \"" + constraint.name + "\"\n";
+			validIdentifiers := false;
+		}endif;
+	};
+	
+	self.modelGenerations->schemas->tables->forEach(tbl){
+		if(tbl.hasRedundantId())then{
+			invalidityString := invalidityString + "Table \"" + tbl.name + "\" in schema \"" + tbl.owningSchema.name + 
+			"\" has redundant PK count.\n";
+			pkCount := false;
+		}endif;
+	};
+	
+	var valid : Boolean := tableUnique and columnUnique and schemaUnique and constraintUnique and pkCount and validIdentifiers;
+	
+	if(not valid)then{
+		if(not schemaUnique)then{
+			invalidityString := invalidityString + "Model - invalid : ambigous schema names\n";
+		}endif;
+		if(not tableUnique)then{
+			invalidityString := invalidityString + "Model - invalid : ambigous table names\n";
+		}endif;
+		if(not columnUnique)then{
+			invalidityString := invalidityString + "Model - invalid : ambigous column names\n";
+		}endif;
+		if(not constraintUnique)then{
+			invalidityString := invalidityString + "Model - invalid : ambiguous constraint names\n"
+		}endif;
+		if(not pkCount) then {
+			invalidityString := invalidityString + "Model invalid - table contains redundant ID's\n";
+		}endif;
+		if(not validIdentifiers) then {
+			invalidityString := invalidityString + "Model invalid - contains invalid identifiers\n";
+		}endif;
+		log(invalidityString);
+	} else {
+		log("Model is valid");
+	}endif;
 	return valid;
 }
 
-
+query RDB::Table::hasRedundantId() : Boolean{
+	return self.constraints[PrimaryKey]->size() > 1;
+};
 
 query isValidIdentifier(identifier : String):Boolean{
 	var valid : Boolean := true;
 	if(not beginsWithChar(identifier))then{
-			log("Model invalid - identifier " + identifier + " not begins with char");
+			log("Model invalid - identifier \"" + identifier + "\" not begins with lower char");
 			valid := false;
 		}endif;
 		if(isKeyWord(identifier))then{
-			log("Model invalid - identifier " + identifier + " is Postgresql keyWord");
+			log("Model invalid - identifier \"" + identifier + "\" is Postgresql keyword");
 			valid := false;
 		}endif;
 		if(not containsAllowedChars(identifier))then{
-			log("Model invalid - identifier " + identifier + " contains unallowed characters");		
+			log("Model invalid - identifier \"" + identifier + "\" contains unallowed characters");		
 			valid := false;
 		}endif;
 		return valid;
 }
 
 query beginsWithChar(identifier : String ):Boolean{
-	var firstChar: String  := identifier.substring(0,1).toLower() ;
+
+	var firstChar: String  := identifier.substring(1,1);
 	return isLatinCharacter(firstChar);
+}
+
+query containsAllowedChars(identifier : String):Boolean{
+	var position:Integer := 1;
+	var valid : Boolean := true;
+	while(position < identifier.size()){
+		var char:String := identifier.substring(position, position);
+		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
+			log("unvalid character \'" + char + "\'");
+			valid := false;
+		}endif;
+		position := position + 1;
+	};
+	return valid;
 }
 
 query isLatinCharacter(char : String):Boolean{
@@ -127,39 +207,27 @@ query isDigit(char : String) : Boolean{
 	return false;
 }
 
-query containsAllowedChars(identifier : String):Boolean{
-	var position:Integer := 0;
-	var lowerIdentifier := identifier.toLower();
-	while(position < lowerIdentifier.size()){
-		var char:String := lowerIdentifier.substring(position, position+1);
-		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
-			return false;
-		}endif;
-		position = position + 1;
-	};
-	return true;
-}
-
 query rdb::Schema::hasUniqueName() : Boolean{
-	return self.owningModel->schemas->exist(schema | schema.name.toLower() = self.name.toLower() and schema <> self);
+	return self.owningModel->schemas->forAll(schema | schema.name <> self.name or schema = self);
 }
 
 query rdb::Table::hasUniqueName() : Boolean{
-	return not self.owningSchema->tables->exists(table | table.name.toLower() = self.name.toLower() and table <> self);
+	return self.owningSchema->tables->forAll(table | table.name <> self.name or table = self);
 }
 
 query rdb::Column::hasUniqueName() : Boolean{
-	return not self.owningTable->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self);
+	return self.owningTable->columns->forAll(column | column.name <> self.name or column = self);
 }
 
 query rdb::ColumnConstraint::hasUniqueName() : Boolean{
-	return not (self.owningColumn->owningTable->owningSchema->tables->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self) or 
-	self.owningColumn->owningTable->owningSchema->tables->constraints->exists(const | const.name.toLower() = self.name.toLower() and const <> self));	
+	return self.owningColumn->owningTable->owningSchema->tables->columns->forAll(const | const.name <> 
+	self.name or const = self) and self.owningColumn->owningTable->owningSchema->tables->constraints->forAll(const | 
+	const.name <> self.name or const = self);	
 }
 
 query rdb::TableConstraint::hasUniqueName() : Boolean{
-	return not (self->owningTable->owningSchema->tables->columns->exists(column | column.name.toLower() = self.name.toLower() and column <> self) or 
-	self.owningTable->owningSchema->tables->constraints->exists(const | const.name.toLower() = self.name.toLower() and const <> self));	
+	return self->owningTable->owningSchema->tables->columns->forAll(column | column.name <> self.name and column = self)
+	or self.owningTable->owningSchema->tables->constraints->forAll(const | const.name <> self.name or const = self);
 }
 
 
@@ -559,6 +627,6 @@ query isKeyWord(name: String ):Boolean{
 "YEAR",
 "YES",
 "ZONE"}; 
-	return keyList->exists(str | str = name);
+	return keyList->exists(str | str.oclAsType(String).toLower() = name);
 }
 

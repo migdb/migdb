@@ -113,9 +113,3 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  		startValue := _startValue;
  	};
  }
- 
- helper _notNullConstraint(_name : String) : RDB::NotNullConstraint{
- 	return object NotNullConstraint{
- 		name := _name;
-	};
- }

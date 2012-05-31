@@ -1,0 +1,16 @@
+import builder_rdb_link;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation secondAPP(out inoutModel : RDB);
+
+
+main() {
+	log("TEST_RDB_INVALID_04_C: one table PK - Not Null");	
+	var col : Column := _column("col", PrimitiveType::int);
+	var table : Table := _table("tab", OrderedSet{col});
+	var collisionPk : PrimaryKey := _primaryKey("collision_constraint", _index("i1", OrderedSet{col}));
+	table.constraints += collisionPk;
+	var notNull : NotNullConstraint := _notNullConstraint("collision_constraint");
+	col.constraints += notNull;
+	
+	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table})})});
+}

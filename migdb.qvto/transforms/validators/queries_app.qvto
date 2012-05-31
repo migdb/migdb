@@ -25,7 +25,7 @@
 library APP_queries;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
-modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
+
 /**
  	query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen 
  	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
@@ -215,26 +215,4 @@ query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardCl
 	}endif;
 
 	return self.parent.containsCycle(addedClasses->including(self));
-}
-
-query getPostgresqlType(type : app::PrimitiveType):rdb::PrimitiveType{
-	
-	if( type = app::PrimitiveType::boolean)then{
-		return rdb::PrimitiveType::boolean;
-	}endif;
-
-	if( type = app::PrimitiveType::int)then{
-		return rdb::PrimitiveType::int;
-	}endif;
-	
-		if( type = app::PrimitiveType::char)then{
-		return rdb::PrimitiveType::char;
-	}endif;
-	
-	return null;
-}
-
-
-query getDBPrimitiveType(type : app::PrimitiveType):rdb::PrimitiveType{
-	return getPostgresqlType(type);
 }
