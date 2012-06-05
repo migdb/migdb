@@ -17,5 +17,5 @@ package mm.app;
  * @model
  * @generated
  */
-public interface EmbeddedClass extends AbstractClass {
+public interface EmbeddedClass extends GeneralClass {
 } // EmbeddedClass

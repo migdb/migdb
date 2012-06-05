@@ -12,8 +12,8 @@ import mm.app.AppPackage;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 
-import mm.app.operations.ModelOperation;
-import mm.app.operations.OperationsPackage;
+import mm.app.ops.ModelOperation;
+import mm.app.ops.OpsPackage;
 
 import org.eclipse.emf.common.notify.NotificationChain;
 
@@ -100,7 +100,7 @@ public class ModelRootImpl extends EObjectImpl implements ModelRoot {
 	 */
 	public EList<ModelOperation> getOperations() {
 		if (operations == null) {
-			operations = new EObjectContainmentWithInverseEList<ModelOperation>(ModelOperation.class, this, AppPackage.MODEL_ROOT__OPERATIONS, OperationsPackage.MODEL_OPERATION__MODEL_ROOT);
+			operations = new EObjectContainmentWithInverseEList<ModelOperation>(ModelOperation.class, this, AppPackage.MODEL_ROOT__OPERATIONS, OpsPackage.MODEL_OPERATION__MODEL_ROOT);
 		}
 		return operations;
 	}

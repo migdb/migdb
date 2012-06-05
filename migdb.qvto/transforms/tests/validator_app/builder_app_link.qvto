@@ -1,1 +1,217 @@
-/home/woxie/git_repositories/migdb/migdb.qvto/transforms/builders/builder_app.qvto
+library builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+/********************************************
+ *				CLASS HELPERS			 	*
+ ********************************************/
+
+helper addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
+	return object APP::ops::AddPrimitiveClass {
+		name := _name;
+		primitiveType := _primitiveType;
+	}
+}
+
+helper addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
+	return object APP::ops::AddEmbeddedClass {
+		name := _name;
+	}
+}
+
+helper addClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddClass {
+	return object APP::ops::AddClass {
+		name := _name;
+		isAbstract := _isAbstract;
+		inheritanceType := _inheritanceType;
+	}
+}
+
+helper renameEntiry(_name : String, _newName : String) : APP::ops::RenameEntity {
+	return object APP::ops::RenameEntity {
+		name := _name;
+		newName := _newName;
+	}
+}
+
+helper removeEntiry(_name : String) : APP::ops::RemoveEntity {
+	return object APP::ops::RemoveEntity {
+		name := _name;
+	}
+}
+
+/********************************************
+ *			PROPERTY HELPERS			 	*
+ ********************************************/
+
+helper addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
+	return object APP::ops::AddProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		type := _type;
+	}
+}
+
+helper renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
+	return object APP::ops::RenameProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		newName := _newName;
+	}
+}
+
+helper removeProperty(_owningClassName : String, _name : String) : APP::ops::RemoveProperty {
+	return object APP::ops::RemoveProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+	}
+}
+
+/********************************************
+ *				SET HELPERS				 	*
+ ********************************************/
+
+helper setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
+	return object APP::ops::SetOpposite {
+		firstClassName := _firstClassName;
+		firstPropertyName := _firstPropertyName;
+		secondClassName := _secondClassName;
+		secondPropertyName := _secondPropertyName;
+		isOpposite := _isOpposite;
+	}
+}
+
+helper setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
+	return object APP::ops::SetAbstract {
+		name := _name;
+		isAbstract := _isAbstract;
+	}
+}
+
+helper setParent(_name : String, _parentName : String, _properties : OrderedSet(String)) : APP::ops::SetParent {
+	return object APP::ops::SetParent {
+		name := _name;
+		parentName := _parentName;
+		properties := _properties;
+	}
+}
+
+helper setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
+	return object APP::ops::SetType {
+		owningClassName := _owningClassName;
+		name := _name;
+		type := _type;
+	}
+}
+
+helper setBoundries(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
+	return object APP::ops::SetBoundries {
+		owningClassName := _owningClassName;
+		name := _name;
+		lowerBound := _lowerBound;
+		upperBound := _upperBound;
+	}
+}
+
+helper setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
+	return object APP::ops::SetOrdered {
+		owningClassName := _owningClassName;
+		name := _name;
+		isOrdered := _isOrdered;
+	}
+}
+
+helper setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
+	return object APP::ops::SetUnique {
+		owningClassName := _owningClassName;
+		name := _name;
+		isUnique := _isUnique;
+	}
+}
+
+/********************************************
+ *				COMPLEX HELPERS			 	*
+ ********************************************/
+
+
+helper copyProperty(_name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::CopyProperty {
+	return object APP::ops::CopyProperty {
+		name := _name;
+		targetClassName := _targetClassName;
+		type := _type;
+	}
+}
+
+helper moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::MoveProperty {
+	return object APP::ops::MoveProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		targetClassName := _targetClassName;
+		type := _type;
+	}
+}
+
+helper extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), _extractClassName : String) : APP::ops::ExtractClass {
+	return object APP::ops::ExtractClass {
+		sourceClassName := _sourceClassName;
+		extractPropertiesNames := _extractPropertiesNames;
+		extractClassName := _extractClassName;
+	}
+}
+
+/********************************************
+ *				BUILD MODEL				 	*
+ ********************************************/
+ 
+helper _property(_name : String, _type : ModelEntity) : Property {
+ 	return object Property {
+ 		name := _name;
+ 		type := _type;
+ 	}
+}
+ 
+helper _property(_name : String, _type : ModelEntity, _isID : Boolean) : Property {
+	var prop : Property := _property(_name, _type);
+	prop.isID := _isID;
+	prop.lowerBound := 1;
+ 	return prop;
+}
+
+helper _property(_name : String, _type : ModelEntity, _lowerBound : Integer, _upperbound : Integer) : Property {
+	var prop : Property := _property(_name, _type);
+ 	prop.lowerBound := _lowerBound;
+ 	prop.upperBound := _upperbound;
+ 	return prop;
+}
+
+helper _property(_name : String, _type : ModelEntity, _oppositeProperty : Property, _isID : Boolean, _lowerBound : Integer, _upperbound : Integer) : Property {
+	var prop : Property := _property(_name, _type,_lowerBound, _upperbound);
+	prop.oppositeProperty := _oppositeProperty;
+	return prop;
+}
+
+helper _class(_name : String, _properties : OrderedSet(Property)) : StandardClass {
+ 	return object StandardClass {
+ 		name := _name;
+ 		properties := _properties;
+ 	}
+}
+
+helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
+ 	var cls : StandardClass := _class(_name, _properties);
+ 	cls.parent := _parent;
+ 	return cls;
+}
+ 
+helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
+ 	return object PrimitiveClass {
+ 		name := _name;
+ 		primitiveType := _primitiveType;
+ 	}
+}
+
+helper _embeddedClass(_name : String, _properties : OrderedSet(Property)) : EmbeddedClass {
+ 	return object EmbeddedClass {
+ 		name := _name;
+ 		properties := _properties;
+ 	}
+}

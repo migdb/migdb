@@ -9,7 +9,7 @@ package mm.app.impl;
 import java.util.Collection;
 
 import mm.app.AppPackage;
-import mm.app.Entity;
+import mm.app.ModelEntity;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 
@@ -36,7 +36,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link mm.app.impl.ModelGenerationImpl#getModelRoot <em>Model Root</em>}</li>
  *   <li>{@link mm.app.impl.ModelGenerationImpl#isIsMissing <em>Is Missing</em>}</li>
- *   <li>{@link mm.app.impl.ModelGenerationImpl#getClasses <em>Classes</em>}</li>
+ *   <li>{@link mm.app.impl.ModelGenerationImpl#getEntities <em>Entities</em>}</li>
  * </ul>
  * </p>
  *
@@ -64,14 +64,14 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	protected boolean isMissing = IS_MISSING_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getClasses() <em>Classes</em>}' containment reference list.
+	 * The cached value of the '{@link #getEntities() <em>Entities</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getClasses()
+	 * @see #getEntities()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Entity> classes;
+	protected EList<ModelEntity> entities;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -128,11 +128,11 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Entity> getClasses() {
-		if (classes == null) {
-			classes = new EObjectContainmentWithInverseEList<Entity>(Entity.class, this, AppPackage.MODEL_GENERATION__CLASSES, AppPackage.ENTITY__OWNING_MODEL);
+	public EList<ModelEntity> getEntities() {
+		if (entities == null) {
+			entities = new EObjectContainmentWithInverseEList<ModelEntity>(ModelEntity.class, this, AppPackage.MODEL_GENERATION__ENTITIES, AppPackage.MODEL_ENTITY__OWNING_GENERATION);
 		}
-		return classes;
+		return entities;
 	}
 
 	/**
@@ -148,8 +148,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return eBasicSetContainer(otherEnd, AppPackage.MODEL_GENERATION__MODEL_ROOT, msgs);
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getClasses()).basicAdd(otherEnd, msgs);
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getEntities()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -164,8 +164,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 		switch (featureID) {
 			case AppPackage.MODEL_GENERATION__MODEL_ROOT:
 				return eBasicSetContainer(null, AppPackage.MODEL_GENERATION__MODEL_ROOT, msgs);
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				return ((InternalEList<?>)getClasses()).basicRemove(otherEnd, msgs);
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				return ((InternalEList<?>)getEntities()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -196,8 +196,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				return getModelRoot();
 			case AppPackage.MODEL_GENERATION__IS_MISSING:
 				return isIsMissing();
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				return getClasses();
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				return getEntities();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -214,9 +214,9 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 			case AppPackage.MODEL_GENERATION__IS_MISSING:
 				setIsMissing((Boolean)newValue);
 				return;
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				getClasses().clear();
-				getClasses().addAll((Collection<? extends Entity>)newValue);
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				getEntities().clear();
+				getEntities().addAll((Collection<? extends ModelEntity>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -233,8 +233,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 			case AppPackage.MODEL_GENERATION__IS_MISSING:
 				setIsMissing(IS_MISSING_EDEFAULT);
 				return;
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				getClasses().clear();
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				getEntities().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -252,8 +252,8 @@ public class ModelGenerationImpl extends EObjectImpl implements ModelGeneration 
 				return getModelRoot() != null;
 			case AppPackage.MODEL_GENERATION__IS_MISSING:
 				return isMissing != IS_MISSING_EDEFAULT;
-			case AppPackage.MODEL_GENERATION__CLASSES:
-				return classes != null && !classes.isEmpty();
+			case AppPackage.MODEL_GENERATION__ENTITIES:
+				return entities != null && !entities.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

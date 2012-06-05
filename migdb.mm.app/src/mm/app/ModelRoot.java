@@ -6,7 +6,7 @@
  */
 package mm.app;
 
-import mm.app.operations.ModelOperation;
+import mm.app.ops.ModelOperation;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -50,8 +50,8 @@ public interface ModelRoot extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Operations</b></em>' containment reference list.
-	 * The list contents are of type {@link mm.app.operations.ModelOperation}.
-	 * It is bidirectional and its opposite is '{@link mm.app.operations.ModelOperation#getModelRoot <em>Model Root</em>}'.
+	 * The list contents are of type {@link mm.app.ops.ModelOperation}.
+	 * It is bidirectional and its opposite is '{@link mm.app.ops.ModelOperation#getModelRoot <em>Model Root</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Operations</em>' containment reference list isn't clear,
@@ -60,7 +60,7 @@ public interface ModelRoot extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Operations</em>' containment reference list.
 	 * @see mm.app.AppPackage#getModelRoot_Operations()
-	 * @see mm.app.operations.ModelOperation#getModelRoot
+	 * @see mm.app.ops.ModelOperation#getModelRoot
 	 * @model opposite="modelRoot" containment="true"
 	 * @generated
 	 */

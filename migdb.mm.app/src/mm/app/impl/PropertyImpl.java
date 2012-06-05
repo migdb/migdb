@@ -6,9 +6,9 @@
  */
 package mm.app.impl;
 
-import mm.app.AbstractClass;
 import mm.app.AppPackage;
-import mm.app.Entity;
+import mm.app.GeneralClass;
+import mm.app.ModelEntity;
 import mm.app.Property;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -27,7 +27,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link mm.app.impl.PropertyImpl#getOwningClass <em>Owning Class</em>}</li>
+ *   <li>{@link mm.app.impl.PropertyImpl#getOwningGeneralClass <em>Owning General Class</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#getName <em>Name</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#getType <em>Type</em>}</li>
  *   <li>{@link mm.app.impl.PropertyImpl#getDefaultValue <em>Default Value</em>}</li>
@@ -72,7 +72,7 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * @generated
 	 * @ordered
 	 */
-	protected Entity type;
+	protected ModelEntity type;
 
 	/**
 	 * The default value of the '{@link #getDefaultValue() <em>Default Value</em>}' attribute.
@@ -248,9 +248,9 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AbstractClass getOwningClass() {
-		if (eContainerFeatureID() != AppPackage.PROPERTY__OWNING_CLASS) return null;
-		return (AbstractClass)eContainer();
+	public GeneralClass getOwningGeneralClass() {
+		if (eContainerFeatureID() != AppPackage.PROPERTY__OWNING_GENERAL_CLASS) return null;
+		return (GeneralClass)eContainer();
 	}
 
 	/**
@@ -279,10 +279,10 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Entity getType() {
+	public ModelEntity getType() {
 		if (type != null && type.eIsProxy()) {
 			InternalEObject oldType = (InternalEObject)type;
-			type = (Entity)eResolveProxy(oldType);
+			type = (ModelEntity)eResolveProxy(oldType);
 			if (type != oldType) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, AppPackage.PROPERTY__TYPE, oldType, type));
@@ -296,7 +296,7 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Entity basicGetType() {
+	public ModelEntity basicGetType() {
 		return type;
 	}
 
@@ -305,8 +305,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setType(Entity newType) {
-		Entity oldType = type;
+	public void setType(ModelEntity newType) {
+		ModelEntity oldType = type;
 		type = newType;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, AppPackage.PROPERTY__TYPE, oldType, type));
@@ -505,10 +505,10 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case AppPackage.PROPERTY__OWNING_CLASS:
+			case AppPackage.PROPERTY__OWNING_GENERAL_CLASS:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
-				return eBasicSetContainer(otherEnd, AppPackage.PROPERTY__OWNING_CLASS, msgs);
+				return eBasicSetContainer(otherEnd, AppPackage.PROPERTY__OWNING_GENERAL_CLASS, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -521,8 +521,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case AppPackage.PROPERTY__OWNING_CLASS:
-				return eBasicSetContainer(null, AppPackage.PROPERTY__OWNING_CLASS, msgs);
+			case AppPackage.PROPERTY__OWNING_GENERAL_CLASS:
+				return eBasicSetContainer(null, AppPackage.PROPERTY__OWNING_GENERAL_CLASS, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -535,8 +535,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	@Override
 	public NotificationChain eBasicRemoveFromContainerFeature(NotificationChain msgs) {
 		switch (eContainerFeatureID()) {
-			case AppPackage.PROPERTY__OWNING_CLASS:
-				return eInternalContainer().eInverseRemove(this, AppPackage.ABSTRACT_CLASS__PROPERTIES, AbstractClass.class, msgs);
+			case AppPackage.PROPERTY__OWNING_GENERAL_CLASS:
+				return eInternalContainer().eInverseRemove(this, AppPackage.GENERAL_CLASS__PROPERTIES, GeneralClass.class, msgs);
 		}
 		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
@@ -549,8 +549,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case AppPackage.PROPERTY__OWNING_CLASS:
-				return getOwningClass();
+			case AppPackage.PROPERTY__OWNING_GENERAL_CLASS:
+				return getOwningGeneralClass();
 			case AppPackage.PROPERTY__NAME:
 				return getName();
 			case AppPackage.PROPERTY__TYPE:
@@ -589,7 +589,7 @@ public class PropertyImpl extends EObjectImpl implements Property {
 				setName((String)newValue);
 				return;
 			case AppPackage.PROPERTY__TYPE:
-				setType((Entity)newValue);
+				setType((ModelEntity)newValue);
 				return;
 			case AppPackage.PROPERTY__DEFAULT_VALUE:
 				setDefaultValue((String)newValue);
@@ -631,7 +631,7 @@ public class PropertyImpl extends EObjectImpl implements Property {
 				setName(NAME_EDEFAULT);
 				return;
 			case AppPackage.PROPERTY__TYPE:
-				setType((Entity)null);
+				setType((ModelEntity)null);
 				return;
 			case AppPackage.PROPERTY__DEFAULT_VALUE:
 				setDefaultValue(DEFAULT_VALUE_EDEFAULT);
@@ -669,8 +669,8 @@ public class PropertyImpl extends EObjectImpl implements Property {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case AppPackage.PROPERTY__OWNING_CLASS:
-				return getOwningClass() != null;
+			case AppPackage.PROPERTY__OWNING_GENERAL_CLASS:
+				return getOwningGeneralClass() != null;
 			case AppPackage.PROPERTY__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case AppPackage.PROPERTY__TYPE:

@@ -6,14 +6,7 @@
  */
 package mm.app.util;
 
-import mm.app.AbstractClass;
-import mm.app.AppPackage;
-import mm.app.EmbeddedClass;
-import mm.app.Entity;
-import mm.app.ModelGeneration;
-import mm.app.ModelRoot;
-import mm.app.PrimitiveClass;
-import mm.app.Property;
+import mm.app.*;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
@@ -87,12 +80,12 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 				return createModelGenerationAdapter();
 			}
 			@Override
-			public Adapter caseEntity(Entity object) {
-				return createEntityAdapter();
+			public Adapter caseModelEntity(ModelEntity object) {
+				return createModelEntityAdapter();
 			}
 			@Override
-			public Adapter caseAbstractClass(AbstractClass object) {
-				return createAbstractClassAdapter();
+			public Adapter caseGeneralClass(GeneralClass object) {
+				return createGeneralClassAdapter();
 			}
 			@Override
 			public Adapter casePrimitiveClass(PrimitiveClass object) {
@@ -103,8 +96,8 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 				return createEmbeddedClassAdapter();
 			}
 			@Override
-			public Adapter caseClass(mm.app.Class object) {
-				return createClassAdapter();
+			public Adapter caseStandardClass(StandardClass object) {
+				return createStandardClassAdapter();
 			}
 			@Override
 			public Adapter caseProperty(Property object) {
@@ -159,30 +152,30 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.Entity <em>Entity</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.ModelEntity <em>Model Entity</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.Entity
+	 * @see mm.app.ModelEntity
 	 * @generated
 	 */
-	public Adapter createEntityAdapter() {
+	public Adapter createModelEntityAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.AbstractClass <em>Abstract Class</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.GeneralClass <em>General Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.AbstractClass
+	 * @see mm.app.GeneralClass
 	 * @generated
 	 */
-	public Adapter createAbstractClassAdapter() {
+	public Adapter createGeneralClassAdapter() {
 		return null;
 	}
 
@@ -215,16 +208,16 @@ public class AppAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link mm.app.Class <em>Class</em>}'.
+	 * Creates a new adapter for an object of class '{@link mm.app.StandardClass <em>Standard Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see mm.app.Class
+	 * @see mm.app.StandardClass
 	 * @generated
 	 */
-	public Adapter createClassAdapter() {
+	public Adapter createStandardClassAdapter() {
 		return null;
 	}
 

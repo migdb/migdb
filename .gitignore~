@@ -1,5 +1,3 @@
 migdb.testing/output-tests/*
 migdb.mm.app/src/*
-migdb.mm.app/bin/*
 migdb.mm.rdb/src/*
-migdb.mm.rdb/bin/*

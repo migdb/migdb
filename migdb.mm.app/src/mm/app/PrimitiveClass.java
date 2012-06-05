@@ -23,7 +23,7 @@ package mm.app;
  * @model
  * @generated
  */
-public interface PrimitiveClass extends Entity {
+public interface PrimitiveClass extends ModelEntity {
 	/**
 	 * Returns the value of the '<em><b>Primitive Type</b></em>' attribute.
 	 * The literals are from the enumeration {@link mm.app.PrimitiveType}.

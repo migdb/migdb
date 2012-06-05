@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EClass;
  *
  * @generated
  */
-public class EmbeddedClassImpl extends AbstractClassImpl implements EmbeddedClass {
+public class EmbeddedClassImpl extends GeneralClassImpl implements EmbeddedClass {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

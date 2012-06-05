@@ -6,21 +6,22 @@
  */
 package mm.app.impl;
 
-import mm.app.AbstractClass;
 import mm.app.AppFactory;
 import mm.app.AppPackage;
 import mm.app.EmbeddedClass;
-import mm.app.Entity;
+import mm.app.GeneralClass;
 import mm.app.InheritanceType;
+import mm.app.ModelEntity;
 import mm.app.ModelGeneration;
 import mm.app.ModelRoot;
 import mm.app.PrimitiveClass;
 import mm.app.PrimitiveType;
 import mm.app.Property;
+import mm.app.StandardClass;
 
-import mm.app.operations.OperationsPackage;
+import mm.app.ops.OpsPackage;
 
-import mm.app.operations.impl.OperationsPackageImpl;
+import mm.app.ops.impl.OpsPackageImpl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -56,14 +57,14 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass entityEClass = null;
+	private EClass modelEntityEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass abstractClassEClass = null;
+	private EClass generalClassEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -84,7 +85,7 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass classEClass = null;
+	private EClass standardClassEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -154,15 +155,15 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 		isInited = true;
 
 		// Obtain or create and register interdependencies
-		OperationsPackageImpl theOperationsPackage = (OperationsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(OperationsPackage.eNS_URI) instanceof OperationsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(OperationsPackage.eNS_URI) : OperationsPackage.eINSTANCE);
+		OpsPackageImpl theOpsPackage = (OpsPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(OpsPackage.eNS_URI) instanceof OpsPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(OpsPackage.eNS_URI) : OpsPackage.eINSTANCE);
 
 		// Create package meta-data objects
 		theAppPackage.createPackageContents();
-		theOperationsPackage.createPackageContents();
+		theOpsPackage.createPackageContents();
 
 		// Initialize created meta-data
 		theAppPackage.initializePackageContents();
-		theOperationsPackage.initializePackageContents();
+		theOpsPackage.initializePackageContents();
 
 		// Mark meta-data to indicate it can't be changed
 		theAppPackage.freeze();
@@ -232,7 +233,7 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getModelGeneration_Classes() {
+	public EReference getModelGeneration_Entities() {
 		return (EReference)modelGenerationEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -241,8 +242,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getEntity() {
-		return entityEClass;
+	public EClass getModelEntity() {
+		return modelEntityEClass;
 	}
 
 	/**
@@ -250,8 +251,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getEntity_OwningModel() {
-		return (EReference)entityEClass.getEStructuralFeatures().get(0);
+	public EReference getModelEntity_OwningGeneration() {
+		return (EReference)modelEntityEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -259,8 +260,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getEntity_Name() {
-		return (EAttribute)entityEClass.getEStructuralFeatures().get(1);
+	public EAttribute getModelEntity_Name() {
+		return (EAttribute)modelEntityEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -268,8 +269,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getAbstractClass() {
-		return abstractClassEClass;
+	public EClass getGeneralClass() {
+		return generalClassEClass;
 	}
 
 	/**
@@ -277,8 +278,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAbstractClass_Properties() {
-		return (EReference)abstractClassEClass.getEStructuralFeatures().get(0);
+	public EReference getGeneralClass_Properties() {
+		return (EReference)generalClassEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -313,8 +314,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getClass_() {
-		return classEClass;
+	public EClass getStandardClass() {
+		return standardClassEClass;
 	}
 
 	/**
@@ -322,8 +323,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getClass_Parent() {
-		return (EReference)classEClass.getEStructuralFeatures().get(0);
+	public EReference getStandardClass_Parent() {
+		return (EReference)standardClassEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -331,8 +332,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getClass_IsAbstract() {
-		return (EAttribute)classEClass.getEStructuralFeatures().get(1);
+	public EAttribute getStandardClass_IsAbstract() {
+		return (EAttribute)standardClassEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -340,8 +341,8 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getClass_InheritanceType() {
-		return (EAttribute)classEClass.getEStructuralFeatures().get(2);
+	public EAttribute getStandardClass_InheritanceType() {
+		return (EAttribute)standardClassEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -358,7 +359,7 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProperty_OwningClass() {
+	public EReference getProperty_OwningGeneralClass() {
 		return (EReference)propertyEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -505,27 +506,27 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 		modelGenerationEClass = createEClass(MODEL_GENERATION);
 		createEReference(modelGenerationEClass, MODEL_GENERATION__MODEL_ROOT);
 		createEAttribute(modelGenerationEClass, MODEL_GENERATION__IS_MISSING);
-		createEReference(modelGenerationEClass, MODEL_GENERATION__CLASSES);
+		createEReference(modelGenerationEClass, MODEL_GENERATION__ENTITIES);
 
-		entityEClass = createEClass(ENTITY);
-		createEReference(entityEClass, ENTITY__OWNING_MODEL);
-		createEAttribute(entityEClass, ENTITY__NAME);
+		modelEntityEClass = createEClass(MODEL_ENTITY);
+		createEReference(modelEntityEClass, MODEL_ENTITY__OWNING_GENERATION);
+		createEAttribute(modelEntityEClass, MODEL_ENTITY__NAME);
 
-		abstractClassEClass = createEClass(ABSTRACT_CLASS);
-		createEReference(abstractClassEClass, ABSTRACT_CLASS__PROPERTIES);
+		generalClassEClass = createEClass(GENERAL_CLASS);
+		createEReference(generalClassEClass, GENERAL_CLASS__PROPERTIES);
 
 		primitiveClassEClass = createEClass(PRIMITIVE_CLASS);
 		createEAttribute(primitiveClassEClass, PRIMITIVE_CLASS__PRIMITIVE_TYPE);
 
 		embeddedClassEClass = createEClass(EMBEDDED_CLASS);
 
-		classEClass = createEClass(CLASS);
-		createEReference(classEClass, CLASS__PARENT);
-		createEAttribute(classEClass, CLASS__IS_ABSTRACT);
-		createEAttribute(classEClass, CLASS__INHERITANCE_TYPE);
+		standardClassEClass = createEClass(STANDARD_CLASS);
+		createEReference(standardClassEClass, STANDARD_CLASS__PARENT);
+		createEAttribute(standardClassEClass, STANDARD_CLASS__IS_ABSTRACT);
+		createEAttribute(standardClassEClass, STANDARD_CLASS__INHERITANCE_TYPE);
 
 		propertyEClass = createEClass(PROPERTY);
-		createEReference(propertyEClass, PROPERTY__OWNING_CLASS);
+		createEReference(propertyEClass, PROPERTY__OWNING_GENERAL_CLASS);
 		createEAttribute(propertyEClass, PROPERTY__NAME);
 		createEReference(propertyEClass, PROPERTY__TYPE);
 		createEAttribute(propertyEClass, PROPERTY__DEFAULT_VALUE);
@@ -566,52 +567,52 @@ public class AppPackageImpl extends EPackageImpl implements AppPackage {
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
-		OperationsPackage theOperationsPackage = (OperationsPackage)EPackage.Registry.INSTANCE.getEPackage(OperationsPackage.eNS_URI);
+		OpsPackage theOpsPackage = (OpsPackage)EPackage.Registry.INSTANCE.getEPackage(OpsPackage.eNS_URI);
 
 		// Add subpackages
-		getESubpackages().add(theOperationsPackage);
+		getESubpackages().add(theOpsPackage);
 
 		// Create type parameters
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		abstractClassEClass.getESuperTypes().add(this.getEntity());
-		primitiveClassEClass.getESuperTypes().add(this.getEntity());
-		embeddedClassEClass.getESuperTypes().add(this.getAbstractClass());
-		classEClass.getESuperTypes().add(this.getAbstractClass());
+		generalClassEClass.getESuperTypes().add(this.getModelEntity());
+		primitiveClassEClass.getESuperTypes().add(this.getModelEntity());
+		embeddedClassEClass.getESuperTypes().add(this.getGeneralClass());
+		standardClassEClass.getESuperTypes().add(this.getGeneralClass());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(modelRootEClass, ModelRoot.class, "ModelRoot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getModelRoot_ModelGenerations(), this.getModelGeneration(), this.getModelGeneration_ModelRoot(), "modelGenerations", null, 1, -1, ModelRoot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelRoot_Operations(), theOperationsPackage.getModelOperation(), theOperationsPackage.getModelOperation_ModelRoot(), "operations", null, 0, -1, ModelRoot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getModelRoot_Operations(), theOpsPackage.getModelOperation(), theOpsPackage.getModelOperation_ModelRoot(), "operations", null, 0, -1, ModelRoot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(modelGenerationEClass, ModelGeneration.class, "ModelGeneration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getModelGeneration_ModelRoot(), this.getModelRoot(), this.getModelRoot_ModelGenerations(), "modelRoot", null, 1, 1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getModelGeneration_IsMissing(), ecorePackage.getEBoolean(), "isMissing", "false", 1, 1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getModelGeneration_Classes(), this.getEntity(), this.getEntity_OwningModel(), "classes", null, 0, -1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEReference(getModelGeneration_Entities(), this.getModelEntity(), this.getModelEntity_OwningGeneration(), "entities", null, 0, -1, ModelGeneration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
-		initEClass(entityEClass, Entity.class, "Entity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getEntity_OwningModel(), this.getModelGeneration(), this.getModelGeneration_Classes(), "owningModel", null, 1, 1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEntity_Name(), ecorePackage.getEString(), "name", null, 1, 1, Entity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(modelEntityEClass, ModelEntity.class, "ModelEntity", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getModelEntity_OwningGeneration(), this.getModelGeneration(), this.getModelGeneration_Entities(), "owningGeneration", null, 1, 1, ModelEntity.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModelEntity_Name(), ecorePackage.getEString(), "name", null, 1, 1, ModelEntity.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(abstractClassEClass, AbstractClass.class, "AbstractClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getAbstractClass_Properties(), this.getProperty(), this.getProperty_OwningClass(), "properties", null, 0, -1, AbstractClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
+		initEClass(generalClassEClass, GeneralClass.class, "GeneralClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getGeneralClass_Properties(), this.getProperty(), this.getProperty_OwningGeneralClass(), "properties", null, 0, -1, GeneralClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED);
 
 		initEClass(primitiveClassEClass, PrimitiveClass.class, "PrimitiveClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPrimitiveClass_PrimitiveType(), this.getPrimitiveType(), "primitiveType", null, 1, 1, PrimitiveClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(embeddedClassEClass, EmbeddedClass.class, "EmbeddedClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(classEClass, mm.app.Class.class, "Class", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getClass_Parent(), this.getClass_(), null, "parent", null, 0, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getClass_IsAbstract(), ecorePackage.getEBoolean(), "isAbstract", "false", 0, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getClass_InheritanceType(), this.getInheritanceType(), "inheritanceType", null, 1, 1, mm.app.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(standardClassEClass, StandardClass.class, "StandardClass", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getStandardClass_Parent(), this.getStandardClass(), null, "parent", null, 0, 1, StandardClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStandardClass_IsAbstract(), ecorePackage.getEBoolean(), "isAbstract", "false", 0, 1, StandardClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStandardClass_InheritanceType(), this.getInheritanceType(), "inheritanceType", null, 1, 1, StandardClass.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getProperty_OwningClass(), this.getAbstractClass(), this.getAbstractClass_Properties(), "owningClass", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getProperty_OwningGeneralClass(), this.getGeneralClass(), this.getGeneralClass_Properties(), "owningGeneralClass", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getProperty_Type(), this.getEntity(), null, "type", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getProperty_Type(), this.getModelEntity(), null, "type", null, 1, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProperty_DefaultValue(), ecorePackage.getEString(), "defaultValue", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProperty_OppositeProperty(), this.getProperty(), null, "oppositeProperty", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProperty_LowerBound(), ecorePackage.getEInt(), "lowerBound", "0", 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

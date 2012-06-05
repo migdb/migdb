@@ -6,17 +6,7 @@
  */
 package mm.app.impl;
 
-import mm.app.AbstractClass;
-import mm.app.AppFactory;
-import mm.app.AppPackage;
-import mm.app.EmbeddedClass;
-import mm.app.Entity;
-import mm.app.InheritanceType;
-import mm.app.ModelGeneration;
-import mm.app.ModelRoot;
-import mm.app.PrimitiveClass;
-import mm.app.PrimitiveType;
-import mm.app.Property;
+import mm.app.*;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -73,11 +63,11 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 		switch (eClass.getClassifierID()) {
 			case AppPackage.MODEL_ROOT: return createModelRoot();
 			case AppPackage.MODEL_GENERATION: return createModelGeneration();
-			case AppPackage.ENTITY: return createEntity();
-			case AppPackage.ABSTRACT_CLASS: return createAbstractClass();
+			case AppPackage.MODEL_ENTITY: return createModelEntity();
+			case AppPackage.GENERAL_CLASS: return createGeneralClass();
 			case AppPackage.PRIMITIVE_CLASS: return createPrimitiveClass();
 			case AppPackage.EMBEDDED_CLASS: return createEmbeddedClass();
-			case AppPackage.CLASS: return createClass();
+			case AppPackage.STANDARD_CLASS: return createStandardClass();
 			case AppPackage.PROPERTY: return createProperty();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
@@ -143,9 +133,9 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Entity createEntity() {
-		EntityImpl entity = new EntityImpl();
-		return entity;
+	public ModelEntity createModelEntity() {
+		ModelEntityImpl modelEntity = new ModelEntityImpl();
+		return modelEntity;
 	}
 
 	/**
@@ -153,9 +143,9 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AbstractClass createAbstractClass() {
-		AbstractClassImpl abstractClass = new AbstractClassImpl();
-		return abstractClass;
+	public GeneralClass createGeneralClass() {
+		GeneralClassImpl generalClass = new GeneralClassImpl();
+		return generalClass;
 	}
 
 	/**
@@ -183,9 +173,9 @@ public class AppFactoryImpl extends EFactoryImpl implements AppFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public mm.app.Class createClass() {
-		ClassImpl class_ = new ClassImpl();
-		return class_;
+	public StandardClass createStandardClass() {
+		StandardClassImpl standardClass = new StandardClassImpl();
+		return standardClass;
 	}
 
 	/**

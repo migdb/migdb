@@ -29,7 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *
  * @generated
  */
-public class PrimitiveClassImpl extends EntityImpl implements PrimitiveClass {
+public class PrimitiveClassImpl extends ModelEntityImpl implements PrimitiveClass {
 	/**
 	 * The default value of the '{@link #getPrimitiveType() <em>Primitive Type</em>}' attribute.
 	 * <!-- begin-user-doc -->

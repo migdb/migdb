@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link mm.app.ModelGeneration#getModelRoot <em>Model Root</em>}</li>
  *   <li>{@link mm.app.ModelGeneration#isIsMissing <em>Is Missing</em>}</li>
- *   <li>{@link mm.app.ModelGeneration#getClasses <em>Classes</em>}</li>
+ *   <li>{@link mm.app.ModelGeneration#getEntities <em>Entities</em>}</li>
  * </ul>
  * </p>
  *
@@ -74,21 +74,21 @@ public interface ModelGeneration extends EObject {
 	void setIsMissing(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Classes</b></em>' containment reference list.
-	 * The list contents are of type {@link mm.app.Entity}.
-	 * It is bidirectional and its opposite is '{@link mm.app.Entity#getOwningModel <em>Owning Model</em>}'.
+	 * Returns the value of the '<em><b>Entities</b></em>' containment reference list.
+	 * The list contents are of type {@link mm.app.ModelEntity}.
+	 * It is bidirectional and its opposite is '{@link mm.app.ModelEntity#getOwningGeneration <em>Owning Generation</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Classes</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Entities</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Classes</em>' containment reference list.
-	 * @see mm.app.AppPackage#getModelGeneration_Classes()
-	 * @see mm.app.Entity#getOwningModel
-	 * @model opposite="owningModel" containment="true" ordered="false"
+	 * @return the value of the '<em>Entities</em>' containment reference list.
+	 * @see mm.app.AppPackage#getModelGeneration_Entities()
+	 * @see mm.app.ModelEntity#getOwningGeneration
+	 * @model opposite="owningGeneration" containment="true" ordered="false"
 	 * @generated
 	 */
-	EList<Entity> getClasses();
+	EList<ModelEntity> getEntities();
 
 } // ModelGeneration
