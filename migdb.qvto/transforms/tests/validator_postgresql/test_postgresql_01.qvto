@@ -1,4 +1,4 @@
-import builder_rdb;
+import builder_rdb_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
