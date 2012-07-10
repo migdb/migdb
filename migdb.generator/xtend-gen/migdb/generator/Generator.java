@@ -5,34 +5,33 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mm.rdb.PrimitiveType;
-import mm.rdb.operations.MergeType;
-import mm.rdb.operations.impl.AddColumnImpl;
-import mm.rdb.operations.impl.AddForeignKeyImpl;
-import mm.rdb.operations.impl.AddIndexImpl;
-import mm.rdb.operations.impl.AddInstancesImpl;
-import mm.rdb.operations.impl.AddNotNullConstraintImpl;
-import mm.rdb.operations.impl.AddPrimaryKeyImpl;
-import mm.rdb.operations.impl.AddSchemaImpl;
-import mm.rdb.operations.impl.AddSequenceImpl;
-import mm.rdb.operations.impl.AddTableImpl;
-import mm.rdb.operations.impl.AddUniqueIndexImpl;
-import mm.rdb.operations.impl.CopyInstancesImpl;
-import mm.rdb.operations.impl.GenerateSequenceNumbersImpl;
-import mm.rdb.operations.impl.HasNoInstancesImpl;
-import mm.rdb.operations.impl.HasNoOwnInstancesImpl;
-import mm.rdb.operations.impl.InsertInstancesImpl;
-import mm.rdb.operations.impl.ModelOperationImpl;
-import mm.rdb.operations.impl.RemoveColumnConstraintImpl;
-import mm.rdb.operations.impl.RemoveColumnImpl;
-import mm.rdb.operations.impl.RemoveDefaultValueImpl;
-import mm.rdb.operations.impl.RemoveIndexImpl;
-import mm.rdb.operations.impl.RemoveSequenceImpl;
-import mm.rdb.operations.impl.RemoveTableConstraintImpl;
-import mm.rdb.operations.impl.RemoveTableImpl;
-import mm.rdb.operations.impl.RenameColumnImpl;
-import mm.rdb.operations.impl.RenameTableImpl;
-import mm.rdb.operations.impl.SetColumnDefaultValueImpl;
-import mm.rdb.operations.impl.SetColumnTypeImpl;
+import mm.rdb.ops.MergeType;
+import mm.rdb.ops.impl.AddColumnImpl;
+import mm.rdb.ops.impl.AddForeignKeyImpl;
+import mm.rdb.ops.impl.AddIndexImpl;
+import mm.rdb.ops.impl.AddInstancesImpl;
+import mm.rdb.ops.impl.AddNotNullImpl;
+import mm.rdb.ops.impl.AddPrimaryKeyImpl;
+import mm.rdb.ops.impl.AddSchemaImpl;
+import mm.rdb.ops.impl.AddSequenceImpl;
+import mm.rdb.ops.impl.AddTableImpl;
+import mm.rdb.ops.impl.AddUniqueImpl;
+import mm.rdb.ops.impl.CopyInstancesImpl;
+import mm.rdb.ops.impl.GenerateSequenceNumbersImpl;
+import mm.rdb.ops.impl.HasNoInstancesImpl;
+import mm.rdb.ops.impl.HasNoOwnInstancesImpl;
+import mm.rdb.ops.impl.InsertInstancesImpl;
+import mm.rdb.ops.impl.ModelOperationImpl;
+import mm.rdb.ops.impl.RemoveColumnImpl;
+import mm.rdb.ops.impl.RemoveConstraintImpl;
+import mm.rdb.ops.impl.RemoveDefaultValueImpl;
+import mm.rdb.ops.impl.RemoveIndexImpl;
+import mm.rdb.ops.impl.RemoveSequenceImpl;
+import mm.rdb.ops.impl.RemoveTableImpl;
+import mm.rdb.ops.impl.RenameColumnImpl;
+import mm.rdb.ops.impl.RenameTableImpl;
+import mm.rdb.ops.impl.SetColumnDefaultValueImpl;
+import mm.rdb.ops.impl.SetColumnTypeImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -128,7 +127,7 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
-   * CREATE NOT NULL CONSTRAINT
+   * CREATE NOT NULL
    * To add a constraint, the table constraint syntax is used. For example:
    * >> ALTER TABLE products ADD CONSTRAINT some_name  NOT NULL (product_group_id); <<
    * To add a not-null constraint, which cannot be written as a table constraint, use this syntax:
@@ -138,7 +137,7 @@ public class Generator extends BaseCodeGenerator {
    * Then we add not null constraint.
    * @param AddNotNullConstraintImpl operation : operation of type AddNotNullConstraintImpl
    */
-  protected CharSequence _genOperation(final AddNotNullConstraintImpl operation) {
+  protected CharSequence _genOperation(final AddNotNullImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
@@ -178,8 +177,8 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("PRIMARY KEY (");
-    String _columnName = operation.getColumnName();
-    _builder.append(_columnName, "	");
+    String _owningColumnName = operation.getOwningColumnName();
+    _builder.append(_owningColumnName, "	");
     _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -209,8 +208,8 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("FOREIGN KEY (");
-    String _constrainedColumnName = operation.getConstrainedColumnName();
-    _builder.append(_constrainedColumnName, "	");
+    String _owningColumnName = operation.getOwningColumnName();
+    _builder.append(_owningColumnName, "	");
     _builder.append(") REFERENCES ");
     String _owningSchemaName_1 = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName_1, "	");
@@ -232,9 +231,9 @@ public class Generator extends BaseCodeGenerator {
    * To add a constraint, the table constraint syntax is used. For example:
    * >> ALTER TABLE products ADD CONSTRAINT some_name UNIQUE (product_no); <<
    * Unique index can use only on column with index.
-   * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
+   * @param AddUniqueImpl operation : operation of type AddUniqueIndexImpl
    */
-  protected CharSequence _genOperation(final AddUniqueIndexImpl operation) {
+  protected CharSequence _genOperation(final AddUniqueImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("CREATE UNIQUE INDEX ");
     String _name = operation.getName();
@@ -249,18 +248,8 @@ public class Generator extends BaseCodeGenerator {
     String _owningTableName = operation.getOwningTableName();
     _builder.append(_owningTableName, "	");
     _builder.append(" (");
-    {
-      EList<String> _columnsNames = operation.getColumnsNames();
-      boolean _hasElements = false;
-      for(final String col : _columnsNames) {
-        if (!_hasElements) {
-          _hasElements = true;
-        } else {
-          _builder.appendImmediate(",", "	");
-        }
-        _builder.append(col, "	");
-      }
-    }
+    String _owningColumnName = operation.getOwningColumnName();
+    _builder.append(_owningColumnName, "	");
     _builder.append("); ");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -443,12 +432,12 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
-   * REMOVE TABLE CONSTRAINT
+   * REMOVE CONSTRAINT
    * To remove a constraint you need to know its name. If you gave it a name then that's easy:
    * >> ALTER TABLE products DROP CONSTRAINT some_name; <<
    * @param RemoveTableConstraintImpl operation : operation of type TableConstraintImpl
    */
-  protected CharSequence _genOperation(final RemoveTableConstraintImpl operation) {
+  protected CharSequence _genOperation(final RemoveConstraintImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
@@ -463,31 +452,6 @@ public class Generator extends BaseCodeGenerator {
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(";");
-    _builder.newLineIfNotEmpty();
-    return _builder;
-  }
-  
-  /**
-   * REMOVE COLUMN CONSTRAINT
-   * This works the same for all constraint types except not-null constraints. To drop a not null constraint use:
-   * >> ALTER TABLE products ALTER COLUMN product_no DROP NOT NULL; <<
-   * @param RemoveColumnConstraintImpl operation : operation of type RemoveColumnConstraintImpl
-   */
-  protected CharSequence _genOperation(final RemoveColumnConstraintImpl operation) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("ALTER TABLE ");
-    String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "");
-    _builder.append(".");
-    String _owningTableName = operation.getOwningTableName();
-    _builder.append(_owningTableName, "");
-    _builder.append(" ");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("ALTER COLUMN ");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "	");
-    _builder.append(" DROP NOT NULL;");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -1177,8 +1141,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddIndexImpl)operation);
     } else if (operation instanceof AddInstancesImpl) {
       return _genOperation((AddInstancesImpl)operation);
-    } else if (operation instanceof AddNotNullConstraintImpl) {
-      return _genOperation((AddNotNullConstraintImpl)operation);
+    } else if (operation instanceof AddNotNullImpl) {
+      return _genOperation((AddNotNullImpl)operation);
     } else if (operation instanceof AddPrimaryKeyImpl) {
       return _genOperation((AddPrimaryKeyImpl)operation);
     } else if (operation instanceof AddSchemaImpl) {
@@ -1187,8 +1151,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddSequenceImpl)operation);
     } else if (operation instanceof AddTableImpl) {
       return _genOperation((AddTableImpl)operation);
-    } else if (operation instanceof AddUniqueIndexImpl) {
-      return _genOperation((AddUniqueIndexImpl)operation);
+    } else if (operation instanceof AddUniqueImpl) {
+      return _genOperation((AddUniqueImpl)operation);
     } else if (operation instanceof CopyInstancesImpl) {
       return _genOperation((CopyInstancesImpl)operation);
     } else if (operation instanceof GenerateSequenceNumbersImpl) {
@@ -1199,18 +1163,16 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((HasNoOwnInstancesImpl)operation);
     } else if (operation instanceof InsertInstancesImpl) {
       return _genOperation((InsertInstancesImpl)operation);
-    } else if (operation instanceof RemoveColumnConstraintImpl) {
-      return _genOperation((RemoveColumnConstraintImpl)operation);
     } else if (operation instanceof RemoveColumnImpl) {
       return _genOperation((RemoveColumnImpl)operation);
+    } else if (operation instanceof RemoveConstraintImpl) {
+      return _genOperation((RemoveConstraintImpl)operation);
     } else if (operation instanceof RemoveDefaultValueImpl) {
       return _genOperation((RemoveDefaultValueImpl)operation);
     } else if (operation instanceof RemoveIndexImpl) {
       return _genOperation((RemoveIndexImpl)operation);
     } else if (operation instanceof RemoveSequenceImpl) {
       return _genOperation((RemoveSequenceImpl)operation);
-    } else if (operation instanceof RemoveTableConstraintImpl) {
-      return _genOperation((RemoveTableConstraintImpl)operation);
     } else if (operation instanceof RemoveTableImpl) {
       return _genOperation((RemoveTableImpl)operation);
     } else if (operation instanceof RenameColumnImpl) {

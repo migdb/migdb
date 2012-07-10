@@ -2,33 +2,32 @@ package migdb.generator
 
 import eu.collectionspro.mwe.BaseCodeGenerator
 import java.util.ArrayList
-import mm.rdb.operations.impl.AddColumnImpl
-import mm.rdb.operations.impl.AddForeignKeyImpl
-import mm.rdb.operations.impl.AddIndexImpl
-import mm.rdb.operations.impl.AddInstancesImpl
-import mm.rdb.operations.impl.AddNotNullConstraintImpl
-import mm.rdb.operations.impl.AddPrimaryKeyImpl
-import mm.rdb.operations.impl.AddSchemaImpl
-import mm.rdb.operations.impl.AddSequenceImpl
-import mm.rdb.operations.impl.AddTableImpl
-import mm.rdb.operations.impl.AddUniqueIndexImpl
-import mm.rdb.operations.impl.CopyInstancesImpl
-import mm.rdb.operations.impl.GenerateSequenceNumbersImpl
-import mm.rdb.operations.impl.HasNoInstancesImpl
-import mm.rdb.operations.impl.HasNoOwnInstancesImpl
-import mm.rdb.operations.impl.InsertInstancesImpl
-import mm.rdb.operations.impl.ModelOperationImpl
-import mm.rdb.operations.impl.RemoveColumnConstraintImpl
-import mm.rdb.operations.impl.RemoveColumnImpl
-import mm.rdb.operations.impl.RemoveDefaultValueImpl
-import mm.rdb.operations.impl.RemoveIndexImpl
-import mm.rdb.operations.impl.RemoveSequenceImpl
-import mm.rdb.operations.impl.RemoveTableConstraintImpl
-import mm.rdb.operations.impl.RemoveTableImpl
-import mm.rdb.operations.impl.RenameColumnImpl
-import mm.rdb.operations.impl.RenameTableImpl
-import mm.rdb.operations.impl.SetColumnDefaultValueImpl
-import mm.rdb.operations.impl.SetColumnTypeImpl
+import mm.rdb.ops.impl.AddColumnImpl
+import mm.rdb.ops.impl.AddForeignKeyImpl
+import mm.rdb.ops.impl.AddIndexImpl
+import mm.rdb.ops.impl.AddInstancesImpl
+import mm.rdb.ops.impl.AddNotNullImpl
+import mm.rdb.ops.impl.AddPrimaryKeyImpl
+import mm.rdb.ops.impl.AddSchemaImpl
+import mm.rdb.ops.impl.AddSequenceImpl
+import mm.rdb.ops.impl.AddTableImpl
+import mm.rdb.ops.impl.AddUniqueImpl
+import mm.rdb.ops.impl.CopyInstancesImpl
+import mm.rdb.ops.impl.GenerateSequenceNumbersImpl
+import mm.rdb.ops.impl.HasNoInstancesImpl
+import mm.rdb.ops.impl.HasNoOwnInstancesImpl
+import mm.rdb.ops.impl.InsertInstancesImpl
+import mm.rdb.ops.impl.ModelOperationImpl
+import mm.rdb.ops.impl.RemoveColumnImpl
+import mm.rdb.ops.impl.RemoveDefaultValueImpl
+import mm.rdb.ops.impl.RemoveIndexImpl
+import mm.rdb.ops.impl.RemoveSequenceImpl
+import mm.rdb.ops.impl.RemoveConstraintImpl
+import mm.rdb.ops.impl.RemoveTableImpl
+import mm.rdb.ops.impl.RenameColumnImpl
+import mm.rdb.ops.impl.RenameTableImpl
+import mm.rdb.ops.impl.SetColumnDefaultValueImpl
+import mm.rdb.ops.impl.SetColumnTypeImpl
 import org.eclipse.emf.ecore.EObject
 
 
@@ -108,7 +107,7 @@ class Generator extends BaseCodeGenerator {
 	'''		
 
 	/**
-	 * CREATE NOT NULL CONSTRAINT
+	 * CREATE NOT NULL
 	 * To add a constraint, the table constraint syntax is used. For example:
  	 * >> ALTER TABLE products ADD CONSTRAINT some_name  NOT NULL (product_group_id); <<
  	 * To add a not-null constraint, which cannot be written as a table constraint, use this syntax:
@@ -118,7 +117,7 @@ class Generator extends BaseCodeGenerator {
 	 * Then we add not null constraint.
 	 * @param AddNotNullConstraintImpl operation : operation of type AddNotNullConstraintImpl
 	 */
-	def dispatch genOperation(AddNotNullConstraintImpl operation) '''
+	def dispatch genOperation(AddNotNullImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ALTER COLUMN «operation.owningColumnName» SET NOT NULL;
 	'''	
@@ -132,7 +131,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddPrimaryKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			PRIMARY KEY («operation.columnName»);
+			PRIMARY KEY («operation.owningColumnName»);
 	'''		
 
 	/**
@@ -146,7 +145,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id_«operation.targetTableName»);
+			FOREIGN KEY («operation.owningColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id_«operation.targetTableName»);
 	'''		
 
 	/**
@@ -156,11 +155,11 @@ class Generator extends BaseCodeGenerator {
 	 * To add a constraint, the table constraint syntax is used. For example:
 	 * >> ALTER TABLE products ADD CONSTRAINT some_name UNIQUE (product_no); <<
 	 * Unique index can use only on column with index.
-	 * @param AddUniqueIndexImpl operation : operation of type AddUniqueIndexImpl
+	 * @param AddUniqueImpl operation : operation of type AddUniqueIndexImpl
 	 */
-	def dispatch genOperation(AddUniqueIndexImpl operation) '''
+	def dispatch genOperation(AddUniqueImpl operation) '''
 		CREATE UNIQUE INDEX «operation.name» 
-			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»); 
+			ON «operation.owningSchemaName».«operation.owningTableName» («operation.owningColumnName»); 
 	'''	
 	
 	/**
@@ -242,25 +241,14 @@ class Generator extends BaseCodeGenerator {
 	'''		
 	
 	/**
-	 * REMOVE TABLE CONSTRAINT
+	 * REMOVE CONSTRAINT
 	 * To remove a constraint you need to know its name. If you gave it a name then that's easy:
 	 * >> ALTER TABLE products DROP CONSTRAINT some_name; <<
 	 * @param RemoveTableConstraintImpl operation : operation of type TableConstraintImpl
 	 */
-	def dispatch genOperation(RemoveTableConstraintImpl operation) '''
+	def dispatch genOperation(RemoveConstraintImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 			DROP CONSTRAINT «operation.name»;
-	'''		
-		
-	/**
-	 * REMOVE COLUMN CONSTRAINT
-	 * This works the same for all constraint types except not-null constraints. To drop a not null constraint use:
-	 * >> ALTER TABLE products ALTER COLUMN product_no DROP NOT NULL; <<
-	 * @param RemoveColumnConstraintImpl operation : operation of type RemoveColumnConstraintImpl
-	 */
-	def dispatch genOperation(RemoveColumnConstraintImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» DROP NOT NULL;
 	'''		
 	
 	/**

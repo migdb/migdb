@@ -11,6 +11,7 @@
         <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/PrimitiveType/boolean"/>
         <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/PrimitiveType/char"/>
         <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/PrimitiveType/int"/>
+        <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/PrimitiveType/float"/>
       </genEnums>
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/ModelRoot">
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/ModelRoot/modelGenerations"/>
@@ -31,7 +32,7 @@
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/Sequence">
         <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Sequence/owningSchema"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Sequence/name"/>
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Sequence/cacheSize"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Sequence/startValue"/>
       </genClasses>
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/Index">
         <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Index/owningSchema"/>
@@ -42,8 +43,6 @@
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/Table">
         <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Table/owningSchema"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Table/name"/>
-        <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Table/primaryKey"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Table/columns"/>
         <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Table/constraints"/>
       </genClasses>
@@ -52,18 +51,13 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Column/name"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Column/type"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Column/defaultValue"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Column/constraints"/>
       </genClasses>
       <genClasses image="false" ecoreClass="mm-rdb.ecore#//rdb/Constraint">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/Constraint/name"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Constraint/owningTable"/>
+        <genFeatures property="Readonly" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/Constraint/owningColumn"/>
       </genClasses>
-      <genClasses image="false" ecoreClass="mm-rdb.ecore#//rdb/TableConstraint">
-        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/TableConstraint/owningTable"/>
-      </genClasses>
-      <genClasses ecoreClass="mm-rdb.ecore#//rdb/UniqueIndex">
-        <genFeatures notify="false" createChild="false" propertySortChoices="true"
-            ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/UniqueIndex/underlyingIndex"/>
-      </genClasses>
+      <genClasses ecoreClass="mm-rdb.ecore#//rdb/Unique"/>
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/PrimaryKey"/>
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/ForeignKey">
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
@@ -71,105 +65,157 @@
         <genFeatures notify="false" createChild="false" propertySortChoices="true"
             ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/ForeignKey/constrainedColumn"/>
       </genClasses>
-      <genClasses image="false" ecoreClass="mm-rdb.ecore#//rdb/ColumnConstraint">
-        <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/ColumnConstraint/owningColumn"/>
-      </genClasses>
       <genClasses ecoreClass="mm-rdb.ecore#//rdb/NotNullConstraint"/>
-      <nestedGenPackages prefix="Operations" disposableProviderFactory="true" ecorePackage="mm-rdb.ecore#//rdb/operations">
-        <genClasses image="false" ecoreClass="mm-rdb.ecore#//rdb/operations/ModelOperation"/>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddSchema">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddSchema/name"/>
+      <nestedGenPackages prefix="Ops" disposableProviderFactory="true" ecorePackage="mm-rdb.ecore#//rdb/ops">
+        <genEnums typeSafeEnumCompatible="false" ecoreEnum="mm-rdb.ecore#//rdb/ops/MergeType">
+          <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/ops/MergeType/strict"/>
+          <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/ops/MergeType/force"/>
+          <genEnumLiterals ecoreEnumLiteral="mm-rdb.ecore#//rdb/ops/MergeType/tolerant"/>
+        </genEnums>
+        <genClasses image="false" ecoreClass="mm-rdb.ecore#//rdb/ops/ModelOperation"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddSchema">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddSchema/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddSequence">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddSequence/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddSequence/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddSequence/cacheSize"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddSequence">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddSequence/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddSequence/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddSequence/startValue"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddIndex">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddIndex/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddIndex/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddIndex/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddIndex/columnsNames"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddIndex">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddIndex/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddIndex/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddIndex/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddIndex/columnsNames"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddTable">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddTable/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddTable/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddTable">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddTable/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddTable/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RenameTable">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameTable/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameTable/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameTable/newName"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RenameTable">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameTable/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameTable/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameTable/newName"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RemoveTable">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveTable/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveTable/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveTable">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveTable/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveTable/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddColumn">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddColumn/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddColumn/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddColumn/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddColumn/type"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddColumn/defaultValue"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddColumn">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddColumn/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddColumn/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddColumn/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddColumn/type"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddColumn/defaultValue"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RenameColumn">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameColumn/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameColumn/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameColumn/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RenameColumn/newName"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RenameColumn">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameColumn/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameColumn/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameColumn/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RenameColumn/newName"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RemoveColumn">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumn/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumn/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumn/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/CopyInstances">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/sourceColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/targetTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/targetColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/CopyInstances/type"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddUniqueIndex">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddUniqueIndex/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddUniqueIndex/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddUniqueIndex/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddUniqueIndex/underlyingIndexName"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveColumn">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumn/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumn/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumn/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddPrimaryKey">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddPrimaryKey/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddPrimaryKey/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddPrimaryKey/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddPrimaryKey/underlyingIndexName"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddUniqueIndex">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddUniqueIndex/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddUniqueIndex/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddUniqueIndex/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddUniqueIndex/columnsNames"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddUniqueIndex/underlyingIndexName"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddForeignKey">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddForeignKey/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddForeignKey/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddForeignKey/name"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddForeignKey/targetTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddForeignKey/constrainedColumnName"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddPrimaryKey">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddPrimaryKey/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddPrimaryKey/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddPrimaryKey/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddPrimaryKey/underlyingIndexName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddPrimaryKey/columnName"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/AddNotNullConstraint">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddNotNullConstraint/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddNotNullConstraint/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddNotNullConstraint/owningColumnName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/AddNotNullConstraint/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddForeignKey">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddForeignKey/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddForeignKey/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddForeignKey/name"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddForeignKey/targetTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddForeignKey/constrainedColumnName"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RemoveTableConstraint">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveTableConstraint/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveTableConstraint/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveTableConstraint/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveTableConstraint">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveTableConstraint/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveTableConstraint/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveTableConstraint/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RemoveColumnConstraint">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumnConstraint/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumnConstraint/owningTableName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumnConstraint/owningColumnName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveColumnConstraint/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddNotNullConstraint">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddNotNullConstraint/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddNotNullConstraint/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddNotNullConstraint/owningColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddNotNullConstraint/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/operations/RemoveIndex">
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveIndex/owningSchemaName"/>
-          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/operations/RemoveIndex/name"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveColumnConstraint">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumnConstraint/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumnConstraint/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumnConstraint/owningColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveColumnConstraint/name"/>
         </genClasses>
-      </nestedGenPackages>
-      <nestedGenPackages prefix="Dml" disposableProviderFactory="true" ecorePackage="mm-rdb.ecore#//rdb/dml">
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/dml/Query">
-          <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/dml/Query/columnReferences"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveIndex">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveIndex/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveIndex/name"/>
         </genClasses>
-        <genClasses ecoreClass="mm-rdb.ecore#//rdb/dml/ColumnReference">
-          <genFeatures notify="false" createChild="false" propertySortChoices="true"
-              ecoreFeature="ecore:EReference mm-rdb.ecore#//rdb/dml/ColumnReference/reference"/>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/SetColumnType">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnType/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnType/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnType/owningColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnType/newType"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnType/oldType"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/SetColumnDefaultValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnDefaultValue/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnDefaultValue/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnDefaultValue/owningColumnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/SetColumnDefaultValue/newDefaultValue"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveDefaultValue">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveDefaultValue/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveDefaultValue/owningTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveDefaultValue/owningColumnName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/RemoveSequence">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveSequence/sequenceName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/RemoveSequence/owningSchemaName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/HasNoOwnInstances">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/HasNoOwnInstances/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/HasNoOwnInstances/tableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/HasNoOwnInstances/descendantsNames"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/HasNoInstances">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/HasNoInstances/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/HasNoInstances/tableName"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/AddInstances">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddInstances/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddInstances/sourceTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/AddInstances/targetTableNames"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/InsertInstances">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/InsertInstances/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/InsertInstances/sourceTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/InsertInstances/targetTableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/InsertInstances/sourceColumnsNames"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/InsertInstances/targetColumnsNames"/>
+        </genClasses>
+        <genClasses ecoreClass="mm-rdb.ecore#//rdb/ops/GenerateSequenceNumbers">
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/GenerateSequenceNumbers/owningSchemaName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/GenerateSequenceNumbers/tableName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/GenerateSequenceNumbers/columnName"/>
+          <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-rdb.ecore#//rdb/ops/GenerateSequenceNumbers/sequenceName"/>
         </genClasses>
       </nestedGenPackages>
     </nestedGenPackages>

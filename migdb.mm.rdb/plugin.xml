@@ -20,14 +20,7 @@
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
             uri="http://www.collectionspro.eu/jam/mm/rdb-ops"
-            class="mm.rdb.operations.OperationsPackage"
-            genModel="models/mm-rdb.genmodel"/>
-   </extension>
-
-   <extension point="org.eclipse.emf.ecore.generated_package">
-      <package
-            uri="http://www.collectionspro.eu/jam/mm/rdb-dml"
-            class="mm.rdb.dml.DmlPackage"
+            class="mm.rdb.ops.OpsPackage"
             genModel="models/mm-rdb.genmodel"/>
    </extension>
 
