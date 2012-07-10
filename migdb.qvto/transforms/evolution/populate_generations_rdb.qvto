@@ -5,7 +5,7 @@ main() {
 	assert(inModel.rootObjects()->size() = 1);
 	assert(inModel.rootObjects()->forAll(oclIsKindOf(RDB::ModelRoot)));
 
-	log("transformation started...");
+	log("RDB evolution started...");
 
 	inModel.rootObjects().deepclone();
 
@@ -22,8 +22,6 @@ main() {
 			break;
 		} endif;
 	};
-
-	// root.operations := root.operations->reject(true);
 }
 
 abstract query RDB::operations::ModelOperation::

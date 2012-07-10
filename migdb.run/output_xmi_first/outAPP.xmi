@@ -1,46 +1,29 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app-ops http://www.collectionspro.eu/jam/mm/app#//ops">
   <app:ModelRoot>
     <modelGenerations>
-      <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.5">
-        <properties name="name" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="surname" type="/0/@modelGenerations.0/@classes.4"/>
-      </classes>
-      <classes xsi:type="app:Class" name="LegalPerson" parent="/0/@modelGenerations.0/@classes.5">
-        <properties name="bisName" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="regNo" type="/0/@modelGenerations.0/@classes.3"/>
-      </classes>
-      <classes xsi:type="app:Class" name="Country">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.3" isID="true"/>
-        <properties name="name" type="/0/@modelGenerations.0/@classes.4"/>
-      </classes>
-      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
-      <classes xsi:type="app:Class" name="Party">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.3" lowerBound="1" isID="true"/>
-        <properties name="street" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="city" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="zip" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="country" type="/0/@modelGenerations.0/@classes.2"/>
-      </classes>
+      <entities xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+      <entities xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+      <entities xsi:type="app:StandardClass" name="Country">
+        <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>
+        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="LegalPerson" parent="/0/@modelGenerations.0/@entities.5">
+        <properties name="regNo" type="/0/@modelGenerations.0/@entities.0"/>
+        <properties name="bizName" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="NaturalPerson" parent="/0/@modelGenerations.0/@entities.5">
+        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="surname" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="Party">
+        <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>
+        <properties name="street" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="city" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="zip" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="country" type="/0/@modelGenerations.0/@entities.2"/>
+      </entities>
     </modelGenerations>
-    <operations xsi:type="app-ops:AddClass" name="Party"/>
-    <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="street" type="String"/>
-    <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="city" type="String"/>
-    <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="zip" type="String"/>
-    <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="country" type="Country"/>
-    <operations xsi:type="app-ops:SetParent" name="LegalPerson" parentName="Party">
-      <properties>street</properties>
-      <properties>city</properties>
-      <properties>zip</properties>
-      <properties>country</properties>
-    </operations>
-    <operations xsi:type="app-ops:SetParent" name="NaturalPerson" parentName="Party">
-      <properties>street</properties>
-      <properties>city</properties>
-      <properties>zip</properties>
-      <properties>country</properties>
-    </operations>
   </app:ModelRoot>
   <app-ops:RemoveProperty owningClassName="LegalPerson" name="street"/>
   <app-ops:RemoveProperty owningClassName="LegalPerson" name="city"/>

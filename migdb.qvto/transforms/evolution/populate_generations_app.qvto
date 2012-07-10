@@ -47,6 +47,7 @@ main() {
 			log("	operation is invalid " + op.repr());
 			break;
 		} endif;
+		//outModel.removeElement(op);
 	};
 }
 

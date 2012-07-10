@@ -1,33 +1,33 @@
 <?xml version="1.0" encoding="ASCII"?>
-<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.operations.OperationsPackage">
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.ops.OpsPackage">
   <app:ModelRoot>
     <modelGenerations>
-      <classes xsi:type="app:Class" name="NaturalPerson" parent="/0/@modelGenerations.0/@classes.1">
-        <properties name="name" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="surname" type="/0/@modelGenerations.0/@classes.3"/>
-      </classes>
-      <classes xsi:type="app:Class" name="Party">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.4" isID="true"/>
-        <properties name="residentialAddress" type="/0/@modelGenerations.0/@classes.6" lowerBound="1"/>
-        <properties name="contactAddress" type="/0/@modelGenerations.0/@classes.5"/>
-      </classes>
-      <classes xsi:type="app:Class" name="LegalPerson" parent="/0/@modelGenerations.0/@classes.1">
-        <properties name="regNo" type="/0/@modelGenerations.0/@classes.4"/>
-        <properties name="bisName" type="/0/@modelGenerations.0/@classes.3"/>
-      </classes>
-      <classes xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
-      <classes xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
-      <classes xsi:type="app:Class" name="Country">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.4" isID="true"/>
-        <properties name="name" type="/0/@modelGenerations.0/@classes.3"/>
-      </classes>
-      <classes xsi:type="app:Class" name="Address">
-        <properties name="id" type="/0/@modelGenerations.0/@classes.4" lowerBound="1" isID="true"/>
-        <properties name="street" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="city" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="zip" type="/0/@modelGenerations.0/@classes.3"/>
-        <properties name="country" type="/0/@modelGenerations.0/@classes.5"/>
-      </classes>
+      <entities xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+      <entities xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+      <entities xsi:type="app:StandardClass" name="Country">
+        <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>
+        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="LegalPerson" parent="/0/@modelGenerations.0/@entities.5">
+        <properties name="regNo" type="/0/@modelGenerations.0/@entities.0"/>
+        <properties name="bizName" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="NaturalPerson" parent="/0/@modelGenerations.0/@entities.5">
+        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="surname" type="/0/@modelGenerations.0/@entities.1"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="Party">
+        <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>
+        <properties name="residentialAddress" type="/0/@modelGenerations.0/@entities.6" lowerBound="1"/>
+        <properties name="contactAddress" type="/0/@modelGenerations.0/@entities.2"/>
+      </entities>
+      <entities xsi:type="app:StandardClass" name="Address">
+        <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>
+        <properties name="street" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="city" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="zip" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="country" type="/0/@modelGenerations.0/@entities.2"/>
+      </entities>
     </modelGenerations>
     <operations xsi:type="app-ops:ExtractClass" sourceClassName="Party" extractClassName="Address">
       <extractPropertiesNames>street</extractPropertiesNames>
@@ -38,6 +38,14 @@
     <operations xsi:type="app-ops:RenameProperty" owningClassName="Party" name="address" newName="residentialAddress"/>
     <operations xsi:type="app-ops:AddProperty" owningClassName="Party" name="contactAddress" type="Country"/>
   </app:ModelRoot>
+  <app-ops:RemoveProperty owningClassName="LegalPerson" name="street"/>
+  <app-ops:RemoveProperty owningClassName="LegalPerson" name="city"/>
+  <app-ops:RemoveProperty owningClassName="LegalPerson" name="zip"/>
+  <app-ops:RemoveProperty owningClassName="LegalPerson" name="country"/>
+  <app-ops:RemoveProperty owningClassName="NaturalPerson" name="street"/>
+  <app-ops:RemoveProperty owningClassName="NaturalPerson" name="city"/>
+  <app-ops:RemoveProperty owningClassName="NaturalPerson" name="zip"/>
+  <app-ops:RemoveProperty owningClassName="NaturalPerson" name="country"/>
   <app-ops:AddClass name="Address"/>
   <app-ops:AddProperty owningClassName="Address" name="street" type="String"/>
   <app-ops:RemoveProperty owningClassName="Party" name="street"/>

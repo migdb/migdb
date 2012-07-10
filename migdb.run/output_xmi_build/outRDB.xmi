@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xmlns:rdb-ops="http://www.collectionspro.eu/jam/mm/rdb-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage http://www.collectionspro.eu/jam/mm/rdb-ops java://mm.rdb.operations.OperationsPackage">
+<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb">
   <modelGenerations>
     <schemas name="public">
       <tables name="country">
@@ -35,39 +35,4 @@
       <indexes name="IX_naturalperson_id_naturalperson" columns="//@modelGenerations.0/@schemas.0/@tables.2/@columns.0"/>
     </schemas>
   </modelGenerations>
-  <operations xsi:type="rdb-ops:AddSchema" name="public"/>
-  <operations xsi:type="rdb-ops:AddSequence" owningSchemaName="public" name="seq_global" startValue="1"/>
-  <operations xsi:type="rdb-ops:AddTable" owningSchemaName="public" name="country"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="country" name="id_country" type="int"/>
-  <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="country" name="IX_country_id_country">
-    <columnsNames>id_country</columnsNames>
-  </operations>
-  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="country" name="PK_country" underlyingIndexName="IX_country_id_country" columnName="id_country"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="country" name="name" type="char"/>
-  <operations xsi:type="rdb-ops:AddTable" owningSchemaName="public" name="legalperson"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="id_legalperson" type="int"/>
-  <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="legalperson" name="IX_legalperson_id_legalperson">
-    <columnsNames>id_legalperson</columnsNames>
-  </operations>
-  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="legalperson" name="PK_legalperson" underlyingIndexName="IX_legalperson_id_legalperson" columnName="id_legalperson"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="regno" type="int"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="bizname" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="street" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="city" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="zip" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="legalperson" name="country" type="int"/>
-  <operations xsi:type="rdb-ops:AddForeignKey" owningSchemaName="public" owningTableName="legalperson" name="FK_country_id_country" targetTableName="country" constrainedColumnName="country"/>
-  <operations xsi:type="rdb-ops:AddTable" owningSchemaName="public" name="naturalperson"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="id_naturalperson" type="int"/>
-  <operations xsi:type="rdb-ops:AddIndex" owningSchemaName="public" owningTableName="naturalperson" name="IX_naturalperson_id_naturalperson">
-    <columnsNames>id_naturalperson</columnsNames>
-  </operations>
-  <operations xsi:type="rdb-ops:AddPrimaryKey" owningSchemaName="public" owningTableName="naturalperson" name="PK_naturalperson" underlyingIndexName="IX_naturalperson_id_naturalperson" columnName="id_naturalperson"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="name" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="surname" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="street" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="city" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="zip" type="char"/>
-  <operations xsi:type="rdb-ops:AddColumn" owningSchemaName="public" owningTableName="naturalperson" name="country" type="int"/>
-  <operations xsi:type="rdb-ops:AddForeignKey" owningSchemaName="public" owningTableName="naturalperson" name="FK_country_id_country" targetTableName="country" constrainedColumnName="country"/>
 </rdb:ModelRoot>

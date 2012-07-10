@@ -16,16 +16,19 @@ import eu.collectionspro.mwe.*
 import migdb.generator.*
 
 Workflow {
-/* Define of APP metamodel */
+/***** DEFINE META-MODELS *****/	
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-/* Define of RDB metamodel */
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
+
+/***** CLEAN DIRECTORIES [SLQ,XMI] *****/		
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_sql_build"
@@ -33,7 +36,9 @@ Workflow {
 /**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output_xmi_build"
-	}	
+	}
+	
+/***** BUILD MODELS *****/	
 /**/
 	component = QVTOExecutor {
 		transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
@@ -44,24 +49,32 @@ Workflow {
 		transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
+	
+/***** APP EVOLUTION *****/			
 /**/
 	component = QVTOExecutor {
 		inputSlot = "buildModelAPP"
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_app.qvto"
 		outputSlot = "generationModelAPP"
 	}
+
+/***** ORM MAPPING *****/	
 /**/
 	component = QVTOExecutor {
 		inputSlot = "generationModelAPP"
 		inOutSlot = "buildModelRDB"
 		transformationFile = "../migdb.qvto/transforms/orm/orm_operations.qvto"
 	}
+
+/***** RDB EVOLUTION *****/		
 /**/
 	component = QVTOExecutor {
 		inputSlot = "buildModelRDB"
 		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
 		outputSlot = "generationModelRDB"
 	}
+	
+/***** WRITE XMI FILES *****/	
 /**/
 	component = Writer {
 		modelSlot = "generationModelAPP"
@@ -76,6 +89,8 @@ Workflow {
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
+	
+/***** SQL GENERATOR *****/		
 /**/
 	component = CodeGenComponent {
 		withoutModel = false
@@ -83,7 +98,9 @@ Workflow {
 		generator = Generator {}
 		outputPath = "output_sql_build/"
 	}
-/**/
+	
+/***** DATABASE CONNECT *****/		
+/**
 	component = CommandLineExec{
 		command = "ruby ../migdb.ruby.sql/script.rb output_sql_build postgres postgres 123456"
 	}		

@@ -1,32 +1,22 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation firstAPP(inout inoutModel : APP);
+transformation firstAPP(in inModel : APP, out outModel : APP);
 
 
 main() {	
 	log("DEMO 1");
-	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
-	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});							  																				  									  												  												  									  	
-	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,country,
-							_class("LegalPerson",OrderedSet{ _property("id",integer,true),_property("regNo", integer), _property("bisName", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)}),
-							_class("NaturalPerson",OrderedSet{ _property("id",integer,true),_property("name", string), _property("surname", string), _property("street", string),_property("city", string), _property("zip", string), _property("country", country)})
-						};
-		};
-	 };
+		
+	inModel.rootObjects().deepclone();
+
+
+	var root : APP::ModelRoot = outModel.rootObjects()![APP::ModelRoot];
+	var gen0 : APP::ModelGeneration = root.modelGenerations->first();
 	 
-	 model.operations += addClass("Party", false, InheritanceType::joined);
-	 model.operations += addProperty("Party", "street", "String");
-	 model.operations += addProperty("Party", "city", "String");
-	 model.operations += addProperty("Party", "zip", "String");
-	 model.operations += addProperty("Party", "country", "Country");
-	 model.operations += setParent("LegalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
-	 model.operations += setParent("NaturalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
-	 //model.operations += extractClass("Party", OrderedSet{"street", "city", "zip", "country"}, "Address");
-	 //model.operations += renameProperty("Party", "address", "residentialAddress");
-	 //model.operations += addProperty("Party", "contactAddress", "Address");
+	 root.operations += addClass("Party", false, InheritanceType::joined);
+	 root.operations += addProperty("Party", "street", "String");
+	 root.operations += addProperty("Party", "city", "String");
+	 root.operations += addProperty("Party", "zip", "String");
+	 root.operations += addProperty("Party", "country", "Country");
+	 root.operations += setParent("LegalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 root.operations += setParent("NaturalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
 }
