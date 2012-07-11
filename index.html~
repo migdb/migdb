@@ -68,7 +68,7 @@ who will no longer have to deal with the database regeneration.</p>
 <ul>
 	<li>Launch <code>migdb.run/builds/build.mwe2</code></li>
 	<li>Generate testing data by force of SQL script <code>cg.sql/insert.sql</code></li>
-	<li>Launch <code>migdb.run/builds/first.mwe2</code> and <code>migdb.run/builds/second.mwe2</code></li>	
+	<li>Launch <code>migdb.run/builds/first.mwe2</code> and <code>migdb.run/builds/second.mwe2<code></li>	
 </ul>
 
 <h3>Outputs</h3>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="ASCII"?>
+<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
+  <modelGenerations>
+    <entities xsi:type="app:StandardClass" name="Person">
+      <properties name="name" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="id" type="//@modelGenerations.0/@entities.1" lowerBound="1" isID="true"/>
+    </entities>
+    <entities xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+    <entities xsi:type="app:StandardClass" name="Thing">
+      <properties name="name" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="id" type="//@modelGenerations.0/@entities.3" lowerBound="1" isID="true"/>
+    </entities>
+    <entities xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+  </modelGenerations>
+</app:ModelRoot>

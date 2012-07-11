@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage">
+  <modelGenerations>
+    <entities xsi:type="app:StandardClass" name="Party">
+      <properties name="id" type="//@modelGenerations.0/@entities.4" lowerBound="1" isID="true"/>
+      <properties name="street" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="city" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="zip" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="country" type="//@modelGenerations.0/@entities.5"/>
+    </entities>
+    <entities xsi:type="app:StandardClass" name="LegalPerson" parent="//@modelGenerations.0/@entities.0">
+      <properties name="regNo" type="//@modelGenerations.0/@entities.4"/>
+      <properties name="bisName" type="//@modelGenerations.0/@entities.3"/>
+    </entities>
+    <entities xsi:type="app:StandardClass" name="NaturalPerson" parent="//@modelGenerations.0/@entities.0">
+      <properties name="name" type="//@modelGenerations.0/@entities.3"/>
+      <properties name="surname" type="//@modelGenerations.0/@entities.3"/>
+    </entities>
+    <entities xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
+    <entities xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
+    <entities xsi:type="app:StandardClass" name="Country">
+      <properties name="id" type="//@modelGenerations.0/@entities.4" lowerBound="1" isID="true"/>
+      <properties name="name" type="//@modelGenerations.0/@entities.3"/>
+    </entities>
+  </modelGenerations>
+</app:ModelRoot>
