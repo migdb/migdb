@@ -1,14 +1,14 @@
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 library builder_rdb;
 
-helper addSchema(_name : String) : RDB::operations::AddSchema {
-	return object RDB::operations::AddSchema {
+helper addSchema(_name : String) : RDB::ops::AddSchema {
+	return object RDB::ops::AddSchema {
 		name := _name;
 	}
 }
 
-helper addSequence(_owningSchemaName : String, _name : String, _startValue : Integer) : RDB::operations::AddSequence {
-	return object RDB::operations::AddSequence {
+helper addSequence(_owningSchemaName : String, _name : String, _startValue : Integer) : RDB::ops::AddSequence {
+	return object RDB::ops::AddSequence {
 		owningSchemaName :=_owningSchemaName ;
 		name := _name;
 		startValue := _startValue;
@@ -24,7 +24,7 @@ helper _rdbRoot( inout _generations : OrderedSet(rdb::ModelGeneration)) : RDB::M
 	};
 }
  
-helper _rdbRoot( inout _generations : OrderedSet(rdb::ModelGeneration), _operations : OrderedSet(rdb::operations::ModelOperation)) : RDB::ModelRoot{
+helper _rdbRoot( inout _generations : OrderedSet(rdb::ModelGeneration), _operations : OrderedSet(rdb::ops::ModelOperation)) : RDB::ModelRoot{
 	var root : RDB::ModelRoot := _rdbRoot(_generations);
 	root.operations := _operations;
 	return root;
@@ -72,7 +72,7 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  }
  
  
- helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(TableConstraint) ) : Table {	
+ helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(Constraint) ) : Table {	
  	var tab : Table := _table(_name, _columns);
  	tab.constraints := _constraints;
  	return tab;
@@ -88,7 +88,6 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  helper _primaryKey(_name : String, _underlineIndex : Index) : PrimaryKey {
  	return object PrimaryKey {
  		name := _name;
- 		underlyingIndex := _underlineIndex;
  	};
  }
  
@@ -96,7 +95,7 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	return object ForeignKey {
  		name := _name;
  		targetTable := _table;
- 		constrainedColumn := _constrainedColumn;
+ 		owningColumn := _constrainedColumn;
  	};
  }
  
@@ -114,8 +113,8 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _notNullConstraint(_name : String) : RDB::NotNullConstraint{
- 	return object NotNullConstraint{
+ helper _notNullConstraint(_name : String) : RDB::NotNull{
+ 	return object NotNull{
  		name := _name;
 	};
  }

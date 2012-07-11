@@ -5,7 +5,7 @@
       <tables name="country">
         <columns name="id_country" type="int"/>
         <columns name="name" type="char"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_country" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.0"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_country"/>
       </tables>
       <tables name="legalperson">
         <columns name="id_legalperson" type="int"/>
@@ -15,8 +15,8 @@
         <columns name="city" type="char"/>
         <columns name="zip" type="char"/>
         <columns name="country" type="int"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_legalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.1"/>
-        <constraints xsi:type="rdb:ForeignKey" name="FK_country_id_country" targetTable="//@modelGenerations.0/@schemas.0/@tables.0" constrainedColumn="//@modelGenerations.0/@schemas.0/@tables.1/@columns.6"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_legalperson"/>
+        <constraints xsi:type="rdb:ForeignKey" name="FK_country_id_country" owningColumn="//@modelGenerations.0/@schemas.0/@tables.1/@columns.6" targetTable="//@modelGenerations.0/@schemas.0/@tables.0"/>
       </tables>
       <tables name="naturalperson">
         <columns name="id_naturalperson" type="int"/>
@@ -26,8 +26,8 @@
         <columns name="city" type="char"/>
         <columns name="zip" type="char"/>
         <columns name="country" type="int"/>
-        <constraints xsi:type="rdb:PrimaryKey" name="PK_naturalperson" underlyingIndex="//@modelGenerations.0/@schemas.0/@indexes.2"/>
-        <constraints xsi:type="rdb:ForeignKey" name="FK_country_id_country" targetTable="//@modelGenerations.0/@schemas.0/@tables.0" constrainedColumn="//@modelGenerations.0/@schemas.0/@tables.2/@columns.6"/>
+        <constraints xsi:type="rdb:PrimaryKey" name="PK_naturalperson"/>
+        <constraints xsi:type="rdb:ForeignKey" name="FK_country_id_country" owningColumn="//@modelGenerations.0/@schemas.0/@tables.2/@columns.6" targetTable="//@modelGenerations.0/@schemas.0/@tables.0"/>
       </tables>
       <sequences name="seq_global" startValue="1"/>
       <indexes name="IX_country_id_country" columns="//@modelGenerations.0/@schemas.0/@tables.0/@columns.0"/>

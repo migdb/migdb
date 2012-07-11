@@ -13,8 +13,8 @@
         <properties name="bizName" type="/0/@modelGenerations.0/@entities.1"/>
       </entities>
       <entities xsi:type="app:StandardClass" name="NaturalPerson" parent="/0/@modelGenerations.0/@entities.5">
-        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
         <properties name="surname" type="/0/@modelGenerations.0/@entities.1"/>
+        <properties name="name" type="/0/@modelGenerations.0/@entities.1"/>
       </entities>
       <entities xsi:type="app:StandardClass" name="Party">
         <properties name="id" type="/0/@modelGenerations.0/@entities.0" lowerBound="1" isID="true"/>

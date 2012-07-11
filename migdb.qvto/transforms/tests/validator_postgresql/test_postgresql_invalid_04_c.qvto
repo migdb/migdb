@@ -9,7 +9,7 @@ main() {
 	var table : Table := _table("tab", OrderedSet{col});
 	var collisionPk : PrimaryKey := _primaryKey("collision_constraint", _index("i1", OrderedSet{col}));
 	table.constraints += collisionPk;
-	var notNull : NotNullConstraint := _notNullConstraint("collision_constraint");
+	var notNull : NotNull := _notNullConstraint("collision_constraint");
 	col.constraints += notNull;
 	
 	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table})})});

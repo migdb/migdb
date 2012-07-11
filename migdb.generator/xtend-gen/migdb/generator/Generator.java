@@ -225,7 +225,7 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
-   * CREATE UNIQUE INDEX
+   * CREATE UNIQUE
    * To create a B-tree index on the column title in the table films:
    * >> CREATE UNIQUE INDEX title_idx ON films (title); <<
    * To add a constraint, the table constraint syntax is used. For example:
@@ -235,22 +235,21 @@ public class Generator extends BaseCodeGenerator {
    */
   protected CharSequence _genOperation(final AddUniqueImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("CREATE UNIQUE INDEX ");
-    String _name = operation.getName();
-    _builder.append(_name, "");
-    _builder.append(" ");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("ON ");
+    _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "	");
+    _builder.append(_owningSchemaName, "");
     _builder.append(".");
     String _owningTableName = operation.getOwningTableName();
-    _builder.append(_owningTableName, "	");
-    _builder.append(" (");
+    _builder.append(_owningTableName, "");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ADD CONSTRAINT ");
+    String _name = operation.getName();
+    _builder.append(_name, "	");
+    _builder.append(" UNIQUE (");
     String _owningColumnName = operation.getOwningColumnName();
     _builder.append(_owningColumnName, "	");
-    _builder.append("); ");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -713,7 +712,6 @@ public class Generator extends BaseCodeGenerator {
   /**
    * GENERATE SEQUENCE NUMBERS
    * This operation generate new sequence numbers to column
-   * 
    * @param GenerateSequenceNumbers operation : operation of type GenerateSequenceNumbers
    */
   protected CharSequence _genOperation(final GenerateSequenceNumbersImpl operation) {
@@ -740,7 +738,6 @@ public class Generator extends BaseCodeGenerator {
    * This operation add defined number of rows to defined tables.
    * This SQL get all instances from source table and copy
    * these instances to target tables.
-   * 
    * @param AddInstances operation : operation of type AddInstances
    */
   protected CharSequence _genOperation(final AddInstancesImpl operation) {
@@ -758,7 +755,6 @@ public class Generator extends BaseCodeGenerator {
   /**
    * HAS NO INSTANCES
    * This operation check if table has some rows.
-   * 
    * @param HasNoInstances operation : operation of type HasNoInstances
    * @return boolean : t - no instances; f - some instances
    */
@@ -780,7 +776,6 @@ public class Generator extends BaseCodeGenerator {
    * This operation check if table has some own rows.
    * This SQL check ownership between instances and tables. Table can have
    * a lot of rows ale nemuseji tabulce patrit hierarchicky.
-   * 
    * @param CheckInstances operation : operation of type CheckInstances
    * @return boolean : t - no instances; f - some instances
    */

@@ -82,13 +82,13 @@ query APP::ops::AddClass::isValid(appGen : APP::ModelGeneration, inout rdbRoot :
 
 mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	// addition of a table to the schema
-	rdbRoot.operations += object RDB::operations::AddTable {
+	rdbRoot.operations += object RDB::ops::AddTable {
 		owningSchemaName := "public";
 		name := self.name.toLower();
 	};
 	
 	// addition of a column to the table
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
 		name := "id_" + self.name.toLower();
@@ -97,7 +97,7 @@ mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot :
 	};
 	
 	// addition of an index to the schema
-	rdbRoot.operations += object RDB::operations::AddIndex {
+	rdbRoot.operations += object RDB::ops::AddIndex {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
 		name := "IX_" + self.name.toLower() + "_id_" + self.name.toLower();
@@ -105,12 +105,12 @@ mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot :
 	};
 	
 	// addition of a primary key to the table
-	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
+	rdbRoot.operations += object RDB::ops::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
-		columnName := "id_" + self.name.toLower();
+		owningColumnName := "id_" + self.name.toLower();
 		name := "PK_" + self.name.toLower();
-		underlyingIndexName := "IX_" + self.name.toLower() + "_id_" + self.name.toLower();
+		//underlyingIndexName := "IX_" + self.name.toLower() + "_id_" + self.name.toLower();
 	};
 }
 
@@ -185,8 +185,8 @@ when { self.lowerBound = 1 }
 /* ++++++++++ HELPERS_FOR_A_CREATION_OF_OPERATIONS ++++++++++++++++++++ */
 
 // the universal helper for an addition of a column of a primitive type t <- {boolean, int, char, float}
-helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty, t : RDB::PrimitiveType) : RDB::operations::AddColumn {		
-	return object RDB::operations::AddColumn {
+helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty, t : RDB::PrimitiveType) : RDB::ops::AddColumn {		
+	return object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
 		name := op.name.toLower();
@@ -196,8 +196,8 @@ helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty
 }
 
 // usually used in a mapping of a proeprty of an embedded type  
-helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB::PrimitiveType) : RDB::operations::AddColumn {		
-	return object RDB::operations::AddColumn {
+helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB::PrimitiveType) : RDB::ops::AddColumn {		
+	return object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
 		name := p.name.toLower();
@@ -207,29 +207,29 @@ helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB
 }
 
 // the helper for an addition of a foreign key to a table
-helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::ops::AddProperty) : RDB::operations::AddForeignKey {
-	return object RDB::operations::AddForeignKey {
+helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::ops::AddProperty) : RDB::ops::AddForeignKey {
+	return object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
-		constrainedColumnName := op.name.toLower(); // todo: fix a order
+		owningColumnName := op.name.toLower(); // todo: fix a order
 		name := "FK_" + op.name.toLower() + "_id_" + op.type.toLower();
 		targetTableName := op.type.toLower();		
 	}
 }
 
-helper APP::ModelGeneration::AddForeignKeyToColumn(p : APP::Property) : RDB::operations::AddForeignKey {
-	return object RDB::operations::AddForeignKey {
+helper APP::ModelGeneration::AddForeignKeyToColumn(p : APP::Property) : RDB::ops::AddForeignKey {
+	return object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
-		constrainedColumnName := p.name.toLower(); // todo: fix a order
+		owningColumnName := p.name.toLower(); // todo: fix a order
 		name := "FK_" + p.name.toLower() + "_id_" + p.type.name.toLower();
 		targetTableName := p.type.name.toLower();
 	}
 }
 
 // the helper for an addition of a not null constraint to a column
-helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::ops::AddProperty) : RDB::operations::AddNotNullConstraint {
-	return object RDB::operations::AddNotNullConstraint {
+helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::ops::AddProperty) : RDB::ops::AddNotNull {
+	return object RDB::ops::AddNotNull {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
 		owningColumnName := op.name.toLower();
@@ -237,8 +237,8 @@ helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::ops::AddProp
 	}
 }
 
-helper APP::ModelGeneration::AddNotNullConstraintToColumn(p : APP::Property) : RDB::operations::AddNotNullConstraint {
-	return object RDB::operations::AddNotNullConstraint {
+helper APP::ModelGeneration::AddNotNullConstraintToColumn(p : APP::Property) : RDB::ops::AddNotNull {
+	return object RDB::ops::AddNotNull {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
 		owningColumnName := p.name.toLower();
@@ -260,7 +260,7 @@ mapping APP::ops::AddProperty::generalCollectionToRdb(appGen : APP::ModelGenerat
 when { true; }
 {
 	// addition of a column to the table
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := self.owningClassName.toLower() + "_id";
@@ -268,12 +268,12 @@ when { true; }
 	};
 	
 	// addition of a foreign key to the table
-	rdbRoot.operations += object RDB::operations::AddForeignKey {
+	rdbRoot.operations += object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := "FK_" + self.owningClassName.toLower() + "_id_" + self.owningClassName.toLower();
 		targetTableName := self.owningClassName.toLower();
-		constrainedColumnName := self.owningClassName.toLower();
+		owningColumnName := self.owningClassName.toLower();
 	};
 }
 
@@ -282,7 +282,7 @@ mapping APP::ops::AddProperty::orderedCollectionToRdb(appGen : APP::ModelGenerat
 when { self.isOrdered }
 {
 	// addition of a column to the table
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := "ord_" + self.owningClassName.toLower();
@@ -290,7 +290,7 @@ when { self.isOrdered }
 	};
 	
 	// addition of an index to the schema
-	rdbRoot.operations += object RDB::operations::AddIndex {
+	rdbRoot.operations += object RDB::ops::AddIndex {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := "UX_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
@@ -298,11 +298,11 @@ when { self.isOrdered }
 	};
 	
 	// addition of an unique constraint to the table
-	rdbRoot.operations += object RDB::operations::AddUniqueIndex {
+	rdbRoot.operations += object RDB::ops::AddUnique {
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := "UK_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
-		underlyingIndexName := "UX_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
+		//underlyingIndexName := "UX_" + self.type.toLower() + "_ord_" + self.owningClassName.toLower();
 	};
 }
 
@@ -313,7 +313,7 @@ query APP::ops::RenameProperty::isValid(appGen : APP::ModelGeneration, inout rdb
 }
 
 mapping APP::ops::RenameProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
-	rdbRoot.operations += object RDB::operations::RenameColumn {
+	rdbRoot.operations += object RDB::ops::RenameColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
 		name := self.name.toLower();
@@ -326,7 +326,7 @@ query APP::ops::RemoveProperty::isValid(appGen : APP::ModelGeneration, inout rdb
 }
 
 mapping APP::ops::RemoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
-	rdbRoot.operations += object RDB::operations::RemoveColumn {
+	rdbRoot.operations += object RDB::ops::RemoveColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
 		name := self.name.toLower();
@@ -339,7 +339,7 @@ query APP::ops::SetAbstract::isValid(appGen : APP::ModelGeneration, inout rdbRoo
 
 mapping APP::ops::SetAbstract::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	
-	rdbRoot.operations += object RDB::operations::HasNoOwnInstances {
+	rdbRoot.operations += object RDB::ops::HasNoOwnInstances {
 		owningSchemaName := "public";
 		tableName := self.name.toLower();
 		descendantsNames := appGen.findDescendants(self.name);
@@ -358,7 +358,7 @@ mapping APP::ops::SetParent::toRdb(appGen : APP::ModelGeneration, inout rdbRoot 
 mapping APP::ops::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 
 	if (not self.properties->isEmpty()) then {
-		rdbRoot.operations += object RDB::operations::InsertInstances {
+		rdbRoot.operations += object RDB::ops::InsertInstances {
 			owningSchemaName := "public";
 			sourceTableName := self.name.toLower();
 			targetTableName := self.parentName.toLower();
@@ -369,7 +369,7 @@ mapping APP::ops::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot
 		};
 		
 		self.properties->forEach(pName) {
-			rdbRoot.operations += object RDB::operations::RemoveColumn {
+			rdbRoot.operations += object RDB::ops::RemoveColumn {
 				owningSchemaName := "public";
 				owningTableName := self.name.toLower();
 				name := pName.toLower();
@@ -382,19 +382,19 @@ mapping APP::ops::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot
 		targets += appGen.findAncestors(self.parentName);
 			
 /*		if (appGen.hasAnyColumns(targets)) then {
-			rdbRoot.operations += object RDB::operations::HasNoInstances {
+			rdbRoot.operations += object RDB::ops::HasNoInstances {
 				owningSchemaName := "public";
 				tableName := self.name.toLower();			
 			};
 		} else {
-			rdbRoot.operations += object RDB::operations::AddInstances {
+			rdbRoot.operations += object RDB::ops::AddInstances {
 				owningSchemaName := "public";
 				sourceTableName := self.name.toLower();
 				targetTableNames := targets;
 			};
 		} endif; */
 		
-		rdbRoot.operations += object RDB::operations::RenameColumn {
+		rdbRoot.operations += object RDB::ops::RenameColumn {
 			owningSchemaName := "public";
 			owningTableName := self.name.toLower();
 			name := "id_" + self.name.toLower();
@@ -404,21 +404,21 @@ mapping APP::ops::SetParent::joined(appGen : APP::ModelGeneration, inout rdbRoot
 
 mapping APP::ops::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 
-	rdbRoot.operations += object RDB::operations::RenameColumn {
+	rdbRoot.operations += object RDB::ops::RenameColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
 		name := self.name;
 		newName := self.name + "_old";
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.targetClassName.toLower();
 		name := self.name;
 		type := RDB::PrimitiveType::boolean;
 	};
 	
-	rdbRoot.operations += object RDB::operations::CopyInstances {
+	rdbRoot.operations += object RDB::ops::CopyInstances {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
 		sourceColumnName := self.name + '_old';
@@ -427,7 +427,7 @@ mapping APP::ops::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		type := appGen.mergeTypeInAppToMergeTypeInRdb(self.type);
 	};
 	
-	rdbRoot.operations += object RDB::operations::RemoveColumn {
+	rdbRoot.operations += object RDB::ops::RemoveColumn {
 		owningSchemaName := "public";
 		owningTableName := self.owningClassName.toLower();
 		name := self.name + "_old";		
@@ -440,41 +440,41 @@ query APP::ops::ExtractClass::isValid(appGen : APP::ModelGeneration, inout rdbRo
 
 mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot : RDB::ModelRoot) {
 	
-	rdbRoot.operations += object RDB::operations::AddTable {
+	rdbRoot.operations += object RDB::ops::AddTable {
 		owningSchemaName := "public";
 		name := self.extractClassName.toLower();
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.extractClassName.toLower();
 		name := "id_" + self.extractClassName.toLower();
 		type := RDB::PrimitiveType::int;
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddIndex {
+	rdbRoot.operations += object RDB::ops::AddIndex {
 		owningSchemaName := "public";
 		owningTableName := self.extractClassName.toLower();
 		name := "IX_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
 		columnsNames := OrderedSet {"id_" + self.extractClassName.toLower()};
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddPrimaryKey {
+	rdbRoot.operations += object RDB::ops::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.extractClassName.toLower();
-		columnName := "id_" + self.extractClassName.toLower();
+		owningColumnName := "id_" + self.extractClassName.toLower();
 		name := "PK_" + self.extractClassName.toLower();
-		underlyingIndexName := "IX_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
+		//underlyingIndexName := "IX_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddColumn {
+	rdbRoot.operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := self.sourceClassName.toLower();
 		name := self.extractClassName.toLower();
 		type := RDB::PrimitiveType::int;
 	};
 	
-	rdbRoot.operations += object RDB::operations::GenerateSequenceNumbers {
+	rdbRoot.operations += object RDB::ops::GenerateSequenceNumbers {
 		owningSchemaName := "public";
 		tableName := self.sourceClassName.toLower();
 		columnName := self.extractClassName.toLower();
@@ -490,7 +490,7 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		
 	};
 	
-	rdbRoot.operations += object RDB::operations::InsertInstances {
+	rdbRoot.operations += object RDB::ops::InsertInstances {
 		owningSchemaName := "public";
 		sourceTableName := self.sourceClassName.toLower();
 		targetTableName := self.extractClassName.toLower();
@@ -501,19 +501,19 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 	};
 	
 	self.extractPropertiesNames->forEach(pName) {		
-		rdbRoot.operations += object RDB::operations::RemoveColumn {
+		rdbRoot.operations += object RDB::ops::RemoveColumn {
 			owningSchemaName := "public";
 			owningTableName := self.sourceClassName.toLower();
 			name := pName.toLower();
 		};
 	};
 	
-	rdbRoot.operations += object RDB::operations::AddForeignKey {
+	rdbRoot.operations += object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := self.sourceClassName.toLower();
 		name := "FK_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
 		targetTableName := self.extractClassName.toLower();
-		constrainedColumnName := self.extractClassName.toLower();
+		owningColumnName := self.extractClassName.toLower();
 	};	
 }
 
@@ -584,11 +584,11 @@ query APP::ModelGeneration::findMergeTypeInApp(pName : String) : APP::PrimitiveT
 	return self.findEntity(pName).oclAsType(APP::PrimitiveClass).primitiveType;
 }
 
-query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::ops::MergeType) : RDB::operations::MergeType {
+query APP::ModelGeneration::mergeTypeInAppToMergeTypeInRdb(type : APP::ops::MergeType) : RDB::ops::MergeType {
 	switch {
-		case (type = APP::ops::MergeType::strict) return RDB::operations::MergeType::strict;
-		case (type = APP::ops::MergeType::force) return RDB::operations::MergeType::force;
-		case (type = APP::ops::MergeType::tolerant) return RDB::operations::MergeType::tolerant;
+		case (type = APP::ops::MergeType::strict) return RDB::ops::MergeType::strict;
+		case (type = APP::ops::MergeType::force) return RDB::ops::MergeType::force;
+		case (type = APP::ops::MergeType::tolerant) return RDB::ops::MergeType::tolerant;
 	};
 	return null;
 }
