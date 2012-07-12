@@ -28,6 +28,20 @@ Workflow{
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
 	
+	/*Experimental Test */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
+		outputSlot = "EXP"
+	}
+	
+	/*Save experimental test */	
+	component = Writer {
+		modelSlot = "EXP"
+		uri = "output-tests/validator_postgresql/experimental.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
 	/* Create Test01 */
 	component = QVTOExecutor {
 		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_01.qvto"
@@ -127,27 +141,7 @@ Workflow{
 		inputSlot = "TEST_04_B"
 		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
 	}
-	
-	/* Create Test04_c */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04_c.qvto"
-		outputSlot = "TEST_04_C"
-	}
-	
-	/*Save test04_c */	
-	component = Writer {
-		modelSlot = "TEST_04_C"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_04_c.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
 		
-	/* Validate test04_c */
-	component = QVTOExecutor {
-		inputSlot = "TEST_04_C"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-	
 	/* Create Test05 */
 	component = QVTOExecutor {
 		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_05.qvto"

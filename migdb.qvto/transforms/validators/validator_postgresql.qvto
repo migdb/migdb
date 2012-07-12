@@ -24,14 +24,12 @@
  */
 
 import queries_rdb;
-import builder_rdb;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 transformation POSTGRESQL_VALIDATE(in inModel : RDB);
 
 main() {	
 	log("Postgresql validation of model started...");
 	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::ModelRoot)))then{
-		var tab : rdb::Table := _table("col", OrderedSet{}); 
 		inModel.rootObjects()![RDB::ModelRoot].isModelValid();
 		log("");
 	}else{
@@ -94,18 +92,6 @@ query rdb::ModelRoot::isModelValid():Boolean{
 		}endif;
 		if(not isValidIdentifier(constraint.name))then{
 			invalidityString := invalidityString + "Invalid table constraint identifier \"" + constraint.name + "\"\n";
-			validIdentifiers := false;
-		}endif;
-	};
-	
-	self->modelGenerations->schemas->tables->columns->constraints->forEach(constraint){
-		if(not constraint.hasUniqueName())then{
-			invalidityString := invalidityString + ("Schema \"" + constraint.owningColumn.owningTable.owningSchema.name + 
-			" \" contains constraint with duplicit name \"" + constraint.name + "\"\n") ;
-			constraintUnique := false;
-		}endif;
-		if(not isValidIdentifier(constraint.name))then{
-			invalidityString := invalidityString + "Invalid column constraint identifier \"" + constraint.name + "\"\n";
 			validIdentifiers := false;
 		}endif;
 	};
@@ -219,15 +205,8 @@ query rdb::Column::hasUniqueName() : Boolean{
 	return self.owningTable->columns->forAll(column | column.name <> self.name or column = self);
 }
 
-query rdb::ColumnConstraint::hasUniqueName() : Boolean{
-	return self.owningColumn->owningTable->owningSchema->tables->columns->forAll(const | const.name <> 
-	self.name or const = self) and self.owningColumn->owningTable->owningSchema->tables->constraints->forAll(const | 
-	const.name <> self.name or const = self);	
-}
-
-query rdb::TableConstraint::hasUniqueName() : Boolean{
-	return self->owningTable->owningSchema->tables->columns->forAll(column | column.name <> self.name and column = self)
-	or self.owningTable->owningSchema->tables->constraints->forAll(const | const.name <> self.name or const = self);
+query rdb::Constraint::hasUniqueName() : Boolean{
+	return self.owningTable->owningSchema->tables->constraints->forAll(const | const.name <> self.name or const = self);
 }
 
 
