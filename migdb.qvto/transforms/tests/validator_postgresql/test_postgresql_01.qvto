@@ -1,10 +1,11 @@
 import builder_rdb_link;
-modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation secondAPP(out inoutModel : RDB);
 
 
 main() {
 	log("TEST_RDB_01: valid");	
-	
+	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema("schema", 
+	OrderedSet{})})});
 	 
 }
