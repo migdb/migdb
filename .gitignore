@@ -1,4 +1,4 @@
-migdb.testing/output-tests/*
+migdb.testing.run/output-tests/*
 migdb.mm.app/src/*
 migdb.mm.app/bin/*
 migdb.mm.rdb/src/*

@@ -1,4 +1,4 @@
-module migb.testing.run.postgresql
+module migb.testing.run.postgresql_validator
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
