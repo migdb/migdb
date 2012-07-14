@@ -50,7 +50,7 @@ query rdb::ModelRoot::isModelValid():Boolean{
 	//kontrola identifikatoru schematu
 	self->modelGenerations->schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{
-			invalidityString := invalidityString + "Schema \"" + schema.name + "\" has duplicit name as another schema in generation + \n";
+			invalidityString := invalidityString + "Schema \"" + schema.name + "\" has duplicit name as another schema in generation \n";
 			schemaUnique := false;
 		}endif;	
 		if(not isValidIdentifier(schema.name))then{

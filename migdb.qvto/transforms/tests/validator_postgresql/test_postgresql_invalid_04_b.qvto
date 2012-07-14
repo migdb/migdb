@@ -13,8 +13,6 @@ main() {
 	var collisionFk1 : ForeignKey := _foreignKey("collision_constraint", table, col);
 	var collisionFk2 : ForeignKey := _foreignKey("collision_constraint", table, col);
 	
-	table1.constraints += collisionFk1;
-	table.constraints += collisionFk2;
-	
+	table1.constraints := OrderedSet{collisionFk1,collisionFk2};
 	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table, table1})})});
 }

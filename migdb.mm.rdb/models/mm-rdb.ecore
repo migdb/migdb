@@ -54,7 +54,7 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
           upperBound="-1" eType="#//rdb/Column" containment="true" eOpposite="#//rdb/Column/owningTable"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
-          upperBound="-1" eType="#//rdb/Constraint" containment="true"/>
+          upperBound="-1" eType="#//rdb/Constraint" containment="true" eOpposite="#//rdb/Constraint/owningTable"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Column">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
@@ -69,7 +69,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
-          eType="#//rdb/Table" derived="true"/>
+          eType="#//rdb/Table" derived="true" eOpposite="#//rdb/Table/constraints"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningColumn" lowerBound="1"
           eType="#//rdb/Column" derived="true"/>
     </eClassifiers>

@@ -28,16 +28,16 @@ Workflow{
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
 	
-	/*Experimental Test */
+	/*Valid Test */
 	component = QVTOExecutor {
 		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
 		outputSlot = "EXP"
 	}
 	
-	/*Save experimental test */	
+	/*Save Valid test */	
 	component = Writer {
 		modelSlot = "EXP"
-		uri = "output-tests/validator_postgresql/experimental.xmi"
+		uri = "output-tests/validator_postgresql/test_postgresql_valid_01.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
