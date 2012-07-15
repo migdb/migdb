@@ -15,8 +15,7 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
-Workflow{
-		
+Workflow{	
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "output-tests/validator_postgresql/"
 	}
@@ -28,198 +27,84 @@ Workflow{
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
 	
-	/*Valid Test */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
-		outputSlot = "EXP"
+	/* Test_postgresql_01*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_01"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_01.xmi"
 	}
 	
-	/*Save Valid test */	
-	component = Writer {
-		modelSlot = "EXP"
-		uri = "output-tests/validator_postgresql/test_postgresql_valid_01.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	/* Create Test01 */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_01.qvto"
-		outputSlot = "TEST_01"
-	}
-	
-	/*Save test01 */	
-	component = Writer {
-		modelSlot = "TEST_01"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_01.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test01 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_01"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+	/* Test_postgresql_invalid_01*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_01.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_01"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_01.xmi"
 	}			
 	
-	/* Create Test02 */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_02.qvto"
-		outputSlot = "TEST_02"
-	}
-	
-	/*Save test02 */	
-	component = Writer {
-		modelSlot = "TEST_02"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_02.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test02 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_02"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-	
-	/* Create Test03 */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_03.qvto"
-		outputSlot = "TEST_03"
-	}
-	
-	/*Save test03 */	
-	component = Writer {
-		modelSlot = "TEST_03"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_03.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test03 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_03"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-	
-	/* Create Test04 */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04.qvto"
-		outputSlot = "TEST_04"
-	}
-	
-	/*Save test04 */	
-	component = Writer {
-		modelSlot = "TEST_04"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_04.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test04 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_04"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-	
-	/* Create Test04_b */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04_b.qvto"
-		outputSlot = "TEST_04_B"
-	}
-	
-	/*Save test04_b */	
-	component = Writer {
-		modelSlot = "TEST_04_B"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_04_b.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test04_b */
-	component = QVTOExecutor {
-		inputSlot = "TEST_04_B"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-		
-	/* Create Test05 */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_05.qvto"
-		outputSlot = "TEST_05"
-	}
-	
-	/*Save test05 */	
-	component = Writer {
-		modelSlot = "TEST_05"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_05.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate test05 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_05"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
-	
-	/* Create Test_06*/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06.qvto"
-		outputSlot = "TEST_06"
-	}
-	
-	/*Save Test_06 */	
-	component = Writer {
-		modelSlot = "TEST_06"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_06.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate Test_06 */
-	component = QVTOExecutor {
-		inputSlot = "TEST_06"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}	
+	/* Test_postgresql_invalid_02*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_02.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_02"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_02.xmi"
+	}			
 
-	/* Create Test_06_b */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06_b.qvto"
-		outputSlot = "TEST_06_B"
-	}
 	
-	/*Save Test_06_b */	
-	component = Writer {
-		modelSlot = "TEST_06_B"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_06_b.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate Test_06_b */
-	component = QVTOExecutor {
-		inputSlot = "TEST_06_B"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}
+	/* Test_postgresql_invalid_03*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_03.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_03"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_03.xmi"
+	}			
 	
-	/* Create Test_multi */
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_multi.qvto"
-		outputSlot = "TEST_MULTI"
-	}
+	/* Test_postgresql_invalid_04*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_04"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04.xmi"
+	}			
+
+	/* Test_postgresql_invalid_04_b*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04_b.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_04_B"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04_b.xmi"
+	}			
+
+	/* Test_postgresql_invalid_05*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_05.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_05"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_05.xmi"
+	}			
+
+	/* Test_postgresql_invalid_06*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_06"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06.xmi"
+	}			
+
+	/* Test_postgresql_invalid_06_b*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06_b.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_06_B"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06_b.xmi"
+	}			
 	
-	/*Save Test_multi */	
-	component = Writer {
-		modelSlot = "TEST_MULTI"
-		uri = "output-tests/validator_postgresql/test_postgresql_invalid_multi.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-		
-	/* Validate Test_multi */
-	component = QVTOExecutor {
-		inputSlot = "TEST_MULTI"
-		transformationFile = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-	}		
-					
+	/* Test_postgresql_invalid_multi*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_multi.qvto"
+		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		modelSlot = "TEST_POSTGRESQL_INVALID_MULTI"
+		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_multi.xmi"
+	}				
 }
