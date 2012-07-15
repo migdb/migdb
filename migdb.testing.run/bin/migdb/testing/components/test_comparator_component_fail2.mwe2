@@ -1,0 +1,72 @@
+module migb.testing.run.test_comparator_component_fail_2
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+/**
+ * Test of the ComparatorComponent. Tested models are of different types.
+ */
+Workflow{
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "output-tests/component/test_comparator_component/2-differents/"
+	}
+	
+		
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+		
+	/*Create compared file 1 */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"
+		outputSlot = "first"
+	}
+
+	/*Create compared file 2 */
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
+		outputSlot = "second"
+	}
+	
+	/* write result */
+	component = Writer {
+		modelSlot = "first"
+		uri = "output-tests/test_comparator_component/2-differents/expected_result_1.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	/* write test */
+	component = Writer {
+		modelSlot = "second"
+		uri = "output-tests/test_comparator_component/2-differents/test_1.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = ModelComparator {
+		testDescription = "COMPARATOR COMPONENT"
+		resultURI = "output-tests/test_comparator_component/2-differents/expected_result_1.xmi"
+		testedURI = "output-tests/test_comparator_component/2-differents/test_1.xmi"
+	}
+}
