@@ -7,8 +7,9 @@ main() {
 	log("TEST_APP_01: valid");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("id",integer,true), _property("name", string)});
-	var party : APP::StandardClass := _class("Party", OrderedSet{ _property("id",integer,true),_property("street", string),_property("city", string), _property("zip", string), _property("country", country)});																		  									  												  												  									  	
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string)}, _idProperty(integer));
+	var party : APP::StandardClass := _class("Party", OrderedSet{ _property("street", string),_property("city", string),
+	 _property("zip", string), _property("country", country)}, _idProperty(integer));																		  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {

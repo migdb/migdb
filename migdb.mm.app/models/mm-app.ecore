@@ -28,6 +28,8 @@
     <eClassifiers xsi:type="ecore:EClass" name="GeneralClass" eSuperTypes="#//app/ModelEntity">
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
           upperBound="-1" eType="#//app/Property" containment="true" eOpposite="#//app/Property/owningGeneralClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" ordered="false"
+          unique="false" eType="#//app/Property" resolveProxies="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="PrimitiveClass" eSuperTypes="#//app/ModelEntity">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
@@ -67,8 +69,6 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isOrdered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isUnique" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-          defaultValueLiteral="false"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isID" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="sequenceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>

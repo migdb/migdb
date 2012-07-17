@@ -23,7 +23,7 @@
  * 
  */
 
-import queries_app;
+import queries_app_link;
 	
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 transformation APP_VALIDATE(in inModel : APP);
@@ -118,7 +118,7 @@ query app::ModelRoot::isModelValid():Boolean{
 	self.modelGenerations->entities[app::StandardClass]->forEach(cls | not cls.isIDRootCountCorrectlySet()){
 		rootsId := false;
 		log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains class \"" +
-	    cls.name + "\" with invalid id count:" + cls.properties->select(prop | prop.isID)->size().repr());	
+	    cls.name + "\" with invalid id count:" + cls.properties->select(prop | prop.isID())->size().repr());	
 	};
 	
 	self.modelGenerations->entities[app::StandardClass]->properties->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and
@@ -177,7 +177,7 @@ query app::Property::isOneToOneUnidirectional():Boolean{
 }
 
 query StandardClass::isIDRootCountCorrectlySet():Boolean{
-	return (self.parent = null and self.properties->select(prop | prop.isID)->size() = 1) or self.parent <> null;
+	return (self.parent = null and self.properties->select(prop | prop.isID())->size() = 1) or self.parent <> null;
 }
 
 
@@ -188,15 +188,15 @@ query app::ModelGeneration::containsNonleafTPCAssociation():Boolean{
 }
 
 query app::StandardClass::hasNonRootId() : Boolean{
-	return self.parent <> null and self.properties->select(prop | prop.isID)->size() != 0;
+	return self.parent <> null and self.properties->select(prop | prop.isID())->size() != 0;
 }
 
 query app::StandardClass::areIDTypesCorrectlySet() : Boolean{
-    return self.properties->forAll(pr | not pr.isID or (pr.type.name = 'Integer' and pr.type.oclIsKindOf(app::PrimitiveClass)));
+    return self.properties->forAll(pr | not pr.isID() or (pr.type.name = 'Integer' and pr.type.oclIsKindOf(app::PrimitiveClass)));
 }
 
 query app::StandardClass::areIDBoundsCorrectlySet() : Boolean{
-    return self.properties->forAll(pr | not pr.isID or (pr.lowerBound = 1 and pr.upperBound = 1));
+    return self.properties->forAll(pr | not pr.isID() or (pr.lowerBound = 1 and pr.upperBound = 1));
 }
 
 

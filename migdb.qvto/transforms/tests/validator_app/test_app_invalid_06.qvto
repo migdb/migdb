@@ -6,9 +6,11 @@ main() {
 	log("TEST_APP_INVALID_06 - invalid : embedded arrity");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("id",integer,true), _property("name", string, 1, -1)});
+	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("name", string, 1, -1)}, 
+	_idProperty(integer));
 	
-	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string), _property("id", integer, true), _property("currency", money, 0, -1)});
+	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string), 
+	_property("currency", money, 0, -1)}, _idProperty(integer));
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {

@@ -7,7 +7,8 @@ main() {
 	log("TEST_APP_INVALID_01 - invalid : Class name");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var party : APP::StandardClass := _class("Party", OrderedSet{ _property("id",integer,true),_property("street", string),_property("city", string), _property("zip", string)});																		  									  												  												  									  	
+	var party : APP::StandardClass := _class("Party", OrderedSet{_property("street", string),
+	_property("city", string), _property("zip", string)}, _idProperty(integer));																		  									  												  												  									  	
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {

@@ -7,7 +7,12 @@ main() {
 	log("TEST_APP_INVALID_10 - invalid : Root id count 0");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var party : APP::StandardClass := _class("Party", OrderedSet{_property("street", string),_property("city", string), _property("zip", string)});																		  									  												  												  									  	
+	
+	var zipProperty : Property := _property("zip", string);
+	var party : APP::StandardClass := _class("Party", OrderedSet{_property("street", string),_property("city", string)}, zipProperty);																		  									  												  												  									  	
+	
+	//@TODO check if this test hack is valid
+	party.idProperty := null;
 	
 	var model : APP::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {

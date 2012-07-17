@@ -98,13 +98,5 @@ Workflow{
 		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_06_B"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06_b.xmi"
-	}			
-	
-	/* Test_postgresql_invalid_multi*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_multi.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_MULTI"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_multi.xmi"
 	}				
 }

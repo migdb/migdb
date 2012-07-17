@@ -6,7 +6,8 @@ main() {
 	log("TEST_APP_INVALID_02_B - invalid : Property name in hierarchy");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("id",integer,true), _property("name", string)});
+	var person : APP::StandardClass := _class("Person", OrderedSet{_property("name", string)}, 
+	_idProperty(integer));
 	var naturalPerson : APP::StandardClass := _class("NaturalPerson", person, OrderedSet{ _property("name", string)});
 	
 	var model : APP::ModelRoot := object ModelRoot {

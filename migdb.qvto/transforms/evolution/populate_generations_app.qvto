@@ -22,10 +22,11 @@
  * THE SOFTWARE.
  * 
  */
+import queries_app_link;
+import builder_app_link;
 
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
-
-	transformation APPEVO(in inModel : APP, out outModel : APP);
+transformation APPEVO(in inModel : APP, out outModel : APP);
 
 main() {
 	//assert(inModel.rootObjects()->size() = 1);
@@ -101,16 +102,9 @@ mapping APP::ops::AddClass::apply(inout gen : APP::ModelGeneration) {
 }
 
 helper APP::ModelGeneration::AddClass(op : APP::ops::AddClass) : APP::StandardClass {
-	return object APP::StandardClass {
-		name := op.name;
-		properties += object APP::Property {
-			name := "id";
-			type := self.findEntity("Integer"); // gen0 has to contain a primitive class called "Integer"
-			lowerBound := 1;
-			upperBound := 1;
-			isID := true;
-		};
-	};
+	var idProp := _idProperty(self.findEntity("Integer"));
+	return 
+	_class(op.name, OrderedSet{}, idProp);
 }
 
 query APP::ops::RenameEntity::isValid(gen : APP::ModelGeneration) : Boolean {
@@ -143,7 +137,7 @@ query APP::EmbeddedClass::isRemoveable(gen : APP::ModelGeneration) : Boolean {
 
 query APP::StandardClass::isRemoveable(gen : APP::ModelGeneration) : Boolean {
 	return not gen.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
-		   and (self.properties->isEmpty() or self.properties->forAll(isID = true))
+		   and (self.properties->isEmpty() or self.properties->forAll(isID()))
 		   and not gen.entities->oclAsType(APP::StandardClass)->exists(parent = self);
 }
 
@@ -194,7 +188,7 @@ mapping APP::ops::RenameProperty::apply(inout gen : APP::ModelGeneration) {
 
 query APP::ops::RemoveProperty::isValid(gen : APP::ModelGeneration) : Boolean {
 	return gen.isPropertyInAbstractClass(self.owningClassName, self.name)
-		   and gen.findProperty(self.owningClassName, self.name).isID = false
+		   and not gen.findProperty(self.owningClassName, self.name).isID()
 		   and gen.findProperty(self.owningClassName, self.name).oppositeProperty = null;
 }
 
@@ -253,20 +247,15 @@ mapping APP::ops::SetParent::apply(inout gen : APP::ModelGeneration) {
 	if (self.parentName = null) then {
 		c.parent := null;
 		// vytvoreni ID atributu
-		c.properties += object APP::Property {
-			name := "id";
-			type := gen.findEntity("Integer");
-			lowerBound := 1;
-			upperBound := 1;
-			isID := true;
-			sequenceName := "SQ_" + self.name.toLower();
-		};
+		var idProp : Property := _idProperty( gen.findEntity("Integer"), "SQ_" + self.name.toLower());
+		c.properties += idProp;
+		c.oclAsType(StandardClass).idProperty := idProp;
 		
 	// tridu pridavame do hierarchie
 	} else {
 		c.parent := gen.findClass(self.parentName);
 		// smazani ID atributu
-		c.properties := c.properties->excluding(c.properties->selectOne(isID = true));
+		c.properties := c.properties->excluding(c.properties->selectOne(isID()));
 		
 	} endif;
 	
@@ -426,95 +415,4 @@ mapping APP::ops::ExtractClass::apply(inout gen : APP::ModelGeneration) {
 			lowerBound := 1;
 			upperBound := 1;
 	}.xmap apply(gen);
-}
-
-
-/* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
-
-query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
-	return self.entities->exists(name = eName);
-}
-
-query APP::ModelGeneration::findEntity(eName : String) : APP::ModelEntity {
-	return self.entities![name = eName];
-}
-
-query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
-}
-
-query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
-	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
-}
-
-query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
-}
-
-query APP::ModelGeneration::findAbstractClass(cName : String) : APP::GeneralClass {
-	return self.findEntity(cName).oclAsType(APP::GeneralClass);
-}
-
-query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
-	return self.findAbstractClass(cName).properties->exists(name = pName);
-}
-
-query APP::ModelGeneration::isPropertyInClass(cName : String, pName : String) : Boolean {
-	return self.findClass(cName).properties->exists(name = pName);
-}
-
-query APP::ModelGeneration::arePropertiesInClass(cName : String, pNames : OrderedSet(String)) : Boolean {
-	return pNames->forAll(name | self.isPropertyInClass(cName, name));
-}
-
-query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::Property {
-	return self.findAbstractClass(cName).properties![name = pName];
-}
-
-query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
-	return self.findEntity(cName).oclIsTypeOf(APP::StandardClass);
-}
-
-query APP::ModelGeneration::findClass(cName : String) : APP::StandardClass {
-	return self.findEntity(cName).oclAsType(APP::StandardClass);
-}
-
-query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
-	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
-}
-
-
-// overime, zda-li je trida potomkem tridy cName
-query APP::StandardClass::isDescendantOf(cName : String) : Boolean {
-	if (self.parent <> null) then {
-		if (self.parent.name = cName) then return true
-		else return self.parent.isDescendantOf(cName) endif;
-	} endif;
-	return false;
-}
-
-// overi, zda-li je trida sClass rodicem tridy fClass
-query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
-	var ourClass : APP::StandardClass := self.findAbstractClass(fClass).oclAsType(APP::StandardClass);
-	if(ourClass <> null) then {
-		if (ourClass.parent <> null and ourClass.parent = sClass) then {
-			return true;
-		} endif;
-		if (ourClass.parent <> null) then {
-			return self.isInHierarchy(ourClass.parent.name, sClass);
-		} endif;
-	}endif;
-	return false;
-}
-
-// overi, zda-li v hierarchii existuje atribut se stejnem nazvem
-query APP::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
-	// pro kazdy atribut se stejnym nazvem...
-	self.entities->oclAsType(APP::StandardClass).properties->forEach(p | p.name = pName) {
-		// ...overime, zda-li se tridy, kterym tyto atributy nalezi, nachazi ve stejne hierarchii
-		if (self.isInHierarchy(cName, p.owningGeneralClass.name) = true or self.isInHierarchy(p.owningGeneralClass.name, cName) = true) then {
-			return true;
-		} endif;
-	};
-	return false;
 }

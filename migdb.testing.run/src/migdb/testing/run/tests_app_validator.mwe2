@@ -161,28 +161,12 @@ Workflow{
 		modelSlot = "TEST_INVALID_10_APP"
 		outputUri = "output-tests/validator_app/test_invalid_10_app.xmi"
 	}
-	
-	/* Test_invalid_10_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_10_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_10_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_10_b_app.xmi"
-	}		
-	
+		
 	/* Test_invalid_11 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_11.qvto"
 		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
 		modelSlot = "TEST_INVALID_11_APP"
 		outputUri = "output-tests/validator_app/test_invalid_11_app.xmi"
-	}
-	
-	/* Test_invalid_complete app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_complete.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_COMPLETE_APP"
-		outputUri = "output-tests/validator_app/test_invalid_complete.xmi"
-	}									
+	}								
 }
