@@ -30,7 +30,7 @@ Workflow{
 	
 	
 	/*Experimental Test */
-	component = eu.collectionspro.mwe.QVTOValidator {
+	component = QVTOValidatorTest {
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_01.qvto"
 		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
 		outputUri = "output-tests/test_validator/exp.xmi"
