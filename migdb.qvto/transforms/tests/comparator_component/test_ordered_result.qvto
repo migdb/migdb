@@ -1,0 +1,13 @@
+import builder_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(out inoutModel : APP);
+
+
+main() {
+	var renameEntity : app::ops::RenameEntity := renameEntiry("cls", "newCls");
+	var addproperty : app::ops::AddProperty := addProperty("cls", "prop", "int");
+	var ops : OrderedSet(app::ops::ModelOperation) := OrderedSet{addproperty, renameEntity};
+	var root : ModelRoot := _appRoot(ops);	
+	
+	 
+}
