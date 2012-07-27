@@ -5,20 +5,20 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
  *				CLASS HELPERS			 	*
  ********************************************/
 
-helper addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
+helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
 	return object APP::ops::AddPrimitiveClass {
 		name := _name;
 		primitiveType := _primitiveType;
 	}
 }
 
-helper addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
+helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
 	return object APP::ops::AddEmbeddedClass {
 		name := _name;
 	}
 }
 
-helper addClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddClass {
+helper _addClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddClass {
 	return object APP::ops::AddClass {
 		name := _name;
 		isAbstract := _isAbstract;
@@ -26,14 +26,14 @@ helper addClass(_name : String, _isAbstract : Boolean, _inheritanceType : Inheri
 	}
 }
 
-helper renameEntiry(_name : String, _newName : String) : APP::ops::RenameEntity {
+helper _renameEntiry(_name : String, _newName : String) : APP::ops::RenameEntity {
 	return object APP::ops::RenameEntity {
 		name := _name;
 		newName := _newName;
 	}
 }
 
-helper removeEntiry(_name : String) : APP::ops::RemoveEntity {
+helper _removeEntiry(_name : String) : APP::ops::RemoveEntity {
 	return object APP::ops::RemoveEntity {
 		name := _name;
 	}
@@ -43,7 +43,7 @@ helper removeEntiry(_name : String) : APP::ops::RemoveEntity {
  *			PROPERTY HELPERS			 	*
  ********************************************/
 
-helper addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -51,7 +51,7 @@ helper addProperty(_owningClassName : String, _name : String, _type : String) : 
 	}
 }
 
-helper renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
+helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
 	return object APP::ops::RenameProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -59,7 +59,7 @@ helper renameProperty(_owningClassName : String, _name : String, _newName : Stri
 	}
 }
 
-helper removeProperty(_owningClassName : String, _name : String) : APP::ops::RemoveProperty {
+helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::RemoveProperty {
 	return object APP::ops::RemoveProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -70,7 +70,7 @@ helper removeProperty(_owningClassName : String, _name : String) : APP::ops::Rem
  *				SET HELPERS				 	*
  ********************************************/
 
-helper setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
+helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
 	return object APP::ops::SetOpposite {
 		firstClassName := _firstClassName;
 		firstPropertyName := _firstPropertyName;
@@ -80,14 +80,14 @@ helper setOpposite(_firstClassName : String, _firstPropertyName : String, _secon
 	}
 }
 
-helper setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
+helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
 	return object APP::ops::SetAbstract {
 		name := _name;
 		isAbstract := _isAbstract;
 	}
 }
 
-helper setParent(_name : String, _parentName : String, _properties : OrderedSet(String)) : APP::ops::SetParent {
+helper _setParent(_name : String, _parentName : String, _properties : OrderedSet(String)) : APP::ops::SetParent {
 	return object APP::ops::SetParent {
 		name := _name;
 		parentName := _parentName;
@@ -95,7 +95,7 @@ helper setParent(_name : String, _parentName : String, _properties : OrderedSet(
 	}
 }
 
-helper setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
+helper _setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
 	return object APP::ops::SetType {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -103,7 +103,7 @@ helper setType(_owningClassName : String, _name : String, _type : String) : APP:
 	}
 }
 
-helper setBoundries(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
+helper _setBoundries(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
 	return object APP::ops::SetBoundries {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -112,7 +112,7 @@ helper setBoundries(_owningClassName : String, _name : String, _lowerBound : Int
 	}
 }
 
-helper setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
+helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
 	return object APP::ops::SetOrdered {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -120,7 +120,7 @@ helper setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolea
 	}
 }
 
-helper setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
+helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
 	return object APP::ops::SetUnique {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -133,7 +133,7 @@ helper setUnique(_owningClassName : String, _name : String, _isUnique : Boolean)
  ********************************************/
 
 
-helper copyProperty(_name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::CopyProperty {
+helper _copyProperty(_name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::CopyProperty {
 	return object APP::ops::CopyProperty {
 		name := _name;
 		targetClassName := _targetClassName;
@@ -141,7 +141,7 @@ helper copyProperty(_name : String, _targetClassName : String, _type : APP::ops:
 	}
 }
 
-helper moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::MoveProperty {
+helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::MoveProperty {
 	return object APP::ops::MoveProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -150,7 +150,7 @@ helper moveProperty(_owningClassName : String, _name : String, _targetClassName 
 	}
 }
 
-helper extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), _extractClassName : String) : APP::ops::ExtractClass {
+helper _extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), _extractClassName : String) : APP::ops::ExtractClass {
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractPropertiesNames := _extractPropertiesNames;

@@ -1,6 +1,9 @@
+import queries_rdb_link;
+import builder_rdb_link; 
+
 modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
 
-transformation DB_To_Rdb(in inModel : RDB, out outModel : RDB);
+transformation RDBEVO(in inModel : RDB, out outModel : RDB);
 main() {
 	assert(inModel.rootObjects()->size() = 1);
 	assert(inModel.rootObjects()->forAll(oclIsKindOf(RDB::ModelRoot)));
@@ -46,9 +49,7 @@ query RDB::ops::AddSchema::isValid(gen : RDB::ModelGeneration) : Boolean {
 }
 
 mapping RDB::ops::AddSchema::apply(inout gen : RDB::ModelGeneration) {
-	gen.schemas += object RDB::Schema {
-		name := self.name;
-	}
+	gen.schemas += _schema(self.name);
 }
 
 /**
@@ -65,10 +66,7 @@ query RDB::ops::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddSequence::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
-	s.sequences += object RDB::Sequence {
-		name := self.name;
-		startValue := self.startValue;
-	}
+	s.sequences += _sequence(self.name, self.startValue); 
 }
 
 /**
@@ -84,10 +82,7 @@ query RDB::ops::AddIndex::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddIndex::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
-	s.indexes += object RDB::Index {
-		name := self.name;			
-		columns += gen.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames);
-	}
+	s.indexes += _index(self.name, gen.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames)); 
 }
 
 /**
@@ -101,9 +96,7 @@ query RDB::ops::AddTable::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddTable::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
-	s.tables += object RDB::Table {
-		name := self.name;
-	};
+	s.tables += _table(self.name);
 }
 
 /**
@@ -117,11 +110,7 @@ query RDB::ops::AddColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddColumn::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.columns += object RDB::Column {
-		name := self.name;
-		type := self.type;
-		defaultValue := self.defaultValue;
-	}
+	t.columns += _column(self.name, self.type, self.defaultValue); 
 }
 
 /**
@@ -137,9 +126,7 @@ query RDB::ops::AddUnique::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddUnique::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += object RDB::Unique {
-		name := self.name;
-	}
+	t.constraints += _unique(self.name);
 }
 
 /**
@@ -156,9 +143,7 @@ query RDB::ops::AddPrimaryKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += object RDB::PrimaryKey {
-		name := self.name;
-	}
+	t.constraints += _primaryKey(self.name);
 }
 
 /**
@@ -176,11 +161,10 @@ query RDB::ops::AddForeignKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddForeignKey::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += object RDB::ForeignKey {
-		name := self.name;
-		targetTable := gen.findTable(self.owningSchemaName, self.targetTableName);
-		owningColumn := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	}
+	t.constraints += _foreignKey(
+						self.name, 
+						gen.findTable(self.owningSchemaName, self.targetTableName),
+						gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName)); 
 }
 
 /**
@@ -196,9 +180,7 @@ query RDB::ops::AddNotNull::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddNotNull::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += object RDB::NotNull {
-		name := self.name;
-	}
+	t.constraints += _notNull(self.name); 
 }
 
 /********************************************************************************
@@ -463,127 +445,4 @@ query RDB::ops::AddInstances::isValid(gen : RDB::ModelGeneration) : Boolean {
 }
 
 mapping RDB::ops::AddInstances::apply(inout gen : RDB::ModelGeneration){
-}
-
-
-/********************************************************************************
- *									QUERIES										*
- ********************************************************************************/
-
-/********************************** SCHEMA **************************************/
-query RDB::ModelGeneration::isSchemaInGeneration(sName : String) : Boolean {
-	return self.schemas->exists(name = sName);
-}
-
-query RDB::ModelGeneration::findSchema(sName : String) : RDB::Schema {
-	return self.schemas->selectOne(name = sName);
-}
-
-
-/********************************** SEQUENCE ************************************/
-query RDB::ModelGeneration::isSequenceInSchema(sName : String, qName : String) : Boolean {
-	return self.findSchema(sName).sequences->exists(name = qName);
-}
-
-query RDB::ModelGeneration::findSequence(sName : String, qName : String) : RDB::Sequence {
-	return self.findSchema(sName).sequences->selectOne(name = qName);
-}
-
-
-/************************************ INDEX *************************************/
-query RDB::ModelGeneration::isIndexInSchema(sName : String, iName : String) : Boolean {
-	return self.findSchema(sName).indexes->exists(name = iName);
-}
-
-query RDB::ModelGeneration::findIndex(sName : String, iName : String) : RDB::Index {
-	return self.findSchema(sName).indexes->selectOne(name = iName);
-}
-
-/*********************************** TABLE *************************************/
-query RDB::ModelGeneration::isTableInSchema(sName : String, tName : String) : Boolean {
-	return self.findSchema(sName).tables->exists(name = tName);
-}
-
-query RDB::ModelGeneration::areTablesInSchema(sName : String, tNames : OrderedSet(String)) : Boolean {
-	return tNames->forAll(name | self.isTableInSchema(sName, name));
-}
-
-query RDB::ModelGeneration::findTable(sName : String, tName : String) : RDB::Table {
-	return self.findSchema(sName).tables->selectOne(name = tName);
-}
-
-query RDB::ModelGeneration::isConstraintForTable(sName : String, tName : String, rName : String) : Boolean {
-	return self.findTable(sName, tName).constraints->exists(name = rName);
-}
-
-
-/*********************************** COLUMN ************************************/
-query RDB::ModelGeneration::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
-	return self.findTable(sName, tName).columns->exists(name = cName);
-}
-
-query RDB::ModelGeneration::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
-	return cNames->forAll(name | self.isColumnInTable(sName, tName, name));
-}
-
-query RDB::ModelGeneration::findColumn(sName : String, tName : String, cName : String) : RDB::Column {
-	return self.findTable(sName, tName).columns->selectOne(name = cName);
-}
-
-query RDB::ModelGeneration::findColumns(sName : String, tName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
-	var columns : OrderedSet(RDB::Column);
-	cNames->forEach(cName) {
-		columns += self.findColumn(sName, tName, cName);
-	};
-	return columns;
-}
-
-
-/********************************** CONSTRAINT **********************************/
-query RDB::ModelGeneration::findConstraint(sName : String, tName : String, rName : String) : RDB::Constraint {
-	return self.findTable(sName, tName).constraints->selectOne(name = rName);
-}
-
-query RDB::ModelGeneration::isConstrainedColumn(sName : String, tName : String, cName : String) : Boolean {
-	return self.findTable(sName, tName).constraints->exists(owningColumn.name = cName);
-}
-
-
-/********************************* COLUMN TYPE *********************************/
-// overi, zda primitivni typ existuje (true - exituje, false - neexistuje)
-query RDB::ModelGeneration::isPrimitiveType(type : String) : Boolean {
-	// je treba prohledat enum, zda se v nem nachazi nas hledany prvek
-	return not (self.createPrimitiveType(type) = null);
-}
-
-// prirazeni primitivni hodnoty podle vstupniho stringu
-query RDB::ModelGeneration::createPrimitiveType (type : String) : RDB::PrimitiveType {
-	switch {
-		case (type = "boolean") return RDB::PrimitiveType::boolean;
-		case (type = "char") return RDB::PrimitiveType::char;
-		case (type = "int") return RDB::PrimitiveType::int;
-		case (type = "float") return RDB::PrimitiveType::float;
-	};
-	return null;
-}
-
-query RDB::ModelGeneration::isSameColumnName(sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(sName, tNameA, cNameA).name = self.findColumn(sName, tNameB, cNameB).name;
-}
-
-query RDB::ModelGeneration::isSameColumnType (sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
-}
-
-query RDB::ModelGeneration::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String, cNameB : OrderedSet(String)) : Boolean {
-	var b : Boolean := true;
-	cNameA->forEach(nameA){
-		cNameB->forEach(nameB){
-			if(self.isSameColumnName(sName, tNameA, nameA, tNameB, nameB) 
-				and not self.isSameColumnType(sName, tNameA, nameA, tNameB, nameB)) then {
-				b := false;
-			} endif;
-		};
-	};
-	return b;
 }

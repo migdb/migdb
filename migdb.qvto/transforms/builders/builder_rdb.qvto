@@ -43,6 +43,12 @@ helper _rdbGeneration(_isMissing : Boolean, _schemas : OrderedSet(Schema)) : rdb
 	return generation;
 }
 
+helper _schema( _name : String) : rdb::Schema{
+	return object rdb::Schema{
+		name := _name;
+	};
+}
+
 
 helper _schema( _tables : OrderedSet(rdb::Table)) : rdb::Schema{
 	return object rdb::Schema{
@@ -63,6 +69,12 @@ helper _schema(_name : String, _tables : OrderedSet(rdb::Table), _sequences : Or
 	schema.indexes := _indexes;
 	return schema;
 }
+
+helper _table(_name : String) : Table {	
+ 	return object Table {
+ 		name := _name;
+ 	};
+ }
 
 helper _table(_name : String, _columns : OrderedSet(Column)) : Table {	
  	return object Table {
@@ -85,17 +97,17 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _primaryKey(_name : String, _underlineIndex : Index) : PrimaryKey {
+ helper _primaryKey(_name : String) : PrimaryKey {
  	return object PrimaryKey {
  		name := _name;
  	};
  }
  
- helper _foreignKey(_name : String, _table : Table, _constrainedColumn : Column) : ForeignKey {
+ helper _foreignKey(_name : String, _table : Table, _owningColumn : Column) : ForeignKey {
  	return object ForeignKey {
  		name := _name;
  		targetTable := _table;
- 		owningColumn := _constrainedColumn;
+ 		owningColumn := _owningColumn;
  	};
  }
  
@@ -106,6 +118,14 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
+  helper _column(_name : String, _type : PrimitiveType, _defaultValue : String) : Column {
+ 	return object Column {
+ 		name := _name;
+ 		type := _type;
+ 		defaultValue := _defaultValue;
+ 	};
+ }
+ 
  helper _sequence(_name : String, _startValue : Integer) : RDB::Sequence {
  	return object RDB::Sequence {
  		name := _name;
@@ -113,7 +133,13 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _notNullConstraint(_name : String) : RDB::NotNull{
+  helper _unique(_name : String) : RDB::Unique{
+ 	return object Unique{
+ 		name := _name;
+	};
+ }
+ 
+ helper _notNull(_name : String) : RDB::NotNull{
  	return object NotNull{
  		name := _name;
 	};

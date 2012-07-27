@@ -1,0 +1,35 @@
+import builder_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation buildAPP(inout inoutModel : APP);
+
+
+main() {
+	log("BUILDING APP MODEL");
+	
+	var model : APP::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+		};
+	 };
+	
+	model.operations += _addPrimitiveClass("Integer", PrimitiveType::int);
+	model.operations += _addPrimitiveClass("String", PrimitiveType::char);
+	model.operations += _addClass("Country", false,  APP::InheritanceType::joined);
+	model.operations += _addProperty("Country", "name", "String");
+
+	model.operations += _addClass("LegalPerson", false,  APP::InheritanceType::joined);	
+	model.operations += _addProperty("LegalPerson", "regNo", "Integer");
+	model.operations += _addProperty("LegalPerson", "bizName", "String");
+	model.operations += _addProperty("LegalPerson", "street", "String");
+	model.operations += _addProperty("LegalPerson", "city", "String");
+	model.operations += _addProperty("LegalPerson", "zip", "String");
+	model.operations += _addProperty("LegalPerson", "country", "Country");	
+		
+	model.operations += _addClass("NaturalPerson", false,  APP::InheritanceType::joined);
+	model.operations += _addProperty("NaturalPerson", "name", "String");
+	model.operations += _addProperty("NaturalPerson", "surname", "String");
+	model.operations += _addProperty("NaturalPerson", "street", "String");
+	model.operations += _addProperty("NaturalPerson", "city", "String");
+	model.operations += _addProperty("NaturalPerson", "zip", "String");
+	model.operations += _addProperty("NaturalPerson", "country", "Country");
+}

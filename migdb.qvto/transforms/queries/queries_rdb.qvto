@@ -1,0 +1,149 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+library RDB_queries;
+
+modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
+
+/********************************************************************************
+ *									QUERIES										*
+ ********************************************************************************/
+
+/********************************** SCHEMA **************************************/
+query RDB::ModelGeneration::isSchemaInGeneration(sName : String) : Boolean {
+	return self.schemas->exists(name = sName);
+}
+
+query RDB::ModelGeneration::findSchema(sName : String) : RDB::Schema {
+	return self.schemas->selectOne(name = sName);
+}
+
+
+/********************************** SEQUENCE ************************************/
+query RDB::ModelGeneration::isSequenceInSchema(sName : String, qName : String) : Boolean {
+	return self.findSchema(sName).sequences->exists(name = qName);
+}
+
+query RDB::ModelGeneration::findSequence(sName : String, qName : String) : RDB::Sequence {
+	return self.findSchema(sName).sequences->selectOne(name = qName);
+}
+
+
+/************************************ INDEX *************************************/
+query RDB::ModelGeneration::isIndexInSchema(sName : String, iName : String) : Boolean {
+	return self.findSchema(sName).indexes->exists(name = iName);
+}
+
+query RDB::ModelGeneration::findIndex(sName : String, iName : String) : RDB::Index {
+	return self.findSchema(sName).indexes->selectOne(name = iName);
+}
+
+/*********************************** TABLE *************************************/
+query RDB::ModelGeneration::isTableInSchema(sName : String, tName : String) : Boolean {
+	return self.findSchema(sName).tables->exists(name = tName);
+}
+
+query RDB::ModelGeneration::areTablesInSchema(sName : String, tNames : OrderedSet(String)) : Boolean {
+	return tNames->forAll(name | self.isTableInSchema(sName, name));
+}
+
+query RDB::ModelGeneration::findTable(sName : String, tName : String) : RDB::Table {
+	return self.findSchema(sName).tables->selectOne(name = tName);
+}
+
+query RDB::ModelGeneration::isConstraintForTable(sName : String, tName : String, rName : String) : Boolean {
+	return self.findTable(sName, tName).constraints->exists(name = rName);
+}
+
+
+/*********************************** COLUMN ************************************/
+query RDB::ModelGeneration::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
+	return self.findTable(sName, tName).columns->exists(name = cName);
+}
+
+query RDB::ModelGeneration::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
+	return cNames->forAll(name | self.isColumnInTable(sName, tName, name));
+}
+
+query RDB::ModelGeneration::findColumn(sName : String, tName : String, cName : String) : RDB::Column {
+	return self.findTable(sName, tName).columns->selectOne(name = cName);
+}
+
+query RDB::ModelGeneration::findColumns(sName : String, tName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
+	var columns : OrderedSet(RDB::Column);
+	cNames->forEach(cName) {
+		columns += self.findColumn(sName, tName, cName);
+	};
+	return columns;
+}
+
+
+/********************************** CONSTRAINT **********************************/
+query RDB::ModelGeneration::findConstraint(sName : String, tName : String, rName : String) : RDB::Constraint {
+	return self.findTable(sName, tName).constraints->selectOne(name = rName);
+}
+
+query RDB::ModelGeneration::isConstrainedColumn(sName : String, tName : String, cName : String) : Boolean {
+	return self.findTable(sName, tName).constraints->exists(owningColumn.name = cName);
+}
+
+
+/********************************* COLUMN TYPE *********************************/
+// overi, zda primitivni typ existuje (true - exituje, false - neexistuje)
+query RDB::ModelGeneration::isPrimitiveType(type : String) : Boolean {
+	// je treba prohledat enum, zda se v nem nachazi nas hledany prvek
+	return not (self.createPrimitiveType(type) = null);
+}
+
+// prirazeni primitivni hodnoty podle vstupniho stringu
+query RDB::ModelGeneration::createPrimitiveType (type : String) : RDB::PrimitiveType {
+	switch {
+		case (type = "boolean") return RDB::PrimitiveType::boolean;
+		case (type = "char") return RDB::PrimitiveType::char;
+		case (type = "int") return RDB::PrimitiveType::int;
+		case (type = "float") return RDB::PrimitiveType::float;
+	};
+	return null;
+}
+
+query RDB::ModelGeneration::isSameColumnName(sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(sName, tNameA, cNameA).name = self.findColumn(sName, tNameB, cNameB).name;
+}
+
+query RDB::ModelGeneration::isSameColumnType (sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
+}
+
+query RDB::ModelGeneration::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String, cNameB : OrderedSet(String)) : Boolean {
+	var b : Boolean := true;
+	cNameA->forEach(nameA){
+		cNameB->forEach(nameB){
+			if(self.isSameColumnName(sName, tNameA, nameA, tNameB, nameB) 
+				and not self.isSameColumnType(sName, tNameA, nameA, tNameB, nameB)) then {
+				b := false;
+			} endif;
+		};
+	};
+	return b;
+}

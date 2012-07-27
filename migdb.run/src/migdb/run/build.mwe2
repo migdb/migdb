@@ -41,12 +41,12 @@ Workflow {
 /***** BUILD MODELS *****/	
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/buildAPP.qvto"
+		transformationFile = "../migdb.qvto/transforms/cg/buildAPP.qvto"
 		outputSlot = "buildModelAPP"
 	}
 /**/
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/builders/buildRDB.qvto"
+		transformationFile = "../migdb.qvto/transforms/cg/buildRDB.qvto"
 		outputSlot = "buildModelRDB"
 	}
 	

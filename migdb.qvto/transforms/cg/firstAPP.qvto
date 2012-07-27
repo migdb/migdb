@@ -1,0 +1,22 @@
+import builder_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation firstAPP(in inModel : APP, out outModel : APP);
+
+
+main() {	
+	log("DEMO 1");
+		
+	inModel.rootObjects().deepclone();
+
+
+	var root : APP::ModelRoot = outModel.rootObjects()![APP::ModelRoot];
+	var gen0 : APP::ModelGeneration = root.modelGenerations->first();
+	 
+	 root.operations += _addClass("Party", false, InheritanceType::joined);
+	 root.operations += _addProperty("Party", "street", "String");
+	 root.operations += _addProperty("Party", "city", "String");
+	 root.operations += _addProperty("Party", "zip", "String");
+	 root.operations += _addProperty("Party", "country", "Country");
+	 root.operations += _setParent("LegalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+	 root.operations += _setParent("NaturalPerson", "Party", OrderedSet{"street", "city", "zip", "country"});
+}
