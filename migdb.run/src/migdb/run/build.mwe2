@@ -104,5 +104,9 @@ Workflow {
 	component = CommandLineExec{
 		command = "ruby ../migdb.ruby.sql/script.rb output_sql_build postgres postgres 123456"
 	}		
+/**/
+	component = CommandLineExec{
+		command = "ruby ../migdb.ruby.sql/script.rb ../cg.sql/insert.sql postgres postgres 123456"
+	}		
 /**/	
 }
