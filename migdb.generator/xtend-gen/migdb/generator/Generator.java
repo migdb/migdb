@@ -1134,7 +1134,7 @@ public class Generator extends BaseCodeGenerator {
     } else if (operation instanceof AddPrimaryKeyImpl) {
       return _genOperation((AddPrimaryKeyImpl)operation);
     } else if (operation instanceof AddSchemaImpl) {
-      return (CharSequence) _genOperation((AddSchemaImpl)operation);
+      return _genOperation((AddSchemaImpl)operation);
     } else if (operation instanceof AddSequenceImpl) {
       return _genOperation((AddSequenceImpl)operation);
     } else if (operation instanceof AddTableImpl) {
@@ -1142,7 +1142,7 @@ public class Generator extends BaseCodeGenerator {
     } else if (operation instanceof AddUniqueImpl) {
       return _genOperation((AddUniqueImpl)operation);
     } else if (operation instanceof CopyInstancesImpl) {
-      return (CharSequence) _genOperation((CopyInstancesImpl)operation);
+      return _genOperation((CopyInstancesImpl)operation);
     } else if (operation instanceof GenerateSequenceNumbersImpl) {
       return _genOperation((GenerateSequenceNumbersImpl)operation);
     } else if (operation instanceof HasNoInstancesImpl) {
@@ -1170,7 +1170,7 @@ public class Generator extends BaseCodeGenerator {
     } else if (operation instanceof SetColumnDefaultValueImpl) {
       return _genOperation((SetColumnDefaultValueImpl)operation);
     } else if (operation instanceof SetColumnTypeImpl) {
-      return (CharSequence) _genOperation((SetColumnTypeImpl)operation);
+      return _genOperation((SetColumnTypeImpl)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         Arrays.<Object>asList(operation).toString());
