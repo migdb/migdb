@@ -201,11 +201,9 @@ class Generator extends BaseCodeGenerator {
 	 * Operation is mode complex. If user want to create schema which name is "public" -> operation do nothing
 	 * @param AddSchemaImpl operation : operation of type AddSchemaImpl
 	 */
-	def dispatch genOperation(AddSchemaImpl operation){
-		if(!operation.name.toLowerCase.equals("public"))
-			return ''' CREATE SCHEMA «operation.name»;''';
-		return "";
-	}
+	def dispatch genOperation(AddSchemaImpl operation)'''
+		«IF !operation.name.toLowerCase.equals("public")»CREATE SCHEMA «operation.name»«ENDIF»; 
+	'''
 	
 	/**		REMOVE OPERATIONS		**/
 	

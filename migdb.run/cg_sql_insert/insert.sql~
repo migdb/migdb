@@ -1,0 +1,4 @@
+﻿INSERT INTO country VALUES(nextval('seq_global'), 'New York'),(nextval('seq_global'), 'Florida'),(nextval('seq_global'), 'Iowa'), (nextval('seq_global'), 'Nevada')
+,(nextval('seq_global'), 'Ohio'),(nextval('seq_global'), 'Washington'),(nextval('seq_global'), 'Indiana'),(nextval('seq_global'), 'New Jersey'),(nextval('seq_global'), 'Oklahoma')
+,(nextval('seq_global'), 'Texas');
+
