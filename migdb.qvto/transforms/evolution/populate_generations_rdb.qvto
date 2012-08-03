@@ -126,7 +126,7 @@ query RDB::ops::AddUnique::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddUnique::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _unique(self.name);
+	t.constraints += _unique(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName));
 }
 
 /**
@@ -143,7 +143,7 @@ query RDB::ops::AddPrimaryKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _primaryKey(self.name);
+	t.constraints += _primaryKey(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName));
 }
 
 /**
@@ -180,7 +180,7 @@ query RDB::ops::AddNotNull::isValid(gen : RDB::ModelGeneration) : Boolean {
 
 mapping RDB::ops::AddNotNull::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _notNull(self.name); 
+	t.constraints += _notNull(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName)); 
 }
 
 /********************************************************************************
@@ -296,11 +296,11 @@ query RDB::ops::RemoveColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
 mapping RDB::ops::RemoveColumn::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
-	t.constraints->forEach(r) {
-		if (r.oclAsType(RDB::ForeignKey).owningColumn.name = c.name.toLower()) then {
-			t.constraints := t.constraints->excluding(r);
-		} endif;
-	};
+	//t.constraints->forEach(r) {
+	//	if (r.oclAsType(RDB::ForeignKey).owningColumn.name = c.name.toLower()) then {
+	//		t.constraints := t.constraints->excluding(r);
+	//	} endif;
+	//};
 	t.columns := t.columns->excluding(c);
 }
 

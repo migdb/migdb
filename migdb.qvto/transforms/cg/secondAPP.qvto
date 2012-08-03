@@ -15,4 +15,9 @@ main() {
 	 root.operations += _extractClass("Party", OrderedSet{"street", "city","zip", "country"}, "Address");
 	 root.operations += _renameProperty("Party", "address", "residentialAddress");
 	 root.operations += _addProperty("Party", "contactAddress", "Country");
+	 
+	 //Prepare for third transformation
+	 root.operations += _addClass("Organizations", false, InheritanceType::joined);
+	 root.operations += _addProperty("Organizations","regNo", "Integer");
+	 root.operations += _addProperty("Organizations","areaOfBusiness", "String");
 }

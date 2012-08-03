@@ -1,0 +1,16 @@
+import builder_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(in inModel : APP, out outModel : APP);
+
+
+main() {
+	log("DEMO 3");	
+
+	inModel.rootObjects().deepclone();
+
+
+	var root : APP::ModelRoot = outModel.rootObjects()![APP::ModelRoot];
+	var gen0 : APP::ModelGeneration = root.modelGenerations->first();
+	 
+	
+}

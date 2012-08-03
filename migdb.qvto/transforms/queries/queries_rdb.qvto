@@ -105,6 +105,7 @@ query RDB::ModelGeneration::findConstraint(sName : String, tName : String, rName
 }
 
 query RDB::ModelGeneration::isConstrainedColumn(sName : String, tName : String, cName : String) : Boolean {
+	var table : RDB::Table = self.findTable(sName, tName);
 	return self.findTable(sName, tName).constraints->exists(owningColumn.name = cName);
 }
 

@@ -71,7 +71,7 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
           eType="#//rdb/Table" derived="true" eOpposite="#//rdb/Table/constraints"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningColumn" lowerBound="1"
-          eType="#//rdb/Column" derived="true"/>
+          eType="#//rdb/Column"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Unique" eSuperTypes="#//rdb/Constraint"/>
     <eClassifiers xsi:type="ecore:EClass" name="PrimaryKey" eSuperTypes="#//rdb/Constraint"/>

@@ -97,9 +97,10 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _primaryKey(_name : String) : PrimaryKey {
+ helper _primaryKey(_name : String, _owningColumn : Column) : PrimaryKey {
  	return object PrimaryKey {
  		name := _name;
+ 		owningColumn := _owningColumn;
  	};
  }
  
@@ -133,14 +134,16 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
-  helper _unique(_name : String) : RDB::Unique{
+  helper _unique(_name : String, _owningColumn : Column) : RDB::Unique{
  	return object Unique{
  		name := _name;
+ 		owningColumn := _owningColumn;
 	};
  }
  
- helper _notNull(_name : String) : RDB::NotNull{
+ helper _notNull(_name : String, _owningColumn : Column) : RDB::NotNull{
  	return object NotNull{
  		name := _name;
+ 		owningColumn := _owningColumn;
 	};
  }

@@ -6,8 +6,8 @@ transformation secondAPP(out inoutModel : RDB);
 main() {
 	log("TEST_RDB_INVALID_05: redundant id");
 	var col : Column := _column("col_first_table", PrimitiveType::int);	
-	var pk1 : PrimaryKey := _primaryKey("pk1");
-	var pk2 : PrimaryKey := _primaryKey("pk2");
+	var pk1 : PrimaryKey := _primaryKey("pk1", col);
+	var pk2 : PrimaryKey := _primaryKey("pk2", col);
 	
 	var table1 : Table := _table("collision", OrderedSet{col}, OrderedSet{pk1, pk2});
 	

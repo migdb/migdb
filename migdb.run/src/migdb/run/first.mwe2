@@ -110,7 +110,7 @@ Workflow {
 	}
 	
 /***** DATABASE CONNECT *****/	
-/**/
+/**
 	component = CommandLineExec{
 		command = "ruby ../migdb.ruby.sql/script.rb output_sql_first postgres postgres 123456"
 	}		
