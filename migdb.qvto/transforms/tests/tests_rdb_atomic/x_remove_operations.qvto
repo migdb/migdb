@@ -1,0 +1,16 @@
+modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
+
+transformation remove_operations(inout inModel : RDB);
+
+main() {
+	assert(inModel.rootObjects()->size() = 1);
+	assert(inModel.rootObjects()->forAll(oclIsKindOf(RDB::ModelRoot)));
+	
+	log("Remove used operations...");
+	
+	var root : RDB::ModelRoot = inModel.rootObjects()![RDB::ModelRoot];
+	
+	root.operations->forEach(op){
+		inModel.removeElement(op);
+	};
+}

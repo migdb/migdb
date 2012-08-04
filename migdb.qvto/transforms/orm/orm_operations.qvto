@@ -92,7 +92,7 @@ mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot :
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
 		name := "id_" + self.name.toLower();
-		type := RDB::PrimitiveType::int;
+		type := "int";
 		// defaultValue := "0";
 	};
 	
@@ -108,7 +108,7 @@ mapping APP::ops::AddClass::toRdb(appGen : APP::ModelGeneration, inout rdbRoot :
 	rdbRoot.operations += object RDB::ops::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.name.toLower();
-		owningColumnName := "id_" + self.name.toLower();
+		constrainedColumnName := "id_" + self.name.toLower();
 		name := "PK_" + self.name.toLower();
 		//underlyingIndexName := "IX_" + self.name.toLower() + "_id_" + self.name.toLower();
 	};
@@ -147,7 +147,7 @@ mapping APP::ops::AddProperty::complexPropertyToRdb(appGen : APP::ModelGeneratio
 when { appGen.isClassInGeneration(self.type) and self.upperBound <> -1; }
 {
 	// adds a column of an integer type to a table
-	rdbRoot.operations += appGen.AddColumnOfPrimitiveType(self, RDB::PrimitiveType::int);
+	rdbRoot.operations += appGen.AddColumnOfPrimitiveType(self, "int");
 	// adds a foreign key to a table
 	rdbRoot.operations += appGen.AddForeignKeyToColumn(self);
 }
@@ -170,7 +170,7 @@ mapping APP::Property::complexPropertyToRdb(appGen : APP::ModelGeneration, inout
 when { appGen.isClassInGeneration(self.type.name) and self.upperBound <> -1; }
 {
 	// adds a column of an integer type to a table
-	rdbRoot.operations += appGen.AddColumnOfPrimitiveType(self, RDB::PrimitiveType::int);
+	rdbRoot.operations += appGen.AddColumnOfPrimitiveType(self, "int");
 	// adds a foreign key to a table
 	rdbRoot.operations += appGen.AddForeignKeyToColumn(self);
 }
@@ -185,7 +185,7 @@ when { self.lowerBound = 1 }
 /* ++++++++++ HELPERS_FOR_A_CREATION_OF_OPERATIONS ++++++++++++++++++++ */
 
 // the universal helper for an addition of a column of a primitive type t <- {boolean, int, char, float}
-helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty, t : RDB::PrimitiveType) : RDB::ops::AddColumn {		
+helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty, t : String) : RDB::ops::AddColumn {		
 	return object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
@@ -196,7 +196,7 @@ helper APP::ModelGeneration::AddColumnOfPrimitiveType(op : APP::ops::AddProperty
 }
 
 // usually used in a mapping of a proeprty of an embedded type  
-helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : RDB::PrimitiveType) : RDB::ops::AddColumn {		
+helper APP::ModelGeneration::AddColumnOfPrimitiveType(p : APP::Property, t : String) : RDB::ops::AddColumn {		
 	return object RDB::ops::AddColumn {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
@@ -211,7 +211,7 @@ helper APP::ModelGeneration::AddForeignKeyToColumn(op : APP::ops::AddProperty) :
 	return object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
-		owningColumnName := op.name.toLower(); // todo: fix a order
+		constrainedColumnName := op.name.toLower(); // todo: fix a order
 		name := "FK_" + op.name.toLower() + "_id_" + op.type.toLower();
 		targetTableName := op.type.toLower();		
 	}
@@ -221,7 +221,7 @@ helper APP::ModelGeneration::AddForeignKeyToColumn(p : APP::Property) : RDB::ops
 	return object RDB::ops::AddForeignKey {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
-		owningColumnName := p.name.toLower(); // todo: fix a order
+		constrainedColumnName := p.name.toLower(); // todo: fix a order
 		name := "FK_" + p.name.toLower() + "_id_" + p.type.name.toLower();
 		targetTableName := p.type.name.toLower();
 	}
@@ -232,7 +232,7 @@ helper APP::ModelGeneration::AddNotNullConstraintToColumn(op : APP::ops::AddProp
 	return object RDB::ops::AddNotNull {
 		owningSchemaName := "public";
 		owningTableName := op.owningClassName.toLower();
-		owningColumnName := op.name.toLower();
+		constrainedColumnName := op.name.toLower();
 		name := "NN_" + op.name.toLower();
 	}
 }
@@ -241,7 +241,7 @@ helper APP::ModelGeneration::AddNotNullConstraintToColumn(p : APP::Property) : R
 	return object RDB::ops::AddNotNull {
 		owningSchemaName := "public";
 		owningTableName := p.owningGeneralClass.name.toLower();
-		owningColumnName := p.name.toLower();
+		constrainedColumnName := p.name.toLower();
 		name := "NN_" + p.name.toLower();
 	}
 }
@@ -264,7 +264,7 @@ when { true; }
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := self.owningClassName.toLower() + "_id";
-		type := RDB::PrimitiveType::int;
+		type := "int";
 	};
 	
 	// addition of a foreign key to the table
@@ -273,7 +273,7 @@ when { true; }
 		owningTableName := self.type.toLower();
 		name := "FK_" + self.owningClassName.toLower() + "_id_" + self.owningClassName.toLower();
 		targetTableName := self.owningClassName.toLower();
-		owningColumnName := self.owningClassName.toLower();
+		constrainedColumnName := self.owningClassName.toLower();
 	};
 }
 
@@ -286,7 +286,7 @@ when { self.isOrdered }
 		owningSchemaName := "public";
 		owningTableName := self.type.toLower();
 		name := "ord_" + self.owningClassName.toLower();
-		type := RDB::PrimitiveType::int;
+		type := "int";
 	};
 	
 	// addition of an index to the schema
@@ -415,7 +415,7 @@ mapping APP::ops::MoveProperty::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		owningSchemaName := "public";
 		owningTableName := self.targetClassName.toLower();
 		name := self.name;
-		type := RDB::PrimitiveType::boolean;
+		type := "boolean";
 	};
 	
 	rdbRoot.operations += object RDB::ops::CopyInstances {
@@ -449,7 +449,7 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		owningSchemaName := "public";
 		owningTableName := self.extractClassName.toLower();
 		name := "id_" + self.extractClassName.toLower();
-		type := RDB::PrimitiveType::int;
+		type := "int";
 	};
 	
 	rdbRoot.operations += object RDB::ops::AddIndex {
@@ -462,7 +462,7 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 	rdbRoot.operations += object RDB::ops::AddPrimaryKey {
 		owningSchemaName := "public";
 		owningTableName := self.extractClassName.toLower();
-		owningColumnName := "id_" + self.extractClassName.toLower();
+		constrainedColumnName := "id_" + self.extractClassName.toLower();
 		name := "PK_" + self.extractClassName.toLower();
 		//underlyingIndexName := "IX_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
 	};
@@ -471,7 +471,7 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		owningSchemaName := "public";
 		owningTableName := self.sourceClassName.toLower();
 		name := self.extractClassName.toLower();
-		type := RDB::PrimitiveType::int;
+		type := "int";
 	};
 	
 	rdbRoot.operations += object RDB::ops::GenerateSequenceNumbers {
@@ -513,7 +513,7 @@ mapping APP::ops::ExtractClass::toRdb(appGen : APP::ModelGeneration, inout rdbRo
 		owningTableName := self.sourceClassName.toLower();
 		name := "FK_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower();
 		targetTableName := self.extractClassName.toLower();
-		owningColumnName := self.extractClassName.toLower();
+		constrainedColumnName := self.extractClassName.toLower();
 	};	
 }
 
@@ -571,11 +571,11 @@ query APP::ModelGeneration::findPrimitiveTypeInApp(pName : String) : APP::Primit
 	return self.findPrimitiveClass(pName).primitiveType;
 }
 
-query APP::ModelGeneration::findPrimitiveTypeInRdb(pName : String) : RDB::PrimitiveType {
+query APP::ModelGeneration::findPrimitiveTypeInRdb(pName : String) : String {
 	switch {
-		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::boolean) return RDB::PrimitiveType::boolean;
-		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::char) return RDB::PrimitiveType::char;
-		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::int) return RDB::PrimitiveType::int;
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::boolean) return "boolean";
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::char) return "char";
+		case (self.findPrimitiveTypeInApp(pName) = APP::PrimitiveType::int) return "int";
 	};
 	return null;
 }

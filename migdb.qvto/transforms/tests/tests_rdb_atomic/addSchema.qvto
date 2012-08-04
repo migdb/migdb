@@ -1,9 +1,12 @@
 import builder_rdb_link;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation buildRDB(inout inoutModel : RDB);
+transformation addschema(out inoutModel : RDB);
+
 
 main() {
-
+	log("TEST_RDB");
+	log("op: ADDSCHEMA");	
+	
 	var model : RDB::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
@@ -11,5 +14,6 @@ main() {
 	};
 	
 	model.operations += _addSchema("public");
-	model.operations += _addSequence("public", "seq_global", 1); 
+	model.operations += _addSchema("second");
+	 
 }

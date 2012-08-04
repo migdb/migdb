@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb">
+<rdb:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:rdb="http://www.collectionspro.eu/jam/mm/rdb" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/rdb java://mm.rdb.RdbPackage">
   <modelGenerations>
     <schemas name="public">
       <tables name="country">

@@ -26,7 +26,7 @@ import mm.rdb.ops.impl.RemoveConstraintImpl
 import mm.rdb.ops.impl.RemoveTableImpl
 import mm.rdb.ops.impl.RenameColumnImpl
 import mm.rdb.ops.impl.RenameTableImpl
-import mm.rdb.ops.impl.SetColumnDefaultValueImpl
+import mm.rdb.ops.impl.SetDefaultValueImpl
 import mm.rdb.ops.impl.SetColumnTypeImpl
 import org.eclipse.emf.ecore.EObject
 
@@ -119,7 +119,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddNotNullImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ALTER COLUMN «operation.owningColumnName» SET NOT NULL;
+			ALTER COLUMN «operation.constrainedColumnName» SET NOT NULL;
 	'''	
 	
 	/**
@@ -131,7 +131,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddPrimaryKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			PRIMARY KEY («operation.owningColumnName»);
+			PRIMARY KEY («operation.constrainedColumnName»);
 	'''		
 
 	/**
@@ -145,7 +145,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
 			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.owningColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id_«operation.targetTableName»);
+			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id_«operation.targetTableName»);
 	'''		
 
 	/**
@@ -159,7 +159,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddUniqueImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name» UNIQUE («operation.owningColumnName»);
+			ADD CONSTRAINT «operation.name» UNIQUE («operation.constrainedColumnName»);
 	'''	
 	
 	/**
@@ -267,7 +267,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveSequenceImpl operation : operation of type RemoveSequenceImpl
 	 */
 	def dispatch genOperation(RemoveSequenceImpl operation)'''
-		DROP SEQUENCE «operation.owningSchemaName».«operation.sequenceName»;
+		DROP SEQUENCE «operation.owningSchemaName».«operation.name»;
 	'''		
 	
 	/**		RENAME OPERATIONS		**/	
@@ -304,7 +304,7 @@ class Generator extends BaseCodeGenerator {
 	 * Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
 	 * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
 	 */
-	def dispatch genOperation(SetColumnDefaultValueImpl operation) '''
+	def dispatch genOperation(SetDefaultValueImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «operation.newDefaultValue»;
 	'''	
@@ -324,13 +324,13 @@ class Generator extends BaseCodeGenerator {
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
 		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
 				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
-						«IF operation.newType.toString().equals("int") && operation.oldType.toString().equals("boolean")»
+						«IF operation.newType.equals("int") && operation.oldType.equals("boolean")»
 							USING converting_booltoint(«operation.owningColumnName»)
-						«ELSEIF operation.newType.toString().equals("boolean") && operation.oldType.toString().equals("int")»
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")»
 							USING converting_inttoboolean(«operation.owningColumnName»)
-						«ELSEIF operation.newType.toString().equals("boolean") && operation.oldType.toString().equals("char")»
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")»
 							USING converting_chartobool(«operation.owningColumnName»)
-						«ELSEIF operation.newType.toString().equals("int") && operation.oldType.toString().equals("char")»
+						«ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")»
 							USING converting_chartoint(«operation.owningColumnName»)
 						«ENDIF»;''';
 	}

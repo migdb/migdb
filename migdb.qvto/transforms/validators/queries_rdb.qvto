@@ -27,7 +27,7 @@ library QueriesDB;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';	
 
 query rdb::Table::getPKColumn():rdb::Column{
-	return self.constraints![rdb::PrimaryKey].owningColumn;
+	return self.constraints![rdb::PrimaryKey].constrainedColumn;
 }
 
 	

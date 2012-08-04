@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app">
+<app:ModelRoot xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:app="http://www.collectionspro.eu/jam/mm/app" xmlns:app-ops="http://www.collectionspro.eu/jam/mm/app-ops" xsi:schemaLocation="http://www.collectionspro.eu/jam/mm/app java://mm.app.AppPackage http://www.collectionspro.eu/jam/mm/app-ops java://mm.app.ops.OpsPackage">
   <modelGenerations>
     <entities xsi:type="app:PrimitiveClass" name="Integer" primitiveType="int"/>
     <entities xsi:type="app:PrimitiveClass" name="String" primitiveType="char"/>
@@ -26,4 +26,22 @@
       <properties name="country" type="//@modelGenerations.0/@entities.2"/>
     </entities>
   </modelGenerations>
+  <operations xsi:type="app-ops:AddPrimitiveClass" name="Integer" primitiveType="int"/>
+  <operations xsi:type="app-ops:AddPrimitiveClass" name="String" primitiveType="char"/>
+  <operations xsi:type="app-ops:AddClass" name="Country"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="Country" name="name" type="String"/>
+  <operations xsi:type="app-ops:AddClass" name="LegalPerson"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="regNo" type="Integer"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="bizName" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="street" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="city" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="zip" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="LegalPerson" name="country" type="Country"/>
+  <operations xsi:type="app-ops:AddClass" name="NaturalPerson"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="name" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="surname" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="street" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="city" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="zip" type="String"/>
+  <operations xsi:type="app-ops:AddProperty" owningClassName="NaturalPerson" name="country" type="Country"/>
 </app:ModelRoot>

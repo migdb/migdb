@@ -1,0 +1,209 @@
+module migb.testing.rdb.atomic.run.test_rdb_atomic
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+
+Workflow{
+/***** DEFINE META-MODELS *****/	
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/		
+/**/	
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "models"
+	}
+
+		
+/**** op: ADDSCHEMA *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSchema.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSchema_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addSchema.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addSchema.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+
+/**** op: ADDSEQUENCE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSequence.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSequence_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addSequence.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addSequence.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	
+/**** op: ADDTABLE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addTable.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addTable_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+/**** op: ADDCOLUMN *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addColumn.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addColumn_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+	
+/**** COMPARATORS *****/
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDCHEMA"
+		resultURI = "models/required_addSchema.xmi"
+		testedURI = "models/test_addSchema.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDSEQUENCE"
+		resultURI = "models/required_addSequence.xmi"
+		testedURI = "models/test_addSequence.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDTABLE"
+		resultURI = "models/required_addTable.xmi"
+		testedURI = "models/test_addTable.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDCOLUMN"
+		resultURI = "models/required_addColumn.xmi"
+		testedURI = "models/test_addColumn.xmi"
+	}					
+}

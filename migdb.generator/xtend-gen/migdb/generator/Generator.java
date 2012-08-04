@@ -4,7 +4,6 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import mm.rdb.PrimitiveType;
 import mm.rdb.ops.MergeType;
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
@@ -30,8 +29,8 @@ import mm.rdb.ops.impl.RemoveSequenceImpl;
 import mm.rdb.ops.impl.RemoveTableImpl;
 import mm.rdb.ops.impl.RenameColumnImpl;
 import mm.rdb.ops.impl.RenameTableImpl;
-import mm.rdb.ops.impl.SetColumnDefaultValueImpl;
 import mm.rdb.ops.impl.SetColumnTypeImpl;
+import mm.rdb.ops.impl.SetDefaultValueImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -148,8 +147,8 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("ALTER COLUMN ");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "	");
+    String _constrainedColumnName = operation.getConstrainedColumnName();
+    _builder.append(_constrainedColumnName, "	");
     _builder.append(" SET NOT NULL;");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -177,8 +176,8 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("PRIMARY KEY (");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "	");
+    String _constrainedColumnName = operation.getConstrainedColumnName();
+    _builder.append(_constrainedColumnName, "	");
     _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -208,8 +207,8 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("FOREIGN KEY (");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "	");
+    String _constrainedColumnName = operation.getConstrainedColumnName();
+    _builder.append(_constrainedColumnName, "	");
     _builder.append(") REFERENCES ");
     String _owningSchemaName_1 = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName_1, "	");
@@ -247,8 +246,8 @@ public class Generator extends BaseCodeGenerator {
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(" UNIQUE (");
-    String _owningColumnName = operation.getOwningColumnName();
-    _builder.append(_owningColumnName, "	");
+    String _constrainedColumnName = operation.getConstrainedColumnName();
+    _builder.append(_constrainedColumnName, "	");
     _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -312,13 +311,13 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_name, "	");
     _builder.append(" ");
     {
-      PrimitiveType _type = operation.getType();
+      String _type = operation.getType();
       String _string = _type.toString();
       boolean _equals = _string.equals("char");
       if (_equals) {
         _builder.append("character(30) ");
       } else {
-        PrimitiveType _type_1 = operation.getType();
+        String _type_1 = operation.getType();
         _builder.append(_type_1, "	");
       }
     }
@@ -493,8 +492,8 @@ public class Generator extends BaseCodeGenerator {
     String _owningSchemaName = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName, "");
     _builder.append(".");
-    String _sequenceName = operation.getSequenceName();
-    _builder.append(_sequenceName, "");
+    String _name = operation.getName();
+    _builder.append(_name, "");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -561,7 +560,7 @@ public class Generator extends BaseCodeGenerator {
    * Note that this doesn't affect any existing rows in the table, it just changes the default for future INSERT commands.
    * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
    */
-  protected CharSequence _genOperation(final SetColumnDefaultValueImpl operation) {
+  protected CharSequence _genOperation(final SetDefaultValueImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
     _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
@@ -617,20 +616,18 @@ public class Generator extends BaseCodeGenerator {
       String _owningColumnName = operation.getOwningColumnName();
       _builder.append(_owningColumnName, "				  	  ");
       _builder.append(" TYPE ");
-      PrimitiveType _newType = operation.getNewType();
+      String _newType = operation.getNewType();
       _builder.append(_newType, "				  	  ");
       _builder.newLineIfNotEmpty();
       {
         boolean _operator_and = false;
-        PrimitiveType _newType_1 = operation.getNewType();
-        String _string = _newType_1.toString();
-        boolean _equals = _string.equals("int");
+        String _newType_1 = operation.getNewType();
+        boolean _equals = _newType_1.equals("int");
         if (!_equals) {
           _operator_and = false;
         } else {
-          PrimitiveType _oldType = operation.getOldType();
-          String _string_1 = _oldType.toString();
-          boolean _equals_1 = _string_1.equals("boolean");
+          String _oldType = operation.getOldType();
+          boolean _equals_1 = _oldType.equals("boolean");
           _operator_and = BooleanExtensions.operator_and(_equals, _equals_1);
         }
         if (_operator_and) {
@@ -642,15 +639,13 @@ public class Generator extends BaseCodeGenerator {
           _builder.newLineIfNotEmpty();
         } else {
           boolean _operator_and_1 = false;
-          PrimitiveType _newType_2 = operation.getNewType();
-          String _string_2 = _newType_2.toString();
-          boolean _equals_2 = _string_2.equals("boolean");
+          String _newType_2 = operation.getNewType();
+          boolean _equals_2 = _newType_2.equals("boolean");
           if (!_equals_2) {
             _operator_and_1 = false;
           } else {
-            PrimitiveType _oldType_1 = operation.getOldType();
-            String _string_3 = _oldType_1.toString();
-            boolean _equals_3 = _string_3.equals("int");
+            String _oldType_1 = operation.getOldType();
+            boolean _equals_3 = _oldType_1.equals("int");
             _operator_and_1 = BooleanExtensions.operator_and(_equals_2, _equals_3);
           }
           if (_operator_and_1) {
@@ -662,15 +657,13 @@ public class Generator extends BaseCodeGenerator {
             _builder.newLineIfNotEmpty();
           } else {
             boolean _operator_and_2 = false;
-            PrimitiveType _newType_3 = operation.getNewType();
-            String _string_4 = _newType_3.toString();
-            boolean _equals_4 = _string_4.equals("boolean");
+            String _newType_3 = operation.getNewType();
+            boolean _equals_4 = _newType_3.equals("boolean");
             if (!_equals_4) {
               _operator_and_2 = false;
             } else {
-              PrimitiveType _oldType_2 = operation.getOldType();
-              String _string_5 = _oldType_2.toString();
-              boolean _equals_5 = _string_5.equals("char");
+              String _oldType_2 = operation.getOldType();
+              boolean _equals_5 = _oldType_2.equals("char");
               _operator_and_2 = BooleanExtensions.operator_and(_equals_4, _equals_5);
             }
             if (_operator_and_2) {
@@ -682,15 +675,13 @@ public class Generator extends BaseCodeGenerator {
               _builder.newLineIfNotEmpty();
             } else {
               boolean _operator_and_3 = false;
-              PrimitiveType _newType_4 = operation.getNewType();
-              String _string_6 = _newType_4.toString();
-              boolean _equals_6 = _string_6.equals("int");
+              String _newType_4 = operation.getNewType();
+              boolean _equals_6 = _newType_4.equals("int");
               if (!_equals_6) {
                 _operator_and_3 = false;
               } else {
-                PrimitiveType _oldType_3 = operation.getOldType();
-                String _string_7 = _oldType_3.toString();
-                boolean _equals_7 = _string_7.equals("char");
+                String _oldType_3 = operation.getOldType();
+                boolean _equals_7 = _oldType_3.equals("char");
                 _operator_and_3 = BooleanExtensions.operator_and(_equals_6, _equals_7);
               }
               if (_operator_and_3) {
@@ -1175,10 +1166,10 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((RenameColumnImpl)operation);
     } else if (operation instanceof RenameTableImpl) {
       return _genOperation((RenameTableImpl)operation);
-    } else if (operation instanceof SetColumnDefaultValueImpl) {
-      return _genOperation((SetColumnDefaultValueImpl)operation);
     } else if (operation instanceof SetColumnTypeImpl) {
       return _genOperation((SetColumnTypeImpl)operation);
+    } else if (operation instanceof SetDefaultValueImpl) {
+      return _genOperation((SetDefaultValueImpl)operation);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         Arrays.<Object>asList(operation).toString());

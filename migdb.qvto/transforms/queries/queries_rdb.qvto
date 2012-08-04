@@ -42,11 +42,7 @@ query RDB::ModelGeneration::findSchema(sName : String) : RDB::Schema {
 
 /********************************** SEQUENCE ************************************/
 query RDB::ModelGeneration::isSequenceInSchema(sName : String, qName : String) : Boolean {
-	return self.findSchema(sName).sequences->exists(name = qName);
-}
-
-query RDB::ModelGeneration::findSequence(sName : String, qName : String) : RDB::Sequence {
-	return self.findSchema(sName).sequences->selectOne(name = qName);
+	return self.findSchema(sName).sequence != null;
 }
 
 
@@ -106,7 +102,7 @@ query RDB::ModelGeneration::findConstraint(sName : String, tName : String, rName
 
 query RDB::ModelGeneration::isConstrainedColumn(sName : String, tName : String, cName : String) : Boolean {
 	var table : RDB::Table = self.findTable(sName, tName);
-	return self.findTable(sName, tName).constraints->exists(owningColumn.name = cName);
+	return self.findTable(sName, tName).constraints->exists(constrainedColumn.name = cName);
 }
 
 

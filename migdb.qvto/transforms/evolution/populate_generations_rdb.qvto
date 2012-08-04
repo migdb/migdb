@@ -60,13 +60,12 @@ mapping RDB::ops::AddSchema::apply(inout gen : RDB::ModelGeneration) {
  * @restriction : in the schema must not be other sequence
  */
 query RDB::ops::AddSequence::isValid(gen : RDB::ModelGeneration) : Boolean {
-	return not gen.isSequenceInSchema(self.owningSchemaName, self.name) 
-		and gen.findSchema(self.owningSchemaName)->sequences->size() = 0;
+	return not gen.isSequenceInSchema(self.owningSchemaName, self.name);
 }
 
 mapping RDB::ops::AddSequence::apply(inout gen : RDB::ModelGeneration) {
 	var s : RDB::Schema := gen.findSchema(self.owningSchemaName);
-	s.sequences += _sequence(self.name, self.startValue); 
+	s.sequence := _sequence(self.name, self.startValue); 
 }
 
 /**
@@ -103,14 +102,16 @@ mapping RDB::ops::AddTable::apply(inout gen : RDB::ModelGeneration) {
  * ADD COLUMN
  * Create column in defined table.
  * @restriction : in the table must not be a column with the same @name.
+ * @restriction : @type must exist in PrimitiveType.
  */
 query RDB::ops::AddColumn::isValid(gen : RDB::ModelGeneration) : Boolean {
-	return not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name);
+	return not gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
+		and gen.isPrimitiveType(self.type);
 }
 
 mapping RDB::ops::AddColumn::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.columns += _column(self.name, self.type, self.defaultValue); 
+	t.columns += _column(self.name, gen.createPrimitiveType(self.type), self.defaultValue); 
 }
 
 /**
@@ -121,12 +122,12 @@ mapping RDB::ops::AddColumn::apply(inout gen : RDB::ModelGeneration) {
  */
 query RDB::ops::AddUnique::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
 }
 
 mapping RDB::ops::AddUnique::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _unique(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName));
+	t.constraints += _unique(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
 }
 
 /**
@@ -138,12 +139,12 @@ mapping RDB::ops::AddUnique::apply(inout gen : RDB::ModelGeneration) {
  */
 query RDB::ops::AddPrimaryKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
 }
 
 mapping RDB::ops::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _primaryKey(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName));
+	t.constraints += _primaryKey(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
 }
 
 /**
@@ -155,7 +156,7 @@ mapping RDB::ops::AddPrimaryKey::apply(inout gen : RDB::ModelGeneration) {
  */
 query RDB::ops::AddForeignKey::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
+	and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName)
 	and gen.isTableInSchema(self.owningSchemaName, self.targetTableName);
 }
 
@@ -164,7 +165,7 @@ mapping RDB::ops::AddForeignKey::apply(inout gen : RDB::ModelGeneration) {
 	t.constraints += _foreignKey(
 						self.name, 
 						gen.findTable(self.owningSchemaName, self.targetTableName),
-						gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName)); 
+						gen.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName)); 
 }
 
 /**
@@ -175,12 +176,12 @@ mapping RDB::ops::AddForeignKey::apply(inout gen : RDB::ModelGeneration) {
  */
 query RDB::ops::AddNotNull::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return not gen.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
-		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);	   
+		and gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);	   
 }
 
 mapping RDB::ops::AddNotNull::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _notNull(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName)); 
+	t.constraints += _notNull(self.name, gen.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName)); 
 }
 
 /********************************************************************************
@@ -218,7 +219,7 @@ mapping RDB::ops::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
 	var t : RDB::Table := gen.findTable(self.owningSchemaName, self.owningTableName);
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.name);
 	t.constraints->forEach(r) {
-		if (r.oclAsType(RDB::ForeignKey).owningColumn.name = c.name.toLower()) then {
+		if (r.oclAsType(RDB::ForeignKey).constrainedColumn.name = c.name.toLower()) then {
 			r.oclAsType(RDB::ForeignKey).name := r.oclAsType(RDB::ForeignKey).name.replace("_" + self.name + "_", "_" + self.newName + "_");
 		} endif;
 	};
@@ -232,12 +233,13 @@ mapping RDB::ops::RenameColumn::apply(inout gen : RDB::ModelGeneration) {
  * @restriction : column with @name must exists in table
  */
 query RDB::ops::SetColumnType::isValid(gen : RDB::ModelGeneration) : Boolean {
-	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
+		and gen.isPrimitiveType(self.newType);
 }
 
 mapping RDB::ops::SetColumnType::apply(inout gen : RDB::ModelGeneration){
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	c.type := self.newType;
+	c.type := gen.createPrimitiveType(self.newType);
 }
 
 /**
@@ -248,11 +250,11 @@ mapping RDB::ops::SetColumnType::apply(inout gen : RDB::ModelGeneration){
  * In sequence case @newDefaultValue means name of sequence in model generation
  * @restriction : column with @owningColumnName must exists in table
  */
-query RDB::ops::SetColumnDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
+query RDB::ops::SetDefaultValue::isValid(gen : RDB::ModelGeneration) : Boolean {
 	return gen.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
-mapping RDB::ops::SetColumnDefaultValue::apply(inout gen : RDB::ModelGeneration){
+mapping RDB::ops::SetDefaultValue::apply(inout gen : RDB::ModelGeneration){
 	var c : RDB::Column := gen.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 	c.defaultValue := self.newDefaultValue;
 }
