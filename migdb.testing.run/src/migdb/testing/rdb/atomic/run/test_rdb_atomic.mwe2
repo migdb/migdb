@@ -181,6 +181,190 @@ Workflow{
 		useSingleGlobalResourceSet = true
 	}	
 	
+/**** op: ADDINDEX *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addIndex.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addIndex_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addIndex.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addIndex.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: ADDPRIMARYKEY *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addPrimaryKey.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addPrimaryKey_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addPrimaryKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addPrimaryKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: ADDFOREIGNKEY *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addForeignKey.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addForeignKey_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addForeignKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addForeignKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}						
+	
+/**** op: ADDUNIQUE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addUnique.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addUnique_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addUnique.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addUnique.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**** op: ADDNOTNULL *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addNotNull.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addNotNull_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_addNotNull.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_addNotNull.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+			
 /**** COMPARATORS *****/
 /**/	
 	component = ModelComparator {
@@ -205,5 +389,35 @@ Workflow{
 		testDescription = "COMPARATOR ADDCOLUMN"
 		resultURI = "models/required_addColumn.xmi"
 		testedURI = "models/test_addColumn.xmi"
-	}					
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDINDEX"
+		resultURI = "models/required_addIndex.xmi"
+		testedURI = "models/test_addIndex.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDPRIMARYKEY"
+		resultURI = "models/required_addPrimaryKey.xmi"
+		testedURI = "models/test_addPrimaryKey.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDFOREIGNKEY"
+		resultURI = "models/required_addForeignKey.xmi"
+		testedURI = "models/test_addForeignKey.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDUNIQUE"
+		resultURI = "models/required_addUnique.xmi"
+		testedURI = "models/test_addUnique.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDNOTNULL"
+		resultURI = "models/required_addNotNull.xmi"
+		testedURI = "models/test_addNotNull.xmi"
+	}									
 }

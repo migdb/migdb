@@ -1,0 +1,17 @@
+import builder_rdb_link;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addschema(out inoutModel : RDB);
+
+
+main() {
+	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
+	var index : RDB::Index := _index("IX_col_first", OrderedSet{column});
+	var table : RDB::Table := _table("first", OrderedSet{column});
+	
+	var model : RDB::ModelRoot := object ModelRoot {
+		modelGenerations += object ModelGeneration {
+			isMissing := false;
+			schemas := Set{_schema("public", OrderedSet{table}, _sequence("seq_global", 1), OrderedSet{index})};
+		};
+	};
+}

@@ -258,10 +258,10 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _foreignKey(_name : String, _table : Table, _constrainedColumn : Column) : ForeignKey {
+ helper _foreignKey(_name : String, _targetTable : Table, _constrainedColumn : Column) : ForeignKey {
  	return object ForeignKey {
  		name := _name;
- 		targetTable := _table;
+ 		targetTable := _targetTable;
  		constrainedColumn := _constrainedColumn;
  	};
  }
