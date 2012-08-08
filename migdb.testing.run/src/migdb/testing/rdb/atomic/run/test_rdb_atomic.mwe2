@@ -328,6 +328,7 @@ Workflow{
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
+	
 /**** op: ADDNOTNULL *****/
 /**/
 	component = QVTOExecutor {
@@ -363,7 +364,81 @@ Workflow{
 		uri = "models/required_addNotNull.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: RENAMETABLE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameTable.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameTable_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_renameTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_renameTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
 	}	
+	
+/**** op: RENAMECOLUMN *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameColumn.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		transformationFile = "../migdb.qvto/transforms/evolution/populate_generations_rdb.qvto"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		inOutSlot = "test"
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/x_remove_operations.qvto"
+	}		
+/**/
+	component = QVTOExecutor {
+		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameColumn_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "models/test_renameColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "models/required_renameColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}			
 			
 /**** COMPARATORS *****/
 /**/	
@@ -419,5 +494,17 @@ Workflow{
 		testDescription = "COMPARATOR ADDNOTNULL"
 		resultURI = "models/required_addNotNull.xmi"
 		testedURI = "models/test_addNotNull.xmi"
-	}									
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR RENAMETABLE"
+		resultURI = "models/required_renameTable.xmi"
+		testedURI = "models/test_renameTable.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR RENAMECOLUMN"
+		resultURI = "models/required_renameColumn.xmi"
+		testedURI = "models/test_renameColumn.xmi"
+	}										
 }

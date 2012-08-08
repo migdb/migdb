@@ -1,11 +1,11 @@
 import builder_rdb_link;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addnotnull(out inoutModel : RDB);
+transformation renamecolumn(out inoutModel : RDB);
 
 
 main() {
 	log("TEST_RDB");
-	log("op: ADDNOTNULL");	
+	log("op: RENAMECOLUMN");	
 	
 	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
 	var columnFK : RDB::Column := _column("cizi", RDB::PrimitiveType::int);
@@ -17,7 +17,7 @@ main() {
 	
 	
 	var column2 : RDB::Column := _column("id_second", RDB::PrimitiveType::int);	
-	var table2 : RDB::Table := _table("second", OrderedSet{column2});
+	var table2 : RDB::Table := _table("sec", OrderedSet{column2});
 	var pk2 : RDB::PrimaryKey := _primaryKey("PK_second", column2);
 	table2.constraints += pk2;
 	
@@ -27,6 +27,9 @@ main() {
 	var uq : RDB::Unique := _unique("UQ_uniq", columnUQ);
 	table.constraints += uq;
 	
+	var nn : RDB::NotNull := _notNull("NN_uniq", columnUQ);
+	table.constraints += nn;
+	
 	var model : RDB::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
@@ -34,5 +37,5 @@ main() {
 		};
 	};
 	
-	model.operations += _addNotNull("public", "first", "uniq", "NN_uniq");
+	model.operations += _renameColumn("public", "first", "uniq", "not");
 }

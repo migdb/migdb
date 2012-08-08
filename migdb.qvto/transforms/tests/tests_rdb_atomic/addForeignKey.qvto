@@ -1,6 +1,6 @@
 import builder_rdb_link;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addschema(out inoutModel : RDB);
+transformation addforeignkey(out inoutModel : RDB);
 
 
 main() {

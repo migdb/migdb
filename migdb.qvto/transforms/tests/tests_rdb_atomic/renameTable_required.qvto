@@ -1,12 +1,9 @@
 import builder_rdb_link;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addnotnull(out inoutModel : RDB);
+transformation renametable_r(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDNOTNULL");	
-	
 	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
 	var columnFK : RDB::Column := _column("cizi", RDB::PrimitiveType::int);
 	var columnUQ : RDB::Column := _column("uniq", RDB::PrimitiveType::char);
@@ -17,7 +14,7 @@ main() {
 	
 	
 	var column2 : RDB::Column := _column("id_second", RDB::PrimitiveType::int);	
-	var table2 : RDB::Table := _table("second", OrderedSet{column2});
+	var table2 : RDB::Table := _table("sec", OrderedSet{column2});
 	var pk2 : RDB::PrimaryKey := _primaryKey("PK_second", column2);
 	table2.constraints += pk2;
 	
@@ -27,12 +24,13 @@ main() {
 	var uq : RDB::Unique := _unique("UQ_uniq", columnUQ);
 	table.constraints += uq;
 	
+	var nn : RDB::NotNull := _notNull("NN_uniq", columnUQ);
+	table.constraints += nn;
+	
 	var model : RDB::ModelRoot := object ModelRoot {
 		modelGenerations += object ModelGeneration {
 			isMissing := false;
 			schemas := Set{_schema("public", OrderedSet{table, table2}, _sequence("seq_global", 1), OrderedSet{index})};
 		};
 	};
-	
-	model.operations += _addNotNull("public", "first", "uniq", "NN_uniq");
 }
