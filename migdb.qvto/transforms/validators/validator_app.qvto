@@ -50,29 +50,34 @@ query app::ModelRoot::isModelValid():Boolean{
 	var classUniqueName : Boolean := true; 
 	var propUniqueName : Boolean := true;
 	var notCycledHierarchies : Boolean := true;
-	var oppositeProperty := true;
-	var embeddedBounds := true;
-	var notHasNonRootId := true;
-	var idBounds := true;
-	var idTypes := true;
-	var notTpcExpansion := true;
-	var rootsId := true;
-	var notOppositePrimitive := true;
+	var oppositeProperty : Boolean := true;
+	var embeddedBounds : Boolean := true;
+	var notHasNonRootId : Boolean := true;
+	var idBounds : Boolean := true;
+	var idTypes : Boolean := true;
+	var notTpcExpansion : Boolean := true;
+	var rootsId : Boolean := true;
+	var notOppositePrimitive : Boolean := true;
+	
+	var generations : OrderedSet(ModelGeneration) := self.modelGenerations;
+	var entities : Sequence(ModelEntity) := generations->entities;
+	var stdClasses : Sequence(StandardClass) := entities[StandardClass];
+	var stdClassProps : Sequence(Property) := stdClasses->properties;
 	//classes leading to cycle
 	var cycles : Set(StandardClass) := Set{};
-	self.modelGenerations->entities->forEach(cls | not cls.hasUniqueName()) {
-		log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains " +
-		 "ambigous Class name \"" + cls.name + "\"");		
+	entities->forEach(ent | not ent.hasUniqueName()) {
+		log("Generation " + generations->indexOf(ent.owningGeneration).repr() + " contains " +
+		 "ambigous Class name \"" + ent.name + "\"");		
 		classUniqueName := false;
 	};
-	self.modelGenerations->entities[app::StandardClass]->properties->forEach(prop | not prop.hasUniqueNameInHierarchy()) {
-		log("Generation " + self.modelGenerations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + 
+	stdClassProps->forEach(prop | not prop.hasUniqueNameInHierarchy()) {
+		log("Generation " + generations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + 
 		" contains ambigous property name \"" + prop.name + "\" in class \"" + prop.owningGeneralClass.name + "\"");
 		propUniqueName := false;		
 	};
-	self.modelGenerations ->entities[StandardClass]->forEach(cls | cls.containsCycle(OrderedSet{}) and not cycles->includes(cls)) {
+	stdClasses->forEach(cls | cls.containsCycle(OrderedSet{}) and not cycles->includes(cls)) {
 		var  iterateClass : StandardClass := cls;  
-		var output : String := "Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + 
+		var output : String := "Generation " + generations->indexOf(cls.owningGeneration).repr() + 
 		" contains cycled hierarchy:\"" + cls.name+"\"";
 		while(not cycles->includes(iterateClass)){
 			cycles += iterateClass;
@@ -82,46 +87,46 @@ query app::ModelRoot::isModelValid():Boolean{
 		log(output + "...");
 		notCycledHierarchies := false;
 	};
-	self.modelGenerations->entities[StandardClass]->properties->forEach(prop | not prop.isOppositeCorrectlySet()){
-		log("Generation " + self.modelGenerations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + " contains property \""
+	stdClassProps->forEach(prop | not prop.isOppositeCorrectlySet()){
+		log("Generation " + generations ->indexOf(prop.owningGeneralClass.owningGeneration).repr() + " contains property \""
 		 + prop.name + "\" property in class \"" + prop.owningGeneralClass.name + "\" opposite not correctly set");
 		 oppositeProperty := false;
 	};
-	self.modelGenerations->entities[StandardClass]->properties->forEach(prop | prop.oppositeProperty <> null
+	stdClassProps->forEach(prop | prop.oppositeProperty <> null
 	 and not prop.oppositeProperty.type.oclIsTypeOf(StandardClass)){
-		log("Generation " + self.modelGenerations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + " contains property \""
+		log("Generation " + generations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + " contains property \""
 		 + prop.name + "\" property in class \"" + prop.owningGeneralClass.name + "\" with embedded or primitive opposite");
 		 notOppositePrimitive := false;
 	};
-	self.modelGenerations->entities[EmbeddedClass]->properties->forEach(prop | not prop.areEmbeddedArritiesCorrectlySet()){
-		log("Generation " + self.modelGenerations->indexOf(prop.owningGeneralClass.owningGeneration).repr() +
+	entities[EmbeddedClass]->properties->forEach(prop | not prop.areEmbeddedArritiesCorrectlySet()){
+		log("Generation " + generations->indexOf(prop.owningGeneralClass.owningGeneration).repr() +
 		 " contains embedded property \"" + prop.name +"\" in class \"" + prop.owningGeneralClass.name + 
 		 "\" with bounds not correctly set");
 		embeddedBounds := false;
 	};
-    self.modelGenerations->entities[app::StandardClass]->forEach(cls | cls.hasNonRootId()){
-    	log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains Non-root class \"" 
+    stdClasses->forEach(cls | cls.hasNonRootId()){
+    	log("Generation " + generations->indexOf(cls.owningGeneration).repr() + " contains Non-root class \"" 
     	+ cls.name + "\" contains id property.");
     	notHasNonRootId := false;
     };
-	self.modelGenerations->entities[app::StandardClass]->forEach(cls | not cls.areIDBoundsCorrectlySet()){
+	stdClasses->forEach(cls | not cls.areIDBoundsCorrectlySet()){
 		log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains class \"" + cls.name + 
 		"\" with id bounds not correctly set");
 		idBounds := false;
 	};
-	self.modelGenerations->entities[app::StandardClass]->forEach(cls | not cls.areIDTypesCorrectlySet()){
-	    log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains class \"" +
+	stdClasses->forEach(cls | not cls.areIDTypesCorrectlySet()){
+	    log("Generation " + generations->indexOf(cls.owningGeneration).repr() + " contains class \"" +
 	     cls.name + "\" with id not according primitive Integer");
 	     idTypes := false;
 	};
 	
-	self.modelGenerations->entities[app::StandardClass]->forEach(cls | not cls.isIDRootCountCorrectlySet()){
+	stdClasses->forEach(cls | not cls.isIDRootCountCorrectlySet()){
 		rootsId := false;
-		log("Generation " + self.modelGenerations->indexOf(cls.owningGeneration).repr() + " contains class \"" +
+		log("Generation " + generations->indexOf(cls.owningGeneration).repr() + " contains class \"" +
 	    cls.name + "\" with invalid id count:" + cls.properties->select(prop | prop.isID())->size().repr());	
 	};
 	
-	self.modelGenerations->entities[app::StandardClass]->properties->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and
+	stdClassProps->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and
 	  (prop.upperBound > 1 or prop.upperBound = -1))){
 		log(self.modelGenerations->indexOf(prop.owningGeneralClass.owningGeneration).repr() + ". generation contains TPC" + 
 		" hierarchy causing table expansion class \"" + prop.owningGeneralClass.name + "\" property\"" + prop.name + "\"");
@@ -211,7 +216,7 @@ query app::Property::isOppositeCorrectlySet():Boolean{
 }
 
 query app::ModelEntity::hasUniqueName():Boolean{
-	return self.owningGeneration->entities->forAll(cls | cls.name <> self.name or cls = self);
+	return self.owningGeneration->entities->forAll(ent | ent.name <> self.name or ent = self);
 }
 
 

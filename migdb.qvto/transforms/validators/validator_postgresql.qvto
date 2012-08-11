@@ -44,11 +44,15 @@ query rdb::ModelRoot::isModelValid():Boolean{
 	var schemaUnique : Boolean := true;
 	var columnUnique : Boolean := true;
 	var constraintUnique : Boolean := true;
-	var pkCount := true;
+	var pkCount : Boolean := true;
 	
 	var validIdentifiers : Boolean := true;
+	
+	var generations : Sequence(ModelGeneration) := self->modelGenerations;
+	var schemas : Sequence(Schema) := generations->schemas;
+	var tables : Sequence(Table) := schemas->tables;
 	//kontrola identifikatoru schematu
-	self->modelGenerations->schemas->forEach(schema){
+	schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{
 			invalidityString := invalidityString + "Schema \"" + schema.name + "\" has duplicit name as another schema in generation \n";
 			schemaUnique := false;
@@ -60,7 +64,7 @@ query rdb::ModelRoot::isModelValid():Boolean{
 	};
 	
 	//kontrola identifikatoru tabulky
-	self->modelGenerations->schemas->tables->forEach(table){
+	tables->forEach(table){
 		if(not table.hasUniqueName())then{
 			invalidityString := invalidityString + "Schema \"" + table.owningSchema.name + "\" contains duplicit table name - \"" 
 			+ table.name + "\"\n";
@@ -72,7 +76,7 @@ query rdb::ModelRoot::isModelValid():Boolean{
 		}endif;
 	};
 	//kontrola identifikatoru sloupce
-	self->modelGenerations->schemas->tables->columns->forEach(column){
+	tables->columns->forEach(column){
 		if(not column.hasUniqueName())then{
 			invalidityString := invalidityString + ("Schema \"" + column.owningTable.owningSchema.name + "\" contains duplicit " 
 			+ "column name \"" + column.name + "\"\n") ;
@@ -84,7 +88,7 @@ query rdb::ModelRoot::isModelValid():Boolean{
 		}endif;
 	};
 	
-	self->modelGenerations->schemas->tables->constraints->forEach(constraint){
+	tables->constraints->forEach(constraint){
 		if(not constraint.hasUniqueName())then{
 			invalidityString := invalidityString + ("Schema \"" + constraint.owningTable.owningSchema.name + 
 			"\" contains constraint with duplicit name \"" + constraint.name + "\"\n") ;
@@ -96,7 +100,7 @@ query rdb::ModelRoot::isModelValid():Boolean{
 		}endif;
 	};
 	
-	self.modelGenerations->schemas->tables->forEach(tbl){
+	tables->forEach(tbl){
 		if(tbl.hasRedundantId())then{
 			invalidityString := invalidityString + "Table \"" + tbl.name + "\" in schema \"" + tbl.owningSchema.name + 
 			"\" has redundant PK count.\n";
