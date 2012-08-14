@@ -151,7 +151,7 @@ query isValidIdentifier(identifier : String):Boolean{
 			valid := false;
 		}endif;
 		if(not containsAllowedChars(identifier))then{
-			log("Model invalid - identifier \"" + identifier + "\" contains unallowed characters");		
+			log("Model invalid - identifier \"" + identifier + "\" contains forbidden characters");		
 			valid := false;
 		}endif;
 		return valid;
@@ -169,7 +169,7 @@ query containsAllowedChars(identifier : String):Boolean{
 	while(position < identifier.size()){
 		var char:String := identifier.substring(position, position);
 		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
-			log("unvalid character \'" + char + "\'");
+			log("forbidden character \'" + char + "\'");
 			valid := false;
 		}endif;
 		position := position + 1;
@@ -198,7 +198,8 @@ query isDigit(char : String) : Boolean{
 }
 
 query rdb::Schema::hasUniqueName() : Boolean{
-	return self.owningModel->schemas->forAll(schema | schema.name <> self.name or schema = self);
+    var schemas : OrderedSet(Schema) := self.owningModel->schemas->asOrderedSet();
+	return schemas->forAll(schema | schema.name <> self.name or schema = self); 
 }
 
 query rdb::Table::hasUniqueName() : Boolean{

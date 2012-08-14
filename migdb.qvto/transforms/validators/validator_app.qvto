@@ -106,7 +106,7 @@ query app::ModelRoot::isModelValid():Boolean{
 	};
     stdClasses->forEach(cls | cls.hasNonRootId()){
     	log("Generation " + generations->indexOf(cls.owningGeneration).repr() + " contains Non-root class \"" 
-    	+ cls.name + "\" contains id property.");
+    	+ cls.name + "\" containing id property.");
     	notHasNonRootId := false;
     };
 	stdClasses->forEach(cls | not cls.areIDBoundsCorrectlySet()){

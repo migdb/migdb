@@ -18,6 +18,7 @@ main() {
 	propMoney.oppositeProperty := idPropCountry;
 	
 	country.properties += idPropCountry;
+	country.idProperty := idPropCountry;
 	money.properties += propMoney;
 
 	
