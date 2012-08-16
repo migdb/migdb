@@ -4,24 +4,18 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
     nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="app" nsURI="http://www.collectionspro.eu/jam/mm/app" nsPrefix="app">
-    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="modelGenerations" lowerBound="1"
-          upperBound="-1" eType="#//app/ModelGeneration" containment="true" eOpposite="#//app/ModelGeneration/modelRoot"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
-          eType="#//app/ops/ModelOperation" containment="true" eOpposite="#//app/ops/ModelOperation/modelRoot"/>
-    </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ModelGeneration">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
-          eType="#//app/ModelRoot" changeable="false" derived="true" eOpposite="#//app/ModelRoot/modelGenerations"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMissing" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-          defaultValueLiteral="false"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//app/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="entities" ordered="false"
-          upperBound="-1" eType="#//app/ModelEntity" containment="true" eOpposite="#//app/ModelEntity/owningGeneration"/>
+          upperBound="-1" eType="#//app/ModelEntity" containment="true" eOpposite="#//app/ModelEntity/owningModel"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//app/ModelRoot">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
+          eType="#//app/ops/ModelOperation" containment="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModelEntity">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owningGeneration" lowerBound="1"
-          eType="#//app/ModelGeneration" changeable="false" derived="true" eOpposite="#//app/ModelGeneration/entities"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
+          eType="#//app/Structure" changeable="false" derived="true" eOpposite="#//app/Structure/entities"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
@@ -75,7 +69,7 @@
     <eSubpackages name="ops" nsURI="http://www.collectionspro.eu/jam/mm/app-ops" nsPrefix="app-ops">
       <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
-            eType="#//app/ModelRoot" changeable="false" derived="true" eOpposite="#//app/ModelRoot/operations"/>
+            eType="#//app/ModelRoot" changeable="false" derived="true"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddPrimitiveClass" eSuperTypes="#//app/ops/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"

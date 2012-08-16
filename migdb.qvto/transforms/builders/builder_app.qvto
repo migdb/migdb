@@ -161,18 +161,6 @@ helper _extractClass(_sourceClassName : String, _extractPropertiesNames : Ordere
 /********************************************
  *				BUILD MODEL				 	*
  ********************************************/
-helper _appRoot( inout _operations : OrderedSet(app::ops::ModelOperation)) : APP::ModelRoot{
-	return object ModelRoot{
-		operations := _operations;
-	};
-}
- 
-helper _appRoot( inout _generations : OrderedSet(app::ModelGeneration)) : APP::ModelRoot{
-	return object ModelRoot {
-		modelGenerations := _generations;
-	};
-}
-
 helper _idProperty(_integerReference : ModelEntity) : Property{
 	return _property("id", _integerReference, 1, 1)
 }

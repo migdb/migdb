@@ -125,7 +125,7 @@ query app::StandardClass::hasId(): Boolean{
  	a porovnanim jmena techto trid s jmenem typu property
 **/
 query app::Property::isPrimitive():Boolean{
-	self.owningGeneralClass.owningGeneration.entities->forOne(cl | cl.name = self.type.name){
+	self.owningGeneralClass.owningModel.entities->forOne(cl | cl.name = self.type.name){
 			return true;
 	};
 	return false;
@@ -198,7 +198,7 @@ query app::Property::isManyToManyBidirectional():Boolean{
 **/
 query app::GeneralClass::isNonleafTPCClass():Boolean{
 		if(self.oclIsTypeOf(StandardClass) and self.oclAsType(StandardClass).inheritanceType = app::InheritanceType::tablePerClass and 
-			self.owningGeneration.entities[app::StandardClass]->exists(cls | cls.parent = self))then{
+			self.owningModel.entities[app::StandardClass]->exists(cls | cls.parent = self))then{
 			return true;
 		}endif;
 	return false;
@@ -223,55 +223,55 @@ query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardCl
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
 
-query APP::ModelGeneration::isEntityInGeneration(eName : String) : Boolean {
+query APP::Structure::isEntityInGeneration(eName : String) : Boolean {
 	return self.entities->exists(name = eName);
 }
 
-query APP::ModelGeneration::findEntity(eName : String) : APP::ModelEntity {
+query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
 	return self.entities![name = eName];
 }
 
-query APP::ModelGeneration::isPrimitiveClassInGeneration(cName : String) : Boolean {
+query APP::Structure::isPrimitiveClassInGeneration(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
-query APP::ModelGeneration::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
+query APP::Structure::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
 	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
-query APP::ModelGeneration::isAbstractClassInGeneration(cName : String) : Boolean {
+query APP::Structure::isAbstractClassInGeneration(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
 }
 
-query APP::ModelGeneration::findAbstractClass(cName : String) : APP::GeneralClass {
+query APP::Structure::findAbstractClass(cName : String) : APP::GeneralClass {
 	return self.findEntity(cName).oclAsType(APP::GeneralClass);
 }
 
-query APP::ModelGeneration::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
+query APP::Structure::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
 	return self.findAbstractClass(cName).properties->exists(name = pName);
 }
 
-query APP::ModelGeneration::isPropertyInClass(cName : String, pName : String) : Boolean {
+query APP::Structure::isPropertyInClass(cName : String, pName : String) : Boolean {
 	return self.findClass(cName).properties->exists(name = pName);
 }
 
-query APP::ModelGeneration::arePropertiesInClass(cName : String, pNames : OrderedSet(String)) : Boolean {
+query APP::Structure::arePropertiesInClass(cName : String, pNames : OrderedSet(String)) : Boolean {
 	return pNames->forAll(name | self.isPropertyInClass(cName, name));
 }
 
-query APP::ModelGeneration::findProperty(cName : String, pName : String) : APP::Property {
+query APP::Structure::findProperty(cName : String, pName : String) : APP::Property {
 	return self.findAbstractClass(cName).properties![name = pName];
 }
 
-query APP::ModelGeneration::isClassInGeneration(cName : String) : Boolean {
+query APP::Structure::isClassInGeneration(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::StandardClass);
 }
 
-query APP::ModelGeneration::findClass(cName : String) : APP::StandardClass {
+query APP::Structure::findClass(cName : String) : APP::StandardClass {
 	return self.findEntity(cName).oclAsType(APP::StandardClass);
 }
 
-query APP::ModelGeneration::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
+query APP::Structure::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
@@ -286,7 +286,7 @@ query APP::StandardClass::isDescendantOf(cName : String) : Boolean {
 }
 
 // overi, zda-li je trida sClass rodicem tridy fClass
-query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Boolean {
+query APP::Structure::isInHierarchy(fClass : String, sClass : String) : Boolean {
 	var ourClass : APP::StandardClass := self.findAbstractClass(fClass).oclAsType(APP::StandardClass);
 	if(ourClass <> null) then {
 		if (ourClass.parent <> null and ourClass.parent = sClass) then {
@@ -300,7 +300,7 @@ query APP::ModelGeneration::isInHierarchy(fClass : String, sClass : String) : Bo
 }
 
 // overi, zda-li v hierarchii existuje atribut se stejnem nazvem
-query APP::ModelGeneration::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
+query APP::Structure::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
 	// pro kazdy atribut se stejnym nazvem...
 	self.entities->oclAsType(APP::StandardClass).properties->forEach(p | p.name = pName) {
 		// ...overime, zda-li se tridy, kterym tyto atributy nalezi, nachazi ve stejne hierarchii

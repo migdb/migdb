@@ -30,14 +30,14 @@ transformation POSTGRESQL_VALIDATE(in inModel : RDB);
 main() {	
 	log("Postgresql validation of model started...");
 	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::ModelRoot)))then{
-		inModel.rootObjects()![RDB::ModelRoot].isModelValid();
+		inModel.rootObjects()![RDB::Structure].isModelValid();
 		log("");
 	}else{
 		log("modelRoots doesn't conform to RDB::ModelRoot type");
 	}endif;
 }
 
-query rdb::ModelRoot::isModelValid():Boolean{
+query rdb::Structure::isModelValid():Boolean{
 	var invalidityString : String := "";
 
 	var tableUnique : Boolean := true;
@@ -48,9 +48,8 @@ query rdb::ModelRoot::isModelValid():Boolean{
 	
 	var validIdentifiers : Boolean := true;
 	
-	var generations : Sequence(ModelGeneration) := self->modelGenerations;
-	var schemas : Sequence(Schema) := generations->schemas;
-	var tables : Sequence(Table) := schemas->tables;
+	var schemas : Set(Schema) := self.schemas;
+	var tables : Bag(Table) := schemas->tables;
 	//kontrola identifikatoru schematu
 	schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{

@@ -4,23 +4,18 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
     nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="rdb">
-    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="modelGenerations" lowerBound="1"
-          upperBound="-1" eType="#//rdb/ModelGeneration" containment="true" eOpposite="#//rdb/ModelGeneration/modelRoot"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//rdb/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//rdb/ops/ModelOperation" containment="true"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ModelGeneration">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
-          eType="#//rdb/ModelRoot" eOpposite="#//rdb/ModelRoot/modelGenerations"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMissing" lowerBound="1"
-          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//rdb/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
           upperBound="-1" eType="#//rdb/Schema" containment="true" eOpposite="#//rdb/Schema/owningModel"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Schema">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
-          eType="#//rdb/ModelGeneration" derived="true" eOpposite="#//rdb/ModelGeneration/schemas"/>
+          eType="#//rdb/Structure" derived="true" eOpposite="#//rdb/Structure/schemas"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="tables" ordered="false"

@@ -163,30 +163,6 @@ helper _removeSequence(_owningSchemaName : String, _sequenceName : String) : RDB
 /********************************************
  *				BUILD MODEL			 	*
  ********************************************/
-helper _rdbRoot( inout _generations : OrderedSet(RDB::ModelGeneration)) : RDB::ModelRoot{
-	return object ModelRoot {
-		modelGenerations := _generations;
-	};
-}
- 
-helper _rdbRoot( inout _generations : OrderedSet(RDB::ModelGeneration), _operations : OrderedSet(RDB::ops::ModelOperation)) : RDB::ModelRoot{
-	var root : RDB::ModelRoot := _rdbRoot(_generations);
-	root.operations := _operations;
-	return root;
-}
-
-helper _rdbGeneration (inout _schemas : OrderedSet(Schema)) : RDB::ModelGeneration{
-	return object RDB::ModelGeneration{
-		isMissing := false;
-		schemas := _schemas;
-	};	
-}
-
-helper _rdbGeneration(_isMissing : Boolean, _schemas : OrderedSet(Schema)) : RDB::ModelGeneration{
-	var generation : RDB::ModelGeneration := _rdbGeneration(_schemas);
-	generation.isMissing := _isMissing;
-	return generation;
-}
 
 helper _schema( _name : String) : RDB::Schema{
 	return object RDB::Schema{
