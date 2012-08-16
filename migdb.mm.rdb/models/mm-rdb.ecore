@@ -4,7 +4,7 @@
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
     nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="rdb">
-    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ModelRoot" abstract="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//rdb/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//rdb/ops/ModelOperation" containment="true"/>
