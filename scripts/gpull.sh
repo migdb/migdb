@@ -1,7 +1,9 @@
 #!/bin/sh
 git pull
-ECLIPSE=`which eclipse`
-D_ECLIPSE=`dirname $ECLIPSE`
+
+#read configuration file
+#. `dirname $0`/config.cfg
+. ~/config.cfg
 
 #conditional copying mm.app
 diff -q plugins/migdb.mm.app_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.app_1.0.0.jar
