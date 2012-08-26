@@ -16,12 +16,5 @@ main() {
 	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _property("sallary", string), idProp});
 	teacher.idProperty := idProp;
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,person, teacher
-			};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, teacher});
 }

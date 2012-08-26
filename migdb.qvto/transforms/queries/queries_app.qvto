@@ -230,7 +230,7 @@ query APP::Structure::findDefaultIdType() : PrimitiveClass{
 	return self.findPrimitiveClass(self.getDefaultIdTypeName());
 }
 
-query APP::Structure::isEntityInGeneration(eName : String) : Boolean {
+query APP::Structure::containsEntity(eName : String) : Boolean {
 	return self.entities->exists(name = eName);
 }
 
@@ -238,7 +238,7 @@ query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
 	return self.entities![name = eName];
 }
 
-query APP::Structure::isPrimitiveClassInGeneration(cName : String) : Boolean {
+query APP::Structure::containsPrimitiveClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
@@ -246,7 +246,7 @@ query APP::Structure::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
 	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
-query APP::Structure::isAbstractClassInGeneration(cName : String) : Boolean {
+query APP::Structure::containsAbstractClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
 }
 
@@ -270,7 +270,7 @@ query APP::Structure::findProperty(cName : String, pName : String) : APP::Proper
 	return self.findAbstractClass(cName).properties![name = pName];
 }
 
-query APP::Structure::isClassInGeneration(cName : String) : Boolean {
+query APP::Structure::containsClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::StandardClass);
 }
 
@@ -316,4 +316,62 @@ query APP::Structure::isPropertyInHierarchy(cName : String, pName : String) : Bo
 		} endif;
 	};
 	return false;
+}
+
+/**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
+/*
+	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-1,
+	ktera v nynejsi verzi neni vytvoritelna
+*/
+query app::Property::isOneToOneUnidirectional():Boolean{
+	return false;
+}
+
+query StandardClass::isIDRootCountCorrectlySet():Boolean{
+	return (self.parent = null and self.properties->select(prop | prop.isID())->size() = 1) or self.parent <> null;
+}
+
+
+query app::Structure::containsNonleafTPCAssociation():Boolean{
+	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and prop.owningGeneralClass.isNonleafTPCClass() and 
+	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
+}
+
+query app::StandardClass::hasNonRootId() : Boolean{
+	return self.parent <> null and self.properties->select(prop | prop.isID())->size() != 0;
+}
+
+query app::StandardClass::areIDTypesCorrectlySet() : Boolean{
+    return self.properties->forAll(pr | not pr.isID() or (pr.type.name = 'Integer' and pr.type.oclIsKindOf(app::PrimitiveClass)));
+}
+
+query app::StandardClass::areIDBoundsCorrectlySet() : Boolean{
+    return self.properties->forAll(pr | not pr.isID() or (pr.lowerBound = 1 and pr.upperBound = 1));
+}
+
+
+query app::Property::areEmbeddedArritiesCorrectlySet():Boolean{
+    return not self.owningGeneralClass.oclIsKindOf(app::EmbeddedClass) or (self.upperBound = 1 and 
+	(self.lowerBound = 1 or self.lowerBound = 0));		
+}
+
+query app::Property::isOppositeCorrectlySet():Boolean{
+	return self.oppositeProperty = null or (self.oppositeProperty.oppositeProperty = self and 
+	self.type=self.oppositeProperty.owningGeneralClass and self.owningGeneralClass = self.oppositeProperty.type);
+}
+
+query app::ModelEntity::hasUniqueName():Boolean{
+	return self.owningModel->entities->forAll(ent | ent.name <> self.name or ent = self);
+}
+
+
+query app::Property::hasUniqueNameInHierarchy():Boolean{
+    if(not self.owningGeneralClass.oclIsTypeOf(StandardClass))then{
+    	return false;
+    }endif;
+    self.owningGeneralClass[StandardClass].getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
+		return false;
+	};
+	return true;	
 }

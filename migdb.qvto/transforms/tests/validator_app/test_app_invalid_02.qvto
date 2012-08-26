@@ -9,11 +9,5 @@ main() {
 	var country : APP::StandardClass := _class("Country", OrderedSet{_property("name", string), 
 	_property("name", integer)}, _idProperty(integer));
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,country};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,country});	 
 }

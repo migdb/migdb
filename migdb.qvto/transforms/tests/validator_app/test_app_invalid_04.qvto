@@ -21,12 +21,5 @@ main() {
 	money.properties += propMoney;
 
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,country, money
-			};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,country, money});
 }

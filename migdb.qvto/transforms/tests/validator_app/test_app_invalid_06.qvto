@@ -12,12 +12,5 @@ main() {
 	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string), 
 	_property("currency", money, 0, -1)}, _idProperty(integer));
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,country, money
-			};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,country, money});	 
 }

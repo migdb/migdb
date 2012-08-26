@@ -7,5 +7,5 @@ main() {
 	log("TEST_RDB_INVALID_06_B: identifier/keyword");	
 	var table : Table := _table("table", OrderedSet{_column("col", PrimitiveType::int)});
 	
-	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table})})});
+	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table})});
 }

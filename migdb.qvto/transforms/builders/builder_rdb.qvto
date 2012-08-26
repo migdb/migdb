@@ -163,6 +163,11 @@ helper _removeSequence(_owningSchemaName : String, _sequenceName : String) : RDB
 /********************************************
  *				BUILD MODEL			 	*
  ********************************************/
+helper _rdbStructure(inout _schemas : Set(Schema)) : RDB::Structure{
+	return object Structure{
+		schemas := _schemas;
+	};
+}
 
 helper _schema( _name : String) : RDB::Schema{
 	return object RDB::Schema{

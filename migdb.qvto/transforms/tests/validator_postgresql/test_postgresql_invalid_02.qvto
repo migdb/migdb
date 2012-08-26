@@ -8,5 +8,5 @@ main() {
 	var table1 : Table := _table("collision", OrderedSet{_column("col_first_table", PrimitiveType::int)});
 	var table2 : Table := _table("collision", OrderedSet{_column("col_second_table", PrimitiveType::int)});
 	
-	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table1, table2})})});
+	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table1, table2})});
 }

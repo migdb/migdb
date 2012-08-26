@@ -7,5 +7,5 @@ main() {
 	log("TEST_RDB_INVALID_06: identifier upper CASE");	
 	var table : Table := _table("tab", OrderedSet{_column("POPOCATEPETL", PrimitiveType::int)});
 	
-	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table})})});
+	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table})});
 }

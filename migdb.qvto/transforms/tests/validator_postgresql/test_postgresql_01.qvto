@@ -5,7 +5,5 @@ transformation secondAPP(out inoutModel : RDB);
 
 main() {
 	log("TEST_RDB_01: valid");	
-	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema("valid_schema", 
-	OrderedSet{})})});
-	 
+	var root : rdb::ModelRoot := _rdbStructure(Set{_schema("valid_schema")});
 }

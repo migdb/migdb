@@ -2,7 +2,7 @@ library builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
 /********************************************
- *				CLASS HELPERS			 	*
+ *				OPERATION HELPERS			 	*
  ********************************************/
 
 helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
@@ -39,10 +39,6 @@ helper _removeEntiry(_name : String) : APP::ops::RemoveEntity {
 	}
 }
 
-/********************************************
- *			PROPERTY HELPERS			 	*
- ********************************************/
-
 helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
@@ -65,10 +61,6 @@ helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::Re
 		name := _name;
 	}
 }
-
-/********************************************
- *				SET HELPERS				 	*
- ********************************************/
 
 helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
 	return object APP::ops::SetOpposite {
@@ -103,8 +95,8 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 	}
 }
 
-helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
-	return object APP::ops::SetBoundries {
+helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBounds {
+	return object APP::ops::SetBounds {
 		owningClassName := _owningClassName;
 		name := _name;
 		lowerBound := _lowerBound;
@@ -161,6 +153,12 @@ helper _extractClass(_sourceClassName : String, _extractPropertiesNames : Ordere
 /********************************************
  *				BUILD MODEL				 	*
  ********************************************/
+helper _appStructure(_entities : Set(ModelEntity)) : Structure{
+	return object Structure{
+		entities := _entities;
+	};
+}
+
 helper _appOperations(appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
 	return object Operations{
 		operations := appOperations;
@@ -198,8 +196,6 @@ helper _property(_name : String, _type : ModelEntity, _oppositeProperty : Proper
 	return prop;
 }
 
-
-
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
  	assert(_parent <> null);
  	var cls : StandardClass := object StandardClass {
@@ -220,6 +216,12 @@ helper _class(_name : String, _properties : OrderedSet(Property), _idProperty : 
 	return cls;
 }
 
+helper _class(_name : String, _idProperty : Property, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+	var cls : StandardClass := _class(_name, OrderedSet{}, _idProperty);
+	cls.inheritanceType := type;
+	cls.isAbstract := _isAbstract;
+	return cls;	
+}
  
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	return object PrimitiveClass {

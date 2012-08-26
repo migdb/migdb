@@ -14,5 +14,5 @@ main() {
 	var collisionFk2 : ForeignKey := _foreignKey("collision_constraint", table, col);
 	
 	table1.constraints := OrderedSet{collisionFk1,collisionFk2};
-	var root : rdb::ModelRoot := _rdbRoot(OrderedSet{_rdbGeneration(OrderedSet{_schema(OrderedSet{table, table1})})});
+	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table, table1})});
 }

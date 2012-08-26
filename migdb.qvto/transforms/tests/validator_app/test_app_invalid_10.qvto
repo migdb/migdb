@@ -14,12 +14,5 @@ main() {
 	//@TODO check if this test hack is valid
 	party.idProperty := null;
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,party
-			};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,party});	 
 }

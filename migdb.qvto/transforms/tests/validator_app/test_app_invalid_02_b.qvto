@@ -10,11 +10,6 @@ main() {
 	_idProperty(integer));
 	var naturalPerson : APP::StandardClass := _class("NaturalPerson", person, OrderedSet{ _property("name", string)});
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer, string, person, naturalPerson};
-		};
-	 };
+	var model : APP::ModelRoot := _appStructure(Set{integer, string, person, naturalPerson});
 	 
 }

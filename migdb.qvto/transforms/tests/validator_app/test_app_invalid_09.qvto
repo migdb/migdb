@@ -10,12 +10,5 @@ main() {
 	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("name", string)}, _idProperty(integer));
 	var thing : APP::StandardClass := _class("Thing", OrderedSet{ _property("name", string)}, _idProperty(person));	
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,person, thing
-			};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, thing});	 
 }

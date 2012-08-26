@@ -12,11 +12,5 @@ main() {
 	};
 	country.parent := country;
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			entities += Set{integer,string,country};
-		};
-	 };
-	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,country});	 
 }
