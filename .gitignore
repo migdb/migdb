@@ -1,8 +1,18 @@
-migdb.testing.run/output-tests/*
+#generated model outputs
 migdb.testing.run/models/*
+
+#generated model source code and binary code
 migdb.mm.app/src/*
 migdb.mm.app/bin/*
 migdb.mm.rdb/src/*
 migdb.mm.rdb/bin/*
+
+#workflow binaries 
 migdb.testing.run/bin/*
 migdb.run/bin/*
+
+#generated SQLs
+migdb.run/output*/*
+
+#generated test outputs
+migdb.testing.run/output-tests/*
