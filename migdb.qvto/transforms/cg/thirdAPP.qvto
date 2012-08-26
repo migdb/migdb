@@ -10,7 +10,6 @@ main() {
 
 
 	var root : APP::ModelRoot = outModel.rootObjects()![APP::ModelRoot];
-	var gen0 : APP::ModelGeneration = root.modelGenerations->first();
 	 
 	
 }

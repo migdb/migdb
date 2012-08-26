@@ -6,10 +6,8 @@ transformation buildAPP(inout inoutModel : APP);
 main() {
 	log("BUILDING APP MODEL");
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-		};
+	var model : APP::Operations := object Operations {
+		operations := OrderedSet{};
 	 };
 	
 	model.operations += _addPrimitiveClass("Integer", PrimitiveType::int);

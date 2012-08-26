@@ -33,7 +33,7 @@ abstract query APP::ops::ModelOperation::
 	isValid(root : APP::Structure) : Boolean;
 
 // a mapping of an operation
-abstract mapping APP::ops::ModelOperation::
+abstract helper APP::ops::ModelOperation::
 	apply(inout root : APP::Structure);
 
 
@@ -43,44 +43,28 @@ query APP::ops::AddPrimitiveClass::isValid(root : APP::Structure) : Boolean {
 	return not root.isEntityInGeneration(self.name);
 }
 
-mapping APP::ops::AddPrimitiveClass::apply(inout root : APP::Structure) {
-	root.entities += root.AddPrimitiveClass(self);
-}
-
-helper APP::Structure::AddPrimitiveClass(op : APP::ops::AddPrimitiveClass) : APP::PrimitiveClass {
-	return object APP::PrimitiveClass {
-		name := op.name;
-		primitiveType := op.primitiveType;
-	};
+helper APP::ops::AddPrimitiveClass::apply(inout root : APP::Structure) {
+	root.entities += _primitiveClass(self.name, self.primitiveType);
+	return;
 }
 
 query APP::ops::AddEmbeddedClass::isValid(root : APP::Structure) : Boolean {
 	return not root.isEntityInGeneration(self.name);
 }
 
-mapping APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
-	root.entities += root.AddEmbeddedClass(self);
-}
-
-helper APP::Structure::AddEmbeddedClass(op : APP::ops::AddEmbeddedClass) : APP::EmbeddedClass {
-	return object APP::EmbeddedClass {
-		name := op.name;
-	};
+helper APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
+	root.entities += _embeddedClass(self.name, _idProperty(root.findDefaultIdType()));
+	return;
 }
 
 query APP::ops::AddClass::isValid(root : APP::Structure) : Boolean {
 	return not root.isEntityInGeneration(self.name)
-		   and root.isPrimitiveClassInGeneration("Integer");
+		   and root.isPrimitiveClassInGeneration(root.getDefaultIdTypeName());
 }
 
-mapping APP::ops::AddClass::apply(inout root : APP::Structure) {	
-	root.entities += root.AddClass(self);
-}
-
-helper APP::Structure::AddClass(op : APP::ops::AddClass) : APP::StandardClass {
-	var idProp := _idProperty(self.findEntity("Integer"));
-	return 
-	_class(op.name, OrderedSet{}, idProp);
+helper APP::ops::AddClass::apply(inout root : APP::Structure) {	
+	root.entities += _class(self.name);
+	return;
 }
 
 query APP::ops::RenameEntity::isValid(root : APP::Structure) : Boolean {
@@ -88,9 +72,10 @@ query APP::ops::RenameEntity::isValid(root : APP::Structure) : Boolean {
 		   and not root.isEntityInGeneration(self.newName);
 }
 
-mapping APP::ops::RenameEntity::apply(inout root : APP::Structure) {
+helper APP::ops::RenameEntity::apply(inout root : APP::Structure) {
 	var e : APP::ModelEntity := root.findEntity(self.name);
 	e.name := self.newName;
+	return;
 }
 
 query APP::ops::RemoveEntity::isValid(root : APP::Structure) : Boolean {
@@ -117,8 +102,9 @@ query APP::StandardClass::isRemoveable(root : APP::Structure) : Boolean {
 		   and not root.entities->oclAsType(APP::StandardClass)->exists(parent = self);
 }
 
-mapping APP::ops::RemoveEntity::apply(inout root : APP::Structure) {
+helper APP::ops::RemoveEntity::apply(inout root : APP::Structure) {
 	root.entities := root.entities->excluding(root.findEntity(self.name));
+	return;
 }
 
 query APP::ops::AddProperty::isValid(root : APP::Structure) : Boolean {
@@ -138,7 +124,7 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 	return false;
 }
 
-mapping APP::ops::AddProperty::apply(inout root : APP::Structure) {
+helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
 	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);		
 	c.properties += object APP::Property {
 		name := self.name;
@@ -150,6 +136,7 @@ mapping APP::ops::AddProperty::apply(inout root : APP::Structure) {
 		isUnique := self.isUnique; // makes sense just for upperBound = -1
 		sequenceName := self.sequenceName;
 	};
+	return;
 }
 
 query APP::ops::RenameProperty::isValid(root : APP::Structure) : Boolean {
@@ -157,9 +144,10 @@ query APP::ops::RenameProperty::isValid(root : APP::Structure) : Boolean {
 		   and not root.isPropertyInAbstractClass(self.owningClassName, self.newName);
 }
 
-mapping APP::ops::RenameProperty::apply(inout root : APP::Structure) {
+helper APP::ops::RenameProperty::apply(inout root : APP::Structure) {
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.name := self.newName;
+	return;
 }
 
 query APP::ops::RemoveProperty::isValid(root : APP::Structure) : Boolean {
@@ -168,9 +156,10 @@ query APP::ops::RemoveProperty::isValid(root : APP::Structure) : Boolean {
 		   and root.findProperty(self.owningClassName, self.name).oppositeProperty = null;
 }
 
-mapping APP::ops::RemoveProperty::apply(inout root : APP::Structure) {
+helper APP::ops::RemoveProperty::apply(inout root : APP::Structure) {
 	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);
 	c.properties := c.properties->excluding(root.findProperty(self.owningClassName, self.name));
+	return;
 }
 
 query APP::ops::SetOpposite::isValid(root : APP::Structure) : Boolean {
@@ -190,7 +179,7 @@ query APP::ops::SetOpposite::isValid(root : APP::Structure) : Boolean {
 	return null;
 }
 
-mapping APP::ops::SetOpposite::apply(inout root : APP::Structure) {
+helper APP::ops::SetOpposite::apply(inout root : APP::Structure) {
 	var p1 : APP::Property := root.findProperty(self.firstClassName, self.firstPropertyName);
 	var p2 : APP::Property := root.findProperty(self.secondClassName, self.secondPropertyName);
 	if (self.isOpposite = true) then {
@@ -206,8 +195,9 @@ query APP::ops::SetAbstract::isValid(root : APP::Structure) : Boolean {
 	return root.isClassInGeneration(self.name);
 }
 
-mapping APP::ops::SetAbstract::apply(inout root : APP::Structure) {
+helper APP::ops::SetAbstract::apply(inout root : APP::Structure) {
 	root.findClass(self.name).isAbstract := self.isAbstract;
+	return; 
 }
 
 query APP::ops::SetParent::isValid(root : APP::Structure) : Boolean {
@@ -216,7 +206,7 @@ query APP::ops::SetParent::isValid(root : APP::Structure) : Boolean {
 		   and not root.findClass(self.parentName).isDescendantOf(self.name);
 }
 
-mapping APP::ops::SetParent::apply(inout root : APP::Structure) {
+helper APP::ops::SetParent::apply(inout root : APP::Structure) {
 	var c : APP::StandardClass := root.findClass(self.name);
 	
 	// tridu odebirame z hierarchie
@@ -253,10 +243,11 @@ query APP::ops::SetType::isValid(root : APP::Structure) : Boolean {
 		   and root.isAbstractClassInGeneration(self.type);
 }
 
-mapping APP::ops::SetType::apply(inout root : APP::Structure) {
+helper APP::ops::SetType::apply(inout root : APP::Structure) {
 	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.type := root.findAbstractClass(self.type); // null
+	return;
 }
 
 query APP::ops::SetBoundries::isValid(root : APP::Structure) : Boolean {
@@ -267,13 +258,14 @@ query APP::ops::SetBoundries::isValid(root : APP::Structure) : Boolean {
 }
 
 // nastavi hranice atributu
-mapping APP::ops::SetBoundries::apply(inout root : APP::Structure) {
+helper APP::ops::SetBoundries::apply(inout root : APP::Structure) {
 	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	// nastavi dolni hranici atributu
 	p.lowerBound := self.lowerBound;
 	// nastavi horni hranici atributu
 	p.upperBound := self.upperBound;
+	return;
 }
 
 query APP::ops::SetOrdered::isValid(root : APP::Structure) : Boolean {
@@ -281,10 +273,11 @@ query APP::ops::SetOrdered::isValid(root : APP::Structure) : Boolean {
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
-mapping APP::ops::SetOrdered::apply(inout root : APP::Structure) {
+helper APP::ops::SetOrdered::apply(inout root : APP::Structure) {
 	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.isOrdered := self.isOrdered;
+	return;
 }
 
 query APP::ops::SetUnique::isValid(root : APP::Structure) : Boolean {
@@ -292,10 +285,11 @@ query APP::ops::SetUnique::isValid(root : APP::Structure) : Boolean {
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
-mapping APP::ops::SetUnique::apply(inout root : APP::Structure) {
+helper APP::ops::SetUnique::apply(inout root : APP::Structure) {
 	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.isUnique := self.isUnique;
+	return;
 }
 
 
@@ -315,7 +309,7 @@ query APP::ops::CopyProperty::isValid(root : APP::Structure) : Boolean {
 		   		or root.isInHierarchy(self.targetClassName, self.owningClassName));
 }
 
-mapping APP::ops::CopyProperty::apply(inout root : APP::Structure){
+helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
 	var c : APP::GeneralClass := root.findAbstractClass(self.targetClassName);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	
@@ -328,6 +322,7 @@ mapping APP::ops::CopyProperty::apply(inout root : APP::Structure){
 		isOrdered := p.isOrdered;
 		isUnique := p.isUnique;
 	};
+	return;
 }
 
 query APP::ops::MoveProperty::isValid(root : APP::Structure) : Boolean{

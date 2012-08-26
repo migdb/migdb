@@ -222,6 +222,13 @@ query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardCl
 
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
+query APP::Structure::getDefaultIdTypeName():String{
+	return "Integer";
+}
+
+query APP::Structure::findDefaultIdType() : PrimitiveClass{
+	return self.findPrimitiveClass(self.getDefaultIdTypeName());
+}
 
 query APP::Structure::isEntityInGeneration(eName : String) : Boolean {
 	return self.entities->exists(name = eName);

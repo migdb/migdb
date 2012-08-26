@@ -4,10 +4,8 @@ transformation buildRDB(inout inoutModel : RDB);
 
 main() {
 
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-		};
+	var model : RDB::Operations := object Operations {
+		operations := OrderedSet{}; 
 	};
 	
 	model.operations += _addSchema("public");

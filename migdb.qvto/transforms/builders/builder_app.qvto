@@ -103,7 +103,7 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 	}
 }
 
-helper _setBoundries(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
+helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBoundries {
 	return object APP::ops::SetBoundries {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -161,6 +161,12 @@ helper _extractClass(_sourceClassName : String, _extractPropertiesNames : Ordere
 /********************************************
  *				BUILD MODEL				 	*
  ********************************************/
+helper _appOperations(appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
+	return object Operations{
+		operations := appOperations;
+	}
+} 
+ 
 helper _idProperty(_integerReference : ModelEntity) : Property{
 	return _property("id", _integerReference, 1, 1)
 }
@@ -193,6 +199,7 @@ helper _property(_name : String, _type : ModelEntity, _oppositeProperty : Proper
 }
 
 
+
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
  	assert(_parent <> null);
  	var cls : StandardClass := object StandardClass {
@@ -221,10 +228,16 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
  	}
 }
 
-helper _embeddedClass(_name : String, _properties : OrderedSet(Property), _idProperty : Property) : EmbeddedClass {
+helper _embeddedClass(_name : String, _idProperty : Property) : EmbeddedClass {
  	return object EmbeddedClass {
  		name := _name;
- 		properties := _properties;
- 		idProperty := _idProperty
+ 		properties := OrderedSet{};
+ 		idProperty := _idProperty;
  	}
+}
+
+helper _embeddedClass(_name : String, _properties : OrderedSet(Property), _idProperty : Property) : EmbeddedClass {
+ 	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
+ 	embClass.properties := _properties;
+ 	return embClass;
 }
