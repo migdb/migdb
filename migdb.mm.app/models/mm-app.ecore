@@ -165,7 +165,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="isOpposite" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="SetBoundries" eSuperTypes="#//app/ops/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="SetBounds" eSuperTypes="#//app/ops/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
