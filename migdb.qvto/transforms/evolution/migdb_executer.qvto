@@ -22,11 +22,17 @@ main() {
 			op.apply(processedAStructure);
 			//apply dbOps
 			dbOps->forEach(dbOp){
-				dbOp.apply(rdbStructure);
+				if(dbOp.isValid(rdbStructure))then{
+					dbOp.apply(rdbStructure);
+				}else{
+					//log and break
+					log("operation not valid in current context " + op.repr());
+					break;
+				}endif;
 			};
 			
 			//apply Aop
-			op.apply(processedAStructure);
+			//op.apply(processedAStructure);
 		}else{
 			//log and break
 			log("operation not valid in current context " + op.repr());
