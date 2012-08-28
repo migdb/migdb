@@ -305,8 +305,7 @@ query APP::ops::CopyProperty::isValid(root : APP::Structure) : Boolean {
 	return root.isPropertyInAbstractClass(self.owningClassName, self.name) 
 		   and root.containsEntity(self.targetClassName)
 		   and not root.isPropertyInAbstractClass(self.targetClassName, self.name)
-		   and (root.isInHierarchy(self.owningClassName, self.targetClassName)
-		   		or root.isInHierarchy(self.targetClassName, self.owningClassName));
+		   and root.areClassesRelatives(self.owningClassName, self.targetClassName);
 }
 
 helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
@@ -326,11 +325,11 @@ helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
 }
 
 query APP::ops::MoveProperty::isValid(root : APP::Structure) : Boolean{
+	
 	return root.isPropertyInAbstractClass(self.owningClassName, self.name) 
 		   and root.containsEntity(self.targetClassName)
 		   and not root.isPropertyInAbstractClass(self.targetClassName, self.name)
-		   and (root.isInHierarchy(self.owningClassName, self.targetClassName)
-		   		or root.isInHierarchy(self.targetClassName, self.owningClassName));
+		   and root.areClassesRelatives(self.owningClassName, self.targetClassName);
 }
 
 

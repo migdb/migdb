@@ -234,20 +234,24 @@ query APP::Structure::containsEntity(eName : String) : Boolean {
 	return self.entities->exists(name = eName);
 }
 
-query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
-	return self.entities![name = eName];
-}
-
 query APP::Structure::containsPrimitiveClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
-query APP::Structure::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
-	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
-}
-
 query APP::Structure::containsAbstractClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
+}
+
+query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
+	return self.entities![name = eName];
+}
+
+query APP::Structure::findStandardClass(cName : String) : APP::StandardClass {
+	return self.findEntity(cName).oclAsType(APP::StandardClass);
+}
+
+query APP::Structure::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
+	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
 query APP::Structure::findAbstractClass(cName : String) : APP::GeneralClass {
@@ -282,40 +286,35 @@ query APP::Structure::areBoundsValid(lowerBound : Integer, upperBound : Integer)
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
+/**
+query APP::Structure::hasAnyColumns(entities : Set(String)) : Boolean {
+	var b : Boolean := false;
+	entities->forEach(cName) {
+		b := b or self.findClass(cName).properties->size() <> 1;
+	};
+	return b;
+};
+**/
 
-// overime, zda-li je trida potomkem tridy cName
-query APP::StandardClass::isDescendantOf(cName : String) : Boolean {
-	if (self.parent <> null) then {
-		if (self.parent.name = cName) then return true
-		else return self.parent.isDescendantOf(cName) endif;
-	} endif;
-	return false;
+// overime, zda-li je trida potomkem tridy precedessorName
+query APP::Structure::isDescendantOf(cName : String, precedessorName : String ) : Boolean {
+	var cls : StandardClass := self.findStandardClass(cName);
+	return cls.isDescendantOf(precedessorName);
+}
+ 
+query APP::StandardClass::isDescendantOf(precedessorName : String): Boolean {
+	return self.getPathToRoot()->exists(c | c.name = precedessorName)
 }
 
-// overi, zda-li je trida sClass rodicem tridy fClass
-query APP::Structure::isInHierarchy(fClass : String, sClass : String) : Boolean {
-	var ourClass : APP::StandardClass := self.findAbstractClass(fClass).oclAsType(APP::StandardClass);
-	if(ourClass <> null) then {
-		if (ourClass.parent <> null and ourClass.parent = sClass) then {
-			return true;
-		} endif;
-		if (ourClass.parent <> null) then {
-			return self.isInHierarchy(ourClass.parent.name, sClass);
-		} endif;
-	}endif;
-	return false;
+query APP::Structure::areClassesRelatives(cName : String , c2Name : String ) : Boolean{
+	return  self.isDescendantOf(cName, c2Name) or self.isDescendantOf(c2Name, cName);
+	
 }
 
 // overi, zda-li v hierarchii existuje atribut se stejnem nazvem
 query APP::Structure::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
-	// pro kazdy atribut se stejnym nazvem...
-	self.entities->oclAsType(APP::StandardClass).properties->forEach(p | p.name = pName) {
-		// ...overime, zda-li se tridy, kterym tyto atributy nalezi, nachazi ve stejne hierarchii
-		if (self.isInHierarchy(cName, p.owningGeneralClass.name) = true or self.isInHierarchy(p.owningGeneralClass.name, cName) = true) then {
-			return true;
-		} endif;
-	};
-	return false;
+	return self.entities->selectOne(cls | cls.name = cName).oclAsType(APP::StandardClass).
+	getPathToRoot()->exist(_class | _class.properties->size() > 0);
 }
 
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
