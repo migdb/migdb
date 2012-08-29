@@ -13,31 +13,31 @@ main() {
 	var processedAStructure : APP::Structure := inAStructure.rootObjects().deepclone()![APP::Structure];
 	inRStructure.rootObjects()![RDB::Structure];
 	var rdbStructure : RDB::Structure := outRStructure.rootObjects().deepclone()![RDB::Structure];
-
-	appOperations.rootObjects()![APP::Operations]->operations->forEach(op){
+	var isValid : Boolean := true;
+	
+	//forEach is also if due to isValid condition
+	appOperations.rootObjects()![APP::Operations]->operations->forEach(op | isValid){
 		//check appOp validity
 		if(op.isValid(processedAStructure))then{
 			// map throught ORM - TODO
 			var dbOps : Sequence(RDB::ops::ModelOperation) := null;
-			op.apply(processedAStructure);
 			//apply dbOps
 			dbOps->forEach(dbOp){
 				if(dbOp.isValid(rdbStructure))then{
 					dbOp.apply(rdbStructure);
 				}else{
-					//log and break
-					log("operation not valid in current context " + op.repr());
-					break;
+					//log and "break"
+					isValid := false;
+					log("rdb_operation not valid in current context " + op.repr());
 				}endif;
 			};
-			
-			//apply Aop
-			//op.apply(processedAStructure);
+			op.apply(processedAStructure);
 		}else{
-			//log and break
-			log("operation not valid in current context " + op.repr());
-			break;
+			//log and "break"
+			log("app_operation not valid in current context " + op.repr());
+			isValid := false;
 		}endif;
 	};
+	log("migdb_executer process finished");
 	outAStructure.rootObjects()![APP::Structure].entities := processedAStructure.entities;
 }
