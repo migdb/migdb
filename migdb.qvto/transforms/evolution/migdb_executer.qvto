@@ -27,9 +27,9 @@ main() {
 					dbOp.apply(rdbStructure);
 				}else{
 					//log and "break"
-					break;
 					isValid := false;
 					log("rdb_operation not valid in current context " + op.repr());
+					break;
 				}endif;
 			};
 			op.apply(processedAStructure);
