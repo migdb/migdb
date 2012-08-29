@@ -7,13 +7,5 @@ main() {
 	log("TEST_RDB");
 	log("op: ADDSCHEMA");	
 	
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-		};
-	};
-	
-	model.operations += _addSchema("public");
-	model.operations += _addSchema("second");
-	 
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{});
 }

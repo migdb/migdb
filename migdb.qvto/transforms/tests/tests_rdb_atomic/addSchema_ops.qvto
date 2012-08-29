@@ -1,0 +1,11 @@
+import builder_rdb_link;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addcolumnOps(out inoutModel : RDB);
+
+
+main() {
+	log("TEST_RDB");
+	log("op: ADDCOLUMN");	
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{_addSchema("public"),_addSchema("second")};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

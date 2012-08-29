@@ -4,10 +4,5 @@ transformation addsequence_r(out inoutModel : RDB);
 
 
 main() {
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			schemas := Set{_schema("public", _sequence("seq_global", 1))};
-		};
-	};
+	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", _sequence("seq_global", 1))});
 }

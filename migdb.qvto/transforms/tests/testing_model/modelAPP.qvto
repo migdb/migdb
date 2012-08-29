@@ -19,10 +19,7 @@ main() {
 	var property_id_parent : APP::Property := _property("id", class_integer);
 	var class_parent : APP::StandardClass := _class("Parent", OrderedSet{property_id_parent}, property_id_parent);
 	
-	var model : APP::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-		};
-	};
+	var clsSet : OrderedSet(StandardClass) := OrderedSet{};
+	var model : APP::ModelRoot := _appStructure(clsSet);
 	 
 }

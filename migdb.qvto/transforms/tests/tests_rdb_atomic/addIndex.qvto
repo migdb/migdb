@@ -7,15 +7,7 @@ main() {
 	log("TEST_RDB");
 	log("op: ADDINDEX");	
 	
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			schemas := Set{_schema("public", 
+	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", 
 								   OrderedSet{_table("first", OrderedSet{_column("col", RDB::PrimitiveType::char)})}, 
-								   _sequence("seq_global", 1))};
-		};
-	};
-	
-	model.operations += _addIndex("public", "first", "IX_col_first", Set{"col"});
-	 
+								   _sequence("seq_global", 1))});	 
 }

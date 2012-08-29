@@ -10,10 +10,5 @@ main() {
 	var pk : RDB::PrimaryKey := _primaryKey("PK_first", column);
 	table.constraints += pk;
 	
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			schemas := Set{_schema("public", OrderedSet{table}, _sequence("seq_global", 1), OrderedSet{index})};
-		};
-	};
+	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", OrderedSet{table}, _sequence("seq_global", 1), OrderedSet{index})});
 }

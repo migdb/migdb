@@ -11,13 +11,5 @@ main() {
 	var index : RDB::Index := _index("IX_col_first", OrderedSet{column});
 	var table : RDB::Table := _table("first", OrderedSet{column});
 	
-	var model : RDB::ModelRoot := object ModelRoot {
-		modelGenerations += object ModelGeneration {
-			isMissing := false;
-			schemas := Set{_schema("public", OrderedSet{table}, _sequence("seq_global", 1), OrderedSet{index})};
-		};
-	};
-	
-	model.operations += _addPrimaryKey("public", "first", "col", "PK_first");
-	 
+	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", OrderedSet{table}, _sequence("seq_global", 1), OrderedSet{index})}); 
 }
