@@ -56,7 +56,7 @@ helper APP::ops::AddClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB
 	operations += _addTable(getDefaultSchemaName(), self.name.toLower());
 	
 	// addition of a column to the table
-	operations += _addColumn(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), appStructure.getDefaultIdTypeName());
+	operations += _addColumn(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), getAppDefaultIdTypeName());
 	
 	// addition of an index to the schema
 	operations += _addIndex(getDefaultSchemaName(), self.name.toLower(), "IX_" + self.name.toLower() + "_id_" + self.name.toLower(), OrderedSet {"id_" + self.name.toLower()});
@@ -292,11 +292,11 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 
 helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{ _addTable(getDefaultSchemaName(), self.extractClassName.toLower())};
-	operations += _addColumn(getDefaultSchemaName(), self.extractClassName.toLower(),"id_" + self.extractClassName.toLower(), appStructure.getDefaultIdTypeName());
+	operations += _addColumn(getDefaultSchemaName(), self.extractClassName.toLower(),"id_" + self.extractClassName.toLower(), getAppDefaultIdTypeName());
 	operations += _addIndex (getDefaultSchemaName(), self.extractClassName.toLower(), "IX_" + self.extractClassName.toLower() + "_id_" + self.extractClassName.toLower(),
 	OrderedSet {"id_" + self.extractClassName.toLower()});
 	operations += _addPrimaryKey(getDefaultSchemaName(), self.extractClassName.toLower(), "id_" + self.extractClassName.toLower(), "PK_" + self.extractClassName.toLower());
-	operations += _addColumn(getDefaultSchemaName(), self.sourceClassName.toLower(), self.extractClassName.toLower(), appStructure.getDefaultIdTypeName());
+	operations += _addColumn(getDefaultSchemaName(), self.sourceClassName.toLower(), self.extractClassName.toLower(), getAppDefaultIdTypeName());
 	operations += object RDB::ops::GenerateSequenceNumbers {
 		owningSchemaName := getDefaultSchemaName();
 		tableName := self.sourceClassName.toLower();

@@ -4,9 +4,7 @@ transformation buildRDB(inout inoutModel : RDB);
 
 main() {
 
-	var model : RDB::Operations := object Operations {
-		operations := OrderedSet{}; 
-	};
+	var model : RDB::Operations := _rdbOperations(OrderedSet{});
 	
 	model.operations += _addSchema("public");
 	model.operations += _addSequence("public", "seq_global", 1); 

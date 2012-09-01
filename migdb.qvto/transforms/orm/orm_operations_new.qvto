@@ -1,0 +1,103 @@
+/*
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+import queries_app_link;
+import queries_rdb_link;
+//import builder_app_link;
+import builder_rdb_link;
+ 
+modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
+modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
+
+
+library MIGDB_ORM;
+
+// a mapping of a given operation
+abstract helper APP::ops::ModelOperation::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation);
+	
+/* ++++++++++ OPERATIONS ++++++++++++++++++++ */
+
+
+helper APP::ops::AddPrimitiveClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
+	return OrderedSet{};
+	// this operation is not mapped to RDB
+}
+
+helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
+	return OrderedSet{};
+	// this operation is not mapped to RDB
+}
+
+/**
+	AddClass independently
+**/
+helper APP::ops::AddClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
+	// addition of a table to the schema
+	var operations: OrderedSet(RDB::ops::ModelOperation) = OrderedSet{};
+	operations += _addTable("public", self.name.toLower());
+	
+	// addition of a column to the table
+	operations += _addColumn("public", self.name.toLower(), "id_" + self.name.toLower(), getAppDefaultIdTypeName());
+	
+	// addition of an index to the schema
+	operations += _addIndex("public", self.name.toLower(), "IX_" + self.name.toLower() + "_id_" + self.name.toLower(), OrderedSet {"id_" + self.name.toLower()});
+		
+	// addition of a primary key to the table
+	operations += _addPrimaryKey("public", self.name.toLower(), "id_" + self.name.toLower(), "PK_" + self.name.toLower());
+	return operations;
+}
+
+helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var entity : ModelEntity := appStructure.findEntity(self.name);
+	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	if(entity.oclIsTypeOf(PrimitiveClass))then{
+		return null;
+	}endif;
+	if(entity.oclIsTypeOf(EmbeddedClass))then{
+		//TODO who knows???
+		return null;
+	}endif; 
+	if(entity.oclIsTypeOf(StandardClass))then{
+		var stcls := entity.oclAsType(StandardClass);
+		if(stcls.hasSingleTableInheritanceType())then{
+			//change values in table with name = rootClass.name DiscriminatorColumn = self.name to self.newName
+			return operations; 
+		}endif;
+		if(stcls.hasJoinedInheritanceType())then{
+			operations->append(_renameTable("public", self.name, self.newName));
+			//rename all FKs outside hierarchy
+			//rename FKs for all strict descendats stcls - eg des.parent.name = self.name
+			return operations;
+		}endif;
+		if(stcls.hasTablePerClassInheritanceType())then{
+			operations->append(_renameTable("public", self.name, self.newName));
+			//rename all FKs outside hierarchy
+			return operations;
+		}endif;
+	}endif;
+	
+	return null;
+}
+
+

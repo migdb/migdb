@@ -1,0 +1,29 @@
+import builder_app_link;
+import queries_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation DFSQueryTest(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _integer();
+	var root : StandardClass := _class("root", OrderedSet{}, _idProperty(int)); 
+	var cl1 : StandardClass := _class("cl1", root, OrderedSet{});
+	var cl2 : StandardClass := _class("cl2", root, OrderedSet{});
+	var cl3 : StandardClass := _class("cl3", root, OrderedSet{});  
+	var cl4 : StandardClass := _class("cl4", cl1, OrderedSet{});
+	var cl5 : StandardClass := _class("cl5", cl2, OrderedSet{}); 
+	var cl6 : StandardClass := _class("cl6", cl1, OrderedSet{}); 
+	var cl7 : StandardClass := _class("cl7", cl6, OrderedSet{});  
+	
+	var str : Structure := inoutModel.rootObjects()![Structure];
+	str.entities:= OrderedSet{int, root, cl1, cl2, cl3, cl4, cl5, cl6, cl7};
+	
+	var set := str.getClassDescendants("root");
+	log(set->size().repr());
+	var i : Integer := 1; 
+	while(i <= set->size()){
+		var _cls : StandardClass := set->at(i);
+			log(_cls.name);
+			i := i+1;
+	};
+}

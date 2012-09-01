@@ -1,0 +1,8 @@
+import builder_app_link;
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation migdb_executer_test_1(out outAstr : APP);
+
+main(){
+	_appOperations(OrderedSet{ _addClass("cls", false, InheritanceType::joined)});
+}

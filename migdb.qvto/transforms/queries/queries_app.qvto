@@ -131,7 +131,9 @@ query app::Property::isPrimitive():Boolean{
 	return false;
 }
 
-
+/**
+	Kontroluje cyklicnost, v pripade nalezeni cyklu vrati prazdny OrderedSet
+**/
 query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 	var precedessors : OrderedSet(app::StandardClass) := OrderedSet{};
 	if(not self.containsCycle(precedessors)) then{
@@ -141,6 +143,9 @@ query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 		
 }
 
+/**
+	Nekontroluje cyklicnost
+**/
 query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
 	if(self.parent = null)then{
 		return collection->append(self);
@@ -222,12 +227,12 @@ query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardCl
 
 
 /* ++++++++++ QUERIES FOR OPERATIONS ++++++++++++++++++++ */
-query APP::Structure::getDefaultIdTypeName():String{
+query getAppDefaultIdTypeName():String{
 	return "Integer";
 }
 
 query APP::Structure::findDefaultIdType() : PrimitiveClass{
-	return self.findPrimitiveClass(self.getDefaultIdTypeName());
+	return self.findPrimitiveClass(getAppDefaultIdTypeName());
 }
 
 query APP::Structure::containsEntity(eName : String) : Boolean {
@@ -317,6 +322,27 @@ query APP::Structure::isPropertyInHierarchy(cName : String, pName : String) : Bo
 	getPathToRoot()->exist(_class | _class.properties->size() > 0);
 }
 
+/**
+	Vrati vsechny potomky dane tridy v topologickem usporadani - tj predek nesmi byt v listu pozdeji nez jeho potomek
+**/
+query APP::Structure::getClassDescendants(cName : String) : OrderedSet(StandardClass){
+	var _clas := self.findStandardClass(cName);
+	return _clas.getDescendants(OrderedSet{});
+}
+
+
+/**
+	Vrati potomky dane tridy v topologickem usporadani - Nyni implementovano pomoci DFS. Nema deterministicke chovani. 
+	Opetovne spusteni muze vratit jine, ale platne usporadani    
+**/
+query APP::StandardClass::getDescendants(closedList : OrderedSet(StandardClass)) : OrderedSet(StandardClass){
+	var set := closedList->append(self);
+	self.owningModel.entities[StandardClass]->select(cls | cls.parent = self)->forEach(_class){
+		//zpracovani vetve stromu
+		set := _class.getDescendants(set);
+	};
+	return set;
+}
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
 /*
 	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-1,

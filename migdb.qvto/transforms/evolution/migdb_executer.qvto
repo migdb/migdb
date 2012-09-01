@@ -2,6 +2,7 @@ import queries_rdb_link;
 import builder_rdb_link;
 import evolution_app;
 import evolution_rdb; 
+import orm_link;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -11,24 +12,25 @@ transformation perform_process(in appOperations:APP , in inAStructure:APP, out o
 
 main() {
 	var processedAStructure : APP::Structure := inAStructure.rootObjects().deepclone()![APP::Structure];
-	inRStructure.rootObjects()![RDB::Structure];
-	var rdbStructure : RDB::Structure := outRStructure.rootObjects().deepclone()![RDB::Structure];
-	var isValid : Boolean := true;
+	var processedRStructure : RDB::Structure := inRStructure.rootObjects().deepclone()![RDB::Structure];
 	
+	var isValid : Boolean := true;
+	var outRdbOps : RDB::Operations := _rdbOperations(OrderedSet{});
 	//forEach is also if due to isValid condition
 	appOperations.rootObjects()![APP::Operations]->operations->forEach(op | isValid){
 		//check appOp validity
 		if(op.isValid(processedAStructure))then{
 			// map throught ORM - TODO
-			var dbOps : Sequence(RDB::ops::ModelOperation) := null;
+			var dbOps : OrderedSet(RDB::ops::ModelOperation) := op.toRdb(processedAStructure);
+			outRdbOps.operations+=dbOps;
 			//apply dbOps
 			dbOps->forEach(dbOp){
-				if(dbOp.isValid(rdbStructure))then{
-					dbOp.apply(rdbStructure);
+				if(dbOp.isValid(processedRStructure))then{
+					dbOp.apply(processedRStructure);
 				}else{
 					//log and "break"
-					isValid := false;
-					log("rdb_operation not valid in current context " + op.repr());
+					//isValid := false;
+					log("rdb_operation not valid in current context " + dbOp.repr());
 					break;
 				}endif;
 			};
@@ -41,4 +43,7 @@ main() {
 	};
 	log("migdb_executer process finished");
 	outAStructure.rootObjects()![APP::Structure].entities := processedAStructure.entities;
+	outRStructure.rootObjects()![RDB::Structure].schemas := processedRStructure.schemas;
+	
+	rOperations.rootObjects()![RDB::Operations].operations := outRdbOps.operations;
 }

@@ -59,7 +59,7 @@ helper APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
 
 query APP::ops::AddClass::isValid(root : APP::Structure) : Boolean {
 	return not root.containsEntity(self.name)
-		   and root.containsPrimitiveClass(root.getDefaultIdTypeName());
+		   and root.containsPrimitiveClass(getAppDefaultIdTypeName());
 }
 
 helper APP::ops::AddClass::apply(inout root : APP::Structure) {	
@@ -125,19 +125,13 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 }
 
 helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
-	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);		
-	c.properties += object APP::Property {
-		name := self.name;
-		type := root.findEntity(self.type);
-		defaultValue := self.defaultValue;
-		lowerBound := self.lowerBound;
-		upperBound := self.upperBound;
-		isOrdered := self.isOrdered; // makes sense just for upperBound = -1
-		isUnique := self.isUnique; // makes sense just for upperBound = -1
-		sequenceName := self.sequenceName;
-	};
-	return;
+//	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);		
+//	c.properties += _pro
+	
+	return null;
 }
+
+
 
 query APP::ops::RenameProperty::isValid(root : APP::Structure) : Boolean {
 	return root.isPropertyInAbstractClass(self.owningClassName, self.name)
@@ -311,16 +305,7 @@ query APP::ops::CopyProperty::isValid(root : APP::Structure) : Boolean {
 helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
 	var c : APP::GeneralClass := root.findAbstractClass(self.targetClassName);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
-	
-	c.properties += object APP::Property {
-		name := p.name;
-		type := p.type;
-		defaultValue := p.defaultValue;
-		lowerBound := p.lowerBound;
-		upperBound := p.upperBound;
-		isOrdered := p.isOrdered;
-		isUnique := p.isUnique;
-	};
+	c.properties += _property(p.name, p.type, p.defaultValue, p.lowerBound, p.upperBound, p.isOrdered, p.isUnique);
 	return;
 }
 
@@ -338,17 +323,10 @@ mapping APP::ops::MoveProperty::apply(inout root : APP::Structure){
 	var o : APP::GeneralClass := root.findAbstractClass(self.owningClassName);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	
-	t.properties += object APP::Property {
-		name := p.name;
-		type := p.type;
-		defaultValue := p.defaultValue;
-		lowerBound := p.lowerBound;
-		upperBound := p.upperBound;
-		isOrdered := p.isOrdered;
-		isUnique := p.isUnique;
-	};
-	
-	o.properties := o.properties->excluding(p);
+	//unsetting property from o is done by asserting p to collection in t
+	t.properties += p;	
+	//t.properties += _property(p.name, p.type, p.defaultValue, p.lowerBound, p.upperBound, p.isOrdered, p.isUnique);
+	//o.properties := o.properties->excluding(p);
 }
 
 query APP::ops::ExtractClass::isValid(root : APP::Structure) : Boolean {

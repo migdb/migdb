@@ -1,3 +1,5 @@
+import queries_app_link;
+
 library builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
@@ -163,6 +165,11 @@ helper _appOperations(appOperations : OrderedSet(APP::ops::ModelOperation)) : AP
 	return object Operations{
 		operations := appOperations;
 	}
+}
+
+
+helper _integer() : PrimitiveClass{
+	return _primitiveClass(getAppDefaultIdTypeName(), PrimitiveType::int);
 } 
  
 helper _idProperty(_integerReference : ModelEntity) : Property{
@@ -195,6 +202,16 @@ helper _property(_name : String, _type : ModelEntity, _oppositeProperty : Proper
 	prop.oppositeProperty := _oppositeProperty;
 	return prop;
 }
+
+helper _property(_name : String, _type : ModelEntity, _defaultValue : String, _lowerBound : Integer, _upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : Property{
+	var prop : Property := _property(_name, _type,_lowerBound, _upperBound);
+	prop.defaultValue := _defaultValue;
+	prop.isOrdered := _isOrdered;
+	prop.isUnique := _isUnique;
+	return prop;
+}
+
+
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
  	assert(_parent <> null);
