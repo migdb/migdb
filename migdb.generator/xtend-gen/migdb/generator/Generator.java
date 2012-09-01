@@ -4,7 +4,6 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
-import mm.rdb.ops.MergeType;
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
 import mm.rdb.ops.impl.AddIndexImpl;
@@ -15,7 +14,6 @@ import mm.rdb.ops.impl.AddSchemaImpl;
 import mm.rdb.ops.impl.AddSequenceImpl;
 import mm.rdb.ops.impl.AddTableImpl;
 import mm.rdb.ops.impl.AddUniqueImpl;
-import mm.rdb.ops.impl.CopyInstancesImpl;
 import mm.rdb.ops.impl.GenerateSequenceNumbersImpl;
 import mm.rdb.ops.impl.HasNoInstancesImpl;
 import mm.rdb.ops.impl.HasNoOwnInstancesImpl;
@@ -29,14 +27,10 @@ import mm.rdb.ops.impl.RemoveSequenceImpl;
 import mm.rdb.ops.impl.RemoveTableImpl;
 import mm.rdb.ops.impl.RenameColumnImpl;
 import mm.rdb.ops.impl.RenameTableImpl;
-import mm.rdb.ops.impl.SetColumnTypeImpl;
 import mm.rdb.ops.impl.SetDefaultValueImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
-import org.eclipse.xtext.xbase.lib.BooleanExtensions;
-import org.eclipse.xtext.xbase.lib.IntegerExtensions;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class Generator extends BaseCodeGenerator {
@@ -52,16 +46,16 @@ public class Generator extends BaseCodeGenerator {
    * @param EObject model : model of our application
    */
   public void doGenerate(final EObject model) {
-      ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
-      ArrayList<ModelOperationImpl> operations = _arrayList;
-      this.counter = 100;
-      EList<EObject> _eContents = model.eContents();
-      for (final Object arg : _eContents) {
-        if ((arg instanceof ModelOperationImpl)) {
-          operations.add(((ModelOperationImpl) arg));
-        }
+    ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
+    ArrayList<ModelOperationImpl> operations = _arrayList;
+    this.counter = 100;
+    EList<EObject> _eContents = model.eContents();
+    for (final Object arg : _eContents) {
+      if ((arg instanceof ModelOperationImpl)) {
+        operations.add(((ModelOperationImpl) arg));
       }
-      this.toplevelGenerator(operations);
+    }
+    this.toplevelGenerator(operations);
   }
   
   /**
@@ -82,8 +76,7 @@ public class Generator extends BaseCodeGenerator {
   public File generateOperationFile(final ModelOperationImpl operation) {
     File _xblockexpression = null;
     {
-      CharSequence _genOperation = this.genOperation(operation);
-      CharSequence text = _genOperation;
+      CharSequence text = this.genOperation(operation);
       String _fileName = this.getFileName(operation, ".sql");
       File _generateFile = this.generateFile(_fileName, text);
       _xblockexpression = (_generateFile);
@@ -96,11 +89,10 @@ public class Generator extends BaseCodeGenerator {
    * @param ModelOperationImpl operation : method do not need specific type of operation
    */
   public String getFileName(final ModelOperationImpl operation, final String type) {
-      int _operator_plus = IntegerExtensions.operator_plus(this.counter, 1);
-      this.counter = _operator_plus;
-      String _operator_plus_1 = StringExtensions.operator_plus("", Integer.valueOf(this.counter));
-      String _operator_plus_2 = StringExtensions.operator_plus(_operator_plus_1, type);
-      return _operator_plus_2;
+    int _plus = (this.counter + 1);
+    this.counter = _plus;
+    String _plus_1 = ("" + Integer.valueOf(this.counter));
+    return (_plus_1 + type);
   }
   
   /**
@@ -298,7 +290,7 @@ public class Generator extends BaseCodeGenerator {
    */
   protected CharSequence _genOperation(final AddColumnImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("ALTER TABLE ");
+    _builder.append("ALTER TABLE \u00C2");
     String _owningSchemaName = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName, "");
     _builder.append(".");
@@ -306,7 +298,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_owningTableName, "");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("ADD COLUMN ");
+    _builder.append("ADD COLUMN \u00C2");
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(" ");
@@ -358,8 +350,8 @@ public class Generator extends BaseCodeGenerator {
       String _name = operation.getName();
       String _lowerCase = _name.toLowerCase();
       boolean _equals = _lowerCase.equals("public");
-      boolean _operator_not = BooleanExtensions.operator_not(_equals);
-      if (_operator_not) {
+      boolean _not = (!_equals);
+      if (_not) {
         _builder.append("CREATE SCHEMA ");
         String _name_1 = operation.getName();
         _builder.append(_name_1, "");
@@ -583,125 +575,6 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
-   * SET COLUMN DATA TYPE
-   * To convert a column to a different data type, use a command like:
-   * >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
-   * For some not trivial causes of changing of data type are created functions.
-   * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
-   */
-  protected CharSequence _genOperation(final SetColumnTypeImpl operation) {
-      String _fileName = this.getFileName(operation, ".sql");
-      CharSequence _convertBoolToInt = this.convertBoolToInt();
-      this.generateFile(_fileName, _convertBoolToInt);
-      String _fileName_1 = this.getFileName(operation, ".sql");
-      CharSequence _convertCharToBool = this.convertCharToBool();
-      this.generateFile(_fileName_1, _convertCharToBool);
-      String _fileName_2 = this.getFileName(operation, ".sql");
-      CharSequence _convertCharToInt = this.convertCharToInt();
-      this.generateFile(_fileName_2, _convertCharToInt);
-      String _fileName_3 = this.getFileName(operation, ".sql");
-      CharSequence _convertIntToBool = this.convertIntToBool();
-      this.generateFile(_fileName_3, _convertIntToBool);
-      StringConcatenation _builder = new StringConcatenation();
-      _builder.append("ALTER TABLE ");
-      String _owningSchemaName = operation.getOwningSchemaName();
-      _builder.append(_owningSchemaName, "");
-      _builder.append(".");
-      String _owningTableName = operation.getOwningTableName();
-      _builder.append(_owningTableName, "");
-      _builder.append(" ");
-      _builder.newLineIfNotEmpty();
-      _builder.append("\t\t\t\t  \t  ");
-      _builder.append("ALTER COLUMN ");
-      String _owningColumnName = operation.getOwningColumnName();
-      _builder.append(_owningColumnName, "				  	  ");
-      _builder.append(" TYPE ");
-      String _newType = operation.getNewType();
-      _builder.append(_newType, "				  	  ");
-      _builder.newLineIfNotEmpty();
-      {
-        boolean _operator_and = false;
-        String _newType_1 = operation.getNewType();
-        boolean _equals = _newType_1.equals("int");
-        if (!_equals) {
-          _operator_and = false;
-        } else {
-          String _oldType = operation.getOldType();
-          boolean _equals_1 = _oldType.equals("boolean");
-          _operator_and = BooleanExtensions.operator_and(_equals, _equals_1);
-        }
-        if (_operator_and) {
-          _builder.append("\t\t\t\t\t\t");
-          _builder.append("USING converting_booltoint(");
-          String _owningColumnName_1 = operation.getOwningColumnName();
-          _builder.append(_owningColumnName_1, "						");
-          _builder.append(")");
-          _builder.newLineIfNotEmpty();
-        } else {
-          boolean _operator_and_1 = false;
-          String _newType_2 = operation.getNewType();
-          boolean _equals_2 = _newType_2.equals("boolean");
-          if (!_equals_2) {
-            _operator_and_1 = false;
-          } else {
-            String _oldType_1 = operation.getOldType();
-            boolean _equals_3 = _oldType_1.equals("int");
-            _operator_and_1 = BooleanExtensions.operator_and(_equals_2, _equals_3);
-          }
-          if (_operator_and_1) {
-            _builder.append("\t\t\t\t\t\t");
-            _builder.append("USING converting_inttoboolean(");
-            String _owningColumnName_2 = operation.getOwningColumnName();
-            _builder.append(_owningColumnName_2, "						");
-            _builder.append(")");
-            _builder.newLineIfNotEmpty();
-          } else {
-            boolean _operator_and_2 = false;
-            String _newType_3 = operation.getNewType();
-            boolean _equals_4 = _newType_3.equals("boolean");
-            if (!_equals_4) {
-              _operator_and_2 = false;
-            } else {
-              String _oldType_2 = operation.getOldType();
-              boolean _equals_5 = _oldType_2.equals("char");
-              _operator_and_2 = BooleanExtensions.operator_and(_equals_4, _equals_5);
-            }
-            if (_operator_and_2) {
-              _builder.append("\t\t\t\t\t\t");
-              _builder.append("USING converting_chartobool(");
-              String _owningColumnName_3 = operation.getOwningColumnName();
-              _builder.append(_owningColumnName_3, "						");
-              _builder.append(")");
-              _builder.newLineIfNotEmpty();
-            } else {
-              boolean _operator_and_3 = false;
-              String _newType_4 = operation.getNewType();
-              boolean _equals_6 = _newType_4.equals("int");
-              if (!_equals_6) {
-                _operator_and_3 = false;
-              } else {
-                String _oldType_3 = operation.getOldType();
-                boolean _equals_7 = _oldType_3.equals("char");
-                _operator_and_3 = BooleanExtensions.operator_and(_equals_6, _equals_7);
-              }
-              if (_operator_and_3) {
-                _builder.append("\t\t\t\t\t\t");
-                _builder.append("USING converting_chartoint(");
-                String _owningColumnName_4 = operation.getOwningColumnName();
-                _builder.append(_owningColumnName_4, "						");
-                _builder.append(")");
-                _builder.newLineIfNotEmpty();
-                _builder.append("\t\t\t\t\t\t");
-              }
-            }
-          }
-        }
-      }
-      _builder.append(";");
-      return _builder;
-  }
-  
-  /**
    * GENERATE SEQUENCE NUMBERS
    * This operation generate new sequence numbers to column
    * @param GenerateSequenceNumbers operation : operation of type GenerateSequenceNumbers
@@ -733,15 +606,15 @@ public class Generator extends BaseCodeGenerator {
    * @param AddInstances operation : operation of type AddInstances
    */
   protected CharSequence _genOperation(final AddInstancesImpl operation) {
-      EList<String> _targetTableNames = operation.getTargetTableNames();
-      for (final String tab : _targetTableNames) {
-        String _fileName = this.getFileName(operation, ".sql");
-        String _owningSchemaName = operation.getOwningSchemaName();
-        String _sourceTableName = operation.getSourceTableName();
-        CharSequence _addInstancesToTabble = this.addInstancesToTabble(_owningSchemaName, _sourceTableName, tab);
-        this.generateFile(_fileName, _addInstancesToTabble);
-      }
-      return "";
+    EList<String> _targetTableNames = operation.getTargetTableNames();
+    for (final String tab : _targetTableNames) {
+      String _fileName = this.getFileName(operation, ".sql");
+      String _owningSchemaName = operation.getOwningSchemaName();
+      String _sourceTableName = operation.getSourceTableName();
+      CharSequence _addInstancesToTabble = this.addInstancesToTabble(_owningSchemaName, _sourceTableName, tab);
+      this.generateFile(_fileName, _addInstancesToTabble);
+    }
+    return "";
   }
   
   /**
@@ -815,82 +688,6 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("    \t");
     _builder.newLineIfNotEmpty();
     return _builder;
-  }
-  
-  /**
-   * COPY INSTANCES
-   * This operation copy data from one column to another.
-   * Target and source column can be in the same table.
-   * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
-   */
-  protected CharSequence _genOperation(final CopyInstancesImpl operation) {
-      MergeType _type = operation.getType();
-      String _string = _type.toString();
-      boolean _equals = _string.equals("strict");
-      if (_equals) {
-        {
-          String _fileName = this.getFileName(operation, ".q");
-          String _owningSchemaName = operation.getOwningSchemaName();
-          String _owningTableName = operation.getOwningTableName();
-          String _targetTableName = operation.getTargetTableName();
-          CharSequence _isSameTableSize = this.isSameTableSize(_owningSchemaName, _owningTableName, _targetTableName);
-          this.generateFile(_fileName, _isSameTableSize);
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append("UPDATE ");
-          String _owningSchemaName_1 = operation.getOwningSchemaName();
-          _builder.append(_owningSchemaName_1, "");
-          _builder.append(".");
-          String _targetTableName_1 = operation.getTargetTableName();
-          _builder.append(_targetTableName_1, "");
-          _builder.append(" SET ");
-          String _targetColumnName = operation.getTargetColumnName();
-          _builder.append(_targetColumnName, "");
-          _builder.append(" = ");
-          _builder.newLineIfNotEmpty();
-          _builder.append("\t\t\t\t\t\t\t");
-          _builder.append("(SELECT ");
-          String _sourceColumnName = operation.getSourceColumnName();
-          _builder.append(_sourceColumnName, "							");
-          _builder.append(" FROM ");
-          String _owningSchemaName_2 = operation.getOwningSchemaName();
-          _builder.append(_owningSchemaName_2, "							");
-          _builder.append(".");
-          String _owningTableName_1 = operation.getOwningTableName();
-          _builder.append(_owningTableName_1, "							");
-          _builder.append(");");
-          return _builder;
-        }
-      }
-      MergeType _type_1 = operation.getType();
-      String _string_1 = _type_1.toString();
-      boolean _equals_1 = _string_1.equals("force");
-      if (_equals_1) {
-        StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("UPDATE ");
-        String _owningSchemaName_3 = operation.getOwningSchemaName();
-        _builder_1.append(_owningSchemaName_3, "");
-        _builder_1.append(".");
-        String _targetTableName_2 = operation.getTargetTableName();
-        _builder_1.append(_targetTableName_2, "");
-        _builder_1.append(" SET ");
-        String _targetColumnName_1 = operation.getTargetColumnName();
-        _builder_1.append(_targetColumnName_1, "");
-        _builder_1.append(" = ");
-        _builder_1.newLineIfNotEmpty();
-        _builder_1.append("\t\t\t\t\t\t\t");
-        _builder_1.append("(SELECT ");
-        String _sourceColumnName_1 = operation.getSourceColumnName();
-        _builder_1.append(_sourceColumnName_1, "							");
-        _builder_1.append(" FROM ");
-        String _owningSchemaName_4 = operation.getOwningSchemaName();
-        _builder_1.append(_owningSchemaName_4, "							");
-        _builder_1.append(".");
-        String _owningTableName_2 = operation.getOwningTableName();
-        _builder_1.append(_owningTableName_2, "							");
-        _builder_1.append(");");
-        return _builder_1;
-      }
-      return "";
   }
   
   /**
@@ -1140,8 +937,6 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((AddTableImpl)operation);
     } else if (operation instanceof AddUniqueImpl) {
       return _genOperation((AddUniqueImpl)operation);
-    } else if (operation instanceof CopyInstancesImpl) {
-      return _genOperation((CopyInstancesImpl)operation);
     } else if (operation instanceof GenerateSequenceNumbersImpl) {
       return _genOperation((GenerateSequenceNumbersImpl)operation);
     } else if (operation instanceof HasNoInstancesImpl) {
@@ -1166,8 +961,6 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((RenameColumnImpl)operation);
     } else if (operation instanceof RenameTableImpl) {
       return _genOperation((RenameTableImpl)operation);
-    } else if (operation instanceof SetColumnTypeImpl) {
-      return _genOperation((SetColumnTypeImpl)operation);
     } else if (operation instanceof SetDefaultValueImpl) {
       return _genOperation((SetDefaultValueImpl)operation);
     } else {
