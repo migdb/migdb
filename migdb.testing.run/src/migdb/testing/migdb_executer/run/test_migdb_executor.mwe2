@@ -53,6 +53,12 @@ Workflow{
 		outputSlot= "strRdb"
 	}
 	
+	/*Helper rdb ops */
+	component = QVTOExecutor {
+		transformationFile= "../migdb.qvto/transforms/tests/migdb_executer/opsRdb.qvto"
+		outputSlot= "opsRdb"
+	}
+	
 	/**Executor Transformation */
 	component = QVTOExecutor{
 		inputSlot="opsApp"
@@ -60,7 +66,7 @@ Workflow{
 		outputSlot="outStrApp"
 		inputSlot="strRdb"
 		outputSlot="outStrRdb"
-		outputSlot="opsRdb"
+		inOutSlot="opsRdb"
 		transformationFile="../migdb.qvto/transforms/evolution/migdb_executer.qvto"
 	}
 	

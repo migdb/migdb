@@ -7,15 +7,20 @@ import orm_link;
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 
+/**
+	There is problem with the same types of models - if rOperations is inModel DbOperations are collected in outRStructure
+**/
 transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	in inRStructure:RDB, out outRStructure : RDB , out rOperations :RDB );
+	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB);
 
 main() {
-	var processedAStructure : APP::Structure := inAStructure.rootObjects().deepclone()![APP::Structure];
-	var processedRStructure : RDB::Structure := inRStructure.rootObjects().deepclone()![RDB::Structure];
+	outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
+	outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
 	
+	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
+	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];	
 	var isValid : Boolean := true;
-	var outRdbOps : RDB::Operations := _rdbOperations(OrderedSet{});
+	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
 	//forEach is also if due to isValid condition
 	appOperations.rootObjects()![APP::Operations]->operations->forEach(op | isValid){
 		//check appOp validity
@@ -25,6 +30,7 @@ main() {
 			outRdbOps.operations+=dbOps;
 			//apply dbOps
 			dbOps->forEach(dbOp){
+				//log("check executer " + dbOp.isValid(processedRStructure).repr());
 				if(dbOp.isValid(processedRStructure))then{
 					dbOp.apply(processedRStructure);
 				}else{
@@ -42,8 +48,5 @@ main() {
 		}endif;
 	};
 	log("migdb_executer process finished");
-	outAStructure.rootObjects()![APP::Structure].entities := processedAStructure.entities;
-	outRStructure.rootObjects()![RDB::Structure].schemas := processedRStructure.schemas;
-	
-	rOperations.rootObjects()![RDB::Operations].operations := outRdbOps.operations;
+
 }

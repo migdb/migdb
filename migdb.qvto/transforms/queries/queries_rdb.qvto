@@ -118,7 +118,7 @@ query RDB::Structure::createPrimitiveType (type : String) : RDB::PrimitiveType {
 	switch {
 		case (type = "boolean") return RDB::PrimitiveType::boolean;
 		case (type = "char") return RDB::PrimitiveType::char;
-		case (type = "int") return RDB::PrimitiveType::int;
+		case (type = "Integer") return RDB::PrimitiveType::int;
 		case (type = "float") return RDB::PrimitiveType::float;
 	};
 	return null;
