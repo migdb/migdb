@@ -101,7 +101,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddSequenceImpl operation : operation of type AddSequenceImpl
 	 */
 	def dispatch genOperation(AddSequenceImpl operation) '''
-		CREATE SEQUENCE «operation.owningSchemaName».«operation.name» START «operation.startValue»;
+		CREATE SEQUENCE Â«operation.owningSchemaNameÂ».Â«operation.nameÂ» START Â«operation.startValueÂ»;
 	'''		
 
 	/**
@@ -116,8 +116,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddNotNullConstraintImpl operation : operation of type AddNotNullConstraintImpl
 	 */
 	def dispatch genOperation(AddNotNullImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ALTER COLUMN «operation.constrainedColumnName» SET NOT NULL;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ»
+			ALTER COLUMN Â«operation.constrainedColumnNameÂ» SET NOT NULL;
 	'''	
 	
 	/**
@@ -127,9 +127,9 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddPrimaryKeyImpl operation : operation of type AddPrimaryKeyImpl
 	 */
 	def dispatch genOperation(AddPrimaryKeyImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name»
-			PRIMARY KEY («operation.constrainedColumnName»);
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ»
+			ADD CONSTRAINT Â«operation.nameÂ»
+			PRIMARY KEY (Â«operation.constrainedColumnNameÂ»);
 	'''		
 
 	/**
@@ -141,9 +141,9 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddForeignKeyImpl operation : operation of type AddForeignKeyImpl
 	 */
 	def dispatch genOperation(AddForeignKeyImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name»
-			FOREIGN KEY («operation.constrainedColumnName») REFERENCES «operation.owningSchemaName».«operation.targetTableName» (id_«operation.targetTableName»);
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ»
+			ADD CONSTRAINT Â«operation.nameÂ»
+			FOREIGN KEY (Â«operation.constrainedColumnNameÂ») REFERENCES Â«operation.owningSchemaNameÂ».Â«operation.targetTableNameÂ» (id_Â«operation.targetTableNameÂ»);
 	'''		
 
 	/**
@@ -156,8 +156,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddUniqueImpl operation : operation of type AddUniqueIndexImpl
 	 */
 	def dispatch genOperation(AddUniqueImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name» UNIQUE («operation.constrainedColumnName»);
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ»
+			ADD CONSTRAINT Â«operation.nameÂ» UNIQUE (Â«operation.constrainedColumnNameÂ»);
 	'''	
 	
 	/**
@@ -167,8 +167,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddIndexImpl operation : operation of type AddIndexImpl
 	 */
 	def dispatch genOperation(AddIndexImpl operation) '''
-		CREATE INDEX «operation.name»
-			ON «operation.owningSchemaName».«operation.owningTableName» («FOR col : operation.columnsNames SEPARATOR ","»«col»«ENDFOR»);
+		CREATE INDEX Â«operation.nameÂ»
+			ON Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» (Â«FOR col : operation.columnsNames SEPARATOR ","Â»Â«colÂ»Â«ENDFORÂ»);
 	'''
 	
 	/**
@@ -178,8 +178,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddColumnImpl operation : operation of type AddColumnImpl
 	 */
 	def dispatch genOperation(AddColumnImpl operation) '''
-		ALTER TABLE Â«operation.owningSchemaName».«operation.owningTableName»
-			ADD COLUMN Â«operation.name» «IF operation.type.toString().equals("char")»character(30) «ELSE»«operation.type»«ENDIF»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ»
+			ADD COLUMN Â«operation.nameÂ» Â«IF operation.type.toString().equals("char")Â»character(30) Â«ELSEÂ»Â«operation.typeÂ»Â«ENDIFÂ»;
 	'''
 	
 	/**
@@ -189,7 +189,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddTableImpl operation : operation of type AddTableImpl
 	 */
 	def dispatch genOperation(AddTableImpl operation) '''
-		CREATE TABLE «operation.owningSchemaName».«operation.name» ();
+		CREATE TABLE Â«operation.owningSchemaNameÂ».Â«operation.nameÂ» ();
 	'''
 	
 	/**
@@ -200,7 +200,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param AddSchemaImpl operation : operation of type AddSchemaImpl
 	 */
 	def dispatch genOperation(AddSchemaImpl operation)'''
-		«IF !operation.name.toLowerCase.equals("public")»CREATE SCHEMA «operation.name»«ENDIF»; 
+		Â«IF !operation.name.toLowerCase.equals("public")Â»CREATE SCHEMA Â«operation.nameÂ» Â«ENDIFÂ»; 
 	'''
 	
 	/**		REMOVE OPERATIONS		**/
@@ -212,7 +212,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveTableImpl operation : operation of type RemoveTableImpl
 	 */
 	def dispatch genOperation(RemoveTableImpl operation) '''
-		DROP TABLE «operation.owningSchemaName».«operation.name»;
+		DROP TABLE Â«operation.owningSchemaNameÂ».Â«operation.nameÂ»;
 	'''
 	
 	/**
@@ -222,8 +222,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveColumnImpl operation : operation of type RemoveColumnImpl
 	 */
 	def dispatch genOperation(RemoveColumnImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			DROP COLUMN «operation.name»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» 
+			DROP COLUMN Â«operation.nameÂ»;
 	'''	
 	
 	/**
@@ -233,7 +233,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveIndexImpl operation : operation of type RemoveIndexImpl
 	 */
 	def dispatch genOperation(RemoveIndexImpl operation) '''
-		DROP INDEX «operation.name»;
+		DROP INDEX Â«operation.nameÂ»;
 	'''		
 	
 	/**
@@ -243,8 +243,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveTableConstraintImpl operation : operation of type TableConstraintImpl
 	 */
 	def dispatch genOperation(RemoveConstraintImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			DROP CONSTRAINT «operation.name»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» 
+			DROP CONSTRAINT Â«operation.nameÂ»;
 	'''		
 	
 	/**
@@ -254,8 +254,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveDefaultValueImpl operation : operation of type RemoveDefaultValueImpl
 	 */
 	def dispatch genOperation(RemoveDefaultValueImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» DROP DEFAULT;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» 
+			ALTER COLUMN Â«operation.owningColumnNameÂ» DROP DEFAULT;
 	'''		
 	
 	/**
@@ -265,7 +265,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param RemoveSequenceImpl operation : operation of type RemoveSequenceImpl
 	 */
 	def dispatch genOperation(RemoveSequenceImpl operation)'''
-		DROP SEQUENCE «operation.owningSchemaName».«operation.name»;
+		DROP SEQUENCE Â«operation.owningSchemaNameÂ».Â«operation.nameÂ»;
 	'''		
 	
 	/**		RENAME OPERATIONS		**/	
@@ -277,8 +277,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param RenameTableImpl operation : operation of type RenameTableImpl
 	 */
 	def dispatch genOperation(RenameTableImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.name» 
-			RENAME TO «operation.newName»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.nameÂ» 
+			RENAME TO Â«operation.newNameÂ»;
 	'''		
 	
 	/**
@@ -288,8 +288,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param RenameColumnImpl operation : operation of type RenameColumnImpl
 	 */
 	def dispatch genOperation(RenameColumnImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			RENAME COLUMN «operation.name» TO «operation.newName»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» 
+			RENAME COLUMN Â«operation.nameÂ» TO Â«operation.newNameÂ»;
 	'''		
 		
 	/**	    SET OPERATIONS	    	**/		
@@ -303,8 +303,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param SetColumnDefaultValueImpl operation : operation of type SetColumnDefaultValueImpl
 	 */
 	def dispatch genOperation(SetDefaultValueImpl operation) '''
-		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-			ALTER COLUMN «operation.owningColumnName» SET DEFAULT «operation.newDefaultValue»;
+		ALTER TABLE Â«operation.owningSchemaNameÂ».Â«operation.owningTableNameÂ» 
+			ALTER COLUMN Â«operation.owningColumnNameÂ» SET DEFAULT Â«operation.newDefaultValueÂ»;
 	'''	
 	
 	/**
@@ -321,17 +321,17 @@ class Generator extends BaseCodeGenerator {
 		generateFile(operation.getFileName(".sql"), this.convertCharToBool);
 		generateFile(operation.getFileName(".sql"), this.convertCharToInt);
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
-		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
-				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
-						«IF operation.newType.equals("int") && operation.oldType.equals("boolean")»
-							USING converting_booltoint(«operation.owningColumnName»)
-						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")»
-							USING converting_inttoboolean(«operation.owningColumnName»)
-						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")»
-							USING converting_chartobool(«operation.owningColumnName»)
-						«ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")»
-							USING converting_chartoint(«operation.owningColumnName»)
-						«ENDIF»;''';
+		return '''ALTER TABLE ï¿½operation.owningSchemaNameï¿½.ï¿½operation.owningTableNameï¿½ 
+				  	  ALTER COLUMN ï¿½operation.owningColumnNameï¿½ TYPE ï¿½operation.newTypeï¿½
+						ï¿½IF operation.newType.equals("int") && operation.oldType.equals("boolean")ï¿½
+							USING converting_booltoint(ï¿½operation.owningColumnNameï¿½)
+						ï¿½ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")ï¿½
+							USING converting_inttoboolean(ï¿½operation.owningColumnNameï¿½)
+						ï¿½ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")ï¿½
+							USING converting_chartobool(ï¿½operation.owningColumnNameï¿½)
+						ï¿½ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")ï¿½
+							USING converting_chartoint(ï¿½operation.owningColumnNameï¿½)
+						ï¿½ENDIFï¿½;''';
 	}
 	*/
 	
@@ -347,7 +347,7 @@ class Generator extends BaseCodeGenerator {
      * @param GenerateSequenceNumbers operation : operation of type GenerateSequenceNumbers 
      */     
     def dispatch genOperation(GenerateSequenceNumbersImpl operation)'''
-    	UPDATE «operation.owningSchemaName».«operation.tableName» SET «operation.columnName» = nextval('«operation.sequenceName»');
+    	UPDATE Â«operation.owningSchemaNameÂ».Â«operation.tableNameÂ» SET Â«operation.columnNameÂ» = nextval('Â«operation.sequenceNameÂ»');
     '''
     
      /**
@@ -371,7 +371,7 @@ class Generator extends BaseCodeGenerator {
      * @return boolean : t - no instances; f - some instances 
      */ 
     def dispatch genOperation(HasNoInstancesImpl operation)'''
-    		SELECT COUNT(1) > 0 FROM «operation.owningSchemaName».«operation.tableName»;
+    		SELECT COUNT(1) > 0 FROM Â«operation.owningSchemaNameÂ».Â«operation.tableNameÂ»;
     '''
     
     /**
@@ -384,9 +384,9 @@ class Generator extends BaseCodeGenerator {
      */ 
     def dispatch genOperation(HasNoOwnInstancesImpl operation)'''
     		SELECT COUNT(1) > 0 
-    			FROM «operation.owningSchemaName».«operation.tableName» AS parent
-    			«FOR tab : operation.descendantsNames»LEFT JOIN «tab» ON «tab».id = parent.id«ENDFOR»
-    			WHERE «FOR tab : operation.descendantsNames SEPARATOR "AND"» «tab».id IS null «ENDFOR»    	
+    			FROM Â«operation.owningSchemaNameÂ».Â«operation.tableNameÂ» AS parent
+    			Â«FOR tab : operation.descendantsNamesÂ» LEFT JOIN Â«tabÂ» ON Â«tabÂ».id = parent.idÂ«ENDFORÂ»
+    			WHERE Â«FOR tab : operation.descendantsNames SEPARATOR "AND"Â»Â«tabÂ».id IS null Â«ENDFORÂ»    	
     '''    
     
 	/**
@@ -424,12 +424,12 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(CopyInstancesImpl operation){
 		if(operation.type.toString().equals("strict")){
 			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName»);''';
+			return '''UPDATE ï¿½operation.owningSchemaNameï¿½.ï¿½operation.targetTableNameï¿½ SET ï¿½operation.targetColumnNameï¿½ = 
+							(SELECT ï¿½operation.sourceColumnNameï¿½ FROM ï¿½operation.owningSchemaNameï¿½.ï¿½operation.owningTableNameï¿½);''';
 		}
 		if(operation.type.toString().equals("force")){
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName»);''';
+			return '''UPDATE ï¿½operation.owningSchemaNameï¿½.ï¿½operation.targetTableNameï¿½ SET ï¿½operation.targetColumnNameï¿½ = 
+							(SELECT ï¿½operation.sourceColumnNameï¿½ FROM ï¿½operation.owningSchemaNameï¿½.ï¿½operation.owningTableNameï¿½);''';
 		}
 		return "";
 	}
@@ -443,8 +443,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param InsertInstancesImpl operation : operation of type InsertInstancesImpl
 	 */
 	def dispatch genOperation(InsertInstancesImpl operation)'''
-		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» («FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-						SELECT «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
+		INSERT INTO Â«operation.owningSchemaNameÂ».Â«operation.targetTableNameÂ» (Â«FOR col : operation.targetColumnsNames SEPARATOR ","Â»Â«colÂ»Â«ENDFORÂ»)
+						SELECT Â«FOR col : operation.sourceColumnsNames SEPARATOR ","Â»Â«colÂ»Â«ENDFORÂ» FROM Â«operation.sourceTableNameÂ»;
 	'''
 	
 	
@@ -460,8 +460,8 @@ class Generator extends BaseCodeGenerator {
 	 * @return SQL
 	 */
 	def addInstancesToTabble(String schema, String sourceTable, String targetTable)'''
-		INSERT INTO «schema».«targetTable» (id)
-			SELECT id FROM «schema».«sourceTable»;
+		INSERT INTO Â«schemaÂ».Â«targetTableÂ» (id)
+			SELECT id FROM Â«schemaÂ».Â«sourceTableÂ»;
 	'''
 	
 	/**
@@ -473,7 +473,7 @@ class Generator extends BaseCodeGenerator {
 	 * @return boolean : t - the same size; f - different size
 	 */
 	def isSameTableSize(String schema, String table1, String table2)'''
-		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
+		SELECT CASE WHEN (SELECT COUNT(*) FROM Â«schemaÂ».Â«table1Â») = (SELECT COUNT(*) FROM Â«schemaÂ».Â«table2Â») THEN TRUE ELSE FALSE END;
 	'''
 
 	/**
@@ -484,7 +484,7 @@ class Generator extends BaseCodeGenerator {
 	 * @return boolean : t - is empty; f - has instances
 	 */	
 	def hasNoInstances(String schema, String table)'''
-		SELECT COUNT(1) > 0 FROM «schema».«table»;
+		SELECT COUNT(1) > 0 FROM Â«schemaÂ».Â«tableÂ»;
 	'''
 	
 	

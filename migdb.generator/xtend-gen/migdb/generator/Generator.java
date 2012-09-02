@@ -290,7 +290,7 @@ public class Generator extends BaseCodeGenerator {
    */
   protected CharSequence _genOperation(final AddColumnImpl operation) {
     StringConcatenation _builder = new StringConcatenation();
-    _builder.append("ALTER TABLE \u00C2");
+    _builder.append("ALTER TABLE ");
     String _owningSchemaName = operation.getOwningSchemaName();
     _builder.append(_owningSchemaName, "");
     _builder.append(".");
@@ -298,7 +298,7 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_owningTableName, "");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
-    _builder.append("ADD COLUMN \u00C2");
+    _builder.append("ADD COLUMN ");
     String _name = operation.getName();
     _builder.append(_name, "	");
     _builder.append(" ");
@@ -355,6 +355,7 @@ public class Generator extends BaseCodeGenerator {
         _builder.append("CREATE SCHEMA ");
         String _name_1 = operation.getName();
         _builder.append(_name_1, "");
+        _builder.append(" ");
       }
     }
     _builder.append("; ");
@@ -661,7 +662,7 @@ public class Generator extends BaseCodeGenerator {
     {
       EList<String> _descendantsNames = operation.getDescendantsNames();
       for(final String tab : _descendantsNames) {
-        _builder.append("LEFT JOIN ");
+        _builder.append(" LEFT JOIN ");
         _builder.append(tab, "	");
         _builder.append(" ON ");
         _builder.append(tab, "	");
@@ -680,7 +681,6 @@ public class Generator extends BaseCodeGenerator {
         } else {
           _builder.appendImmediate("AND", "	");
         }
-        _builder.append(" ");
         _builder.append(tab_1, "	");
         _builder.append(".id IS null ");
       }
