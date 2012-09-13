@@ -100,4 +100,47 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 	return null;
 }
 
+helper app::ops::RenameProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var stcls : StandardClass := appStructure.findStandardClass(self.owningClassName);
+	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	var renamedProperty : Property := stcls.properties->selectOne(pr | pr.name = self.name); 
+	//handling primitive properties
+	if(renamedProperty.type.oclIsTypeOf(PrimitiveClass)) then{
+		return generateOpSequence(stcls, "public",self.name, self.newName);
+	}else{
+		//handling Embedded properties
+		if(renamedProperty.type.oclIsTypeOf(EmbeddedClass))then{
+			//rename column for each cls containing stcls prop
+			appStructure.entities[StandardClass]->forEach( cls | cls.properties->exists(pr | pr.type = renamedProperty.type)){
+				operations+= generateOpSequence(cls, "public", cls.name + "_" + self.name, cls.name + "_" + self.newName);
+			};
+			return operations;
+		}else {
+			if(renamedProperty.type.oclIsKindOf(StandardClass))then{
+				//FIND owner - rename
+			}endif;
+		}endif;
+	}endif;
+	
+	return null;
+}
 
+//HELPER helper - generates sequence of RenameOps.
+helper generateOpSequence ( cls : StandardClass, owningSchema : String, name : String, newName : String ) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	if(cls.hasJoinedInheritanceType() or cls.hasImplicitInheritanceType()) then{
+			operations->append(_renameColumn(owningSchema, cls.name, name, newName));
+			return operations;
+		}endif;
+		if(cls.hasSingleTableInheritanceType())then{
+			operations->append(_renameColumn(owningSchema, cls.getRootClass().name, name, newName));
+			return operations;
+		}endif;
+		if(cls.hasTablePerClassInheritanceType())then{
+			cls.getDescendants(OrderedSet{})->forEach(desc | desc){
+				operations->append(_renameColumn(owningSchema, desc.name, name, newName))
+			};
+			return operations;
+		}endif;
+		return null;
+}

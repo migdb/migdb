@@ -264,12 +264,17 @@ query APP::Structure::findAbstractClass(cName : String) : APP::GeneralClass {
 }
 
 query APP::Structure::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
-	return self.findAbstractClass(cName).properties->exists(name = pName);
+	return self.findAbstractClass(cName).containsProperty(pName);
 }
 
 query APP::Structure::isPropertyInClass(cName : String, pName : String) : Boolean {
-	return self.findClass(cName).properties->exists(name = pName);
+	return self.findClass(cName).containsProperty(pName);
 }
+
+query GeneralClass::containsProperty(pName : String) : Boolean{
+	return self.properties->exists(name = pName);
+} 
+
 
 query APP::Structure::arePropertiesInClass(cName : String, pNames : OrderedSet(String)) : Boolean {
 	return pNames->forAll(name | self.isPropertyInClass(cName, name));
@@ -355,7 +360,6 @@ query app::Property::isOneToOneUnidirectional():Boolean{
 query StandardClass::isIDRootCountCorrectlySet():Boolean{
 	return (self.parent = null and self.properties->select(prop | prop.isID())->size() = 1) or self.parent <> null;
 }
-
 
 query app::Structure::containsNonleafTPCAssociation():Boolean{
 	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and prop.owningGeneralClass.isNonleafTPCClass() and 
