@@ -207,7 +207,7 @@ helper APP::ops::SetParent::apply(inout root : APP::Structure) {
 	if (self.parentName = null) then {
 		c.parent := null;
 		// vytvoreni ID atributu
-		var idProp : Property := _idProperty( root.findEntity("Integer"), "SQ_" + self.name.toLower());
+		var idProp : Property := _idProperty( root.findEntity("Integer"));
 		c.properties += idProp;
 		c.oclAsType(StandardClass).idProperty := idProp;
 		

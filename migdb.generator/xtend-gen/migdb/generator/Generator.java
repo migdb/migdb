@@ -31,6 +31,9 @@ import mm.rdb.ops.impl.SetDefaultValueImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
+import org.eclipse.xtext.xbase.lib.BooleanExtensions;
+import org.eclipse.xtext.xbase.lib.IntegerExtensions;
+import org.eclipse.xtext.xbase.lib.StringExtensions;
 
 @SuppressWarnings("all")
 public class Generator extends BaseCodeGenerator {
@@ -46,16 +49,16 @@ public class Generator extends BaseCodeGenerator {
    * @param EObject model : model of our application
    */
   public void doGenerate(final EObject model) {
-    ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
-    ArrayList<ModelOperationImpl> operations = _arrayList;
-    this.counter = 100;
-    EList<EObject> _eContents = model.eContents();
-    for (final Object arg : _eContents) {
-      if ((arg instanceof ModelOperationImpl)) {
-        operations.add(((ModelOperationImpl) arg));
+      ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
+      ArrayList<ModelOperationImpl> operations = _arrayList;
+      this.counter = 100;
+      EList<EObject> _eContents = model.eContents();
+      for (final Object arg : _eContents) {
+        if ((arg instanceof ModelOperationImpl)) {
+          operations.add(((ModelOperationImpl) arg));
+        }
       }
-    }
-    this.toplevelGenerator(operations);
+      this.toplevelGenerator(operations);
   }
   
   /**
@@ -76,7 +79,8 @@ public class Generator extends BaseCodeGenerator {
   public File generateOperationFile(final ModelOperationImpl operation) {
     File _xblockexpression = null;
     {
-      CharSequence text = this.genOperation(operation);
+      CharSequence _genOperation = this.genOperation(operation);
+      CharSequence text = _genOperation;
       String _fileName = this.getFileName(operation, ".sql");
       File _generateFile = this.generateFile(_fileName, text);
       _xblockexpression = (_generateFile);
@@ -89,10 +93,11 @@ public class Generator extends BaseCodeGenerator {
    * @param ModelOperationImpl operation : method do not need specific type of operation
    */
   public String getFileName(final ModelOperationImpl operation, final String type) {
-    int _plus = (this.counter + 1);
-    this.counter = _plus;
-    String _plus_1 = ("" + Integer.valueOf(this.counter));
-    return (_plus_1 + type);
+      int _operator_plus = IntegerExtensions.operator_plus(this.counter, 1);
+      this.counter = _operator_plus;
+      String _operator_plus_1 = StringExtensions.operator_plus("", Integer.valueOf(this.counter));
+      String _operator_plus_2 = StringExtensions.operator_plus(_operator_plus_1, type);
+      return _operator_plus_2;
   }
   
   /**
@@ -350,8 +355,8 @@ public class Generator extends BaseCodeGenerator {
       String _name = operation.getName();
       String _lowerCase = _name.toLowerCase();
       boolean _equals = _lowerCase.equals("public");
-      boolean _not = (!_equals);
-      if (_not) {
+      boolean _operator_not = BooleanExtensions.operator_not(_equals);
+      if (_operator_not) {
         _builder.append("CREATE SCHEMA ");
         String _name_1 = operation.getName();
         _builder.append(_name_1, "");
@@ -607,15 +612,15 @@ public class Generator extends BaseCodeGenerator {
    * @param AddInstances operation : operation of type AddInstances
    */
   protected CharSequence _genOperation(final AddInstancesImpl operation) {
-    EList<String> _targetTableNames = operation.getTargetTableNames();
-    for (final String tab : _targetTableNames) {
-      String _fileName = this.getFileName(operation, ".sql");
-      String _owningSchemaName = operation.getOwningSchemaName();
-      String _sourceTableName = operation.getSourceTableName();
-      CharSequence _addInstancesToTabble = this.addInstancesToTabble(_owningSchemaName, _sourceTableName, tab);
-      this.generateFile(_fileName, _addInstancesToTabble);
-    }
-    return "";
+      EList<String> _targetTableNames = operation.getTargetTableNames();
+      for (final String tab : _targetTableNames) {
+        String _fileName = this.getFileName(operation, ".sql");
+        String _owningSchemaName = operation.getOwningSchemaName();
+        String _sourceTableName = operation.getSourceTableName();
+        CharSequence _addInstancesToTabble = this.addInstancesToTabble(_owningSchemaName, _sourceTableName, tab);
+        this.generateFile(_fileName, _addInstancesToTabble);
+      }
+      return "";
   }
   
   /**

@@ -81,14 +81,6 @@ helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstra
 	}
 }
 
-helper _setParent(_name : String, _parentName : String, _properties : OrderedSet(String)) : APP::ops::SetParent {
-	return object APP::ops::SetParent {
-		name := _name;
-		parentName := _parentName;
-		properties := _properties;
-	}
-}
-
 helper _setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
 	return object APP::ops::SetType {
 		owningClassName := _owningClassName;
@@ -174,12 +166,6 @@ helper _integer() : PrimitiveClass{
  
 helper _idProperty(_integerReference : ModelEntity) : Property{
 	return _property("id", _integerReference, 1, 1)
-}
-
-helper _idProperty(_integerReference : ModelEntity, _sequenceName : String) : Property{
-	var idProp : Property := _idProperty(_integerReference);
-	idProp.sequenceName = _sequenceName;
-	return idProp;
 }
 
 helper _property(_name : String, _type : ModelEntity) : Property {
