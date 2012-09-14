@@ -55,16 +55,16 @@ helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : Ordere
 helper APP::ops::AddClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	// addition of a table to the schema
 	var operations: OrderedSet(RDB::ops::ModelOperation) = OrderedSet{};
-	operations += _addTable("public", self.name.toLower());
+	operations += _addTable(getDefaultSchemaName(), self.name.toLower());
 	
 	// addition of a column to the table
-	operations += _addColumn("public", self.name.toLower(), "id_" + self.name.toLower(), getAppDefaultIdTypeName());
+	operations += _addColumn(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), getAppDefaultIdTypeName());
 	
 	// addition of an index to the schema
-	operations += _addIndex("public", self.name.toLower(), "IX_" + self.name.toLower() + "_id_" + self.name.toLower(), OrderedSet {"id_" + self.name.toLower()});
+	operations += _addIndex(getDefaultSchemaName(), self.name.toLower(), "IX_" + self.name.toLower() + "_id_" + self.name.toLower(), OrderedSet {"id_" + self.name.toLower()});
 		
 	// addition of a primary key to the table
-	operations += _addPrimaryKey("public", self.name.toLower(), "id_" + self.name.toLower(), "PK_" + self.name.toLower());
+	operations += _addPrimaryKey(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), "PK_" + self.name.toLower());
 	return operations;
 }
 
@@ -85,13 +85,13 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 			return operations; 
 		}endif;
 		if(stcls.hasJoinedInheritanceType())then{
-			operations->append(_renameTable("public", self.name, self.newName));
+			operations->append(_renameTable(getDefaultSchemaName(), self.name, self.newName));
 			//rename all FKs outside hierarchy
 			//rename FKs for all strict descendats stcls - eg des.parent.name = self.name
 			return operations;
 		}endif;
 		if(stcls.hasTablePerClassInheritanceType())then{
-			operations->append(_renameTable("public", self.name, self.newName));
+			operations->append(_renameTable(getDefaultSchemaName(), self.name, self.newName));
 			//rename all FKs outside hierarchy
 			return operations;
 		}endif;
@@ -100,23 +100,35 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 	return null;
 }
 
+helper app::ops::AddProperty::toRdb() : OrderedSet(RDB::ops::ModelOperation){
+	//var stcls : StandardClass := appStructure.findStandardClass(self.owningClassName);
+}
+
 helper app::ops::RenameProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var stcls : StandardClass := appStructure.findStandardClass(self.owningClassName);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 	var renamedProperty : Property := stcls.properties->selectOne(pr | pr.name = self.name); 
 	//handling primitive properties
 	if(renamedProperty.type.oclIsTypeOf(PrimitiveClass)) then{
-		return generateOpSequence(stcls, "public",self.name, self.newName);
+		return generateOpSequence(stcls, getDefaultSchemaName(),self.name, self.newName);
 	}else{
 		//handling Embedded properties
 		if(renamedProperty.type.oclIsTypeOf(EmbeddedClass))then{
 			//rename column for each cls containing stcls prop
 			appStructure.entities[StandardClass]->forEach( cls | cls.properties->exists(pr | pr.type = renamedProperty.type)){
-				operations+= generateOpSequence(cls, "public", cls.name + "_" + self.name, cls.name + "_" + self.newName);
+				operations+= generateOpSequence(cls, getDefaultSchemaName(), cls.name + "_" + self.name, cls.name + "_" + self.newName);
 			};
 			return operations;
 		}else {
 			if(renamedProperty.type.oclIsKindOf(StandardClass))then{
+				if(renamedProperty.isOneToManyUnidirectional())then{
+					
+				}else {
+					if(renamedProperty.isOneToManyUnidirectional())then{
+					
+					}else{
+					}endif;
+				}endif;
 				//FIND owner - rename
 			}endif;
 		}endif;
@@ -143,4 +155,8 @@ helper generateOpSequence ( cls : StandardClass, owningSchema : String, name : S
 			return operations;
 		}endif;
 		return null;
+}
+
+query getDefaultSchemaName() : String{
+	return "public";
 }
