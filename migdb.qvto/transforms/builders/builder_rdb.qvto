@@ -59,13 +59,13 @@ helper _addPrimaryKey(_owningSchemaName : String, _owningTableName : String, _co
 	};
 }
 
-helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String, _targerTableName : String) : RDB::ops::AddForeignKey{
+helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String, _targetTableName : String) : RDB::ops::AddForeignKey{
 	return object RDB::ops::AddForeignKey {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
 		constrainedColumnName := _constraineColumnName;
 		name := _name;
-		targetTableName := _targerTableName;
+		targetTableName := _targetTableName;
 	};
 }
 

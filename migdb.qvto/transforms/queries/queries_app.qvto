@@ -243,7 +243,7 @@ query APP::Structure::containsPrimitiveClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsTypeOf(APP::PrimitiveClass);
 }
 
-query APP::Structure::containsAbstractClass(cName : String) : Boolean {
+query APP::Structure::containsGeneralClass(cName : String) : Boolean {
 	return self.findEntity(cName).oclIsKindOf(APP::GeneralClass);
 }
 

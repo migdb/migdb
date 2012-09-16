@@ -55,16 +55,16 @@ helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : Ordere
 helper APP::ops::AddClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	// addition of a table to the schema
 	var operations: OrderedSet(RDB::ops::ModelOperation) = OrderedSet{};
-	operations += _addTable(getDefaultSchemaName(), self.name.toLower());
+	operations += _addTable(getDefaultSchemaName(), self.name.getDbName());
 	
 	// addition of a column to the table
-	operations += _addColumn(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), getAppDefaultIdTypeName());
+	operations += _addColumn(getDefaultSchemaName(), self.name.getDbName(), ("id_" + self.name).getDbName(), getAppDefaultIdTypeName());
 	
 	// addition of an index to the schema
-	operations += _addIndex(getDefaultSchemaName(), self.name.toLower(), "IX_" + self.name.toLower() + "_id_" + self.name.toLower(), OrderedSet {"id_" + self.name.toLower()});
+	operations += _addIndex(getDefaultSchemaName(), self.name.getDbName(), ("ix_" + self.name + "_id_" + self.name).getDbName(), OrderedSet {("id_" + self.name).getDbName()});
 		
 	// addition of a primary key to the table
-	operations += _addPrimaryKey(getDefaultSchemaName(), self.name.toLower(), "id_" + self.name.toLower(), "PK_" + self.name.toLower());
+	operations += _addPrimaryKey(getDefaultSchemaName(), self.name.getDbName(), ("id_" + self.name).getDbName(), ("pk_" + self.name).getDbName());
 	return operations;
 }
 
@@ -100,63 +100,120 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 	return null;
 }
 
-helper app::ops::AddProperty::toRdb() : OrderedSet(RDB::ops::ModelOperation){
-	//var stcls : StandardClass := appStructure.findStandardClass(self.owningClassName);
-}
 
-helper app::ops::RenameProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
-	var stcls : StandardClass := appStructure.findStandardClass(self.owningClassName);
-	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
-	var renamedProperty : Property := stcls.properties->selectOne(pr | pr.name = self.name); 
-	//handling primitive properties
-	if(renamedProperty.type.oclIsTypeOf(PrimitiveClass)) then{
-		return generateOpSequence(stcls, getDefaultSchemaName(),self.name, self.newName);
-	}else{
-		//handling Embedded properties
-		if(renamedProperty.type.oclIsTypeOf(EmbeddedClass))then{
-			//rename column for each cls containing stcls prop
-			appStructure.entities[StandardClass]->forEach( cls | cls.properties->exists(pr | pr.type = renamedProperty.type)){
-				operations+= generateOpSequence(cls, getDefaultSchemaName(), cls.name + "_" + self.name, cls.name + "_" + self.newName);
-			};
-			return operations;
-		}else {
-			if(renamedProperty.type.oclIsKindOf(StandardClass))then{
-				if(renamedProperty.isOneToManyUnidirectional())then{
-					
-				}else {
-					if(renamedProperty.isOneToManyUnidirectional())then{
-					
-					}else{
-					}endif;
-				}endif;
-				//FIND owner - rename
-			}endif;
+helper app::ops::AddProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
+	var type : ModelEntity := appStructure.findEntity(self.type);
+	
+	if(ent.oclIsTypeOf(PrimitiveClass))then{
+		assert(false);
+	}endif;
+
+	if(type.oclIsTypeOf(PrimitiveClass))then{
+		if(ent.oclIsTypeOf(StandardClass))then{
+			return self.primitiveToStandardClass(appStructure, ent.oclAsType(StandardClass), type.oclAsType(PrimitiveClass));
 		}endif;
+	
+		if(ent.oclIsTypeOf(EmbeddedClass))then{
+			return self.primitiveToEmbeddedClass(appStructure, ent.oclAsType(EmbeddedClass), type.oclAsType(PrimitiveClass));
+		}endif;
+	} else{
+		
 	}endif;
 	
 	return null;
 }
 
-//HELPER helper - generates sequence of RenameOps.
-helper generateOpSequence ( cls : StandardClass, owningSchema : String, name : String, newName : String ) : OrderedSet(RDB::ops::ModelOperation){
-	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
-	if(cls.hasJoinedInheritanceType() or cls.hasImplicitInheritanceType()) then{
-			operations->append(_renameColumn(owningSchema, cls.name, name, newName));
-			return operations;
-		}endif;
-		if(cls.hasSingleTableInheritanceType())then{
-			operations->append(_renameColumn(owningSchema, cls.getRootClass().name, name, newName));
-			return operations;
-		}endif;
-		if(cls.hasTablePerClassInheritanceType())then{
-			cls.getDescendants(OrderedSet{})->forEach(desc | desc){
-				operations->append(_renameColumn(owningSchema, desc.name, name, newName))
+helper app::ops::AddProperty::primitiveToStandardClass(appStructure : Structure, stcls : StandardClass, type : PrimitiveClass ) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	if(self.upperBound = 1)then{
+		mappedSet->forEach(cls){
+				operations->append(_addColumn(getDefaultSchemaName(), cls.name.getDbName(),self.name.getDbName(), self.type));
 			};
-			return operations;
+	}else{
+		if(self.upperBound > 1 or self.upperBound = -1)then{
+			mappedSet->forEach(cls){
+				operations->append(_addTable(getDefaultSchemaName(), (cls.name + self.name).getDbName()));
+				operations->append(_addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), self.name.getDbName(), self.type));
+				operations->append(_addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + "_").getDbName(), self.type));
+				//check creating FK name
+				operations->append(_addForeignKey(getDefaultSchemaName(), (cls.name + self.name).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.name).getDbName(), cls.name.getDbName()));
+			};
+		}else{
+			log("Upper bound " + self.upperBound.repr() + " not allowed");			
+			assert(false);
 		}endif;
-		return null;
+	}endif;
+	return null;
 }
+
+helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{_addColumn(getDefaultSchemaName(), embeddedClass.name.getDbName(), self.name.getDbName(), self.type)};
+	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() > 1){
+		operations->append(_addColumn(getDefaultSchemaName(), cls.name.getDbName(), self.name.getDbName(), self.type));
+		//ADD FK?
+		operations->append(_addForeignKey(getDefaultSchemaName(), cls.name.getDbName(), (embeddedClass.name).getDbName(), "FK_" + (cls.name + embeddedClass.name).getDbName(), self.name.getDbName()));
+	};
+	return operations;
+}
+
+//get set of classes that will be transformed by operation
+query APP::StandardClass::getMappedClassSet(appStructure : Structure) : OrderedSet(StandardClass){
+	if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType()) then{
+		return OrderedSet{self};
+	}else {
+		if(self.hasSingleTableInheritanceType())then {
+			return OrderedSet{self.getRootClass()};
+		}else{
+			if(self.hasTablePerClassInheritanceType())then{
+				return self.getDescendants(OrderedSet{});
+			}else {
+				log("Inheritance type " + self.inheritanceType.repr() + " not Supported yet");
+				assert(false);
+			}endif;
+		}endif;
+	}endif;
+return null;
+}
+
+helper app::ops::RenameProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
+	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	
+	if(ent.oclIsTypeOf(PrimitiveClass))then{
+		assert(false);
+	}endif;
+
+	if(ent.oclIsTypeOf(StandardClass))then{
+	//	return self.primitiveInStandardClass(); 
+	}endif;
+	
+	return null;
+}
+
+//helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
+//	
+//}
 
 query getDefaultSchemaName() : String{
 	return "public";
+}
+
+query String :: getDbName() : String{
+	var dbName : String := self.at(1).toLower();
+	var i : Integer := 2; 
+	while(self.size() >= i){
+		if(self.at(i).toLower() != self.at(i))then{
+			dbName := dbName + "_" + self.at(i).toLower();
+		}else{
+			dbName := dbName + self.at(i);
+		}endif;
+		i:= i+1;
+	};
+	return dbName;
+}
+
+query String::at(index : Integer) : String{
+	return self.substring(index,index);
 }

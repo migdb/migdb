@@ -108,7 +108,7 @@ helper APP::ops::RemoveEntity::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::AddProperty::isValid(root : APP::Structure) : Boolean {
-	return root.containsAbstractClass(self.owningClassName)
+	return root.containsGeneralClass(self.owningClassName)
 		   and not root.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   and root.findAbstractClass(self.owningClassName).isTypeValid(root, self.type)
 		   and root.areBoundsValid(self.lowerBound, self.upperBound);
@@ -119,7 +119,7 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 		return root.containsPrimitiveClass(type);
 	} endif;
 	if (self.oclIsTypeOf(APP::StandardClass)) then {
-		return root.containsPrimitiveClass(type) or root.containsAbstractClass(type);
+		return root.containsPrimitiveClass(type) or root.containsGeneralClass(type);
 	} endif;
 	return false;
 }
@@ -232,9 +232,9 @@ helper APP::ops::SetParent::apply(inout root : APP::Structure) {
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 
 query APP::ops::SetType::isValid(root : APP::Structure) : Boolean {
-	return root.containsAbstractClass(self.owningClassName)
+	return root.containsGeneralClass(self.owningClassName)
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name)
-		   and root.containsAbstractClass(self.type);
+		   and root.containsGeneralClass(self.type);
 }
 
 helper APP::ops::SetType::apply(inout root : APP::Structure) {
@@ -245,7 +245,7 @@ helper APP::ops::SetType::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::SetBounds::isValid(root : APP::Structure) : Boolean {
-	return root.containsAbstractClass(self.owningClassName)
+	return root.containsGeneralClass(self.owningClassName)
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name)
 		   // overi, zda-li jsou hranice nastaveny smysluplne
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
@@ -263,7 +263,7 @@ helper APP::ops::SetBounds::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::SetOrdered::isValid(root : APP::Structure) : Boolean {
-	return root.containsAbstractClass(self.owningClassName)
+	return root.containsGeneralClass(self.owningClassName)
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
@@ -275,7 +275,7 @@ helper APP::ops::SetOrdered::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::SetUnique::isValid(root : APP::Structure) : Boolean {
-	return root.containsAbstractClass(self.owningClassName)
+	return root.containsGeneralClass(self.owningClassName)
 		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
 }
 
