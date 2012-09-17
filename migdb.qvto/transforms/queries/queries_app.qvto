@@ -341,7 +341,7 @@ query APP::Structure::getClassDescendants(cName : String) : OrderedSet(StandardC
 	Opetovne spusteni muze vratit jine, ale platne usporadani    
 **/
 query APP::StandardClass::getDescendants(closedList : OrderedSet(StandardClass)) : OrderedSet(StandardClass){
-	var set := closedList->append(self);
+	var set : OrderedSet(StandardClass) := closedList->append(self);
 	self.owningModel.entities[StandardClass]->select(cls | cls.parent = self)->forEach(_class){
 		//zpracovani vetve stromu
 		set := _class.getDescendants(set);

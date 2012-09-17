@@ -55,7 +55,7 @@ Workflow{
 	
 	/*Helper rdb ops */
 	component = QVTOExecutor {
-		transformationFile= "../migdb.qvto/transforms/tests/migdb_executer/opsRdb.qvto"
+		transformationFile= "../migdb.qvto/transforms/tests/orm/operations/empty_rdb_ops.qvto"
 		outputSlot= "opsRdb"
 	}
 	

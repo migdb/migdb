@@ -169,6 +169,12 @@ helper _rdbStructure( _schemas : Set(Schema)) : RDB::Structure{
 	};
 }
 
+helper _rdbOperations() : RDB::Operations{
+	return object Operations{
+		operations := OrderedSet{};
+	};
+}
+
 helper _rdbOperations(_operations : OrderedSet(RDB::ops::ModelOperation)) : RDB::Operations{
 	return object Operations{
 		operations := _operations;

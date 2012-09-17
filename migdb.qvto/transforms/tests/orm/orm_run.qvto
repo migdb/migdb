@@ -1,0 +1,21 @@
+import orm_operations_link;
+	
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation OrmPerformTest(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
+
+main(){
+	emptyRdbOps.rootObjects().deepclone();
+	
+	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
+	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
+	inOps.rootObjects()[APP::Operations].operations->forEach(op){
+		op.toRdb(inStr.rootObjects()![APP::Structure])->forEach(rdbOp){
+			log(rdbOp.repr());
+			opsCol+=(rdbOp);
+		};
+	};
+	rdbOps.operations := opsCol;
+	log("runner finished\n");
+}

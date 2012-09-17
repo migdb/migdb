@@ -205,6 +205,7 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
  		name := _name;
  		properties := _properties;
  		parent := _parent;
+ 		inheritanceType := _parent.inheritanceType;
  	};
  	return cls;
 }

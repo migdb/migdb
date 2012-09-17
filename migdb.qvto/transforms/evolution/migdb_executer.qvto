@@ -14,8 +14,10 @@ transformation perform_process(in appOperations:APP , in inAStructure:APP, out o
 	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB);
 
 main() {
-	outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
-	outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
+	//outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
+	inAStructure.rootObjects().deepclone();
+	//outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
+	inRStructure.rootObjects().deepclone();
 	
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
 	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];	

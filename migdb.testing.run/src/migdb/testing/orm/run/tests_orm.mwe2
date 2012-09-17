@@ -1,0 +1,158 @@
+module migb.testing.orm.run.orm_runner
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+Workflow{	
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "output-tests/orm/"
+	}
+	
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+	
+	//str Integer
+	component = QVTOExecutor{
+		outputSlot = "structureInteger"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/int_structure.qvto" 
+	}
+	
+	//addClass1
+	component = QVTOExecutor{
+		outputSlot = "addClass1"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/addClass1.qvto" 
+	}
+	
+	//helper - empty rdbOps
+	component = QVTOExecutor{
+		outputSlot = "emptyRdbOps"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/operations/empty_rdb_ops.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "addClass1"
+		inputSlot = "structureInteger"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addClass1-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addClass1-out"
+		uri = "output-tests/orm/addClass1_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	//addProperty1
+	component = QVTOExecutor{
+		outputSlot = "addProperty1"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty1.qvto" 
+	}
+
+	//str Integer
+	component = QVTOExecutor{
+		outputSlot = "structureTab"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty1"
+		inputSlot = "structureTab"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty1-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty1-out"
+		uri = "output-tests/orm/addProperty1_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//str_tab_joined
+	component = QVTOExecutor{
+		outputSlot = "structure_tab_joined_hierarchy"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_joined_hierarchy.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty1"
+		inputSlot = "structure_tab_joined_hierarchy"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty1a-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty1a-out"
+		uri = "output-tests/orm/addProperty1a_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	//str_tab_ST
+	component = QVTOExecutor{
+		outputSlot = "structure_tab_ST_hierarchy"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_ST_hierarchy.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty1"
+		inputSlot = "structure_tab_ST_hierarchy"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty1b-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty1b-out"
+		uri = "output-tests/orm/addProperty1b_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	//str_tab_TPC
+	component = QVTOExecutor{
+		outputSlot = "structure_tab_TPC_hierarchy"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_TPC_hierarchy.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty1"
+		inputSlot = "structure_tab_TPC_hierarchy"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty1c-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty1c-out"
+		uri = "output-tests/orm/addProperty1c_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+}

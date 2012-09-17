@@ -85,13 +85,13 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 			return operations; 
 		}endif;
 		if(stcls.hasJoinedInheritanceType())then{
-			operations->append(_renameTable(getDefaultSchemaName(), self.name, self.newName));
+			operations+=_renameTable(getDefaultSchemaName(), self.name, self.newName);
 			//rename all FKs outside hierarchy
 			//rename FKs for all strict descendats stcls - eg des.parent.name = self.name
 			return operations;
 		}endif;
 		if(stcls.hasTablePerClassInheritanceType())then{
-			operations->append(_renameTable(getDefaultSchemaName(), self.name, self.newName));
+			operations+=_renameTable(getDefaultSchemaName(), self.name, self.newName);
 			//rename all FKs outside hierarchy
 			return operations;
 		}endif;
@@ -108,7 +108,10 @@ helper app::ops::AddProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::
 	if(ent.oclIsTypeOf(PrimitiveClass))then{
 		assert(false);
 	}endif;
-
+	
+	if(type.oclIsTypeOf(StandardClass))then{
+		//TODO
+	}endif;
 	if(type.oclIsTypeOf(PrimitiveClass))then{
 		if(ent.oclIsTypeOf(StandardClass))then{
 			return self.primitiveToStandardClass(appStructure, ent.oclAsType(StandardClass), type.oclAsType(PrimitiveClass));
@@ -117,8 +120,7 @@ helper app::ops::AddProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::
 		if(ent.oclIsTypeOf(EmbeddedClass))then{
 			return self.primitiveToEmbeddedClass(appStructure, ent.oclAsType(EmbeddedClass), type.oclAsType(PrimitiveClass));
 		}endif;
-	} else{
-		
+	} else{	
 	}endif;
 	
 	return null;
@@ -129,17 +131,19 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : Structure,
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
 	if(self.upperBound = 1)then{
 		mappedSet->forEach(cls){
-				operations->append(_addColumn(getDefaultSchemaName(), cls.name.getDbName(),self.name.getDbName(), self.type));
+				operations+=_addColumn(getDefaultSchemaName(), cls.name.getDbName(),self.name.getDbName(), self.type);
 			};
+		return operations;	
 	}else{
 		if(self.upperBound > 1 or self.upperBound = -1)then{
 			mappedSet->forEach(cls){
-				operations->append(_addTable(getDefaultSchemaName(), (cls.name + self.name).getDbName()));
-				operations->append(_addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), self.name.getDbName(), self.type));
-				operations->append(_addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + "_").getDbName(), self.type));
-				//check creating FK name
-				operations->append(_addForeignKey(getDefaultSchemaName(), (cls.name + self.name).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.name).getDbName(), cls.name.getDbName()));
+				operations+= _addTable(getDefaultSchemaName(), (cls.name + self.name).getDbName());
+				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), self.name.getDbName(), self.type);
+				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + "_").getDbName(), self.type);
+				//TODO check creating FK name
+				operations+= _addForeignKey(getDefaultSchemaName(), (cls.name + self.name).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.name).getDbName(), cls.name.getDbName());
 			};
+			return operations;
 		}else{
 			log("Upper bound " + self.upperBound.repr() + " not allowed");			
 			assert(false);
@@ -151,9 +155,9 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : Structure,
 helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{_addColumn(getDefaultSchemaName(), embeddedClass.name.getDbName(), self.name.getDbName(), self.type)};
 	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() > 1){
-		operations->append(_addColumn(getDefaultSchemaName(), cls.name.getDbName(), self.name.getDbName(), self.type));
+		operations+=_addColumn(getDefaultSchemaName(), cls.name.getDbName(), self.name.getDbName(), self.type);
 		//ADD FK?
-		operations->append(_addForeignKey(getDefaultSchemaName(), cls.name.getDbName(), (embeddedClass.name).getDbName(), "FK_" + (cls.name + embeddedClass.name).getDbName(), self.name.getDbName()));
+		operations+=_addForeignKey(getDefaultSchemaName(), cls.name.getDbName(), (embeddedClass.name).getDbName(), "FK_" + (cls.name + embeddedClass.name).getDbName(), self.name.getDbName());
 	};
 	return operations;
 }
@@ -180,21 +184,49 @@ return null;
 helper app::ops::RenameProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
-	
 	if(ent.oclIsTypeOf(PrimitiveClass))then{
 		assert(false);
 	}endif;
 
+	var renamedProperty : Property := ent.oclAsType(GeneralClass).properties->selectOne( pr | pr.name = self.name.getDbName());
+	 
 	if(ent.oclIsTypeOf(StandardClass))then{
-	//	return self.primitiveInStandardClass(); 
+		if(renamedProperty.type.oclIsTypeOf(PrimitiveClass))then{
+			return self.primitiveInStandardClass(appStructure, ent.oclAsType(StandardClass), renamedProperty); 
+		} else{
+			if(renamedProperty.type.oclIsTypeOf(EmbeddedClass))then{
+			//return self.
+			}endif;
+		}endif;
 	}endif;
 	
 	return null;
 }
 
-//helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
-//	
-//}
+helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : Property) : OrderedSet(RDB::ops::ModelOperation){
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	
+	if(renamedProperty.upperBound = 1)then{
+		mappedSet->forEach(cls){	
+			operations+=_renameColumn(getDefaultSchemaName(), cls.name.getDbName(), self.name.getDbName(), self.newName.getDbName());		
+		};
+		return operations;
+	}else{
+		if(renamedProperty.upperBound = -1 or renamedProperty.upperBound > 1)then{
+			mappedSet->forEach(cls){
+				operations+=_removeConstraint(getDefaultSchemaName(), (cls.name + self.name).getDbName(), "FK_" + (cls.name + self.name).getDbName());
+				operations+=_renameTable(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + self.newName).getDbName());
+				//check creating FK name
+				operations+=_addForeignKey(getDefaultSchemaName(), (cls.name + self.newName).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.newName).getDbName(), cls.name.getDbName());
+			};
+			return operations;
+		}else{
+			assert(false);
+		}endif;
+	}endif;
+	return null;	
+}
 
 query getDefaultSchemaName() : String{
 	return "public";
