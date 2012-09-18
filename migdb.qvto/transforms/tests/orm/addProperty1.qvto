@@ -2,8 +2,8 @@ import builder_app_link;
 import queries_app_link;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation OrmAddClassFirstTest(out inoutModel : APP);
+transformation addProperty1(out inoutModel : APP);
 
 main(){
-	_appOperations(OrderedSet{_addProperty( "tab", "pr", getAppDefaultIdTypeName())});	
+	_appOperations(OrderedSet{_addProperty( "Tab", "pr", getAppDefaultIdTypeName())});	
 }

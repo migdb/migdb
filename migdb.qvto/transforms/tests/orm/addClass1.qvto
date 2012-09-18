@@ -5,5 +5,5 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation OrmAddClassFirstTest(out inoutModel : APP);
 
 main(){
-	_appOperations(OrderedSet{_addClass( "tab", false, InheritanceType::singleTable)});	
+	_appOperations(OrderedSet{_addClass( "Tab", false, InheritanceType::singleTable)});	
 }

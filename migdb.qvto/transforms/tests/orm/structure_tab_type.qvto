@@ -6,9 +6,8 @@ transformation structure_tab_joined_hierarchy(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	var root : StandardClass := _class("Root", _idProperty(int), false, InheritanceType::joined);
-	var tab : StandardClass := _class("Tab", root, OrderedSet{});
-	var descendant : StandardClass := _class("Descendant", tab, OrderedSet{});
+	var tab : StandardClass := _class("Tab",  _idProperty(int), false, InheritanceType::tablePerClass);
+	var type : StandardClass := _class("Type", _idProperty(int), false, InheritanceType::tablePerClass);
 	
-	_appStructure(OrderedSet{int, root, tab, descendant});
+	_appStructure(OrderedSet{int, tab, type});
 }

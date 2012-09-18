@@ -155,4 +155,51 @@ Workflow{
 		useSingleGlobalResourceSet = true
 	}
 	
+	//str_tab_embedded
+	component = QVTOExecutor{
+		outputSlot = "structure_tab_embedded"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_embedded.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty1"
+		inputSlot = "structure_tab_embedded"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty1d-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty1d-out"
+		uri = "output-tests/orm/addProperty1d_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//addProperty2
+	component = QVTOExecutor{
+		outputSlot = "addProperty2"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty2.qvto" 
+	}
+	
+	//str_tab_type
+	component = QVTOExecutor{
+		outputSlot = "structure_tab_type"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_type.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty2"
+		inputSlot = "structure_tab_type"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty2-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty2-out"
+		uri = "output-tests/orm/addProperty2_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
 }

@@ -104,13 +104,16 @@ helper APP::ops::RenameEntity::toRdb(appStructure : Structure) : OrderedSet(RDB:
 helper app::ops::AddProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
 	var type : ModelEntity := appStructure.findEntity(self.type);
-	
+	if(ent = null)then{
+		log("added property cannot be null");
+		assert(false);
+	}endif;
 	if(ent.oclIsTypeOf(PrimitiveClass))then{
 		assert(false);
 	}endif;
 	
 	if(type.oclIsTypeOf(StandardClass))then{
-		//TODO
+		return self.standardToStandardClass(appStructure, ent.oclAsType(StandardClass), type.oclAsType(StandardClass));
 	}endif;
 	if(type.oclIsTypeOf(PrimitiveClass))then{
 		if(ent.oclIsTypeOf(StandardClass))then{
@@ -120,8 +123,45 @@ helper app::ops::AddProperty::toRdb(appStructure : Structure) : OrderedSet(RDB::
 		if(ent.oclIsTypeOf(EmbeddedClass))then{
 			return self.primitiveToEmbeddedClass(appStructure, ent.oclAsType(EmbeddedClass), type.oclAsType(PrimitiveClass));
 		}endif;
-	} else{	
+	} else{
+		log("wrong type:" + type.repr());
+		assert(false);	
 	}endif;
+	
+	return null;
+}
+
+helper app::ops::AddProperty::standardToStandardClass(appStructure : Structure, stcls : StandardClass, type : StandardClass) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	if(self.upperBound = 1)then{
+		mappedSet->forEach(cls){
+			var newColumnName : String := cls.name.getDbName();
+			operations += _addColumn(getDefaultSchemaName(), newColumnName , stcls.getIdName(), getAppDefaultIdTypeName() );
+			operations += _addForeignKey(getDefaultSchemaName(), newColumnName, stcls.getIdName(), "fk_" + (cls.name+self.name).getDbName(), stcls.name.getDbName());
+		};
+		return operations;
+	}else {
+		if(self.upperBound = -1 or self.upperBound > 1)then{
+			mappedSet->forEach(cls){
+				var newTableName := (cls.name+"_" +self.name).getDbName();
+				var idOriginColName : String := cls.getIdName();
+				var idTypeName : String := type.getIdName();
+				operations += _addTable(getDefaultSchemaName(), newTableName);
+				operations += _addColumn(getDefaultSchemaName(), newTableName, idOriginColName , getAppDefaultIdTypeName());
+				operations += _addColumn(getDefaultSchemaName(), newTableName, idTypeName, getAppDefaultIdTypeName());
+				operations += _addForeignKey(getDefaultSchemaName(), newTableName, idOriginColName, "fk_" + (cls.name+"_" +self.name).getDbName(), cls.name.getDbName());
+				operations += _addForeignKey(getDefaultSchemaName(), newTableName, idOriginColName, "fk_" + (cls.name+"_" +self.name).getDbName(), type.name.getDbName());
+				if(self.isOrdered)then{
+					
+				}endif;
+			}
+		} else {
+			log("Upper bound " + self.upperBound.repr() + " not allowed");			
+			assert(false);
+		}endif;
+	}endif;
+	
 	
 	return null;
 }
@@ -141,7 +181,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : Structure,
 				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), self.name.getDbName(), self.type);
 				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + "_").getDbName(), self.type);
 				//TODO check creating FK name
-				operations+= _addForeignKey(getDefaultSchemaName(), (cls.name + self.name).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.name).getDbName(), cls.name.getDbName());
+				operations+= _addForeignKey(getDefaultSchemaName(), (cls.name + self.name).getDbName(), cls.getIdName(), "FK_" + (cls.name + self.name).getDbName(), cls.name.getDbName());
 			};
 			return operations;
 		}else{
@@ -154,10 +194,10 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : Structure,
 
 helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{_addColumn(getDefaultSchemaName(), embeddedClass.name.getDbName(), self.name.getDbName(), self.type)};
-	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() > 1){
+	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() >= 1){
 		operations+=_addColumn(getDefaultSchemaName(), cls.name.getDbName(), self.name.getDbName(), self.type);
 		//ADD FK?
-		operations+=_addForeignKey(getDefaultSchemaName(), cls.name.getDbName(), (embeddedClass.name).getDbName(), "FK_" + (cls.name + embeddedClass.name).getDbName(), self.name.getDbName());
+		operations+=_addForeignKey(getDefaultSchemaName(), cls.name.getDbName(), (embeddedClass.name).getDbName(), "fk_" + (cls.name + embeddedClass.name).getDbName(), self.name.getDbName());
 	};
 	return operations;
 }
@@ -218,7 +258,7 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 				operations+=_removeConstraint(getDefaultSchemaName(), (cls.name + self.name).getDbName(), "FK_" + (cls.name + self.name).getDbName());
 				operations+=_renameTable(getDefaultSchemaName(), (cls.name + self.name).getDbName(), (cls.name + self.newName).getDbName());
 				//check creating FK name
-				operations+=_addForeignKey(getDefaultSchemaName(), (cls.name + self.newName).getDbName(), ("id_" + cls.name).getDbName(), "FK_" + (cls.name + self.newName).getDbName(), cls.name.getDbName());
+				operations+=_addForeignKey(getDefaultSchemaName(), (cls.name + self.newName).getDbName(), cls.getIdName(), "FK_" + (cls.name + self.newName).getDbName(), cls.name.getDbName());
 			};
 			return operations;
 		}else{
@@ -244,6 +284,21 @@ query String :: getDbName() : String{
 		i:= i+1;
 	};
 	return dbName;
+}
+
+// returns column name for ordered collections 
+query getOrderingColumnName() : String {
+	return "_ordering";
+}
+
+query app::EmbeddedClass::getIdName() : String{
+	return "id_" + self.name.getDbName();
+}
+query app::StandardClass::getIdName() : String{
+	if(self.parent = null)then{
+		return ("id_" + self.name.getDbName());
+	}endif;
+	return self.parent.getIdName();
 }
 
 query String::at(index : Integer) : String{
