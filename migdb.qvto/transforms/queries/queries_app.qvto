@@ -91,14 +91,7 @@ query app::StandardClass::hasJoinedInheritanceType():Boolean{
 	zjisti, jestli ma trida InheritanceType z parametru
 **/
 query app::StandardClass::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
-	var temp:app::StandardClass = self;
-	while(temp.parent <> null ){
-		if(temp.parent.inheritanceType <> null and temp.parent.inheritanceType <> chosenType ) then {
-			return false;
-		}endif;
-		temp := temp.parent;
-	};
-	return true;
+	return self.inheritanceType = chosenType;
 }
 
 /**
@@ -313,7 +306,7 @@ query APP::Structure::isDescendantOf(cName : String, precedessorName : String ) 
 }
  
 query APP::StandardClass::isDescendantOf(precedessorName : String): Boolean {
-	return self.getPathToRoot()->exists(c | c.name = precedessorName)
+	return self.getPathToRoot()->exists(c | c.name = precedessorName);
 }
 
 query APP::Structure::areClassesRelatives(cName : String , c2Name : String ) : Boolean{
@@ -341,8 +334,11 @@ query APP::Structure::getClassDescendants(cName : String) : OrderedSet(StandardC
 	Opetovne spusteni muze vratit jine, ale platne usporadani    
 **/
 query APP::StandardClass::getDescendants(closedList : OrderedSet(StandardClass)) : OrderedSet(StandardClass){
-	var set : OrderedSet(StandardClass) := closedList->append(self);
+	log("desc");
+	var set : OrderedSet(StandardClass) := closedList;
+	set +=self;
 	self.owningModel.entities[StandardClass]->select(cls | cls.parent = self)->forEach(_class){
+		log(_class.name);
 		//zpracovani vetve stromu
 		set := _class.getDescendants(set);
 	};
@@ -365,6 +361,18 @@ query app::Structure::containsNonleafTPCAssociation():Boolean{
 	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and prop.owningGeneralClass.isNonleafTPCClass() and 
 	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
 	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
+}
+
+query app::Structure::print(){
+	self->entities->forEach(ent){
+		log(ent.repr());
+	}
+}
+
+query app::Operations::print(){
+	self->operations->forEach(op){
+		log(op.repr());
+	}
 }
 
 query app::StandardClass::hasNonRootId() : Boolean{

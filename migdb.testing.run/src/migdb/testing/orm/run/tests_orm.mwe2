@@ -202,4 +202,38 @@ Workflow{
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
+	
+	//addProperty3
+	component = QVTOExecutor{
+		outputSlot = "addProperty3"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty3.qvto" 
+	}
+	
+	//str_embedded_type
+	component = QVTOExecutor{
+		outputSlot = "structure_embedded_hierarchy_TPC"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_embedded_hierarchy_TPC.qvto" 
+	}
+
+	component = QVTOExecutor{
+		inputSlot = "addProperty3"
+		inputSlot = "structure_embedded_hierarchy_TPC"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "addProperty3-out"
+		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	}
+	
+	component = Writer {
+		modelSlot = "addProperty3-out"
+		uri = "output-tests/orm/addProperty3_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "structure_embedded_hierarchy_TPC"
+		uri = "output-tests/orm/structure_embedded_hierarchy_TPC.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
 }

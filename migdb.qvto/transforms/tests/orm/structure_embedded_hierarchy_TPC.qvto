@@ -1,0 +1,15 @@
+import builder_app_link;
+import queries_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation structure_embedded_hierarchy_TPC(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var tab : EmbeddedClass := _embeddedClass("Tab", OrderedSet{_property("emProperty", int)}, _idProperty(int));
+	var emptyProps : OrderedSet(Property) := OrderedSet{};
+	var root : StandardClass := _class("Root", _idProperty(int), emptyProps, false, InheritanceType::tablePerClass);
+	var child : StandardClass := _class("Child", root, OrderedSet{});
+	
+	_appStructure(OrderedSet{int, tab, root, child});
+}

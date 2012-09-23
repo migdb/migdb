@@ -26,11 +26,27 @@ library RDB_queries;
 
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 
+
 /********************************************************************************
  *									QUERIES										*
  ********************************************************************************/
 
 /********************************** SCHEMA **************************************/
+query Operations::print(){
+	self.operations->forEach(op){
+		log(op.repr());
+	}
+}
+
+query Structure::print(){
+	self.schemas->forEach(schema){
+		log("schema: " + schema.name);
+		schema.tables->forEach(table){
+			log(table.repr());
+		}
+	}	
+}
+
 query RDB::Structure::isSchemaInGeneration(sName : String) : Boolean {
 	return self.schemas->exists(name = sName);
 }

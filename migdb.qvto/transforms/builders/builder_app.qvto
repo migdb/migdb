@@ -197,8 +197,6 @@ helper _property(_name : String, _type : ModelEntity, _defaultValue : String, _l
 	return prop;
 }
 
-
-
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property)) : StandardClass {
  	assert(_parent <> null);
  	var cls : StandardClass := object StandardClass {
@@ -222,6 +220,14 @@ helper _class(_name : String, _properties : OrderedSet(Property), _idProperty : 
 
 helper _class(_name : String, _idProperty : Property, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
 	var cls : StandardClass := _class(_name, OrderedSet{}, _idProperty);
+	log(type.repr());
+	cls.inheritanceType := type;
+	cls.isAbstract := _isAbstract;
+	return cls;	
+}
+
+helper _class(_name : String, _idProperty : Property, _properties : OrderedSet(Property), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+	var cls : StandardClass := _class(_name, _properties, _idProperty);
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
 	return cls;	
@@ -237,13 +243,13 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
 helper _embeddedClass(_name : String, _idProperty : Property) : EmbeddedClass {
  	return object EmbeddedClass {
  		name := _name;
- 		properties := OrderedSet{};
+ 		properties := OrderedSet{_idProperty};
  		idProperty := _idProperty;
  	}
 }
 
 helper _embeddedClass(_name : String, _properties : OrderedSet(Property), _idProperty : Property) : EmbeddedClass {
  	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
- 	embClass.properties := _properties;
+ 	embClass.properties += _properties;
  	return embClass;
 }

@@ -15,7 +15,7 @@ main(){
 	var cl6 : StandardClass := _class("cl6", cl1, OrderedSet{}); 
 	var cl7 : StandardClass := _class("cl7", cl6, OrderedSet{});  
 	
-	var str : Structure := inoutModel.rootObjects()![Structure];
+	var str : Structure := _appStructure(OrderedSet{});
 	str.entities:= OrderedSet{int, root, cl1, cl2, cl3, cl4, cl5, cl6, cl7};
 	
 	var set := str.getClassDescendants("root");

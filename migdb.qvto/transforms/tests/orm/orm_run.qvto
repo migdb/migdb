@@ -1,4 +1,6 @@
 import orm_operations_link;
+import queries_app_link;
+import queries_rdb_link;
 	
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -6,16 +8,25 @@ modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 transformation OrmPerformTest(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
 
 main(){
+	log("Orm runner started");
 	emptyRdbOps.rootObjects().deepclone();
 	
 	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
 	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
+	
+	log("In ops");
+	inOps.rootObjects()![APP::Operations].print();
+	log("In structure");
+	inStr.rootObjects()![APP::Structure].print();
 	inOps.rootObjects()[APP::Operations].operations->forEach(op){
+		log("mapping op \n" + op.repr() + " \nresults:");
 		op.toRdb(inStr.rootObjects()![APP::Structure])->forEach(rdbOp){
 			log(rdbOp.repr());
 			opsCol+=(rdbOp);
 		};
 	};
 	rdbOps.operations := opsCol;
+	log("Out ops");
+	rdbOps.print();
 	log("runner finished\n");
 }
