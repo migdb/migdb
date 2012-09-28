@@ -164,7 +164,6 @@ helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(
 helper app::ops::AddProperty::embeddedToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : EmbeddedClass) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
-	log("emb to std size " + mappedSet->size().repr());
 	mappedSet->forEach(cls){
 		type->properties->forEach(prop){
 			operations+=_addColumn(getDefaultSchemaName(), cls.name.translate(), self.name.translate() + "_" + prop.name.translate() , toRdbType(appStructure.findPrimitiveClass(prop.type.name).primitiveType));

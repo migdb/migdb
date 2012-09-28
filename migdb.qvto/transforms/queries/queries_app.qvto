@@ -32,7 +32,6 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 **/
 query app::StandardClass::isSerializable():Boolean{
 	if(not self.hasOneIDProperty()) then {
-		//log(self.name + " prim:" + self.isPrimitive.repr() + " ID:" + self.hasOneIDProperty().repr() + " Emb:" + self.isEmbedded.repr());
 		return false;
 	}endif;
 	
@@ -52,7 +51,6 @@ query app::StandardClass::hasOneIDProperty():Boolean{
 	rootPath -> forEach(_class){
 		idCount:= idCount + _class.properties->select(prop | prop.isID())->size();
 	};
-	//log(self.name + " IDcount " + idCount.repr() + " rclass" + self.getRootClass().name + " " + self.getRootClass().properties->select(prop | prop.isID)->size().repr());
 	if(idCount <> 1 or self.getRootClass().properties->select(prop | prop.isID())->size() <> 1) then { 
 		return false; 
 	}endif;
@@ -289,16 +287,6 @@ query APP::Structure::areBoundsValid(lowerBound : Integer, upperBound : Integer)
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
-/**
-query APP::Structure::hasAnyColumns(entities : Set(String)) : Boolean {
-	var b : Boolean := false;
-	entities->forEach(cName) {
-		b := b or self.findClass(cName).properties->size() <> 1;
-	};
-	return b;
-};
-**/
-
 // overime, zda-li je trida potomkem tridy precedessorName
 query APP::Structure::isDescendantOf(cName : String, precedessorName : String ) : Boolean {
 	var cls : StandardClass := self.findStandardClass(cName);
@@ -334,11 +322,9 @@ query APP::Structure::getClassDescendants(cName : String) : OrderedSet(StandardC
 	Opetovne spusteni muze vratit jine, ale platne usporadani    
 **/
 query APP::StandardClass::getDescendants(closedList : OrderedSet(StandardClass)) : OrderedSet(StandardClass){
-	log("desc");
 	var set : OrderedSet(StandardClass) := closedList;
 	set +=self;
 	self.owningModel.entities[StandardClass]->select(cls | cls.parent = self)->forEach(_class){
-		log(_class.name);
 		//zpracovani vetve stromu
 		set := _class.getDescendants(set);
 	};

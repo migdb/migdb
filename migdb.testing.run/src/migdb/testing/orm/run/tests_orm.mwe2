@@ -35,19 +35,19 @@ Workflow{
 	//str Integer
 	component = QVTOExecutor{
 		outputSlot = "structureInteger"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/int_structure.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_int.qvto" 
 	}
 	
 	//addClass1
 	component = QVTOExecutor{
 		outputSlot = "addClass1"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/addClass1.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addClass1.qvto" 
 	}
 	
 	//helper - empty rdbOps
 	component = QVTOExecutor{
 		outputSlot = "emptyRdbOps"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/operations/empty_rdb_ops.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/operations/rdb/empty_rdb_ops.qvto" 
 	}
 	
 	component = QVTOExecutor{
@@ -68,15 +68,15 @@ Workflow{
 	//addProperty1
 	component = QVTOExecutor{
 		outputSlot = "addProperty1"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty1.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty1.qvto" 
 	}
 
-	//str Integer
+	//structureTab
 	component = QVTOExecutor{
 		outputSlot = "structureTab"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab.qvto" 
 	}
-
+	
 	component = QVTOExecutor{
 		inputSlot = "addProperty1"
 		inputSlot = "structureTab"
@@ -95,7 +95,7 @@ Workflow{
 	//str_tab_joined
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_joined_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_joined_hierarchy.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_joined_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -116,7 +116,7 @@ Workflow{
 	//str_tab_ST
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_ST_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_ST_hierarchy.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_ST_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -137,7 +137,7 @@ Workflow{
 	//str_tab_TPC
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_TPC_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_TPC_hierarchy.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_TPC_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -158,7 +158,7 @@ Workflow{
 	//str_tab_embedded
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_embedded"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_embedded.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_embedded.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -179,13 +179,13 @@ Workflow{
 	//addProperty2
 	component = QVTOExecutor{
 		outputSlot = "addProperty2"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty2.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty2.qvto" 
 	}
 	
 	//str_tab_type
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_type"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_tab_type.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_type.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -206,13 +206,13 @@ Workflow{
 	//addProperty3
 	component = QVTOExecutor{
 		outputSlot = "addProperty3"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/addProperty3.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty3.qvto" 
 	}
 	
 	//str_embedded_type
 	component = QVTOExecutor{
 		outputSlot = "structure_embedded_hierarchy_TPC"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/structure_embedded_hierarchy_TPC.qvto" 
+		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_embedded_hierarchy_TPC.qvto" 
 	}
 
 	component = QVTOExecutor{

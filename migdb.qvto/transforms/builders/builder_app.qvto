@@ -74,6 +74,13 @@ helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _seco
 	}
 }
 
+helper _setParent(_className : String , _parentName : String) : APP::ops::SetParent{
+	return object APP::ops::SetParent{
+		name := _className;
+		parentName := _parentName;
+	}
+}
+
 helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
 	return object APP::ops::SetAbstract {
 		name := _name;
