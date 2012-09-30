@@ -10,7 +10,7 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("name", string) }, _idProperty(integer));
+	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _property("name", string) });
 	
 	var idProp := _idProperty(integer);
 	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _property("sallary", string), idProp});

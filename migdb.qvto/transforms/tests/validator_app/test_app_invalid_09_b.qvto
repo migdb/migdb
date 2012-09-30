@@ -7,10 +7,10 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("name", string)}, _idProperty(integer));
+	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _property("name", string)});
 	//TODO check if this test hack is valid
 	var idProperty : Property := _property("id", string, 1, 1);
-	var thing : APP::StandardClass := _class("Thing", OrderedSet{ _property("name", string)}, idProperty);	
+	var thing : APP::StandardClass := _class("Thing", idProperty, OrderedSet{ _property("name", string)});	
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, thing});
 }

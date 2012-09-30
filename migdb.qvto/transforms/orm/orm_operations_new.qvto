@@ -180,16 +180,16 @@ helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Struct
 	if(self.upperBound = 1)then{
 		mappedSet->forEach(cls){
 			var newColumnName : String := cls.name.translate();
-			operations += _addColumn(getDefaultSchemaName(), newColumnName , stcls.getIdName(), idDbTypeName );
-			operations += _addForeignKey(getDefaultSchemaName(), newColumnName, stcls.getIdName(), "fk_" + (cls.name+self.name).translate(), stcls.name.translate());
+			operations += _addColumn(getDefaultSchemaName(), newColumnName , stcls.translateIdName(), idDbTypeName );
+			operations += _addForeignKey(getDefaultSchemaName(), newColumnName, stcls.translateIdName(), "fk_" + (cls.name+self.name).translate(), stcls.name.translate());
 		};
 		return operations;
 	}else {
 		if(self.upperBound = -1 or self.upperBound > 1)then{
 			mappedSet->forEach(cls){
 				var newTableName := (cls.name+"_" +self.name).translate();
-				var idOriginColName : String := cls.getIdName();
-				var idTypeTableName : String := type.getIdName();
+				var idOriginColName : String := cls.translateIdName();
+				var idTypeTableName : String := type.translateIdName();
 				operations += _addTable(getDefaultSchemaName(), newTableName);
 				operations += _addColumn(getDefaultSchemaName(), newTableName, idOriginColName , idDbTypeName);
 				operations += _addColumn(getDefaultSchemaName(), newTableName, idTypeTableName, idDbTypeName);
@@ -230,7 +230,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).translate(), self.name.translate(), rdbTypeName);
 				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).translate(), (cls.name + "_").translate(), rdbTypeName);
 				//TODO check creating FK name
-				operations+= _addForeignKey(getDefaultSchemaName(), (cls.name + self.name).translate(), cls.getIdName(), "FK_" + (cls.name + self.name).translate(), cls.name.translate());
+				operations+= _addForeignKey(getDefaultSchemaName(), (cls.name + self.name).translate(), cls.translateIdName(), "FK_" + (cls.name + self.name).translate(), cls.name.translate());
 			};
 			return operations;
 		}else{
@@ -253,22 +253,6 @@ helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Struc
 		}	
 	};
 	return operations;
-}
-
-//get set of classes that will be transformed by operation
-query APP::StandardClass::getMappedClassSet(appStructure : APP::Structure) : OrderedSet(StandardClass){
-	if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType()) then{
-		return OrderedSet{self};
-	}endif;
-	if(self.hasSingleTableInheritanceType())then {
-		return OrderedSet{self.getRootClass()};
-	}endif;
-	if(self.hasTablePerClassInheritanceType())then{
-		return self.getDescendants(OrderedSet{});
-	}endif;
-	log("Inheritance type " + self.inheritanceType.repr() + " not Supported yet");
-	assert(false);
-return null;
 }
 
 helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
@@ -321,7 +305,7 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 				operations+=_removeConstraint(getDefaultSchemaName(), (cls.name + self.name).translate(), "FK_" + (cls.name + self.name).translate());
 				operations+=_renameTable(getDefaultSchemaName(), (cls.name + self.name).translate(), (cls.name + self.newName).translate());
 				//check creating FK name
-				operations+=_addForeignKey(getDefaultSchemaName(), (cls.name + self.newName).translate(), cls.getIdName(), "FK_" + (cls.name + self.newName).translate(), cls.name.translate());
+				operations+=_addForeignKey(getDefaultSchemaName(), (cls.name + self.newName).translate(), cls.translateIdName(), "FK_" + (cls.name + self.newName).translate(), cls.name.translate());
 			};
 			return operations;
 		}else{
@@ -329,6 +313,42 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 		}endif;
 	}endif;
 	return null;	
+}
+
+helper APP::ops::SetParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
+	var parentClass : StandardClass := appStructure.findStandardClass(self.parentName);
+	var childClass : StandardClass := appStructure.findStandardClass(self.name);
+	var mappedSet : OrderedSet(StandardClass) := parentClass.getMappedClassSet(appStructure);
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	if(childClass.hasImplicitInheritanceType() or parentClass.hasJoinedInheritanceType())then{
+	//	return OrderedSet{_addForeignKey()};
+	}endif;
+	if(childClass.hasTablePerClassInheritanceType())then{
+	 	 mappedSet->forEach(cls){
+	 	 	
+	 	 };
+	 	 return operations;
+	}endif;
+	if(childClass.hasSingleTableInheritanceType())then{
+		var rootClass : StandardClass := childClass.getRootClass();
+		
+	}endif;
+}
+
+//get set of classes that will be transformed by operation
+query APP::StandardClass::getMappedClassSet(appStructure : APP::Structure) : OrderedSet(StandardClass){
+	if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType()) then{
+		return OrderedSet{self};
+	}endif;
+	if(self.hasSingleTableInheritanceType())then {
+		return OrderedSet{self.getRootClass()};
+	}endif;
+	if(self.hasTablePerClassInheritanceType())then{
+		return self.getDescendantsOfType(InheritanceType::tablePerClass);
+	}endif;
+	log("Inheritance type " + self.inheritanceType.repr() + " not Supported yet");
+	assert(false);
+return null;
 }
 
 query getDefaultSchemaName() : String{
@@ -353,7 +373,16 @@ query String :: translate() : String{
 	return dbName;
 }
 
-// returns column name for ordered collections 
+/** Returns class representative - e.g. origin class of table where are stored instances of this cls.  */
+query StandardClass::getDbRepresentative(): StandardClass{
+	var representant : StandardClass := self;
+	while(representant.parent <> null and representant.hasSingleTableInheritanceType()){
+		representant := representant.parent;
+	};
+	return self;
+}
+
+/** returns column name for ordered collections **/ 
 query getOrderingColumnName() : String {
 	return "_ordering";
 }
@@ -362,11 +391,12 @@ query app::EmbeddedClass::getIdName() : String{
 	return "id_" + self.name.translate();
 }
 
-query app::StandardClass::getIdName() : String{
+/** Translates idProperty name into db "language" **/
+query app::StandardClass::translateIdName() : String{
 	if(self.parent = null)then{
-		return ("id_" + self.name.translate());
+		return ("id_" + self.getId().name.translate());
 	}endif;
-	return self.parent.getIdName();
+	return self.parent.translateIdName();
 }
 
 /** Helper query for String manipulation **/

@@ -6,7 +6,8 @@ main() {
 	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var cycle : APP::StandardClass := _class("Cycle", OrderedSet{ _property("name", string)}, null);
+	var cycle : APP::StandardClass := _class("Cycle", _idProperty(integer), OrderedSet{ _property("name", string)});
+	cycle.idProperty := null;
 	var cycle1 : APP::StandardClass := _class("Cycle1", cycle, OrderedSet{});
 	var cycle2 : APP::StandardClass := _class("Cycle2", cycle1, OrderedSet{});
 	var child : APP::StandardClass := _class("OutOfCycle", cycle1, OrderedSet{});

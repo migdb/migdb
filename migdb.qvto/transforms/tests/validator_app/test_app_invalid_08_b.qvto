@@ -8,7 +8,7 @@ main() {
 	
 	var idProp : APP::Property := _idProperty(integer);
 	idProp.upperBound := -1;
-	var person : APP::StandardClass := _class("Person", OrderedSet{ _property("age", integer)}, idProp);
+	var person : APP::StandardClass := _class("Person",  idProp, OrderedSet{ _property("age", integer)});
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,person});	 
 }

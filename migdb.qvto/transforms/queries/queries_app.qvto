@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2012 MigDB team [https://github.com/migdb/migdb/wiki]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,116 +26,67 @@ library APP_queries;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
-/**
- 	query na obecnou podminku nutnou k serializovatelnosti, uvazuje jen 
- 	jednosloupcovy ID, neprimitivnost, neEmbeddovanost tridy
-**/
-query app::StandardClass::isSerializable():Boolean{
-	if(not self.hasOneIDProperty()) then {
-		return false;
-	}endif;
-	
-	return true;
-}
-
 query app::Property::isID() : Boolean{
-	return self.owningGeneralClass.oclIsTypeOf(StandardClass) and self.owningGeneralClass.oclAsType(StandardClass).idProperty = self;
-}
-/**
-	validace existence prave jedne Property PK v stromu dedicnosti
-**/
-query app::StandardClass::hasOneIDProperty():Boolean{
-	var idCount : Integer := 0;
-	var rootPath : OrderedSet(app::StandardClass) := self.getPathToRoot();
-	
-	rootPath -> forEach(_class){
-		idCount:= idCount + _class.properties->select(prop | prop.isID())->size();
-	};
-	if(idCount <> 1 or self.getRootClass().properties->select(prop | prop.isID())->size() <> 1) then { 
-		return false; 
-	}endif;
-		return true;	
+	return self.owningGeneralClass.oclIsKindOf(GeneralClass) and self.owningGeneralClass.oclAsType(GeneralClass).getId() = self;
 }
 
-/**
-	zjisti, jestli ma trida implicitni InheritanceType
-**/
+/**	Checks if this class has default inheritanceType **/
 query app::StandardClass::hasImplicitInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::joined);	
 } 
 
-/**
-	zjisti, jestli ma trida InheritanceType SingleTable
-**/
+/**	Checks if this class has singleTable inheritanceType **/
 query app::StandardClass::hasSingleTableInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::singleTable);	
 }
 
-/**
-	zjisti, jestli ma trida InheritanceType TablePerClass
-**/
+/**	Checks if this class has inheritanceType tablePerClass **/
 query app::StandardClass::hasTablePerClassInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::tablePerClass);	
 }
 
-/**
-	zjisti, jestli ma trida InheritanceType Joined
-**/
+/**	Checks if this class has joined inheritanceType **/
 query app::StandardClass::hasJoinedInheritanceType():Boolean{
 	return self.hasInheritanceType(app::InheritanceType::joined);	
 }
 
-/**
-	zjisti, jestli ma trida InheritanceType z parametru
-**/
+/**	Compares actual inheritanceType of class with chosenType **/
 query app::StandardClass::hasInheritanceType( chosenType:app::InheritanceType):Boolean{
 	return self.inheritanceType = chosenType;
 }
 
-/**
-	vrati serializovatelnou root Class
-**/
+/**	Returns root of the class hierarchy. **/
 query app::StandardClass::getRootClass():app::StandardClass{
 	var path : OrderedSet(app::StandardClass) := self.getPathToRoot();
 	if(path->size() = 0 ) then{
 		log("Class is in cycle. Root doesn't exist");
 		return null;
 	}endif;
-	return path->selectOne(cls | cls.parent = null);	
+	return path->last();	
 }
 
-/**
-	Overuje, ze dana trida ma id Property
-**/	
-query app::StandardClass::hasId(): Boolean{
-	return self->properties->select(prop | prop.isID())->size() > 0;
-}
-
-/**
- 	zjisti, jestli je dana Property primitivni typ proiterovanim vsech primitivnich trid 
- 	a porovnanim jmena techto trid s jmenem typu property
-**/
+/** Returns true for PrimitiveProperty and false otherwise **/
 query app::Property::isPrimitive():Boolean{
-	self.owningGeneralClass.owningModel.entities->forOne(cl | cl.name = self.type.name){
-			return true;
-	};
-	return false;
+	return self.type.oclIsKindOf(PrimitiveClass);
 }
 
 /**
-	Kontroluje cyklicnost, v pripade nalezeni cyklu vrati prazdny OrderedSet
+	Returns path to rootClass starting with self and ending with root. 
+	NOTE: In the case of cyclic hierarchy returns empty OrderedSet.
 **/
 query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
-	var precedessors : OrderedSet(app::StandardClass) := OrderedSet{};
-	if(not self.containsCycle(precedessors)) then{
-			return self.getPath(precedessors);
+	var emptyOrderedSet : OrderedSet(app::StandardClass) := OrderedSet{};
+	if(not self.containsCycle(emptyOrderedSet)) then{
+			return self.getPath(emptyOrderedSet);
 		}endif;
 	return OrderedSet{};	
 		
 }
 
-/**
-	Nekontroluje cyklicnost
+/** 
+	Returns path to root class in class hierarchy.
+	NOTE - accyclity of self class hierarchy is not checked 
+	NOTE - this query should not be called dirrectly
 **/
 query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
 	if(self.parent = null)then{
@@ -250,12 +201,12 @@ query APP::Structure::findPrimitiveClass(cName : String) : APP::PrimitiveClass {
 	return self.findEntity(cName).oclAsType(APP::PrimitiveClass);
 }
 
-query APP::Structure::findAbstractClass(cName : String) : APP::GeneralClass {
+query APP::Structure::findGeneralClass(cName : String) : APP::GeneralClass {
 	return self.findEntity(cName).oclAsType(APP::GeneralClass);
 }
 
-query APP::Structure::isPropertyInAbstractClass(cName : String, pName : String) : Boolean {
-	return self.findAbstractClass(cName).containsProperty(pName);
+query APP::Structure::isPropertyInGeneralClass(cName : String, pName : String) : Boolean {
+	return self.findGeneralClass(cName).containsProperty(pName);
 }
 
 query APP::Structure::isPropertyInClass(cName : String, pName : String) : Boolean {
@@ -272,7 +223,7 @@ query APP::Structure::arePropertiesInClass(cName : String, pNames : OrderedSet(S
 }
 
 query APP::Structure::findProperty(cName : String, pName : String) : APP::Property {
-	return self.findAbstractClass(cName).properties![name = pName];
+	return self.findGeneralClass(cName).properties![name = pName];
 }
 
 query APP::Structure::containsClass(cName : String) : Boolean {
@@ -302,45 +253,51 @@ query APP::Structure::areClassesRelatives(cName : String , c2Name : String ) : B
 	
 }
 
-// overi, zda-li v hierarchii existuje atribut se stejnem nazvem
-query APP::Structure::isPropertyInHierarchy(cName : String, pName : String) : Boolean {
-	return self.entities->selectOne(cls | cls.name = cName).oclAsType(APP::StandardClass).
-	getPathToRoot()->exist(_class | _class.properties->size() > 0);
-}
-
 /**
 	Vrati vsechny potomky dane tridy v topologickem usporadani - tj predek nesmi byt v listu pozdeji nez jeho potomek
 **/
 query APP::Structure::getClassDescendants(cName : String) : OrderedSet(StandardClass){
 	var _clas := self.findStandardClass(cName);
-	return _clas.getDescendants(OrderedSet{});
+	return _clas.getAllDescendants();
 }
-
 
 /**
 	Vrati potomky dane tridy v topologickem usporadani - Nyni implementovano pomoci DFS. Nema deterministicke chovani. 
 	Opetovne spusteni muze vratit jine, ale platne usporadani    
 **/
-query APP::StandardClass::getDescendants(closedList : OrderedSet(StandardClass)) : OrderedSet(StandardClass){
-	var set : OrderedSet(StandardClass) := closedList;
-	set +=self;
+query APP::StandardClass::getAllDescendants() : OrderedSet(StandardClass){
+	return self.getDescendants(OrderedSet{}, OrderedSet{InheritanceType::joined, InheritanceType::tablePerClass, InheritanceType::singleTable});
+}
+
+query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType) : OrderedSet(StandardClass){
+	return self.getDescendants(OrderedSet{}, OrderedSet{_inheritanceType});
+}
+
+/** 
+	NOTE: This query should not be called directly - see APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType)
+	returns descendants of chosen inheritanceTypes
+**/
+query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardClass), _inheritanceTypes: OrderedSet(InheritanceType)) : OrderedSet(StandardClass){
+	var set : OrderedSet(StandardClass) := _descendantsList;
+	if(_inheritanceTypes->includes(self.inheritanceType))then{
+		set +=self;
+	}endif;
 	self.owningModel.entities[StandardClass]->select(cls | cls.parent = self)->forEach(_class){
-		//zpracovani vetve stromu
-		set := _class.getDescendants(set);
+		//processing branch of search tree
+		set := _class.getDescendants(set, _inheritanceTypes);
 	};
 	return set;
 }
+
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
-/*
-	Overuje, jestli dana Property reprezentuje unidirectional (jednostranne navigabilni) vazbu 1-1,
-	ktera v nynejsi verzi neni vytvoritelna
-*/
+/* Returns true if Property represents unidirectional 1:1 association */
 query app::Property::isOneToOneUnidirectional():Boolean{
 	return false;
 }
 
-query StandardClass::isIDRootCountCorrectlySet():Boolean{
-	return (self.parent = null and self.properties->select(prop | prop.isID())->size() = 1) or self.parent <> null;
+/** Returns true if class has idProperty, false otherwise **/
+query StandardClass::hasId():Boolean{
+	return self.idProperty <> null;
 }
 
 query app::Structure::containsNonleafTPCAssociation():Boolean{
@@ -349,28 +306,12 @@ query app::Structure::containsNonleafTPCAssociation():Boolean{
 	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
 }
 
-query app::Structure::print(){
-	self->entities->forEach(ent){
-		log(ent.repr());
-	}
-}
-
-query app::Operations::print(){
-	self->operations->forEach(op){
-		log(op.repr());
-	}
-}
-
-query app::StandardClass::hasNonRootId() : Boolean{
-	return self.parent <> null and self.properties->select(prop | prop.isID())->size() != 0;
-}
-
 query app::StandardClass::areIDTypesCorrectlySet() : Boolean{
-    return self.properties->forAll(pr | not pr.isID() or (pr.type.name = 'Integer' and pr.type.oclIsKindOf(app::PrimitiveClass)));
+    return self.getId().type.name = getAppDefaultIdTypeName() and self.getId().type.oclIsKindOf(app::PrimitiveClass);
 }
 
 query app::StandardClass::areIDBoundsCorrectlySet() : Boolean{
-    return self.properties->forAll(pr | not pr.isID() or (pr.lowerBound = 1 and pr.upperBound = 1));
+    return self.getId().lowerBound = 1 and self.getId().upperBound = 1;
 }
 
 
@@ -391,10 +332,28 @@ query app::ModelEntity::hasUniqueName():Boolean{
 
 query app::Property::hasUniqueNameInHierarchy():Boolean{
     if(not self.owningGeneralClass.oclIsTypeOf(StandardClass))then{
-    	return false;
+    	log("This method can be called only on Property owned by StandardClass");
+    	assert(false);
     }endif;
     self.owningGeneralClass[StandardClass].getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
 		return false;
 	};
 	return true;	
+}
+
+query GeneralClass::getId():Property{ 
+	return self.idProperty;
+}
+
+/**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/
+query app::Structure::print(){
+	self->entities->forEach(ent){
+		log(ent.repr());
+	}
+}
+
+query app::Operations::print(){
+	self->operations->forEach(op){
+		log(op.repr());
+	}
 }

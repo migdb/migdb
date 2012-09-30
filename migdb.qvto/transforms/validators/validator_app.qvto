@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2012 MigDB team [https://github.com/migdb/migdb/wiki]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -68,7 +68,7 @@ query app::Structure::isModelValid():Boolean{
 	};
 	stdClasses->forEach(cls | cls.containsCycle(OrderedSet{}) and not cycles->includes(cls)) {
 		var  iterateClass : StandardClass := cls;  
-		var output : String := "Structure contains cycled hierarchy:\"" + cls.name+"\"";
+		var output : String := "Structure contains cycled hierarchy:\"" + cls.name +"\"";
 		while(not cycles->includes(iterateClass)){
 			cycles += iterateClass;
 			iterateClass := iterateClass.parent;
@@ -93,8 +93,8 @@ query app::Structure::isModelValid():Boolean{
 		 + prop.owningGeneralClass.name + "\" with bounds not correctly set");
 		embeddedBounds := false;
 	};
-    stdClasses->forEach(cls | cls.hasNonRootId()){
-    	log("Structure" + " contains Non-root class \"" + cls.name + "\" containing id property.");
+    stdClasses->forEach(cls | cls.parent <> null and cls.hasId()){
+    	log("Structure contains Non-root class \"" + cls.name + "\" containing id property " + cls.idProperty.name + " .");
     	notHasNonRootId := false;
     };
 	stdClasses->forEach(cls | not cls.areIDBoundsCorrectlySet()){
@@ -102,15 +102,14 @@ query app::Structure::isModelValid():Boolean{
 		idBounds := false;
 	};
 	stdClasses->forEach(cls | not cls.areIDTypesCorrectlySet()){
-	    log("Structure" + " contains class \"" +
+	    log("Structure contains class \"" +
 	     cls.name + "\" with id not according primitive Integer");
 	     idTypes := false;
 	};
 	
-	stdClasses->forEach(cls | not cls.isIDRootCountCorrectlySet()){
+	stdClasses->forEach(cls | cls.parent = null and not cls.hasId()){
 		rootsId := false;
-		log("Structure" + " contains class \"" +
-	    cls.name + "\" with invalid id count:" + cls.properties->select(prop | prop.isID())->size().repr());	
+		log("Structure contains root class " + cls.name + " with no id Property");	
 	};
 	
 	stdClassProps->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and

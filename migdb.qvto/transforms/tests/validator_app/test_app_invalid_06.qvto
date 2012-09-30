@@ -9,8 +9,8 @@ main() {
 	var money : APP::EmbeddedClass := _embeddedClass("money", OrderedSet{ _property("name", string, 1, -1)}, 
 	_idProperty(integer));
 	
-	var country : APP::StandardClass := _class("Country", OrderedSet{ _property("name", string), 
-	_property("currency", money, 0, -1)}, _idProperty(integer));
+	var country : APP::StandardClass := _class("Country", _idProperty(integer), OrderedSet{ _property("name", string), 
+	_property("currency", money, 0, -1)});
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,country, money});	 
 }

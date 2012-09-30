@@ -9,7 +9,7 @@ main() {
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
 	var zipProperty : Property := _property("zip", string);
-	var party : APP::StandardClass := _class("Party", OrderedSet{_property("street", string),_property("city", string)}, zipProperty);																		  									  												  												  									  	
+	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{_property("street", string),_property("city", string)});																		  									  												  												  									  	
 	
 	//@TODO check if this test hack is valid
 	party.idProperty := null;

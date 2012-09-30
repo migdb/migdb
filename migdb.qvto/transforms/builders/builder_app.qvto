@@ -160,9 +160,9 @@ helper _appStructure(_entities : Set(ModelEntity)) : Structure{
 	};
 }
 
-helper _appOperations(appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
+helper _appOperations(_appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
 	return object Operations{
-		operations := appOperations;
+		operations := _appOperations;
 	}
 }
 
@@ -170,7 +170,8 @@ helper _appOperations(appOperations : OrderedSet(APP::ops::ModelOperation)) : AP
 helper _integer() : PrimitiveClass{
 	return _primitiveClass(getAppDefaultIdTypeName(), PrimitiveType::int);
 } 
- 
+
+/** Name of this entity must be changed in _class constructor using it **/
 helper _idProperty(_integerReference : ModelEntity) : Property{
 	return _property("id", _integerReference, 1, 1)
 }
@@ -215,7 +216,13 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
  	return cls;
 }
 
-helper _class(_name : String, _properties : OrderedSet(Property), _idProperty : Property) : StandardClass{
+helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(Property), _inheritanceType : InheritanceType) : StandardClass {
+ 	var cls : StandardClass := _class(_name, _parent, _properties);
+ 	cls.inheritanceType := _inheritanceType;
+ 	return cls;
+}
+
+helper _class(_name : String, _idProperty : Property, _properties : OrderedSet(Property)) : StandardClass{
 	assert(_idProperty <> null);
 	var cls : StandardClass := object StandardClass {
  		name := _name;
@@ -225,16 +232,21 @@ helper _class(_name : String, _properties : OrderedSet(Property), _idProperty : 
 	return cls;
 }
 
+helper _class(_name : String, _idProperty : Property, _properties : OrderedSet(Property), _inheritanceType : InheritanceType) : StandardClass{
+	var cls : StandardClass := 	_class(_name, _idProperty, _properties);
+	cls.inheritanceType := _inheritanceType;
+	return cls;
+}
+
 helper _class(_name : String, _idProperty : Property, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
-	var cls : StandardClass := _class(_name, OrderedSet{}, _idProperty);
-	log(type.repr());
+	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
 	return cls;	
 }
 
 helper _class(_name : String, _idProperty : Property, _properties : OrderedSet(Property), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
-	var cls : StandardClass := _class(_name, _properties, _idProperty);
+	var cls : StandardClass := _class(_name, _idProperty, _properties);
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
 	return cls;	

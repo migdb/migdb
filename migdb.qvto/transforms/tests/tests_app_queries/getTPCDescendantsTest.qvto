@@ -1,0 +1,48 @@
+import builder_app_link;
+import queries_app_link;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation DFSQueryTest(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _integer();
+	var hierarchyRoot : StandardClass := _class("hierarchyRoot", _idProperty(int), OrderedSet{}, InheritanceType::singleTable);
+	var hierarchyRootChild := _class("hierarchyRootChild", hierarchyRoot, OrderedSet{});
+	var root : StandardClass := _class("root", hierarchyRoot, OrderedSet{}); 
+	var cl1 : StandardClass := _class("cl1", root, OrderedSet{}, InheritanceType::joined);
+	var cl2 : StandardClass := _class("cl2", root, OrderedSet{}, InheritanceType::tablePerClass);
+	var cl3 : StandardClass := _class("cl3", root, OrderedSet{}, InheritanceType::joined);  
+	var cl4 : StandardClass := _class("cl4", cl1, OrderedSet{}, InheritanceType::tablePerClass);
+	var cl5 : StandardClass := _class("cl5", cl2, OrderedSet{}, InheritanceType::joined); 
+	var cl6 : StandardClass := _class("cl6", cl1, OrderedSet{}, InheritanceType::tablePerClass); 
+	var cl7 : StandardClass := _class("cl7", cl6, OrderedSet{}, InheritanceType::joined);  
+	
+	var structure : Structure := _appStructure(OrderedSet{});
+	structure.entities:= OrderedSet{int, hierarchyRoot, hierarchyRootChild, root, cl1, cl2, cl3, cl4, cl5, cl6, cl7};
+	structure.print();
+	
+	var rootTPCDescendants := root.getDescendantsOfType(InheritanceType::tablePerClass);
+	log("class root TPC descendants:" + rootTPCDescendants->size().repr());
+	rootTPCDescendants->printOrderedClassSet();
+	
+	log("-----------------------------------------------------------");
+	log("class root ST descendants");
+	var rootSTDescendants := root.getDescendantsOfType(InheritanceType::singleTable);
+	rootSTDescendants->printOrderedClassSet();
+	
+	log("-----------------------------------------------------------");
+	log("class root joined descendants");
+	
+	var rootJoinedDescendants := root.getDescendantsOfType(InheritanceType::joined);
+	rootJoinedDescendants->printOrderedClassSet();
+	
+}
+
+helper OrderedSet(StandardClass)::printOrderedClassSet(){
+	var i : Integer := 1; 
+	while(i <= self->size()){
+		var _cls : StandardClass := self->at(i);
+			log(_cls.name);
+			i := i+1;
+	};
+}

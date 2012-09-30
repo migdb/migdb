@@ -58,8 +58,7 @@ helper APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::AddClass::isValid(root : APP::Structure) : Boolean {
-	return not root.containsEntity(self.name)
-		   and root.containsPrimitiveClass(getAppDefaultIdTypeName());
+	return not root.containsEntity(self.name) and root.containsPrimitiveClass(getAppDefaultIdTypeName());
 }
 
 helper APP::ops::AddClass::apply(inout root : APP::Structure) {	
@@ -68,13 +67,12 @@ helper APP::ops::AddClass::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::RenameEntity::isValid(root : APP::Structure) : Boolean {
-	return root.containsEntity(self.name)
-		   and not root.containsEntity(self.newName);
+	return root.containsEntity(self.name) and not root.containsEntity(self.newName);
 }
 
 helper APP::ops::RenameEntity::apply(inout root : APP::Structure) {
-	var e : APP::ModelEntity := root.findEntity(self.name);
-	e.name := self.newName;
+	var entity : APP::ModelEntity := root.findEntity(self.name);
+	entity.name := self.newName;
 	return;
 }
 
@@ -99,7 +97,7 @@ query APP::EmbeddedClass::isRemoveable(root : APP::Structure) : Boolean {
 query APP::StandardClass::isRemoveable(root : APP::Structure) : Boolean {
 	return not root.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
 		   and (self.properties->isEmpty() or self.properties->forAll(isID()))
-		   and not root.entities->oclAsType(APP::StandardClass)->exists(parent = self);
+		   and not root.entities[APP::StandardClass]->exists(parent = self);
 }
 
 helper APP::ops::RemoveEntity::apply(inout root : APP::Structure) {
@@ -109,8 +107,8 @@ helper APP::ops::RemoveEntity::apply(inout root : APP::Structure) {
 
 query APP::ops::AddProperty::isValid(root : APP::Structure) : Boolean {
 	return root.containsGeneralClass(self.owningClassName)
-		   and not root.isPropertyInAbstractClass(self.owningClassName, self.name)
-		   and root.findAbstractClass(self.owningClassName).isTypeValid(root, self.type)
+		   and not root.isPropertyInGeneralClass(self.owningClassName, self.name)
+		   and root.findGeneralClass(self.owningClassName).isTypeValid(root, self.type)
 		   and root.areBoundsValid(self.lowerBound, self.upperBound);
 }
 
@@ -134,8 +132,8 @@ helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
 
 
 query APP::ops::RenameProperty::isValid(root : APP::Structure) : Boolean {
-	return root.isPropertyInAbstractClass(self.owningClassName, self.name)
-		   and not root.isPropertyInAbstractClass(self.owningClassName, self.newName);
+	return root.isPropertyInGeneralClass(self.owningClassName, self.name)
+		   and not root.isPropertyInGeneralClass(self.owningClassName, self.newName);
 }
 
 helper APP::ops::RenameProperty::apply(inout root : APP::Structure) {
@@ -145,20 +143,20 @@ helper APP::ops::RenameProperty::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::RemoveProperty::isValid(root : APP::Structure) : Boolean {
-	return root.isPropertyInAbstractClass(self.owningClassName, self.name)
+	return root.isPropertyInGeneralClass(self.owningClassName, self.name)
 		   and not root.findProperty(self.owningClassName, self.name).isID()
 		   and root.findProperty(self.owningClassName, self.name).oppositeProperty = null;
 }
 
 helper APP::ops::RemoveProperty::apply(inout root : APP::Structure) {
-	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);
+	var c : APP::GeneralClass := root.findGeneralClass(self.owningClassName);
 	c.properties := c.properties->excluding(root.findProperty(self.owningClassName, self.name));
 	return;
 }
 
 query APP::ops::SetOpposite::isValid(root : APP::Structure) : Boolean {
-	var pre : Boolean := root.isPropertyInAbstractClass(self.firstClassName, self.firstPropertyName)
-						 and root.isPropertyInAbstractClass(self.secondClassName, self.secondPropertyName);
+	var pre : Boolean := root.isPropertyInGeneralClass(self.firstClassName, self.firstPropertyName)
+						 and root.isPropertyInGeneralClass(self.secondClassName, self.secondPropertyName);
 	if (self.isOpposite = true) then {
 		return pre
 			   and root.findProperty(self.firstClassName, self.firstPropertyName).oppositeProperty = null
@@ -207,53 +205,43 @@ helper APP::ops::SetParent::apply(inout root : APP::Structure) {
 	if (self.parentName = null) then {
 		c.parent := null;
 		// vytvoreni ID atributu
-		var idProp : Property := _idProperty( root.findEntity("Integer"));
+		var idProp : Property := _idProperty( root.findPrimitiveClass(getAppDefaultIdTypeName()));
 		c.properties += idProp;
-		c.oclAsType(StandardClass).idProperty := idProp;
+		c.idProperty := idProp;
 		
 	// tridu pridavame do hierarchie
 	} else {
 		c.parent := root.findClass(self.parentName);
 		// smazani ID atributu
-		c.properties := c.properties->excluding(c.properties->selectOne(isID()));
-		
+		c.properties := c.properties->excluding(c.idProperty);
+		c.idProperty := null;
 	} endif;
-	
-// takovy navrh uz dnes nepripada v uvahu - struktura nesmi sahat do operaci
-/////////////////////////////////////////////////////////////////////////////
-//	self.properties->forEach(pName) {
-//		root.operations += object APP::ops::RemoveProperty {
-//			owningClassName := self.name;
-//			name := pName;
-//		}.xmap apply(root);
-//	};
 }
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
-
 query APP::ops::SetType::isValid(root : APP::Structure) : Boolean {
 	return root.containsGeneralClass(self.owningClassName)
-		   and root.isPropertyInAbstractClass(self.owningClassName, self.name)
+		   and root.isPropertyInGeneralClass(self.owningClassName, self.name)
 		   and root.containsGeneralClass(self.type);
 }
 
 helper APP::ops::SetType::apply(inout root : APP::Structure) {
-	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
+	var c : APP::StandardClass := root.findGeneralClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
-	p.type := root.findAbstractClass(self.type); // null
+	p.type := root.findGeneralClass(self.type); // null
 	return;
 }
 
 query APP::ops::SetBounds::isValid(root : APP::Structure) : Boolean {
 	return root.containsGeneralClass(self.owningClassName)
-		   and root.isPropertyInAbstractClass(self.owningClassName, self.name)
+		   and root.isPropertyInGeneralClass(self.owningClassName, self.name)
 		   // overi, zda-li jsou hranice nastaveny smysluplne
 		   and (self.lowerBound <= self.upperBound or (self.upperBound = -1 and self.lowerBound > self.upperBound))
 }
 
 // nastavi hranice atributu
 helper APP::ops::SetBounds::apply(inout root : APP::Structure) {
-	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
+	var c : APP::StandardClass := root.findGeneralClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	// nastavi dolni hranici atributu
 	p.lowerBound := self.lowerBound;
@@ -264,11 +252,11 @@ helper APP::ops::SetBounds::apply(inout root : APP::Structure) {
 
 query APP::ops::SetOrdered::isValid(root : APP::Structure) : Boolean {
 	return root.containsGeneralClass(self.owningClassName)
-		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
+		   and root.isPropertyInGeneralClass(self.owningClassName, self.name);
 }
 
 helper APP::ops::SetOrdered::apply(inout root : APP::Structure) {
-	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
+	var c : APP::StandardClass := root.findGeneralClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.isOrdered := self.isOrdered;
 	return;
@@ -276,34 +264,27 @@ helper APP::ops::SetOrdered::apply(inout root : APP::Structure) {
 
 query APP::ops::SetUnique::isValid(root : APP::Structure) : Boolean {
 	return root.containsGeneralClass(self.owningClassName)
-		   and root.isPropertyInAbstractClass(self.owningClassName, self.name);
+		   and root.isPropertyInGeneralClass(self.owningClassName, self.name);
 }
 
 helper APP::ops::SetUnique::apply(inout root : APP::Structure) {
-	var c : APP::StandardClass := root.findAbstractClass(self.owningClassName).oclAsType(APP::StandardClass);
+	var c : APP::StandardClass := root.findGeneralClass(self.owningClassName).oclAsType(APP::StandardClass);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	p.isUnique := self.isUnique;
 	return;
 }
 
-
-/* ++++++++++ EDIT OPERATIONS ++++++++++++++++++++ */
-
-
-
-
-
 /* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
 
 query APP::ops::CopyProperty::isValid(root : APP::Structure) : Boolean {
-	return root.isPropertyInAbstractClass(self.owningClassName, self.name) 
+	return root.isPropertyInGeneralClass(self.owningClassName, self.name) 
 		   and root.containsEntity(self.targetClassName)
-		   and not root.isPropertyInAbstractClass(self.targetClassName, self.name)
+		   and not root.isPropertyInGeneralClass(self.targetClassName, self.name)
 		   and root.areClassesRelatives(self.owningClassName, self.targetClassName);
 }
 
 helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
-	var c : APP::GeneralClass := root.findAbstractClass(self.targetClassName);
+	var c : APP::GeneralClass := root.findGeneralClass(self.targetClassName);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	c.properties += _property(p.name, p.type, p.defaultValue, p.lowerBound, p.upperBound, p.isOrdered, p.isUnique);
 	return;
@@ -311,16 +292,16 @@ helper APP::ops::CopyProperty::apply(inout root : APP::Structure){
 
 query APP::ops::MoveProperty::isValid(root : APP::Structure) : Boolean{
 	
-	return root.isPropertyInAbstractClass(self.owningClassName, self.name) 
+	return root.isPropertyInGeneralClass(self.owningClassName, self.name) 
 		   and root.containsEntity(self.targetClassName)
-		   and not root.isPropertyInAbstractClass(self.targetClassName, self.name)
+		   and not root.isPropertyInGeneralClass(self.targetClassName, self.name)
 		   and root.areClassesRelatives(self.owningClassName, self.targetClassName);
 }
 
 
 mapping APP::ops::MoveProperty::apply(inout root : APP::Structure){
-	var t : APP::GeneralClass := root.findAbstractClass(self.targetClassName);
-	var o : APP::GeneralClass := root.findAbstractClass(self.owningClassName);
+	var t : APP::GeneralClass := root.findGeneralClass(self.targetClassName);
+	var o : APP::GeneralClass := root.findGeneralClass(self.owningClassName);
 	var p : APP::Property := root.findProperty(self.owningClassName, self.name);
 	
 	//unsetting property from o is done by asserting p to collection in t
