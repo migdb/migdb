@@ -123,9 +123,9 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 }
 
 helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
-//	var c : APP::GeneralClass := root.findAbstractClass(self.owningClassName);		
-//	c.properties += _pro
-	
+	var owningClass : APP::GeneralClass := root.findGeneralClass(self.owningClassName);
+	var typeEnity : APP::ModelEntity := root.findEntity(self.type);
+	owningClass.properties += _property(self.name, typeEnity, self.defaultValue, self.lowerBound, self.upperBound, self.isOrdered, self.isUnique);
 	return null;
 }
 

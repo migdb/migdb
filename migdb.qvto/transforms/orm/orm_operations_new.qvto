@@ -163,7 +163,7 @@ helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(
 
 helper app::ops::AddProperty::embeddedToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : EmbeddedClass) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	mappedSet->forEach(cls){
 		type->properties->forEach(prop){
 			operations+=_addColumn(getDefaultSchemaName(), cls.name.translate(), self.name.translate() + "_" + prop.name.translate() , toRdbType(appStructure.findPrimitiveClass(prop.type.name).primitiveType));
@@ -174,7 +174,7 @@ helper app::ops::AddProperty::embeddedToStandardClass(appStructure : APP::Struct
 
 helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : StandardClass) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	var idDbTypeName : String := toRdbType(appStructure.findDefaultIdType().primitiveType);
 	
 	if(self.upperBound = 1)then{
@@ -215,7 +215,7 @@ helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Struct
 
 helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : PrimitiveClass ) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	var rdbTypeName : String := toRdbType(appStructure.findPrimitiveClass(self.type).primitiveType);
 	
 	if(self.upperBound = 1)then{
@@ -245,7 +245,7 @@ helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Struc
 	var rdbTypeName : String := toRdbType(appStructure.findPrimitiveClass(self.type).primitiveType);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{_addColumn(getDefaultSchemaName(), embeddedClass.name.translate(), self.name.translate(), rdbTypeName)};
 	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() >= 1){
-		var mappedSet : OrderedSet(StandardClass) := cls.getMappedClassSet(appStructure);
+		var mappedSet : OrderedSet(StandardClass) := cls.getMappedClassSet();
 		mappedSet->forEach(clss){
 			operations+=_addColumn(getDefaultSchemaName(), clss.name.translate(), self.name.translate(), rdbTypeName);
 			//ADD FK?
@@ -279,7 +279,7 @@ helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure) : OrderedS
 
 helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : Property) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	
 	mappedSet->forEach(cls){
 		cls->properties->forEach(prop){
@@ -291,7 +291,7 @@ helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structur
 } 
 
 helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : Property) : OrderedSet(RDB::ops::ModelOperation){
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet(appStructure);
+	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 	
 	if(renamedProperty.upperBound = 1)then{
@@ -315,40 +315,41 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 	return null;	
 }
 
+/** Currently implemented only adding parent **/
 helper APP::ops::SetParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var parentClass : StandardClass := appStructure.findStandardClass(self.parentName);
 	var childClass : StandardClass := appStructure.findStandardClass(self.name);
-	var mappedSet : OrderedSet(StandardClass) := parentClass.getMappedClassSet(appStructure);
+	var parentRepresentative : StandardClass := parentClass.getDbRepresentative();
+	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	if(childClass.hasImplicitInheritanceType() or parentClass.hasJoinedInheritanceType())then{
-	//	return OrderedSet{_addForeignKey()};
-	}endif;
-	if(childClass.hasTablePerClassInheritanceType())then{
-	 	 mappedSet->forEach(cls){
-	 	 	
-	 	 };
-	 	 return operations;
-	}endif;
-	if(childClass.hasSingleTableInheritanceType())then{
-		var rootClass : StandardClass := childClass.getRootClass();
+	var parentRepresentativeDbName : String := parentRepresentative.name.translate();
 		
-	}endif;
+	mappedSet ->forEach(cls){
+//		operations += _removeConstraint();
+	};
+	mappedSet ->forEach(cls){
+//		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, childClass.translateIdName());
+	};
+	mappedSet->forEach(cls){
+//		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
+	
+	};
+	mappedSet->forEach(cls){
+//		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
+	};
 }
 
 //get set of classes that will be transformed by operation
-query APP::StandardClass::getMappedClassSet(appStructure : APP::Structure) : OrderedSet(StandardClass){
+query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
+	var mappedSet : OrderedSet(StandardClass); 
 	if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType()) then{
-		return OrderedSet{self};
+		mappedSet := OrderedSet{self};
 	}endif;
 	if(self.hasSingleTableInheritanceType())then {
-		return OrderedSet{self.getRootClass()};
+		mappedSet := OrderedSet{self.getRootClass()};
 	}endif;
-	if(self.hasTablePerClassInheritanceType())then{
-		return self.getDescendantsOfType(InheritanceType::tablePerClass);
-	}endif;
-	log("Inheritance type " + self.inheritanceType.repr() + " not Supported yet");
-	assert(false);
-return null;
+	mappedSet += self.getDescendantsOfType(InheritanceType::tablePerClass);	
+	return mappedSet;
 }
 
 query getDefaultSchemaName() : String{

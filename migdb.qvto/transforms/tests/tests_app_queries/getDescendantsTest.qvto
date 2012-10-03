@@ -20,14 +20,14 @@ main(){
 	structure.print();
 	
 	var rootDescendants := structure.getClassDescendants("root");
-	log("class root descendants:" + rootDescendants->size().repr());
+	rootDescendants->printOrderedClassSet();
+}
+
+helper OrderedSet(StandardClass)::printOrderedClassSet(){
 	var i : Integer := 1; 
-	while(i <= rootDescendants->size()){
-		var _cls : StandardClass := rootDescendants->at(i);
+	while(i <= self->size()){
+		var _cls : StandardClass := self->at(i);
 			log(_cls.name);
 			i := i+1;
 	};
-	
-	
-	
 }
