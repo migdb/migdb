@@ -25,9 +25,10 @@
           eType="#//app/PrimitiveType"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="EmbeddedClass" eSuperTypes="#//app/GeneralClass">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="embeddedProperties" upperBound="-1"
-          eType="#//app/EmbeddedProperty" eOpposite="#//app/EmbeddedProperty/owningClass"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" lowerBound="1" eType="#//app/EmbeddedProperty"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="embeddedProperties" lowerBound="1"
+          upperBound="-1" eType="#//app/EmbeddedProperty" eOpposite="#//app/EmbeddedProperty/owningClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" lowerBound="1"
+          eType="#//app/EmbeddedProperty"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="StandardClass" eSuperTypes="#//app/GeneralClass">
       <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//app/StandardClass"/>
