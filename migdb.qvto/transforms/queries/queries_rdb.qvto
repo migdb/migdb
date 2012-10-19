@@ -88,7 +88,6 @@ query RDB::Structure::isConstraintForTable(sName : String, tName : String, rName
 	return self.findTable(sName, tName).constraints->exists(name = rName);
 }
 
-
 /*********************************** COLUMN ************************************/
 query RDB::Structure::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
 	return self.findTable(sName, tName).columns->exists(name = cName);
@@ -123,22 +122,6 @@ query RDB::Structure::isConstrainedColumn(sName : String, tName : String, cName 
 
 
 /********************************* COLUMN TYPE *********************************/
-// overi, zda primitivni typ existuje (true - exituje, false - neexistuje)
-query RDB::Structure::isPrimitiveType(type : String) : Boolean {
-	// je treba prohledat enum, zda se v nem nachazi nas hledany prvek
-	return not (self.createPrimitiveType(type) = null);
-}
-
-// prirazeni primitivni hodnoty podle vstupniho stringu
-query RDB::Structure::createPrimitiveType (type : String) : RDB::PrimitiveType {
-	switch {
-		case (type = "boolean") return RDB::PrimitiveType::boolean;
-		case (type = "char") return RDB::PrimitiveType::char;
-		case (type = "Integer") return RDB::PrimitiveType::int;
-		case (type = "float") return RDB::PrimitiveType::float;
-	};
-	return null;
-}
 
 query RDB::Structure::isSameColumnName(sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
 	return self.findColumn(sName, tNameA, cNameA).name = self.findColumn(sName, tNameB, cNameB).name;

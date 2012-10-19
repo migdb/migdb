@@ -1,6 +1,7 @@
 import orm_operations_link;
 import queries_app_link;
 import queries_rdb_link;
+import validator_app_link;
 	
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -15,18 +16,39 @@ main(){
 	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
 	
 	log("In ops");
-	inOps.rootObjects()![APP::Operations].print();
+	var appOps :APP::Operations := inOps.rootObjects()![APP::Operations];
+	appOps.print();
 	log("In structure");
-	inStr.rootObjects()![APP::Structure].print();
-	inOps.rootObjects()[APP::Operations].operations->forEach(op){
-		log("mapping op \n" + op.repr() + " \nresults:");
-		op.toRdb(inStr.rootObjects()![APP::Structure])->forEach(rdbOp){
-			log(rdbOp.repr());
-			opsCol+=(rdbOp);
+	var appStr :APP::Structure := inStr.rootObjects()![APP::Structure];
+	appStr.print();
+	
+	if(canProcessTest(appStr, appOps))then{
+		appOps.operations[APP::ops::AtomicOperation]->forOne(op){
+			log("mapping op \n" + op.repr() + " \nresults:");
+				op.toRdb(appStr)->forEach(rdbOp){
+				log(rdbOp.repr());
+				opsCol+=(rdbOp);
+			};
 		};
-	};
-	rdbOps.operations := opsCol;
-	log("Out ops");
-	rdbOps.print();
-	log("runner finished\n");
+		rdbOps.operations := opsCol;
+		log("Out ops");
+		rdbOps.print();
+		log("runner finished\n");
+	}endif;
+}
+
+query canProcessTest(structure : APP::Structure, ops : APP::Operations) : Boolean{
+	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
+		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->size().repr());
+		return false;
+	}endif;
+	if(not inOps.rootObjects()![APP::Operations].operations->first().oclIsKindOf(APP::ops::AtomicOperation))then{
+		log("orm_run.qvto cannot be executed for nonatomic operations");
+		return false;
+	}endif;
+
+	if(not inStr.rootObjects()![APP::Structure].isModelValid())then{
+		return false;
+	}endif;
+	return true;	
 }

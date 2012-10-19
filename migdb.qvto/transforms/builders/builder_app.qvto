@@ -20,8 +20,8 @@ helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
 	}
 }
 
-helper _addClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddClass {
-	return object APP::ops::AddClass {
+helper _addClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
+	return object APP::ops::AddStandardClass {
 		name := _name;
 		isAbstract := _isAbstract;
 		inheritanceType := _inheritanceType;

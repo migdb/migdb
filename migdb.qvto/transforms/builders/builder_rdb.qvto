@@ -31,7 +31,7 @@ helper _addIndex(_owningSchemaName : String, _owningTableName : String, _name : 
 	};
 }
 
-helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name : String, _type : String) : RDB::ops::AddColumn{
+helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name : String, _type : PrimitiveType) : RDB::ops::AddColumn{
 	return object RDB::ops::AddColumn {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -95,7 +95,7 @@ helper _renameColumn(_owningSchemaName : String, _owningTableName : String, _nam
 	};
 }
 
-helper _setColumnType(_owningSchemaName : String, _owningTableName : String, _owningColumnName : String, _newType : String, _oldType : String) : RDB::ops::SetColumnType{
+helper _setColumnType(_owningSchemaName : String, _owningTableName : String, _owningColumnName : String, _newType : PrimitiveType , _oldType : PrimitiveType) : RDB::ops::SetColumnType{
 	return object RDB::ops::SetColumnType {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;

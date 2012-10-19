@@ -86,13 +86,12 @@ helper RDB::ops::AddTable::apply(inout root : RDB::Structure) {
  * @restriction : @type must exist in PrimitiveType.
  */
 query RDB::ops::AddColumn::isValid(root : RDB::Structure) : Boolean {
-	return not root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
-		and root.isPrimitiveType(self.type);
+	return not root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name);
 }
 
 helper RDB::ops::AddColumn::apply(inout root : RDB::Structure) {
 	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
-	t.columns += _column(self.name, root.createPrimitiveType(self.type), self.defaultValue); 
+	t.columns += _column(self.name, self.type, self.defaultValue); 
 	return;
 }
 
@@ -221,13 +220,12 @@ helper RDB::ops::RenameColumn::apply(inout root : RDB::Structure) {
  * @restriction : column with @name must exists in table
  */
 query RDB::ops::SetColumnType::isValid(root : RDB::Structure) : Boolean {
-	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName)
-		and root.isPrimitiveType(self.newType);
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
 }
 
 helper RDB::ops::SetColumnType::apply(inout root : RDB::Structure){
 	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	c.type := root.createPrimitiveType(self.newType);
+	c.type := self.newType;
 	return;
 }
 

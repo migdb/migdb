@@ -57,11 +57,11 @@ helper APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
 	return;
 }
 
-query APP::ops::AddClass::isValid(root : APP::Structure) : Boolean {
+query APP::ops::AddStandardClass::isValid(root : APP::Structure) : Boolean {
 	return not root.containsEntity(self.name) and root.containsPrimitiveClass(getAppDefaultIdTypeName());
 }
 
-helper APP::ops::AddClass::apply(inout root : APP::Structure) {	
+helper APP::ops::AddStandardClass::apply(inout root : APP::Structure) {	
 	root.entities += _class(self.name, _idProperty(root.findDefaultIdType()), self.isAbstract, self.inheritanceType);
 	return;
 }
@@ -315,39 +315,3 @@ query APP::ops::ExtractClass::isValid(root : APP::Structure) : Boolean {
 		   and not root.containsEntity(self.extractClassName)
 		   and root.arePropertiesInClass(self.sourceClassName, self.extractPropertiesNames); 
 }
-
-// takovy navrh uz dnes nepripada v uvahu - struktura nesmi sahat do operaci
-/////////////////////////////////////////////////////////////////////////////
-/**
-mapping APP::ops::ExtractClass::apply(inout root : APP::Structure) {
-	
-	root.operations += object APP::ops::AddClass {
-		name := self.extractClassName;
-	}.xmap apply(root);
-	
-	self.extractPropertiesNames->forEach(pName) {
-		var p : APP::Property := root.findProperty(self.sourceClassName, pName);
-		root.operations += object APP::ops::AddProperty {
-			owningClassName := self.extractClassName;
-			name := p.name;
-			type := p.type.name;
-			defaultValue := p.defaultValue;
-			lowerBound := p.lowerBound;
-			upperBound := p.upperBound;
-		}.xmap apply(root);
-		
-		root.operations += object APP::ops::RemoveProperty {
-			owningClassName := self.sourceClassName;
-			name := p.name;			
-		}.xmap apply(root);
-	};
-	
-	root.operations += object APP::ops::AddProperty {
-			owningClassName := self.sourceClassName;
-			name := self.extractClassName.toLower();
-			type := self.extractClassName;
-			lowerBound := 1;
-			upperBound := 1;
-	}.xmap apply(root);
-}
-*/
