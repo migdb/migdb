@@ -16,3 +16,7 @@ migdb.run/output*/*
 
 #generated test outputs
 migdb.testing.run/output-tests/*
+
+#~files
+scripts/*~
+.gitignore~

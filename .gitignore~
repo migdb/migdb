@@ -1,7 +1,0 @@
-migdb.testing.run/output-tests/*
-migdb.mm.app/src/*
-migdb.mm.app/bin/*
-migdb.mm.rdb/src/*
-migdb.mm.rdb/bin/*
-migdb.testing.run/bin/*
-migdb.run/bin/*

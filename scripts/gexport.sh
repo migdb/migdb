@@ -14,11 +14,11 @@ if [ $? -ne 0 ]
 fi
 
 #conditional exporting mm.rdb
-diff -q $D_ECLIPSE/dropins/migdb.mm.rdb_1.0.0.jar $D_MIGDB/plugins/migdb.mm.rdb_1.0.0.jar
+diff -q $D_MIGDB/plugins/migdb.mm.rdb_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.rdb_1.0.0.jar 
 if [ $? -ne 0 ]
   then 
 	echo exporting mm rdb
-	cp $D_MIGDB/plugins/migdb.mm.rdb_1.0.0.jar $D_ECLIPSE/dropins
+	cp $D_ECLIPSE/dropins/migdb.mm.rdb_1.0.0.jar $D_MIGDB/plugins 
   else
      echo mm rdb is actual
 fi
