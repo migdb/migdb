@@ -36,6 +36,9 @@ abstract query APP::ops::ModelOperation::
 abstract helper APP::ops::ModelOperation::
 	apply(inout root : APP::Structure);
 
+// a dekompose of an complex operation to set of atomic operations
+abstract query APP::ops::DecomposableOperation::
+	decompose(inout appStructure : APP::Structure) : OrderedSet(app::ops::AtomicOperation);
 
 /* ++++++++++ BASIC OPERATIONS ++++++++++++++++++++ */
 
@@ -310,8 +313,33 @@ mapping APP::ops::MoveProperty::apply(inout root : APP::Structure){
 	//o.properties := o.properties->excluding(p);
 }
 
-query APP::ops::ExtractClass::isValid(root : APP::Structure) : Boolean {
-	return root.containsEntity(self.sourceClassName)
-		   and not root.containsEntity(self.extractClassName)
-		   and root.arePropertiesInClass(self.sourceClassName, self.extractPropertiesNames); 
+query APP::ops::ExtractClass::decompose(inout appStructure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
+	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{_addClass(self.extractClassName, false, sourceClass.inheritanceType)};
+	
+	self.extractPropertiesNames->forEach( pName) {
+		var p : APP::Property := appStructure.findProperty(self.sourceClassName, pName);
+		operations += object APP::ops::AddProperty {
+			owningClassName := self.extractClassName;
+			name := p.name;
+			type := p.type.name;
+			defaultValue := p.defaultValue;
+			lowerBound := p.lowerBound;
+			upperBound := p.upperBound;
+		};
+		
+		operations += object APP::ops::RemoveProperty {
+			owningClassName := self.sourceClassName;
+			name := p.name;			
+		};
+	};
+	
+	operations += object APP::ops::AddProperty {
+			owningClassName := self.sourceClassName;
+			name := self.extractClassName.toLower();
+			type := self.extractClassName;
+			lowerBound := 1;
+			upperBound := 1;
+	};
+		return operations;
 }
