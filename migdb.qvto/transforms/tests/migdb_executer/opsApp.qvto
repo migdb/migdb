@@ -1,4 +1,4 @@
-import builder_app_link;
+import builder_app;
 
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation migdb_executer_test_1(out outAstr : APP);

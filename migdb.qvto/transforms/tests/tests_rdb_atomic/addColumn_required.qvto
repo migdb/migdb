@@ -1,4 +1,4 @@
-import builder_rdb_link;
+import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 transformation addcolumn_r(out inoutModel : RDB);
 

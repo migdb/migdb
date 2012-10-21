@@ -1,5 +1,5 @@
-import builder_app_link;
-import queries_app_link;
+import builder_app;
+import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
 transformation structure_tab_joined_hierarchy(out inoutModel : APP);

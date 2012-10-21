@@ -1,7 +1,7 @@
-import orm_operations_link;
-import queries_app_link;
-import queries_rdb_link;
-import validator_app_link;
+import orm;
+import queries_app;
+import queries_rdb;
+import validator_app;
 	
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
