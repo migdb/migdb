@@ -1,0 +1,81 @@
+import queries_rdb;
+import builder_rdb;
+import evolution_app;
+import evolution_rdb; 
+import validator_app;
+import validator_postgresql;
+import orm;
+
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+/**
+	There is problem with the same types of models - if rOperations is inModel DbOperations are collected in outRStructure
+**/
+transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
+	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB);
+
+main() {
+	//outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
+	inAStructure.rootObjects().deepclone();
+	//outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
+	inRStructure.rootObjects().deepclone();
+	
+	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
+	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];	
+	var isValid : Boolean := processedAStructure.isModelValid();
+	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
+	//forEach is also if due to isValid condition
+	appOperations.rootObjects()![APP::Operations]->operations->forEach(op | isValid){
+		var atomicOperations : OrderedSet(APP::ops::AtomicOperation); 
+		if(op.oclIsKindOf(APP::ops::DecomposableOperation))then{
+			atomicOperations := op.oclAsType(APP::ops::DecomposableOperation).decompose(processedAStructure);
+		}else {
+			if(op.oclIsKindOf(APP::ops::AtomicOperation))then{
+				atomicOperations := OrderedSet{op.oclAsType(APP::ops::AtomicOperation)};
+			}endif;
+		}endif;
+		atomicOperations->forEach(atomicOp){
+		//check atomicOperation validity
+			if(atomicOp.isValid(processedAStructure))then{
+				// map throught ORM - TODO
+				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(processedAStructure);
+				outRdbOps.operations+=dbOps;
+				//apply dbOps
+				dbOps->forEach(dbOp){
+					//log("check executer " + dbOp.isValid(processedRStructure).repr());
+					if(dbOp.isValid(processedRStructure))then{
+						dbOp.apply(processedRStructure);
+					}else{
+						//log and "break"
+						//isValid := false;
+						log("rdb_operation not valid in current context " + dbOp.repr());
+						break;
+					}endif;
+				};
+				op.apply(processedAStructure);
+			}else{
+				//log and "break"
+				log("app_operation " + op.repr() +"not valid in current context ");
+				isValid := false;
+			}endif;
+		};
+	};
+	log("migdb_executer process finished");
+}
+
+query OrderedSet(APP::ops::DecomposableOperation)::appendOrderedSet( appendedSet : OrderedSet(app::ops::DecomposableOperation)) : OrderedSet(app::ops::DecomposableOperation){
+	var returnedSet : OrderedSet(APP::ops::DecomposableOperation):= self;
+	appendedSet->forEach(op){
+		returnedSet:= returnedSet->append(op);
+	};
+	return returnedSet;
+}
+
+query OrderedSet(APP::ops::AtomicOperation)::appendOrderedSet( appendedSet : OrderedSet(app::ops::AtomicOperation)) : OrderedSet(app::ops::AtomicOperation){
+	var returnedSet : OrderedSet(APP::ops::AtomicOperation):= self;
+	appendedSet->forEach(op){
+		returnedSet:= returnedSet->append(op);
+	};
+	return returnedSet;
+}
