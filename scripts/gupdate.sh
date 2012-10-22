@@ -1,6 +1,13 @@
 #!/bin/sh
+
+#check existence of migdb configuration file.
+if [ ! -f ~/migdb_config.cfg ] 
+  then 
+	echo Your home folder doesn\'t contain configuration file migdb_config.cfg. Check https://github.com/migdb/migdb/wiki/scripts for help
+	exit
+fi
+
 #read configuration file
-#. `dirname $0`/config.cfg
 . ~/migdb_config.cfg
 
 #conditional copying mm.app

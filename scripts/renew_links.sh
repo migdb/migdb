@@ -1,3 +1,13 @@
+#!/bin/sh
+
+#check existence of migdb configuration file.
+if [ ! -f ~/migdb_config.cfg ] 
+  then 
+	echo Your home folder doesn\'t contain configuration file migdb_config.cfg. Check https://github.com/migdb/migdb/wiki/scripts for help 
+	exit
+fi
+
+#read configuration file
 . ~/migdb_config.cfg
 
 VALIDATOR_APP_PATH=main/validator_app.qvto 
@@ -91,3 +101,5 @@ ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/validator_app/$BUILDER_APP_LIN
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/validator_app/$QUERIES_APP_LINK
 
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
+
+
