@@ -1,11 +1,7 @@
 #!/bin/sh
 
 #check existence of migdb configuration file.
-if [ ! -f ~/migdb_config.cfg ] 
-  then 
-	echo Your home folder doesn\'t contain configuration file migdb_config.cfg. Check https://github.com/migdb/migdb/wiki/scripts for help
-	exit
-fi
+`dirname $0`/check_config.sh
 
 #read configuration file
 . ~/migdb_config.cfg
