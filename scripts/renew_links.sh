@@ -1,4 +1,5 @@
 #!/bin/sh
+#IMPORTANT NOTE : if you modify this script, please execute it once to check it creates valid links before committing change   
 
 #check existence of migdb configuration file.
 if [ ! -f ~/migdb_config.cfg ] 
@@ -64,9 +65,9 @@ rm $D_MIGDB_QVTO/tests/validator_app/$QUERIES_APP_LINK
 
 rm $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
 
-ln -s ../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$QUERIES_APP_LINK
-ln -s ../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_APP_LINK
-ln -s ../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_RDB_LINK
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$QUERIES_APP_LINK
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_APP_LINK
+ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_RDB_LINK
 
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparator_component/$QUERIES_APP_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparator_component/$BUILDER_APP_LINK
