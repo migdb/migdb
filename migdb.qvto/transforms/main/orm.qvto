@@ -244,7 +244,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
 	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.type).primitiveType);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{_addColumn(getDefaultSchemaName(), embeddedClass.name.translate(), self.name.translate(), rdbType)};
-	appStructure.entities[StandardClass]->forEach(cls | cls.properties->select(pr | pr.type = embeddedClass)->size() >= 1){
+	appStructure.entities[StandardClass]->forEach(cls | cls.properties[NestedProperty]->size() >= 1){
 		var mappedSet : OrderedSet(StandardClass) := cls.getMappedClassSet();
 		mappedSet->forEach(clss){
 			operations+=_addColumn(getDefaultSchemaName(), clss.name.translate(), self.name.translate(), rdbType);
@@ -256,28 +256,27 @@ helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Struc
 }
 
 helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
-	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
+	var ent : GeneralClass := appStructure.findGeneralClass(self.owningClassName);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
-	if(ent.oclIsTypeOf(PrimitiveClass))then{
-		assert(false);
-	}endif;
 
-	var renamedProperty : Property := ent.oclAsType(GeneralClass).properties->selectOne( pr | pr.name = self.name);
+	var renamedProperty : Property := ent.oclAsType(GeneralClass).getProperty(self.name);
 	 
 	if(ent.oclIsTypeOf(StandardClass))then{
-		if(renamedProperty.type.oclIsTypeOf(PrimitiveClass))then{
-			return self.primitiveInStandardClass(appStructure, ent.oclAsType(StandardClass), renamedProperty); 
+		if(renamedProperty.oclIsTypeOf(PrimitiveProperty))then{
+			return self.primitiveInStandardClass(appStructure, ent.oclAsType(StandardClass), renamedProperty.oclAsType(PrimitiveProperty)); 
 		} else{
-			if(renamedProperty.type.oclIsTypeOf(EmbeddedClass))then{
-				return self.embeddedInStandardClass(appStructure, ent.oclAsType(StandardClass), renamedProperty);
+			if(renamedProperty.oclIsTypeOf(NestedProperty))then{
+				return self.embeddedInStandardClass(appStructure, ent.oclAsType(StandardClass), renamedProperty.oclAsType(NestedProperty));
 			}endif;
 		}endif;
 	}endif;
 	
+	//missing EmbeddedProperty in EmbeddedClass
+	
 	return null;
 }
 
-helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : Property) : OrderedSet(RDB::ops::ModelOperation){
+helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : NestedProperty) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	
@@ -290,7 +289,7 @@ helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structur
 	return null;	
 } 
 
-helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : Property) : OrderedSet(RDB::ops::ModelOperation){
+helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : PrimitiveProperty) : OrderedSet(RDB::ops::ModelOperation){
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 	

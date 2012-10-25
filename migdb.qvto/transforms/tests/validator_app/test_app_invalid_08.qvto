@@ -5,9 +5,9 @@ transformation secondAPP(out inoutModel : APP);
 main() {
 	log("TEST_APP_INVALID_08 - invalid : ID lowerBound ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
-	var idProp : APP::Property := _idProperty(integer);
+	var idProp : APP::PrimitiveProperty := _idProperty(integer);
 	idProp.lowerBound := 0;
-	var person : APP::StandardClass := _class("Person",  idProp, OrderedSet{ _property("age", integer)});
+	var person : APP::StandardClass := _class("Person",  idProp, OrderedSet{ _primitiveProperty("age", integer)});
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,person});
 }

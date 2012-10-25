@@ -42,9 +42,21 @@ query app::PrimitiveProperty::isID() : Boolean{
 	return self.owningGeneralClass.getId() = self;
 }
 
-//query APP::NestedProperty::isID() : Boolean{
-//	return false;	
-//}
+query APP::NestedProperty::isID() : Boolean{
+	return false;	
+}
+
+abstract query app::GeneralClass::removeProperty(removedPropertyName : String);
+
+helper EmbeddedClass::removeProperty(removedPropertyName : String){
+	self.embeddedProperties->excluding(self.getProperty(removedPropertyName).oclAsType(EmbeddedProperty));
+	return;
+}
+
+helper StandardClass::removeProperty(removedPropertyName : String){
+	self.properties->excluding(self.getProperty(removedPropertyName).oclAsType(MultipliableProperty));
+	return;
+}
 
 /**	Checks if this class has default inheritanceType **/
 query app::StandardClass::hasImplicitInheritanceType():Boolean{
@@ -267,10 +279,9 @@ query StandardClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean
 	return self.properties[PrimitiveProperty]->exists(prop | prop.type = _primitiveType);
 }
 
-//query StandardClass::containsProperty(_primitiveType : EmbeddedClass) : Boolean{
-//	return self.properties[PrimitiveProperty]->exists(prop | prop.type = _primitiveType);
-//}
-
+query StandardClass::containsProperty(_type : EmbeddedClass) : Boolean{
+	return self.properties[NestedProperty]->exists(prop | prop.type) = _type;
+}
 
 query EmbeddedClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean{
 	return self.embeddedProperties->exists(prop | prop.type = _primitiveType);

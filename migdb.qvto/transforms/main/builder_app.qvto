@@ -125,15 +125,6 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
  *				COMPLEX HELPERS			 	*
  ********************************************/
 
-
-helper _copyProperty(_name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::CopyProperty {
-	return object APP::ops::CopyProperty {
-		name := _name;
-		targetClassName := _targetClassName;
-		type := _type;
-	}
-}
-
 helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::MoveProperty {
 	return object APP::ops::MoveProperty {
 		owningClassName := _owningClassName;
@@ -174,6 +165,15 @@ helper _integer() : PrimitiveClass{
 /** Name of this entity must be changed in _class constructor using it **/
 helper _idProperty(_integerReference : PrimitiveClass) : PrimitiveProperty{
 	return _primitiveProperty("id", _integerReference, 1, 1);
+}
+
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : PrimitiveProperty{
+	return object PrimitiveProperty{
+		name := _name;
+		type := _type;
+		lowerBound := 0;
+		upperBound := 1;
+	}
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
@@ -246,6 +246,15 @@ helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : 
 helper _embeddedIdProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
 	return _embeddedProperty(_name, _type, true);
 		
+}
+
+helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
+	return object NestedProperty{
+		name := _name;
+		type := _type;
+		lowerBound := 0;
+		upperBound := 1;
+	}
 }
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {

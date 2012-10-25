@@ -8,7 +8,7 @@ main() {
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var country : APP::StandardClass := object StandardClass{
 		name := "Country";
-	 	properties := OrderedSet{ _property("name", string)}
+	 	properties := OrderedSet{ _primitiveProperty("name", string)}
 	};
 	country.parent := country;
 	

@@ -7,11 +7,11 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var thing : APP::StandardClass := _class("Thing", _idProperty(integer), OrderedSet{ _property("name", string)});
-	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _property("name", string), _property("ownedThings", thing, 0, -1)});
-	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _property("nickName", string)});
+	var thing : APP::StandardClass := _class("Thing", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
+	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string), _associationProperty("ownedThings", thing, 0, -1)});
+	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _primitiveProperty("nickName", string)});
 	
-	var syntheticThing : APP::StandardClass := _class("SynteticThing", thing, OrderedSet{ _property("mineral", string)});
+	var syntheticThing : APP::StandardClass := _class("SynteticThing", thing, OrderedSet{ _primitiveProperty("mineral", string)});
 	
 	teacher.inheritanceType := app::InheritanceType::tablePerClass;
 	person.inheritanceType := app::InheritanceType::tablePerClass;

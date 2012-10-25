@@ -8,8 +8,8 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var zipProperty : Property := _property("zip", string);
-	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{_property("street", string),_property("city", string)});																		  									  												  												  									  	
+	var zipProperty : PrimitiveProperty := _primitiveProperty("zip", string);
+	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{_primitiveProperty("street", string),_primitiveProperty("city", string)});																		  									  												  												  									  	
 	
 	//@TODO check if this test hack is valid
 	party.idProperty := null;
