@@ -2,8 +2,6 @@
 
 ### About
 
-[Git Page](http://migdb.github.com/migdb/)
-
 There are a lot of software applications, which are using object-relation mapping (ORM), this approach speeds up the development a lot, on the other hand most of the current ORM frameworks focus only at software creation, not on software evolution.
 
 The goal of our project is to create a framework which evolves the entities (objects) and the database (schema and data) without loss of any information stored in the database. We call our approach extended ORM.
