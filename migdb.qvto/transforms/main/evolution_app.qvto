@@ -56,7 +56,7 @@ query APP::ops::AddEmbeddedClass::isValid(root : APP::Structure) : Boolean {
 }
 
 helper APP::ops::AddEmbeddedClass::apply(inout root : APP::Structure) {
-	root.entities += _embeddedClass(self.name, _idProperty(root.findDefaultIdType()));
+	root.entities += _embeddedClass(self.name, _embeddedProperty("id" ,root.findDefaultIdType(), false));
 	return;
 }
 
@@ -84,22 +84,19 @@ query APP::ops::RemoveEntity::isValid(root : APP::Structure) : Boolean {
 		   and root.findEntity(self.name).isRemoveable(root);
 }
 
-query  APP::ModelEntity::isRemoveable(root : APP::Structure) : Boolean {
-	return false;
-}
+abstract query  APP::ModelEntity::isRemoveable(root : APP::Structure) : Boolean;
 
 query APP::PrimitiveClass::isRemoveable(root : APP::Structure) : Boolean {
-	return not root.entities->oclAsType(APP::GeneralClass).properties->exists(type = self);
+	return not root.entities[APP::GeneralClass]->exists(cls | cls.containsProperty(self));
 }
 
-query APP::EmbeddedClass::isRemoveable(root : APP::Structure) : Boolean {
-	return not root.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
-		   and self.properties->isEmpty();
-}
+//query APP::EmbeddedClass::isRemoveable(root : APP::Structure) : Boolean {
+//	return not root.entities[APP::StandardClass]->exists(cls | cls.containsProperty()) and self.embeddedProperties->isEmpty();
+//}
 
 query APP::StandardClass::isRemoveable(root : APP::Structure) : Boolean {
-	return not root.entities->oclAsType(APP::StandardClass).properties->exists(type = self)
-		   and (self.properties->isEmpty() or self.properties->forAll(isID()))
+	return not root.entities[APP::StandardClass]->properties[AssociationProperty]->exists(pr | pr.type = self)
+		   and (self.properties->isEmpty() or self.properties->forAll(pr | pr.isID()))
 		   and not root.entities[APP::StandardClass]->exists(parent = self);
 }
 
@@ -126,9 +123,18 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 }
 
 helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
-	var owningClass : APP::GeneralClass := root.findGeneralClass(self.owningClassName);
+	var owningClass : APP::StandardClass := root.findStandardClass(self.owningClassName);
 	var typeEnity : APP::ModelEntity := root.findEntity(self.type);
-	owningClass.properties += _property(self.name, typeEnity, self.defaultValue, self.lowerBound, self.upperBound, self.isOrdered, self.isUnique);
+	if(typeEnity.oclIsKindOf(StandardClass))then{
+		owningClass.properties += _primitiveProperty(self.name, typeEnity.oclAsType(PrimitiveClass), self.lowerBound, self.upperBound, self.defaultValue, self.isOrdered, self.isUnique);	
+	}else{
+		if(typeEnity.oclIsKindOf(StandardClass))then{
+			owningClass.properties+= _associationProperty(self.name, typeEnity.oclAsType(StandardClass), self.lowerBound, self.upperBound, self.isOrdered, self.isUnique);
+		}else{
+			log("Unsupported addition of Property with type:" + typeEnity.repr());
+			assert(false);
+		}endif;
+	}endif;
 	return null;
 }
 
@@ -146,13 +152,18 @@ helper APP::ops::RenameProperty::apply(inout root : APP::Structure) {
 }
 
 query APP::ops::RemoveProperty::isValid(root : APP::Structure) : Boolean {
-	return root.isPropertyInGeneralClass(self.owningClassName, self.name)
-		   and not root.findProperty(self.owningClassName, self.name).isID()
-		   and root.findProperty(self.owningClassName, self.name).oppositeProperty = null;
+	if(root.isPropertyInClass(self.owningClassName, self.name))then{
+		return false;
+	}endif;
+	var prop : Property := root.findProperty(self.owningClassName, self.name);
+	return prop.isID() and (not prop.oclIsKindOf(AssociationProperty) or prop.oclAsType(AssociationProperty).oppositeProperty = null);
 }
 
 helper APP::ops::RemoveProperty::apply(inout root : APP::Structure) {
 	var c : APP::GeneralClass := root.findGeneralClass(self.owningClassName);
+	if()then{
+		
+	}
 	c.properties := c.properties->excluding(root.findProperty(self.owningClassName, self.name));
 	return;
 }

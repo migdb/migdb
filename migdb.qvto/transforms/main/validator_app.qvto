@@ -54,7 +54,7 @@ query app::Structure::isModelValid():Boolean{
 	
 	var entities : Set(ModelEntity) := self.oclAsType(Structure).entities;
 	var stdClasses : Set(StandardClass) := entities[StandardClass];
-	var stdClassProps : Bag(Property) := stdClasses->properties;
+	var stdClassProps : Bag(MultipliableProperty) := stdClasses->properties;
 	//classes leading to cycle
 	var cycles : Set(StandardClass) := Set{};
 	entities->forEach(ent | not ent.hasUniqueName()) {
@@ -77,21 +77,10 @@ query app::Structure::isModelValid():Boolean{
 		log(output + "...");
 		notCycledHierarchies := false;
 	};
-	stdClassProps->forEach(prop | not prop.isOppositeCorrectlySet()){
-		log("Structure contains property \""+ prop.name + "\" property in class \""
-		 + prop.owningGeneralClass.name + "\" opposite not correctly set");
+	stdClassProps[AssociationProperty]->forEach(assocProp | not assocProp.isOppositeCorrectlySet()){
+		log("Structure contains property \""+ assocProp.name + "\" property in class \""
+		 + assocProp.owningGeneralClass.name + "\" opposite not correctly set");
 		 oppositeProperty := false;
-	};
-	stdClassProps->forEach(prop | prop.oppositeProperty <> null
-	 and not prop.oppositeProperty.type.oclIsTypeOf(StandardClass)){
-		log("Structure contains property \"" + prop.name + "\" property in class \"" 
-		+ prop.owningGeneralClass.name + "\" with embedded or primitive opposite");
-		 notOppositePrimitive := false;
-	};
-	entities[EmbeddedClass]->properties->forEach(prop | not prop.areEmbeddedArritiesCorrectlySet()){
-		log("Structure contains embedded property \"" + prop.name +"\" in class \""
-		 + prop.owningGeneralClass.name + "\" with bounds not correctly set");
-		embeddedBounds := false;
 	};
     stdClasses->forEach(cls | cls.parent <> null and cls.hasId()){
     	log("Structure contains Non-root class \"" + cls.name + "\" containing id property " + cls.idProperty.name + " .");

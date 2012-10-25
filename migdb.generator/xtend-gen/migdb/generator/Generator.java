@@ -4,6 +4,7 @@ import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import mm.rdb.PrimitiveType;
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
 import mm.rdb.ops.impl.AddIndexImpl;
@@ -308,13 +309,13 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_name, "	");
     _builder.append(" ");
     {
-      String _type = operation.getType();
+      PrimitiveType _type = operation.getType();
       String _string = _type.toString();
       boolean _equals = _string.equals("char");
       if (_equals) {
         _builder.append("character(30) ");
       } else {
-        String _type_1 = operation.getType();
+        PrimitiveType _type_1 = operation.getType();
         _builder.append(_type_1, "	");
       }
     }

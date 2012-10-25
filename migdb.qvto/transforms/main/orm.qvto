@@ -164,7 +164,7 @@ helper app::ops::AddProperty::embeddedToStandardClass(appStructure : APP::Struct
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
 	mappedSet->forEach(cls){
-		type->properties->forEach(prop){
+		type->embeddedProperties->forEach(prop){
 			operations+=_addColumn(getDefaultSchemaName(), cls.name.translate(), self.name.translate() + "_" + prop.name.translate() , toRdbType(appStructure.findPrimitiveClass(prop.type.name).primitiveType));
 		}	
 	};

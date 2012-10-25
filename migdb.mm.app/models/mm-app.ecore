@@ -26,7 +26,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="EmbeddedClass" eSuperTypes="#//app/GeneralClass">
       <eStructuralFeatures xsi:type="ecore:EReference" name="embeddedProperties" lowerBound="1"
-          upperBound="-1" eType="#//app/EmbeddedProperty" eOpposite="#//app/EmbeddedProperty/owningClass"/>
+          upperBound="-1" eType="#//app/EmbeddedProperty" eOpposite="#//app/EmbeddedProperty/owningEmbeddedClass"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" lowerBound="1"
           eType="#//app/EmbeddedProperty"/>
     </eClassifiers>
@@ -37,7 +37,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
           eType="#//app/InheritanceType"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
-          upperBound="-1" eType="#//app/MultipliableProperty" containment="true" eOpposite="#//app/MultipliableProperty/owningClass"/>
+          upperBound="-1" eType="#//app/MultipliableProperty" containment="true" eOpposite="#//app/MultipliableProperty/owningGeneralClass"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" ordered="false"
           unique="false" eType="#//app/PrimitiveProperty" resolveProxies="false"/>
     </eClassifiers>
@@ -58,7 +58,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="MultipliableProperty" abstract="true"
         eSuperTypes="#//app/Property">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owningClass" lowerBound="1"
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningGeneralClass" lowerBound="1"
           eType="#//app/StandardClass" changeable="false" derived="true" eOpposite="#//app/StandardClass/properties"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           defaultValueLiteral="1"/>
@@ -74,15 +74,19 @@
           eType="#//app/PrimitiveClass"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultValue" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Property">
+    <eClassifiers xsi:type="ecore:EClass" name="Property" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="NestedProperty" eSuperTypes="#//app/MultipliableProperty">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
+          eType="#//app/EmbeddedClass"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="EmbeddedProperty" eSuperTypes="#//app/Property">
       <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
           eType="#//app/PrimitiveClass"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="owningClass" eType="#//app/EmbeddedClass"
-          derived="true" eOpposite="#//app/EmbeddedClass/embeddedProperties"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="owningEmbeddedClass"
+          eType="#//app/EmbeddedClass" derived="true" eOpposite="#//app/EmbeddedClass/embeddedProperties"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="isMandatory" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     </eClassifiers>
