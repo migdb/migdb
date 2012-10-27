@@ -11,7 +11,7 @@ main() {
 
 	var root : APP::Operations = outModel.rootObjects()![APP::Operations];
 	 
-	 root.operations += _addClass("Party", false, InheritanceType::joined);
+	 root.operations += _addStandardClass("Party", false, InheritanceType::joined);
 	 root.operations += _addProperty("Party", "street", "String");
 	 root.operations += _addProperty("Party", "city", "String");
 	 root.operations += _addProperty("Party", "zip", "String");

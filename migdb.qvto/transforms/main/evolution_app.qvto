@@ -315,7 +315,7 @@ mapping APP::ops::MoveProperty::apply(inout root : APP::Structure){
 
 query APP::ops::ExtractClass::decompose(inout appStructure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
 	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
-	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{_addClass(self.extractClassName, false, sourceClass.inheritanceType)};
+	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{_addStandardClass(self.extractClassName, false, sourceClass.inheritanceType)};
 	
 	self.extractPropertiesNames->forEach( pName) {
 		var p : APP::Property := appStructure.findProperty(self.sourceClassName, pName);

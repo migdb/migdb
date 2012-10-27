@@ -27,6 +27,8 @@ import mm.rdb.ops.impl.RenameColumnImpl
 import mm.rdb.ops.impl.RenameTableImpl
 import mm.rdb.ops.impl.SetDefaultValueImpl
 import org.eclipse.emf.ecore.EObject
+import mm.rdb.ops.impl.SetColumnTypeImpl
+import mm.rdb.ops.impl.CopyInstancesImpl
 
 
 
@@ -295,7 +297,7 @@ class Generator extends BaseCodeGenerator {
 	/**	    SET OPERATIONS	    	**/		
 
 	/**
-	 * SET COLUMN DEFAULT VALUE
+	 * SET DEFAULT VALUE
 	 * This operation can be used for setting sequence for PrimaryKey -> DEFAULT nextval('seqName')
 	 * To set a new default for a column, use a command like:
 	 * >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
@@ -308,32 +310,32 @@ class Generator extends BaseCodeGenerator {
 	'''	
 	
 	/**
-	 * SET COLUMN DATA TYPE
+	 * SET COLUMN TYPE
 	 * To convert a column to a different data type, use a command like:
 	 * >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
 	 * For some not trivial causes of changing of data type are created functions.
 	 * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
 	 */
-	 /*
+	 
 	def dispatch genOperation(SetColumnTypeImpl operation){
 		// create SQL functions for converting columns data type
 		generateFile(operation.getFileName(".sql"), this.convertBoolToInt);
 		generateFile(operation.getFileName(".sql"), this.convertCharToBool);
 		generateFile(operation.getFileName(".sql"), this.convertCharToInt);
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
-		return '''ALTER TABLE �operation.owningSchemaName�.�operation.owningTableName� 
-				  	  ALTER COLUMN �operation.owningColumnName� TYPE �operation.newType�
-						�IF operation.newType.equals("int") && operation.oldType.equals("boolean")�
-							USING converting_booltoint(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")�
-							USING converting_inttoboolean(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")�
-							USING converting_chartobool(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")�
-							USING converting_chartoint(�operation.owningColumnName�)
-						�ENDIF�;''';
+		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
+						«IF operation.newType.equals("int") && operation.oldType.equals("boolean")»
+							USING converting_booltoint(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")»
+							USING converting_inttoboolean(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")»
+							USING converting_chartobool(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")»
+							USING converting_chartoint(«operation.owningColumnName»)
+						«ENDIF»;''';
 	}
-	*/
+	
 	
 	/** 		 	DATA OPERATIONS	 		**/
 	/** 
@@ -390,50 +392,30 @@ class Generator extends BaseCodeGenerator {
     '''    
     
 	/**
-	 * COPY INSTANCES IN HIERARCHI
+	 * COPY INSTANCES
 	 * This operation copy data from one column to another. 
  	 * Target and source column can be in the same table.
  	 * MergeType:
  	 * strict -> Can not transfer data if a tables have different number of instances (rows).
+ 	 * tolerant -> Can transfer data if source table has less number of instances (rows).
  	 * force -> Delete rows if there is more instancef in source table. If source table has less number
  	 * of instances add default value or null.
 	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
-	 *
-	def dispatch genOperation(CopyInstancesImpl operation){
-		if(operation.type.toString().equals("strict")){
-			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
-		}
-		if(operation.type.toString().equals("force")){
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
-		}
-		return "";
-	}
-	*/
-	
-	/**
-	 * COPY INSTANCES
-	 * This operation copy data from one column to another. 
- 	 * Target and source column can be in the same table.
-	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
-	 *
 	 */
-	 /*
 	def dispatch genOperation(CopyInstancesImpl operation){
 		if(operation.type.toString().equals("strict")){
 			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
-			return '''UPDATE �operation.owningSchemaName�.�operation.targetTableName� SET �operation.targetColumnName� = 
-							(SELECT �operation.sourceColumnName� FROM �operation.owningSchemaName�.�operation.owningTableName�);''';
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
 		}
 		if(operation.type.toString().equals("force")){
-			return '''UPDATE �operation.owningSchemaName�.�operation.targetTableName� SET �operation.targetColumnName� = 
-							(SELECT �operation.sourceColumnName� FROM �operation.owningSchemaName�.�operation.owningTableName�);''';
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
 		}
 		return "";
 	}
-	*/	
+	
+		
 
 	/**
 	 * INSERT INSTANCES
@@ -460,8 +442,8 @@ class Generator extends BaseCodeGenerator {
 	 * @return SQL
 	 */
 	def addInstancesToTabble(String schema, String sourceTable, String targetTable)'''
-		INSERT INTO «schema».«targetTable» (id)
-			SELECT id FROM «schema».«sourceTable»;
+		INSERT INTO «schema».«targetTable» (id_«targetTable»)
+			SELECT id_«sourceTable» FROM «schema».«sourceTable»;
 	'''
 	
 	/**
