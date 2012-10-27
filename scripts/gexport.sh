@@ -1,6 +1,9 @@
 #!/bin/sh
+
+#check existence of migdb configuration file.
+`dirname $0`/check_config.sh
+
 #read configuration file
-#. `dirname $0`/config.cfg
 . ~/migdb_config.cfg
 
 #conditional exporting mm.app
