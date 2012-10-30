@@ -1,6 +1,9 @@
 #!/bin/sh
+
+#checks existence of migdb_configuration.cfg
+`dirname $0`/check_config.sh
+
 #read configuration file
-#. `dirname $0`/config.cfg
 . ~/migdb_config.cfg
 
 #conditional copying mm.app

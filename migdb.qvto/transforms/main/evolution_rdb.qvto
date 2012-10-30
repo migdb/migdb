@@ -1,0 +1,434 @@
+import queries_rdb;
+import builder_rdb; 
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+library evolution_rdb;
+
+abstract query RDB::ops::ModelOperation::
+	isValid(root : RDB::Structure) : Boolean;
+
+abstract helper RDB::ops::ModelOperation::
+	apply(inout root : RDB::Structure);
+
+
+/********************************************************************************
+ *								ADD OPERATIONS									*
+ ********************************************************************************/
+
+
+/**
+ * ADD SCHEMA
+ * Operation create new database schema in rooteration model
+ * @restriction : schema with @name must not exists in rooteration
+ */
+query RDB::ops::AddSchema::isValid(root : RDB::Structure) : Boolean {
+	return not root.isSchemaInGeneration(self.name);
+}
+
+helper RDB::ops::AddSchema::apply(inout root : RDB::Structure) {
+	root.schemas += _schema(self.name);
+	return;
+}
+
+/**
+ * ADD SEQUENCE
+ * we can use only one global sequence in the system. 
+ * Operation is something like singleton - Sequence can be created only one times.
+ * @restriction : sequence with @newDefaultValue must not exists in rooteration
+ * @restriction : in the schema must not be other sequence
+ */
+query RDB::ops::AddSequence::isValid(root : RDB::Structure) : Boolean {
+	return not root.isSequenceInSchema(self.owningSchemaName, self.name);
+}
+
+helper RDB::ops::AddSequence::apply(inout root : RDB::Structure) {
+	var s : RDB::Schema := root.findSchema(self.owningSchemaName);
+	s.sequence := _sequence(self.name, self.startValue);
+	return;
+}
+
+/**
+ * ADD INDEX
+ * Create index in defined schema.
+ * @restriction : in the schema must not be an index with the same @name.
+ * @restriction : columns with @columnsNames must exists in table
+ */
+query RDB::ops::AddIndex::isValid(root : RDB::Structure) : Boolean {
+	return not root.isIndexInSchema(self.owningSchemaName, self.name)
+		and root.areColumnsInTable(self.owningSchemaName, self.owningTableName, self.columnsNames);
+}
+
+helper RDB::ops::AddIndex::apply(inout root : RDB::Structure) {
+	var s : RDB::Schema := root.findSchema(self.owningSchemaName);
+	s.indexes += _index(self.name, root.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames));
+	return; 
+}
+
+/**
+ * ADD TABLE
+ * Create table in defined schema.
+ * @restriction : in the schema must not be a table with the same @name.
+ */
+query RDB::ops::AddTable::isValid(root : RDB::Structure) : Boolean {
+	return not root.isTableInSchema(self.owningSchemaName, self.name);
+}
+
+helper RDB::ops::AddTable::apply(inout root : RDB::Structure) {
+	var s : RDB::Schema := root.findSchema(self.owningSchemaName);
+	s.tables += _table(self.name);
+	return;
+}
+
+/**
+ * ADD COLUMN
+ * Create column in defined table.
+ * @restriction : in the table must not be a column with the same @name.
+ * @restriction : @type must exist in PrimitiveType.
+ */
+query RDB::ops::AddColumn::isValid(root : RDB::Structure) : Boolean {
+	return not root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+helper RDB::ops::AddColumn::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.columns += _column(self.name, self.type, self.defaultValue); 
+	return;
+}
+
+/**
+ * ADD UNIQUE
+ * Create unique constraint on defined column.
+ * @restriction : in the table must not be a constraint with the same @name.
+ * @restriction : column with @columnName must exists in table
+ */
+query RDB::ops::AddUnique::isValid(root : RDB::Structure) : Boolean {
+	return not root.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
+		and root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
+}
+
+helper RDB::ops::AddUnique::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.constraints += _unique(self.name, root.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	return;
+}
+
+/**
+ * ADD PRIMARY KEY
+ * Create primary key constraint on defined column.
+ * @restriction : in the table must not be a constraint with the same @name.
+ * @restriction : index with @underlyingIndexName must exists in schema
+ * @restriction : column with @columnName must exists in table
+ */
+query RDB::ops::AddPrimaryKey::isValid(root : RDB::Structure) : Boolean {
+	return not root.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
+		and root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);
+}
+
+helper RDB::ops::AddPrimaryKey::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.constraints += _primaryKey(self.name, root.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	return;
+}
+
+/**
+ * ADD FOREIGN KEY
+ * Create foreign key constraint on defined column.
+ * @restriction : in the table must not be a constraint with the same @name.
+ * @restriction : column with @constrainedColumnName must exists in table
+ * @restriction : table with @targetTableName must exists in schema.
+ */
+query RDB::ops::AddForeignKey::isValid(root : RDB::Structure) : Boolean {
+	return not root.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
+	and root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName)
+	and root.isTableInSchema(self.owningSchemaName, self.targetTableName);
+}
+
+helper RDB::ops::AddForeignKey::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.constraints += _foreignKey(
+						self.name, 
+						root.findTable(self.owningSchemaName, self.targetTableName),
+						root.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	return; 
+}
+
+/**
+ * ADD NOT NULL
+ * Create foreign key constraint on defined column.
+ * @restriction : in the table must not be a constraint with the same @name.
+ * @restriction : column with @owningColumnName must exists in table
+ */
+query RDB::ops::AddNotNull::isValid(root : RDB::Structure) : Boolean {
+	return not root.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name)
+		and root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.constrainedColumnName);	   
+}
+
+helper RDB::ops::AddNotNull::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.constraints += _notNull(self.name, root.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	return; 
+}
+
+/********************************************************************************
+ *								SET OPERATIONS									*
+ ********************************************************************************/
+
+/**
+ * RENAME TABLE
+ * Create new name for table.
+ * @restriction : the table must exists in schema
+ * @restriction : in the schema must not be a table with the same @newName.
+ */
+query RDB::ops::RenameTable::isValid( root : RDB::Structure) : Boolean {
+	return root.isTableInSchema(self.owningSchemaName, self.name)
+		and not root.isTableInSchema(self.owningSchemaName, self.newName);
+}
+
+helper RDB::ops::RenameTable::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.name);
+	t.name := self.newName;
+	return;
+}
+
+/**
+ * RENAME COLUMN
+ * Create new name for column.
+ * @restriction : the column must exists in table
+ * @restriction : in the table must not be a column with the same @newName.
+ */
+query RDB::ops::RenameColumn::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
+		and not root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.newName);
+}
+
+helper RDB::ops::RenameColumn::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.name);
+	t.constraints->forEach(r) {
+		if (r.oclAsType(RDB::ForeignKey).constrainedColumn.name = c.name.toLower()) then {
+			r.oclAsType(RDB::ForeignKey).name := r.oclAsType(RDB::ForeignKey).name.replace("_" + self.name + "_", "_" + self.newName + "_");
+		} endif;
+	};
+	c.name := self.newName;
+	return;
+}
+
+/**
+ * SET COLUMN TYPE
+ * This operation replace old type of column with a new type of column
+ * Column and new type must exists in actual model rooteration. 
+ * @restriction : column with @name must exists in table
+ */
+query RDB::ops::SetColumnType::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+}
+
+helper RDB::ops::SetColumnType::apply(inout root : RDB::Structure){
+	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.type := self.newType;
+	return;
+}
+
+/**
+ * SET COLUMN DEFAULT VALUE
+ * This operation set new default value to column
+ * Column must exists in actual model rooteration. 
+ * If is property isSequence set on TRUE - Sequence must exist in rooteration - this information is used only in SQL rooterator
+ * In sequence case @newDefaultValue means name of sequence in model rooteration
+ * @restriction : column with @owningColumnName must exists in table
+ */
+query RDB::ops::SetDefaultValue::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+}
+
+helper RDB::ops::SetDefaultValue::apply(inout root : RDB::Structure){
+	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.defaultValue := self.newDefaultValue;
+	return;
+}
+
+
+
+/********************************************************************************
+ *							 REMOVE OPERATIONS									*
+ ********************************************************************************/
+
+/**
+ * REMOVE TABLE
+ * This operation remove table from schema and rooteration.
+ * @restriction : table with @name must exists in rooteration
+ * @restriction : table must not have columns
+ * @restriction : table must not have table constraints
+ */
+query RDB::ops::RemoveTable::isValid(root : RDB::Structure) : Boolean {
+	return root.isTableInSchema(self.owningSchemaName, self.name)
+		   and root.findTable(self.owningSchemaName, self.name).columns->size() = 0
+		   and root.findTable(self.owningSchemaName, self.name).constraints->size() = 0;
+}
+
+helper RDB::ops::RemoveTable::apply(inout root : RDB::Structure) {
+	var s : RDB::Schema := root.findSchema(self.owningSchemaName);
+	s.tables := s.tables->excluding(root.findTable(self.owningSchemaName, self.name));
+	return;
+}
+
+/**
+ * REMOVE COLUMN
+ * This operation remove column from table and rooteration.
+ * ForeignKey constraint will be remove with column. 
+ * @restriction : column with @name must exists in table
+ * @restriction : column mustn't be part of constraint
+ */
+query RDB::ops::RemoveColumn::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.name)
+		and not root.isConstrainedColumn(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+helper RDB::ops::RemoveColumn::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.name);
+	//t.constraints->forEach(r) {
+	//	if (r.oclAsType(RDB::ForeignKey).owningColumn.name = c.name.toLower()) then {
+	//		t.constraints := t.constraints->excluding(r);
+	//	} endif;
+	//};
+	t.columns := t.columns->excluding(c);
+	return;
+}
+
+/**
+ * REMOVE CONSTRAINT
+ * This operation remove table constraint from table
+ * @restriction : table constraint with @name must exists in table 
+ */
+query RDB::ops::RemoveConstraint::isValid(root : RDB::Structure) : Boolean {
+	return root.isConstraintForTable(self.owningSchemaName, self.owningTableName, self.name);
+}
+
+helper RDB::ops::RemoveConstraint::apply(inout root : RDB::Structure) {
+	var t : RDB::Table := root.findTable(self.owningSchemaName, self.owningTableName);
+	t.constraints := t.constraints->excluding(root.findConstraint(self.owningSchemaName, self.owningTableName, self.name));
+	return;
+}
+
+
+/**
+ * REMOVE INDEX
+ * This operation remove index from schema
+ * @restriction : index with @name must exists in schema 
+ */
+query RDB::ops::RemoveIndex::isValid(root : RDB::Structure) : Boolean {
+	return root.isIndexInSchema(self.owningSchemaName, self.name);
+}
+
+helper RDB::ops::RemoveIndex::apply(inout root : RDB::Structure) {
+	var s : RDB::Schema := root.findSchema(self.owningSchemaName);
+	s.indexes := s.indexes->excluding(root.findIndex(self.owningSchemaName, self.name));
+	return;
+}
+
+/**
+ * REMOVE DEFAULT VALUE
+ * This operation remove default value and set value to NULL
+ * Column must exists in actual model rooteration.
+ * @restriction :  column with @name must exists in rooteration
+ */
+query RDB::ops::RemoveDefaultValue::isValid(root : RDB::Structure) : Boolean { 
+	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+}
+
+helper RDB::ops::RemoveDefaultValue::apply(inout root : RDB::Structure){
+	var c : RDB::Column := root.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	c.defaultValue := null;
+	return;
+}
+
+/********************************************************************************
+ *								DATA OPERATIONS									*
+ ********************************************************************************/
+
+/**
+ * UPDATE ROWS
+ * This operation copy data from one column to another.
+ * That means update of one column in target table. 
+ * Target and source column can be the same tables.
+ * Update instances works in hierarchy only.
+ * MergeType:
+ * strict -> Can not transfer data if a tables have different number of instances (rows).
+ * tolerant -> Can transfer data if source table has less number of instances (rows).
+ * force -> Delete rows if there is more instancef in source table. If source table has less number
+ * of instances add default value or null.
+ * @restriction : column with @sourceColumnName must exists in table
+ * @restriction : target column with @targetColumnName must exists in table
+ * @restriction : target and source column type must be same
+ */
+query RDB::ops::UpdateRows::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.sourceTableName, self.sourceColumnName)
+		   and root.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName)
+		   and root.isSameColumnType(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName);
+}
+
+helper RDB::ops::UpdateRows::apply(inout root : RDB::Structure){
+}
+
+/**
+ * INSERT ROWS
+ * This operation copy collection of columns.
+ * That means insert data from source table to target table.
+ * Columns in source and target table must have same name and same order.
+ * @restriction : columns with @sourceColumnNames must exists in source table
+ * @restriction : columns with @sourceColumnNames must exists in target table
+ * @restriction : columns must have same name and column type
+ */
+query RDB::ops::InsertRows::isValid(root : RDB::Structure) : Boolean {
+	return root.areColumnsInTable(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames)
+		   and root.areColumnsInTable(self.owningSchemaName, self.targetTableName, self.sourceColumnsNames)
+		   and root.areSameColumnsTypes(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, self.targetTableName);
+}
+
+helper RDB::ops::InsertRows::apply(inout root : RDB::Structure) {
+
+}
+
+/**
+ * GENERATE SEQUENCE NUMBERS
+ * This operation rooterate new sequence numbers to defined columns.
+ * @restriction : column with @columnName must exists in defined table
+ * @restriction : sequence with @sequenceName must exists in schema
+ */
+query RDB::ops::GenerateSequenceNumbers::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.tableName, self.columnName)
+		   and root.isSequenceInSchema(self.owningSchemaName,self.sequenceName);
+}
+
+helper RDB::ops::GenerateSequenceNumbers::apply(inout root : RDB::Structure) {
+
+}
+
+/**
+ * HAS NO OWN INSTANCES
+ * This operation check if table has some own rows.
+ * @restriction : table with @tableName must exists in rooteration
+ * @restriction : child tables with @descendantNames must exists in rooteration
+ */
+query RDB::ops::HasNoOwnInstances::isValid(root : RDB::Structure) : Boolean {
+	return root.isTableInSchema(self.owningSchemaName, self.tableName)
+		   and root.areTablesInSchema(self.owningSchemaName, self.descendantsNames);
+}
+
+helper RDB::ops::HasNoOwnInstances::apply(inout root : RDB::Structure) {
+
+}
+
+/**
+ * HAS NO INSTANCES
+ * This operation check if table has any rows.
+ * @restriction : table with @tableName must exists in rooteration
+ */
+query RDB::ops::HasNoInstances::isValid(root : RDB::Structure) : Boolean {
+	return root.isTableInSchema(self.owningSchemaName, self.tableName);
+}
+
+helper RDB::ops::HasNoInstances::apply(inout root : RDB::Structure) {
+
+}

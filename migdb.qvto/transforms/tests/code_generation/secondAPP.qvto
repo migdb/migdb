@@ -1,0 +1,22 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation secondAPP(in inModel : APP, out outModel : APP);
+
+
+main() {
+	log("DEMO 2");	
+
+	inModel.rootObjects().deepclone();
+
+
+	var root : APP::Operations = outModel.rootObjects()![APP::Operations];
+	 
+	 root.operations += _extractClass("Party", OrderedSet{"street", "city","zip", "country"}, "Address");
+	 root.operations += _renameProperty("Party", "address", "residentialAddress");
+	 root.operations += _addProperty("Party", "contactAddress", "Country");
+	 
+	 //Prepare for third transformation
+	 root.operations += _addStandardClass("Organizations", false, InheritanceType::joined);
+	 root.operations += _addProperty("Organizations","regNo", "Integer");
+	 root.operations += _addProperty("Organizations","areaOfBusiness", "String");
+}

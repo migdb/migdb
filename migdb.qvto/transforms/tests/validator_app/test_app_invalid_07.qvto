@@ -1,4 +1,4 @@
-import builder_app_link;
+import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -10,10 +10,10 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _property("name", string) });
+	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string) });
 	
 	var idProp := _idProperty(integer);
-	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _property("sallary", string), idProp});
+	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _primitiveProperty("sallary", string), idProp});
 	teacher.idProperty := idProp;
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, teacher});

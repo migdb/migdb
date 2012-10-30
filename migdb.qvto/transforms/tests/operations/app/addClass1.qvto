@@ -1,10 +1,10 @@
-import builder_app_link;
-import queries_app_link;
+import builder_app;
+import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
 transformation OrmAddClassFirstTest(out inoutModel : APP);
 
 main(){
-	var _addCls : APP::ops::AddStandardClass := _addClass( "Tab", false, InheritanceType::singleTable);
+	var _addCls : APP::ops::AddStandardClass := _addStandardClass( "Tab", false, InheritanceType::singleTable);
 	_appOperations(OrderedSet{_addCls});	
 }

@@ -1,4 +1,4 @@
-import builder_app_link;
+import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -7,11 +7,11 @@ main() {
 	log("TEST_APP_01: valid");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::StandardClass := _class("Country", _idProperty(integer), OrderedSet{ _property("name", string)});
-	var party : APP::StandardClass := _class("Party", _idProperty(integer), OrderedSet{ _property("street", string),_property("city", string),
-	 _property("zip", string), _property("country", country)});																		  									  												  												  									  	
+	var country : APP::StandardClass := _class("Country", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
+	var party : APP::StandardClass := _class("Party", _idProperty(integer), OrderedSet{ _primitiveProperty("street", string),_primitiveProperty("city", string),
+	 _primitiveProperty("zip", string), _associationProperty("country", country)});																		  									  												  												  									  	
 	
-	var legalPerson : APP::StandardClass :=	_class("LegalPerson", party, OrderedSet{_property("regNo", integer), _property("bisName", string)});
-	var naturalPerson : APP::StandardClass :=	_class("NaturalPerson",party, OrderedSet{_property("name", string), _property("surname", string)});
+	var legalPerson : APP::StandardClass :=	_class("LegalPerson", party, OrderedSet{_primitiveProperty("regNo", integer), _primitiveProperty("bisName", string)});
+	var naturalPerson : APP::StandardClass :=	_class("NaturalPerson",party, OrderedSet{_primitiveProperty("name", string), _primitiveProperty("surname", string)});
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,country,party, legalPerson, naturalPerson});
 }

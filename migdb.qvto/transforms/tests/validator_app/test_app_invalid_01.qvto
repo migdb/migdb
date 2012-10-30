@@ -1,4 +1,4 @@
-import builder_app_link;
+import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
@@ -7,8 +7,8 @@ main() {
 	log("TEST_APP_INVALID_01 - invalid : Class name");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var party : APP::StandardClass := _class("Party", _idProperty(integer), OrderedSet{_property("street", string),
-	_property("city", string), _property("zip", string)});																		  									  												  												  									  	
+	var party : APP::StandardClass := _class("Party", _idProperty(integer), OrderedSet{_primitiveProperty("street", string),
+	_primitiveProperty("city", string), _primitiveProperty("zip", string)});																		  									  												  												  									  	
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,party, party.deepclone().oclAsType(app::StandardClass)});
 	 

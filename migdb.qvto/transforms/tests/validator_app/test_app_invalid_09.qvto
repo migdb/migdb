@@ -1,14 +1,16 @@
-import builder_app_link;
+import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_09 - invalid : nonPrimitive ID ");	
+	log("TEST_APP_INVALID_09 - invalid : nonInteger ID ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _property("name", string)});
-	var thing : APP::StandardClass := _class("Thing", _idProperty(person), OrderedSet{ _property("name", string)});	
+	var person : APP::StandardClass := _class("Person", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
+	//TODO check if this test hack is valid
+	var idProperty : PrimitiveProperty := _idProperty( string);
+	var thing : APP::StandardClass := _class("Thing", idProperty, OrderedSet{ _primitiveProperty("name", string)});	
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, thing});	 
+	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, thing});
 }
