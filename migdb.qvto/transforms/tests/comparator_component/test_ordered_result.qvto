@@ -4,7 +4,7 @@ transformation secondAPP(out inoutModel : APP);
 
 
 main() {
-	var ops : OrderedSet(app::ops::ModelOperation) := OrderedSet{_renameEntiry("cls", "newCls"),
+	var ops : OrderedSet(app::ops::ModelOperation) := OrderedSet{_renameEntity("cls", "newCls"),
 	_addProperty("cls", "prop", "int")};
 	var root : ModelRoot := _appOperations(ops);	
 }

@@ -348,40 +348,45 @@ helper RDB::ops::RemoveDefaultValue::apply(inout root : RDB::Structure){
  ********************************************************************************/
 
 /**
- * COPY INSTANCES
- * This operation copy data from one column to another. 
- * Target and source column can be in the same table.
+ * UPDATE ROWS
+ * This operation copy data from one column to another.
+ * That means update of one column in target table. 
+ * Target and source column can be the same tables.
+ * Update instances works in hierarchy only.
  * MergeType:
  * strict -> Can not transfer data if a tables have different number of instances (rows).
+ * tolerant -> Can transfer data if source table has less number of instances (rows).
  * force -> Delete rows if there is more instancef in source table. If source table has less number
  * of instances add default value or null.
  * @restriction : column with @sourceColumnName must exists in table
  * @restriction : target column with @targetColumnName must exists in table
  * @restriction : target and source column type must be same
  */
-query RDB::ops::CopyInstances::isValid(root : RDB::Structure) : Boolean {
-	return root.isColumnInTable(self.owningSchemaName, self.owningTableName, self.sourceColumnName)
+query RDB::ops::UpdateRows::isValid(root : RDB::Structure) : Boolean {
+	return root.isColumnInTable(self.owningSchemaName, self.sourceTableName, self.sourceColumnName)
 		   and root.isColumnInTable(self.owningSchemaName, self.targetTableName, self.targetColumnName)
-		   and root.isSameColumnType(self.owningSchemaName, self.owningTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName);
+		   and root.isSameColumnType(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName);
 }
 
-helper RDB::ops::CopyInstances::apply(inout root : RDB::Structure){
+helper RDB::ops::UpdateRows::apply(inout root : RDB::Structure){
 }
 
 /**
- * INSERT INSTANCES
- * This operation copy data from collection of columns.
+ * INSERT ROWS
+ * This operation copy collection of columns.
+ * That means insert data from source table to target table.
+ * Columns in source and target table must have same name and same order.
  * @restriction : columns with @sourceColumnNames must exists in source table
- * @restriction : columns with @targetColumnNames must exists in target table
+ * @restriction : columns with @sourceColumnNames must exists in target table
  * @restriction : columns must have same name and column type
  */
-query RDB::ops::InsertInstances::isValid(root : RDB::Structure) : Boolean {
+query RDB::ops::InsertRows::isValid(root : RDB::Structure) : Boolean {
 	return root.areColumnsInTable(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames)
-		   and root.areColumnsInTable(self.owningSchemaName, self.targetTableName, self.targetColumnsNames)
-		   and root.areSameColumnsTypes(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, self.targetTableName, self.targetColumnsNames);
+		   and root.areColumnsInTable(self.owningSchemaName, self.targetTableName, self.sourceColumnsNames)
+		   and root.areSameColumnsTypes(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, self.targetTableName);
 }
 
-helper RDB::ops::InsertInstances::apply(inout root : RDB::Structure) {
+helper RDB::ops::InsertRows::apply(inout root : RDB::Structure) {
 
 }
 
@@ -426,18 +431,4 @@ query RDB::ops::HasNoInstances::isValid(root : RDB::Structure) : Boolean {
 
 helper RDB::ops::HasNoInstances::apply(inout root : RDB::Structure) {
 
-}
-
-/**
- * ADD INSTANCES
- * This operation add defined number of rows to defined tables.
- * @restriction : table with @sourceTableName must exists in rooteration
- * @restriction : target tables with @name must exists in rooteration
- */
-query RDB::ops::AddInstances::isValid(root : RDB::Structure) : Boolean {
-	return root.isTableInSchema(self.owningSchemaName, self.sourceTableName)
-		   and root.areTablesInSchema(self.owningSchemaName, self.targetTableNames);
-}
-
-helper RDB::ops::AddInstances::apply(inout root : RDB::Structure){
 }

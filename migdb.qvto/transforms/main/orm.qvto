@@ -350,9 +350,9 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 		type := rdb::PrimitiveType::boolean;
 	};
 
-	operations += object RDB::ops::CopyInstances {
+	operations += object RDB::ops::UpdateRows {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName.toLower();
+		sourceTableName := self.owningClassName.toLower();
 		sourceColumnName := self.name + '_old';
 		targetTableName := self.targetClassName.toLower();
 		targetColumnName := self.name;

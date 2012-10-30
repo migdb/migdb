@@ -16,7 +16,7 @@ main() {
 	 root.operations += _addProperty("Party", "contactAddress", "Country");
 	 
 	 //Prepare for third transformation
-	 root.operations += _addClass("Organizations", false, InheritanceType::joined);
+	 root.operations += _addStandardClass("Organizations", false, InheritanceType::joined);
 	 root.operations += _addProperty("Organizations","regNo", "Integer");
 	 root.operations += _addProperty("Organizations","areaOfBusiness", "String");
 }

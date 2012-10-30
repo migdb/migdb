@@ -5,7 +5,6 @@ import java.util.ArrayList
 import mm.rdb.ops.impl.AddColumnImpl
 import mm.rdb.ops.impl.AddForeignKeyImpl
 import mm.rdb.ops.impl.AddIndexImpl
-import mm.rdb.ops.impl.AddInstancesImpl
 import mm.rdb.ops.impl.AddNotNullImpl
 import mm.rdb.ops.impl.AddPrimaryKeyImpl
 import mm.rdb.ops.impl.AddSchemaImpl
@@ -15,7 +14,6 @@ import mm.rdb.ops.impl.AddUniqueImpl
 import mm.rdb.ops.impl.GenerateSequenceNumbersImpl
 import mm.rdb.ops.impl.HasNoInstancesImpl
 import mm.rdb.ops.impl.HasNoOwnInstancesImpl
-import mm.rdb.ops.impl.InsertInstancesImpl
 import mm.rdb.ops.impl.ModelOperationImpl
 import mm.rdb.ops.impl.RemoveColumnImpl
 import mm.rdb.ops.impl.RemoveDefaultValueImpl
@@ -27,6 +25,9 @@ import mm.rdb.ops.impl.RenameColumnImpl
 import mm.rdb.ops.impl.RenameTableImpl
 import mm.rdb.ops.impl.SetDefaultValueImpl
 import org.eclipse.emf.ecore.EObject
+import mm.rdb.ops.impl.SetColumnTypeImpl
+import mm.rdb.ops.impl.UpdateRowsImpl
+import mm.rdb.ops.impl.InsertRowsImpl
 
 
 
@@ -295,7 +296,7 @@ class Generator extends BaseCodeGenerator {
 	/**	    SET OPERATIONS	    	**/		
 
 	/**
-	 * SET COLUMN DEFAULT VALUE
+	 * SET DEFAULT VALUE
 	 * This operation can be used for setting sequence for PrimaryKey -> DEFAULT nextval('seqName')
 	 * To set a new default for a column, use a command like:
 	 * >> ALTER TABLE products ALTER COLUMN price SET DEFAULT 7.77; <<
@@ -308,32 +309,32 @@ class Generator extends BaseCodeGenerator {
 	'''	
 	
 	/**
-	 * SET COLUMN DATA TYPE
+	 * SET COLUMN TYPE
 	 * To convert a column to a different data type, use a command like:
 	 * >> ALTER TABLE products ALTER COLUMN price TYPE numeric(10,2); <<
 	 * For some not trivial causes of changing of data type are created functions.
 	 * @param SetColumnTypeImpl operation : operation of type SetColumnTypeImpl
 	 */
-	 /*
+	 
 	def dispatch genOperation(SetColumnTypeImpl operation){
 		// create SQL functions for converting columns data type
 		generateFile(operation.getFileName(".sql"), this.convertBoolToInt);
 		generateFile(operation.getFileName(".sql"), this.convertCharToBool);
 		generateFile(operation.getFileName(".sql"), this.convertCharToInt);
 		generateFile(operation.getFileName(".sql"), this.convertIntToBool);
-		return '''ALTER TABLE �operation.owningSchemaName�.�operation.owningTableName� 
-				  	  ALTER COLUMN �operation.owningColumnName� TYPE �operation.newType�
-						�IF operation.newType.equals("int") && operation.oldType.equals("boolean")�
-							USING converting_booltoint(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")�
-							USING converting_inttoboolean(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")�
-							USING converting_chartobool(�operation.owningColumnName�)
-						�ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")�
-							USING converting_chartoint(�operation.owningColumnName�)
-						�ENDIF�;''';
+		return '''ALTER TABLE «operation.owningSchemaName».«operation.owningTableName» 
+				  	  ALTER COLUMN «operation.owningColumnName» TYPE «operation.newType»
+						«IF operation.newType.equals("int") && operation.oldType.equals("boolean")»
+							USING converting_booltoint(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("int")»
+							USING converting_inttoboolean(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("boolean") && operation.oldType.equals("char")»
+							USING converting_chartobool(«operation.owningColumnName»)
+						«ELSEIF operation.newType.equals("int") && operation.oldType.equals("char")»
+							USING converting_chartoint(«operation.owningColumnName»)
+						«ENDIF»;''';
 	}
-	*/
+	
 	
 	/** 		 	DATA OPERATIONS	 		**/
 	/** 
@@ -349,20 +350,6 @@ class Generator extends BaseCodeGenerator {
     def dispatch genOperation(GenerateSequenceNumbersImpl operation)'''
     	UPDATE «operation.owningSchemaName».«operation.tableName» SET «operation.columnName» = nextval('«operation.sequenceName»');
     '''
-    
-     /**
-     * ADD INSTANCES
-     * This operation add defined number of rows to defined tables.
-     * This SQL get all instances from source table and copy 
-     * these instances to target tables.
-     * @param AddInstances operation : operation of type AddInstances 
-     */ 
-     def dispatch genOperation(AddInstancesImpl operation){
-     	for(String tab : operation.targetTableNames){
-     		generateFile(operation.getFileName(".sql"), this.addInstancesToTabble(operation.owningSchemaName, operation.sourceTableName, tab));
-     	}
-     	return "";
-     }
     
     /**
      * HAS NO INSTANCES
@@ -390,60 +377,47 @@ class Generator extends BaseCodeGenerator {
     '''    
     
 	/**
-	 * COPY INSTANCES IN HIERARCHI
-	 * This operation copy data from one column to another. 
+	 * UPDATE ROWS
+	 * This operation copy data from one column to another.
+	 * That means update of one column in target table. 
  	 * Target and source column can be in the same table.
  	 * MergeType:
  	 * strict -> Can not transfer data if a tables have different number of instances (rows).
+ 	 * tolerant -> Can transfer data if source table has less number of instances (rows).
  	 * force -> Delete rows if there is more instancef in source table. If source table has less number
  	 * of instances add default value or null.
 	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
-	 *
-	def dispatch genOperation(CopyInstancesImpl operation){
-		if(operation.type.toString().equals("strict")){
-			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
-		}
-		if(operation.type.toString().equals("force")){
-			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
-							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.owningTableName» AS source WHERE target.id = source.id );''';
-		}
-		return "";
-	}
-	*/
-	
-	/**
-	 * COPY INSTANCES
-	 * This operation copy data from one column to another. 
- 	 * Target and source column can be in the same table.
-	 * @param CopyInstancesImpl operation : operation of type CopyInstancesImpl
-	 *
 	 */
-	 /*
-	def dispatch genOperation(CopyInstancesImpl operation){
+	def dispatch genOperation(UpdateRowsImpl operation){
 		if(operation.type.toString().equals("strict")){
-			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.owningTableName, operation.targetTableName));
-			return '''UPDATE �operation.owningSchemaName�.�operation.targetTableName� SET �operation.targetColumnName� = 
-							(SELECT �operation.sourceColumnName� FROM �operation.owningSchemaName�.�operation.owningTableName�);''';
+			generateFile(operation.getFileName(".q"), this.isSameTableSize(operation.owningSchemaName, operation.sourceTableName, operation.targetTableName));
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.sourceTableName» AS source WHERE target.id = source.id );''';
 		}
 		if(operation.type.toString().equals("force")){
-			return '''UPDATE �operation.owningSchemaName�.�operation.targetTableName� SET �operation.targetColumnName� = 
-							(SELECT �operation.sourceColumnName� FROM �operation.owningSchemaName�.�operation.owningTableName�);''';
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.sourceTableName» AS source WHERE target.id = source.id );''';
 		}
+		generateFile(operation.getFileName(".q"), this.targetTableHasMoreRows(operation.owningSchemaName, operation.sourceTableName, operation.targetTableName));
+		if(operation.type.toString().equals("tolerant")){
+			return '''UPDATE «operation.owningSchemaName».«operation.targetTableName» AS target SET «operation.targetColumnName» = 
+							(SELECT «operation.sourceColumnName» FROM «operation.owningSchemaName».«operation.sourceTableName» AS source WHERE target.id = source.id );''';
+		}		
 		return "";
 	}
-	*/	
+	
+		
 
 	/**
-	 * INSERT INSTANCES
-	 * This operation copy data from source columns to target columns. 
+	 * INSERT ROWS
+	 * This operation copy data from source columns to target columns.
+	 * Thath means insert rows from source table to target table. 
  	 * Target and source column must have same name antd data type.
  	 * Target table must not have instances.
 	 * @param InsertInstancesImpl operation : operation of type InsertInstancesImpl
 	 */
-	def dispatch genOperation(InsertInstancesImpl operation)'''
-		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» («FOR col : operation.targetColumnsNames SEPARATOR ","»«col»«ENDFOR»)
+	def dispatch genOperation(InsertRowsImpl operation)'''
+		INSERT INTO «operation.owningSchemaName».«operation.targetTableName» («FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR»)
 						SELECT «FOR col : operation.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «operation.sourceTableName»;
 	'''
 	
@@ -460,8 +434,8 @@ class Generator extends BaseCodeGenerator {
 	 * @return SQL
 	 */
 	def addInstancesToTabble(String schema, String sourceTable, String targetTable)'''
-		INSERT INTO «schema».«targetTable» (id)
-			SELECT id FROM «schema».«sourceTable»;
+		INSERT INTO «schema».«targetTable» (id_«targetTable»)
+			SELECT id_«sourceTable» FROM «schema».«sourceTable»;
 	'''
 	
 	/**
@@ -475,6 +449,18 @@ class Generator extends BaseCodeGenerator {
 	def isSameTableSize(String schema, String table1, String table2)'''
 		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
 	'''
+	
+	/**
+	 * TARGET TABLE HAS MORE ROWS
+	 * This query check size of two tables and compare
+	 * number of their rows.
+	 * @param String table1 : first table to compare
+	 * @param String table2 : secont table to compare
+	 * @return boolean : t - t1 has less rows; f - t1 has more or the same nomber of rows
+	 */
+	def targetTableHasMoreRows(String schema, String table1, String table2)'''
+		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») <= (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
+	'''	
 
 	/**
 	 * HAS NO INSTANCES

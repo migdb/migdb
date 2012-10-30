@@ -131,17 +131,9 @@ query RDB::Structure::isSameColumnType (sName : String, tNameA : String, cNameA 
 	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
 }
 
-query RDB::Structure::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String, cNameB : OrderedSet(String)) : Boolean {
-	var b : Boolean := true;
-	cNameA->forEach(nameA){
-		cNameB->forEach(nameB){
-			if(self.isSameColumnName(sName, tNameA, nameA, tNameB, nameB) 
-				and not self.isSameColumnType(sName, tNameA, nameA, tNameB, nameB)) then {
-				b := false;
-			} endif;
-		};
-	};
-	return b;
+query RDB::Structure::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String) : Boolean {
+	// TODO there is no check for order of columns
+	return cNameA->forAll(name | self.findColumn(sName, tNameB, name).type = self.findColumn(sName, tNameA, name));
 }
 
 /**+++++++++++++++++++++ Validator queries +++++++++++++++++++++++**/
