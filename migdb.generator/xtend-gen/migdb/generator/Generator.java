@@ -5,10 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mm.rdb.PrimitiveType;
-<<<<<<< HEAD
-=======
 import mm.rdb.ops.MergeType;
->>>>>>> evolution_api
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
 import mm.rdb.ops.impl.AddIndexImpl;
