@@ -1,0 +1,142 @@
+grammar migdb.dsl.app.App with org.eclipse.xtext.common.Terminals 
+
+import "http://www.collectionspro.eu/jam/mm/app" as app //application meta-model
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+ModelRoot returns app::ModelRoot:
+	Structure
+;
+
+Structure returns app::Structure:
+	(
+		entities+=ModelEntity ';' (entities+=ModelEntity ';')*
+	)?
+;
+
+ModelEntity returns app::ModelEntity:
+	GeneralClass
+	| PrimitiveClass
+;
+
+GeneralClass returns app::GeneralClass:
+	EmbeddedClass
+	| StandardClass
+;
+
+PrimitiveClass returns app::PrimitiveClass:
+	'primitive'	name=EString ':' primitiveType=PrimitiveType
+;
+
+/**
+ * descendants of GeneralClass
+ */
+EmbeddedClass returns app::EmbeddedClass:
+	'embedded'
+	name=EString
+	'{'
+		'id' idProperty=[app::EmbeddedProperty|EString] //FIXME: reference???
+		embeddedProperties+=[app::EmbeddedProperty|EString] (embeddedProperties+=[app::EmbeddedProperty|EString])* //FIXME: reference???
+    '}'
+;
+
+StandardClass returns app::StandardClass:
+	'standard'
+	(isAbstract?='abstract')?
+	name=EString ('extends' parent=[app::StandardClass|EString] 'by' inheritanceType=InheritanceType)?
+	'{'
+		('id' idProperty=[app::PrimitiveProperty|EString])? //FIXME: reference???
+		(properties+=MultipliableProperty (properties+=MultipliableProperty)*)?
+    '}'
+;
+
+
+Property returns app::Property:
+	MultipliableProperty
+	| EmbeddedProperty
+;
+
+MultipliableProperty returns app::MultipliableProperty:
+	AssociationProperty
+	| PrimitiveProperty
+	| NestedProperty
+;
+
+EmbeddedProperty returns app::EmbeddedProperty:
+	'EmbeddedProperty' isMandatory?='mandatory'	name=EString ':' type=[app::PrimitiveClass|EString]
+;
+
+
+PrimitiveProperty returns app::PrimitiveProperty:
+	'PrimitiveProperty'
+	(
+		isOrdered?='ordered'? &	isUnique?='unique'?
+	)
+	name=EString
+	(
+		'['
+			upperBound=EInt
+			| (lowerBound=EInt '..'upperBound=EInt)
+		']'
+	)?
+	':' type=[app::PrimitiveClass|EString]
+	('=' defaultValue=EString)?
+;
+
+
+AssociationProperty returns app::AssociationProperty:
+	'AssociationProperty'
+	(
+		isOrdered?='ordered'? &	isUnique?='unique'?
+	)
+	name=EString
+	(
+		'['
+			upperBound=EInt
+			| (lowerBound=EInt '..'upperBound=EInt)
+		']'
+	)?
+	('oposite' oppositeProperty=[app::AssociationProperty|EString])?
+	':' type=[app::StandardClass|EString]
+;
+
+NestedProperty returns app::NestedProperty:
+	'NestedProperty'
+	(
+		isOrdered?='ordered'? &	isUnique?='unique'?
+	)
+	name=EString
+		(
+		'['
+			upperBound=EInt
+			| (lowerBound=EInt '..'upperBound=EInt)
+		']'
+	)?
+	':' type=[app::EmbeddedClass|EString]
+;
+
+enum PrimitiveType returns app::PrimitiveType:
+	boolean = 'boolean'
+	| char = 'char'
+	| int = 'int'
+;
+
+
+enum InheritanceType returns app::InheritanceType:
+	joined = 'joined'
+	| tablePerClass = 'tablePerClass'
+	| singleTable = 'singleTable'
+;
+
+EString returns ecore::EString:
+	STRING
+	| ID
+;
+
+EBoolean returns ecore::EBoolean:
+	'true'
+	| 'false'
+;
+
+EInt returns ecore::EInt:
+	'-'? INT
+;
