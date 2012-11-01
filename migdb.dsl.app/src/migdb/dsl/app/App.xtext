@@ -8,9 +8,7 @@ ModelRoot returns app::ModelRoot:
 ;
 
 Structure returns app::Structure:
-	(
-		entities+=ModelEntity ';' (entities+=ModelEntity ';')*
-	)?
+	(entities+=ModelEntity ';')*
 ;
 
 ModelEntity returns app::ModelEntity:

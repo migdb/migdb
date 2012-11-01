@@ -1,0 +1,267 @@
+grammar migdb.dsl.ops.Ops with org.eclipse.xtext.common.Terminals 
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://www.collectionspro.eu/jam/mm/app" as app //application meta-model
+import "http://www.collectionspro.eu/jam/mm/app-ops" as ops //operations
+
+
+ModelRoot returns app::ModelRoot:
+	Operations
+;
+
+Operations returns app::Operations:
+	(operations+=ModelOperation ';')*
+;
+
+ModelOperation returns ops::ModelOperation:
+	AtomicOperation
+	| DecomposableOperation
+;
+	
+AtomicOperation returns ops::AtomicOperation:
+	AddPrimitiveClass
+	| AddEmbeddedClass
+	| AddStandardClass
+	| RenameEntity
+	| SetParent
+	| SetAbstract
+	| RemoveEntity
+	| AddProperty
+	| RenameProperty
+	| RemoveProperty
+	| SetType
+	| SetOpposite
+	| SetBounds
+	| SetOrdered
+	| SetUnique
+	| CopyProperty
+	| MoveProperty
+;
+
+DecomposableOperation returns ops::DecomposableOperation:
+	ExtractClass
+	| ExtractParent
+;
+
+/**
+ * Atomic Operations:
+ */
+//addPrimitiveClass(name, boolean) adds new primitive class by selected type
+AddPrimitiveClass returns ops::AddPrimitiveClass:
+	'addPrimitiveClass('
+		name=EString
+		',' primitiveType=PrimitiveType
+	')'
+;
+
+//addEmbeddedClass(name) adds new embedded class
+AddEmbeddedClass returns ops::AddEmbeddedClass:
+	'addEmbeddedClass('
+		name=EString
+	')'
+;
+
+//addStandardClass(name, boolean, InheritanceType)
+//adds StandardClass with abstract flag and given maping type in DB
+AddStandardClass returns ops::AddStandardClass:
+	'addStandardClass('	
+		name=EString 
+		(',' ('false' | isAbstract?='true'))? //not required
+		',' inheritanceType=InheritanceType
+	')'
+;
+
+//renameEntity(A, B) renames entity A to B
+RenameEntity returns ops::RenameEntity:
+	'renameEntity('
+		name=EString
+		',' newName=EString
+	')'
+;
+
+//setParent(A, B) sets A new parent B
+SetParent returns ops::SetParent:
+	'setParent('
+		name=EString
+		',' parentName=EString
+	')'
+;
+
+//setAbstract(name, boolean) sets/unsets given class as abstract
+SetAbstract returns ops::SetAbstract:
+	'setAbstract('
+		name=EString
+		',' ('false' | isAbstract?='true')
+	')'
+;
+
+//removeEntity(name) removes entity (GeneralClass, PrimitiveClass and all its subtypes)
+RemoveEntity returns ops::RemoveEntity:
+	'removeEntity('
+		name=EString
+	')'
+;
+
+//FIXME: see issue #104
+//addProperty(owningClass, propertyName, propertyType, defaultValue,
+// lowerBound, upperBound, isOrdered, isUnique)
+AddProperty returns ops::AddProperty:
+	'AddProperty('
+		owningClassName=EString
+		',' name=EString
+		',' type=EString
+		(
+			',' defaultValue=EString
+			',' lowerBound=EInt
+			',' upperBound=EInt
+			',' ('false' | isOrdered?='true')
+			',' ('false' | isUnique?='true')
+		)?
+    '}';
+
+//renamePropety(A, id, identifier) renames A's property id to identifier
+RenameProperty returns ops::RenameProperty:
+	'renameProperty(' 
+		owningClassName=EString
+		',' name=EString
+		',' newName=EString
+	')'
+;
+
+//removePropety(A, id) removes A's property id
+RemoveProperty returns ops::RemoveProperty:
+	'removeProperty('
+		owningClassName=EString
+		',' name=EString
+    ')'
+;
+
+//setType(A, id, int) changes type of A's propety id to int
+SetType returns ops::SetType:
+	'setType('
+		owningClassName=EString
+		',' name=EString
+		',' type=EString
+
+    ')'
+;
+
+//setOpposite(A, key, B, id, true) creates link between A's key and B's id
+//setOpposite(A, key, B, id, false) destroys link between A's key and B's id
+SetOpposite returns ops::SetOpposite:
+	'setOpposite('
+		firstClassName=EString
+		',' firstPropertyName=EString
+		',' secondClassName=EString
+		',' secondPropertyName=EString
+		',' ('false' | isOpposite?='true')
+    ')'
+;
+
+//setBounds(A, list, 0, 50) sets bounds to A's property list to 0,50 (lower, upper)
+SetBounds returns ops::SetBounds:
+	'setBounds('
+		owningClassName=EString
+		',' name=EString
+		',' lowerBound=EInt
+		',' upperBound=EInt
+    ')'
+;
+
+//setOrdered(A, list, true) sets A's property list as ordered
+//setOrdered(A, list, false) sets A's property list as unordered
+SetOrdered returns ops::SetOrdered:
+	'setOrdered('
+		owningClassName=EString
+		',' name=EString
+		',' ('false' | isOrdered?='true')
+    ')'
+;
+
+//setUnique(A, list, true) sets A's property list as unique
+//setUnique(A, list, false) unsets unique status of A's property list
+SetUnique returns ops::SetUnique:
+	'setUnique('
+		owningClassName=EString
+		',' name=EString
+		',' ('false' | isUnique?='true')
+    ')'
+;
+
+//copyPropety(A, id, B, MergeType) copies A's property id to B by selected MergeType
+CopyProperty returns ops::CopyProperty:
+	'copyProperty('
+		owningClassName=EString
+		',' name=EString
+		',' targetClassName=EString
+		',' type=MergeType
+    ')'
+;
+
+//movePropety(A, id, B, MergeType) moves (and deletes) A's property id to B by selected MergeType
+MoveProperty returns ops::MoveProperty:
+	'moveProperty('
+		owningClassName=EString
+		',' name=EString
+		',' targetClassName=EString
+		',' type=MergeType
+    ')'
+;
+
+
+/**
+ * Decomposable Operations:
+ */
+//extractClass(A, {id, name}, B) creates B and moves A's properties {id, name} to created B
+ExtractClass returns ops::ExtractClass:
+	'extractClass('
+		sourceClassName=EString
+		',' '{' extractPropertiesNames+=EString ( "," extractPropertiesNames+=EString)* '}' 
+		',' extractClassName=EString
+    ')'
+;
+
+//extractParent({A, B}, {id, name}, C)
+// creates C, sets C as parent of A and B and moves A's and B's properties {id, name} to C
+ExtractParent returns ops::ExtractParent:
+	'extractParent('
+		'{' sourceClassesName+=EString ( "," sourceClassesName+=EString)* '}' 
+		',' '{' extractPropertiesName+=EString ( "," extractPropertiesName+=EString)* '}' 
+		',' extractParentName=EString
+    ')'
+;
+
+
+/**
+ */
+enum MergeType returns ops::MergeType:
+	strict = 'strict'
+	| force = 'force'
+	| tolerant = 'tolerant'
+;
+
+enum PrimitiveType returns app::PrimitiveType:
+	boolean = 'boolean'
+	| char = 'char'
+	| int = 'int'
+;
+
+enum InheritanceType returns app::InheritanceType:
+	joined = 'joined'
+	| tablePerClass = 'tablePerClass'
+	| singleTable = 'singleTable'
+;
+
+EString returns ecore::EString:
+	STRING
+	| ID
+;
+
+EBoolean returns ecore::EBoolean:
+	'true'
+	| 'false'
+;
+
+EInt returns ecore::EInt:
+	'-'? INT
+;
