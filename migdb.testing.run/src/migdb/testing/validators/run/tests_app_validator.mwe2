@@ -29,7 +29,7 @@ Workflow{
 	/* Test01 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_01_APP"
 		outputUri = "output-tests/validator_app/test_01_app.xmi"
 	}
@@ -37,7 +37,7 @@ Workflow{
 	/* Test02 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_02_APP"
 		outputUri = "output-tests/validator_app/test_02_app.xmi"
 	}
@@ -45,7 +45,7 @@ Workflow{
 	/* Test_invalid_01 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_01_APP"
 		outputUri = "output-tests/validator_app/test_invalid_01_app.xmi"
 	}
@@ -53,7 +53,7 @@ Workflow{
 	/* Test_invalid_02 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_02_APP"
 		outputUri = "output-tests/validator_app/test_invalid_02_app.xmi"
 	}
@@ -61,7 +61,7 @@ Workflow{
 	/* Test_invalid_02_b app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_02_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_02_B_APP"
 		outputUri = "output-tests/validator_app/test_invalid_02_b_app.xmi"
 	}
@@ -69,7 +69,7 @@ Workflow{
 	/* Test_invalid_03 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_03.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_03_APP"
 		outputUri = "output-tests/validator_app/test_invalid_03_app.xmi"
 	}
@@ -77,7 +77,7 @@ Workflow{
 	/* Test_invalid_03_b app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_03_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_03_B_APP"
 		outputUri = "output-tests/validator_app/test_invalid_03_b_app.xmi"
 	}
@@ -85,23 +85,15 @@ Workflow{
 	/* Test_invalid_04 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_04.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_04_APP"
 		outputUri = "output-tests/validator_app/test_invalid_04_app.xmi"
 	}
 			
-	/* Test_invalid_04_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_04_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_04_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_04_b_app.xmi"
-	}
-
 	/* Test_invalid_05 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_05.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_05_APP"
 		outputUri = "output-tests/validator_app/test_invalid_05_app.xmi"
 	}
@@ -109,7 +101,15 @@ Workflow{
 	/* Test_invalid_06 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_06.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
+		modelSlot = "TEST_INVALID_06_APP"
+		outputUri = "output-tests/validator_app/test_invalid_06_app.xmi"
+	}
+
+	/* Test_invalid_06_b app*/
+	component = QVTOValidatorTest {		
+		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_06_b.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_06_APP"
 		outputUri = "output-tests/validator_app/test_invalid_06_app.xmi"
 	}
@@ -117,7 +117,7 @@ Workflow{
 	/* Test_invalid_07 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_07.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_07_APP"
 		outputUri = "output-tests/validator_app/test_invalid_07_app.xmi"
 	}
@@ -125,48 +125,16 @@ Workflow{
 	/* Test_invalid_08 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_08.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_08_APP"
 		outputUri = "output-tests/validator_app/test_invalid_08_app.xmi"
 	}	
 	
-	/* Test_invalid_08_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_08_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_08_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_08_b_app.xmi"
-	}
-	
 	/* Test_invalid_09 app*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_09.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
 		modelSlot = "TEST_INVALID_09_APP"
 		outputUri = "output-tests/validator_app/test_invalid_09_app.xmi"
 	}
-	
-	/* Test_invalid_09_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_09_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_09_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_09_b_app.xmi"
-	}	
-
-	/* Test_invalid_10 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_10.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_10_APP"
-		outputUri = "output-tests/validator_app/test_invalid_10_app.xmi"
-	}
-		
-	/* Test_invalid_11 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_11.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_app.qvto"
-		modelSlot = "TEST_INVALID_11_APP"
-		outputUri = "output-tests/validator_app/test_invalid_11_app.xmi"
-	}								
 }

@@ -14,7 +14,8 @@ echo current branch: $branch
 
 #can be modified only for tracked repositories + branches - eg visible by git remote -v 
 #log changes of configuration file in origin/branch
-i=`git diff origin/$branch..$branch scripts/migdb_config.cfg | wc -l | cut -d' ' -f1`
+script_dir=`dirname $0`
+i=`git diff origin/$branch..$branch $script_dir/migdb_config.cfg | wc -l | cut -d' ' -f1`
 
 if [ $i -ne 0 ]
    then

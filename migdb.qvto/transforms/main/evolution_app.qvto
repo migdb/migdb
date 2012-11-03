@@ -125,7 +125,8 @@ query APP::GeneralClass::isTypeValid(root : APP::Structure, type : String) : Boo
 helper APP::ops::AddProperty::apply(inout root : APP::Structure) {
 	var owningClass : APP::StandardClass := root.findStandardClass(self.owningClassName);
 	var typeEnity : APP::ModelEntity := root.findEntity(self.type);
-	if(typeEnity.oclIsKindOf(StandardClass))then{
+	log("type:" +(typeEnity = null).repr());
+	if(typeEnity.oclIsKindOf(PrimitiveClass))then{
 		owningClass.properties += _primitiveProperty(self.name, typeEnity.oclAsType(PrimitiveClass), self.lowerBound, self.upperBound, self.defaultValue, self.isOrdered, self.isUnique);	
 	}else{
 		if(typeEnity.oclIsKindOf(StandardClass))then{

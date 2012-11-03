@@ -30,7 +30,7 @@ Workflow{
 	/* Test_postgresql_01*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_01"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_01.xmi"
 	}
@@ -38,7 +38,7 @@ Workflow{
 	/* Test_postgresql_invalid_01*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_01"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_01.xmi"
 	}			
@@ -46,7 +46,7 @@ Workflow{
 	/* Test_postgresql_invalid_02*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_02"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_02.xmi"
 	}			
@@ -55,7 +55,7 @@ Workflow{
 	/* Test_postgresql_invalid_03*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_03.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_03"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_03.xmi"
 	}			
@@ -63,7 +63,7 @@ Workflow{
 	/* Test_postgresql_invalid_04*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_04"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04.xmi"
 	}			
@@ -71,7 +71,7 @@ Workflow{
 	/* Test_postgresql_invalid_04_b*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_04_B"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04_b.xmi"
 	}			
@@ -79,7 +79,7 @@ Workflow{
 	/* Test_postgresql_invalid_05*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_05.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_05"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_05.xmi"
 	}			
@@ -87,7 +87,7 @@ Workflow{
 	/* Test_postgresql_invalid_06*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_06"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06.xmi"
 	}			
@@ -95,7 +95,7 @@ Workflow{
 	/* Test_postgresql_invalid_06_b*/
 	component = QVTOValidatorTest {		
 		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/validators/validator_postgresql.qvto"
+		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
 		modelSlot = "TEST_POSTGRESQL_INVALID_06_B"
 		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06_b.xmi"
 	}				

@@ -25,3 +25,14 @@ if [ $? -ne 0 ]
   else
      echo mm rdb is actual
 fi
+
+#conditional exporting mm.errors
+diff -q $D_MIGDB/plugins/migdb.mm.errors_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.errors_1.0.0.jar 
+if [ $? -ne 0 ]
+  then 
+	echo exporting mm errors
+	cp $D_ECLIPSE/dropins/migdb.mm.errors_1.0.0.jar $D_MIGDB/plugins 
+  else
+     echo mm errors is actual
+fi
+

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+ <copyright>
+ </copyright>
+
+ $Id$
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <package
+            uri="http://www.collectionspro.eu/jam/mm/errors"
+            class="mm.errors.ErrorsPackage"
+            genModel="models/mm-error_log.genmodel"/>
+   </extension>
+
+</plugin>
