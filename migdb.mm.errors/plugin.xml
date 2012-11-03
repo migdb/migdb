@@ -14,7 +14,7 @@
       <package
             uri="http://www.collectionspro.eu/jam/mm/errors"
             class="mm.errors.ErrorsPackage"
-            genModel="models/mm-error_log.genmodel"/>
+            genModel="models/mm-errors.genmodel"/>
    </extension>
 
 </plugin>

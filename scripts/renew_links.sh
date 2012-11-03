@@ -17,6 +17,7 @@ EVOLUTION_RDB_PATH=main/evolution_rdb.qvto
 ORM_PATH=main/orm.qvto
 BUILDER_APP_PATH=main/builder_app.qvto
 BUILDER_RDB_PATH=main/builder_rdb.qvto
+BUILDER_ERRORS_PATH=main/builder_errors.qvto
 QUERIES_APP_PATH=main/queries_app.qvto
 QUERIES_RDB_PATH=main/queries_rdb.qvto
 
@@ -24,6 +25,7 @@ QUERIES_APP_LINK=queries_app.qvto
 QUERIES_RDB_LINK=queries_rdb.qvto
 BUILDER_APP_LINK=builder_app.qvto
 BUILDER_RDB_LINK=builder_rdb.qvto
+BUILDER_ERRORS_LINK=builder_errors.qvto
 ORM_LINK=orm.qvto
 VALIDATOR_APP_LINK=validator_app.qvto
 VALIDATOR_RDB_LINK=validator_rdb.qvto
@@ -52,6 +54,7 @@ rm $D_MIGDB_QVTO/tests/orm/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/orm/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/orm/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/orm/$BUILDER_RDB_LINK
+rm $D_MIGDB_QVTO/tests/orm/$BUILDER_ERRORS_LINK
 
 rm $D_MIGDB_QVTO/tests/structures/app/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/structures/app/$QUERIES_APP_LINK
@@ -94,6 +97,7 @@ ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/orm/$QUERIES_APP_LINK
 ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/orm/$QUERIES_RDB_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/orm/$BUILDER_APP_LINK
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/orm/$BUILDER_RDB_LINK
+ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/orm/$BUILDER_ERRORS_LINK
 
 ln -s ../../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/structures/app/$BUILDER_APP_LINK
 ln -s ../../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/structures/app/$QUERIES_APP_LINK

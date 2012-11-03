@@ -6,18 +6,18 @@
   <eSubpackages name="errors" nsURI="http://www.collectionspro.eu/jam/mm/errors" nsPrefix="errors">
     <eClassifiers xsi:type="ecore:EClass" name="ErrorLog">
       <eStructuralFeatures xsi:type="ecore:EReference" name="errors" upperBound="-1"
-          eType="#//errors/Error" eOpposite="#//errors/Error/owningLog"/>
+          eType="#//errors/Error" containment="true" eOpposite="#//errors/Error/owningLog"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Error" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningLog" eType="#//errors/ErrorLog"
           derived="true" eOpposite="#//errors/ErrorLog/errors"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="transformationId" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ValidationError" eSuperTypes="#//errors/Error"/>
     <eClassifiers xsi:type="ecore:EClass" name="EvolutionError" eSuperTypes="#//errors/Error">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="operationIndex" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-      <eStructuralFeatures xsi:type="ecore:EAttribute" name="transformationName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
   </eSubpackages>
 </ecore:EPackage>

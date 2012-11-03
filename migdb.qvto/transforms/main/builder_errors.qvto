@@ -1,0 +1,29 @@
+library builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+helper _errorLog(_errors : OrderedSet(Error)) : ErrorLog{
+	return object ErrorLog{
+		errors:= _errors;
+	};
+}
+
+helper _evolutionError(_operationIndex : Integer, _message : String, _transformationIdentifier : String) : EvolutionError{
+	assert(_operationIndex > 0);
+	assert(_message <> null and _message.size() > 0);
+	assert(_transformationIdentifier <> null and _transformationIdentifier.size() > 0);
+	return object EvolutionError{
+		message := _message;
+		operationIndex := _operationIndex;
+		message := _message;
+		transformationId := _transformationIdentifier;
+	};
+}
+
+helper _validationError(_message : String, _transformationIdentifier : String ) : ValidationError{
+	assert(_message <> null and _message.size() > 0);
+	return object ValidationError{
+		message := _message;
+		transformationId := _transformationIdentifier;
+	}
+}

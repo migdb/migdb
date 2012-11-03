@@ -24,22 +24,26 @@
  */
 
 import queries_rdb;
+import builder_errors;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
-transformation POSTGRESQL_VALIDATE(in inModel : RDB);
+modeltype ERR uses 'http://www.collectionspro.eu/jam/mm/errors';
+
+transformation POSTGRESQL_VALIDATE(in inModel : RDB, inout errorModel : ERR);
 
 main() {	
 	log("Postgresql validation of model started...");
 	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::ModelRoot)))then{
-		inModel.rootObjects()![RDB::Structure].isModelValid();
+		inModel.rootObjects()![RDB::Structure].isModelValid(errorModel.rootObjects()![ErrorLog]);
 		log("");
 	}else{
 		log("modelRoots doesn't conform to RDB::ModelRoot type");
 	}endif;
 }
+query getValidatorPostgresqlId() : String{
+	return "validator_postgresql.qvto";
+}
 
-query rdb::Structure::isModelValid():Boolean{
-	var invalidityString : String := "";
-
+query rdb::Structure::isModelValid(inout errorLog : ErrorLog ):Boolean{
 	var tableUnique : Boolean := true;
 	var schemaUnique : Boolean := true;
 	var columnUnique : Boolean := true;
@@ -53,11 +57,14 @@ query rdb::Structure::isModelValid():Boolean{
 	//kontrola identifikatoru schematu
 	schemas->forEach(schema){
 		if(not schema.hasUniqueName())then{
-			invalidityString := invalidityString + "Schema \"" + schema.name + "\" has duplicit name as another schema in generation \n";
+			var errorMessage : String := "Schema \"" + schema.name + "\" has duplicit name as another schema in "
+				+"generation";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			schemaUnique := false;
 		}endif;	
 		if(not isValidIdentifier(schema.name))then{
-			invalidityString := invalidityString + "Invalid schema identifier \"" + schema.name + "\"\n";
+			var errorMessage : String := "Invalid schema identifier \"" + schema.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			validIdentifiers:= false;
 		}endif;
 	};
@@ -65,72 +72,56 @@ query rdb::Structure::isModelValid():Boolean{
 	//kontrola identifikatoru tabulky
 	tables->forEach(table){
 		if(not table.hasUniqueName())then{
-			invalidityString := invalidityString + "Schema \"" + table.owningSchema.name + "\" contains duplicit table name - \"" 
-			+ table.name + "\"\n";
+			var errorMessage : String := "Schema \"" + table.owningSchema.name + "\" contains duplicit table name - \"" 
+				+ table.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			tableUnique := false;
 		}endif;
 		if(not isValidIdentifier(table.name))then{
-			invalidityString := invalidityString + "Invalid table identifier \"" + table.name + "\"\n";
+			var errorMessage : String := "Invalid table identifier \"" + table.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			validIdentifiers:= false;			
 		}endif;
 	};
 	//kontrola identifikatoru sloupce
 	tables->columns->forEach(column){
 		if(not column.hasUniqueName())then{
-			invalidityString := invalidityString + ("Schema \"" + column.owningTable.owningSchema.name + "\" contains duplicit " 
-			+ "column name \"" + column.name + "\"\n") ;
+			var errorMessage : String := "Schema \"" + column.owningTable.owningSchema.name + "\" contains duplicit " 
+				+ "column name \"" + column.name + "\"\n";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			columnUnique := false;
 		}endif;
 		if(not isValidIdentifier(column.name))then{
-			invalidityString := invalidityString + "Invalid column identifier \"" + column.name + "\"\n";
+			var errorMessage : String := "Invalid column identifier \"" + column.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			validIdentifiers:= false;
 		}endif;
 	};
 	
 	tables->constraints->forEach(constraint){
 		if(not constraint.hasUniqueName())then{
-			invalidityString := invalidityString + ("Schema \"" + constraint.owningTable.owningSchema.name + 
-			"\" contains constraint with duplicit name \"" + constraint.name + "\"\n") ;
+			var errorMessage : String := "Schema \"" + constraint.owningTable.owningSchema.name + 
+					"\" contains constraint with duplicit name \"" + constraint.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			constraintUnique := false;
 		}endif;
 		if(not isValidIdentifier(constraint.name))then{
-			invalidityString := invalidityString + "Invalid table constraint identifier \"" + constraint.name + "\"\n";
+			var errorMessage : String := "Invalid table constraint identifier \"" + constraint.name + "\"";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			validIdentifiers := false;
 		}endif;
 	};
 	
 	tables->forEach(tbl){
 		if(tbl.hasRedundantId())then{
-			invalidityString := invalidityString + "Table \"" + tbl.name + "\" in schema \"" + tbl.owningSchema.name + 
-			"\" has redundant PK count.\n";
+			var errorMessage : String := "Table \"" + tbl.name + "\" in schema \"" + tbl.owningSchema.name 
+					+ "\" has redundant PK count.";
+			errorLog.errors += _validationError(errorMessage, getValidatorPostgresqlId());
 			pkCount := false;
 		}endif;
 	};
 	
-	var valid : Boolean := tableUnique and columnUnique and schemaUnique and constraintUnique and pkCount and validIdentifiers;
-	
-	if(not valid)then{
-		if(not schemaUnique)then{
-			invalidityString := invalidityString + "Model - invalid : ambigous schema names\n";
-		}endif;
-		if(not tableUnique)then{
-			invalidityString := invalidityString + "Model - invalid : ambigous table names\n";
-		}endif;
-		if(not columnUnique)then{
-			invalidityString := invalidityString + "Model - invalid : ambigous column names\n";
-		}endif;
-		if(not constraintUnique)then{
-			invalidityString := invalidityString + "Model - invalid : ambiguous constraint names\n"
-		}endif;
-		if(not pkCount) then {
-			invalidityString := invalidityString + "Model invalid - table contains redundant ID's\n";
-		}endif;
-		if(not validIdentifiers) then {
-			invalidityString := invalidityString + "Model invalid - contains invalid identifiers\n";
-		}endif;
-		log(invalidityString);
-	} else {
-		log("Model is valid");
-	}endif;
+	var valid : Boolean := tableUnique and columnUnique and schemaUnique and constraintUnique and pkCount 
+			and validIdentifiers;
 	return valid;
 }

@@ -49,6 +49,20 @@ helper _addProperty(_owningClassName : String, _name : String, _type : String) :
 	}
 }
 
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type); 
+	addProperty.lowerBound := _lowerBound;
+	addProperty.upperBound := _upperBound;
+	return addProperty;
+}
+
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, _lowerBound, _upperBound); 
+	addProperty.defaultValue := _defaultValue;
+	return addProperty;
+}
+
+
 helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
 	return object APP::ops::RenameProperty {
 		owningClassName := _owningClassName;
