@@ -47,7 +47,7 @@ query Structure::print(){
 	}	
 }
 
-query RDB::Structure::isSchemaInGeneration(sName : String) : Boolean {
+query RDB::Structure::containsSchema(sName : String) : Boolean {
 	return self.schemas->exists(name = sName);
 }
 
@@ -84,13 +84,10 @@ query RDB::Structure::findTable(sName : String, tName : String) : RDB::Table {
 	return self.findSchema(sName).tables->selectOne(name = tName);
 }
 
-query RDB::Structure::isConstraintForTable(sName : String, tName : String, rName : String) : Boolean {
-	return self.findTable(sName, tName).constraints->exists(name = rName);
-}
-
 /*********************************** COLUMN ************************************/
+
 query RDB::Structure::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
-	return self.findTable(sName, tName).columns->exists(name = cName);
+    return self.findTable(sName, tName).columns->exists(name = cName);
 }
 
 query RDB::Structure::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
@@ -111,6 +108,14 @@ query RDB::Structure::findColumns(sName : String, tName : String, cNames : Order
 
 
 /********************************** CONSTRAINT **********************************/
+query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, constraintName : String) : Boolean{
+	return self.findTable(owningSchema, owningTable).constraints->exists(c | c.name = constraintName);	
+}
+
+query RDB::Structure::hasConstraintUniqueName(constraintName : String) : Boolean {
+		return self.schemas->tables->constraints->select(const | const.name = constraintName)->size() = 1;
+}
+
 query RDB::Structure::findConstraint(sName : String, tName : String, rName : String) : RDB::Constraint {
 	return self.findTable(sName, tName).constraints->selectOne(name = rName);
 }

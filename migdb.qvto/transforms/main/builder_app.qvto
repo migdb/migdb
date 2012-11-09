@@ -35,7 +35,7 @@ helper _renameEntity(_name : String, _newName : String) : APP::ops::RenameEntity
 	}
 }
 
-helper _removeEntiry(_name : String) : APP::ops::RemoveEntity {
+helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
 	return object APP::ops::RemoveEntity {
 		name := _name;
 	}
