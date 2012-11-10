@@ -65,16 +65,22 @@
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
           eType="#//rdb/Table" derived="true" eOpposite="#//rdb/Table/constraints"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="ColumnConstraint" abstract="true"
+        eSuperTypes="#//rdb/Constraint">
       <eStructuralFeatures xsi:type="ecore:EReference" name="constrainedColumn" lowerBound="1"
           eType="#//rdb/Column"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="Unique" eSuperTypes="#//rdb/Constraint"/>
-    <eClassifiers xsi:type="ecore:EClass" name="PrimaryKey" eSuperTypes="#//rdb/Constraint"/>
-    <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/Constraint">
+    <eClassifiers xsi:type="ecore:EClass" name="Unique" eSuperTypes="#//rdb/Constraint">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="UniqueColumns" upperBound="-1"
+          eType="#//rdb/Column"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PrimaryKey" eSuperTypes="#//rdb/ColumnConstraint"/>
+    <eClassifiers xsi:type="ecore:EClass" name="ForeignKey" eSuperTypes="#//rdb/ColumnConstraint">
       <eStructuralFeatures xsi:type="ecore:EReference" name="targetTable" lowerBound="1"
           eType="#//rdb/Table"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="NotNull" eSuperTypes="#//rdb/Constraint"/>
+    <eClassifiers xsi:type="ecore:EClass" name="NotNull" eSuperTypes="#//rdb/ColumnConstraint"/>
     <eClassifiers xsi:type="ecore:EEnum" name="PrimitiveType">
       <eLiterals name="boolean"/>
       <eLiterals name="char" value="1"/>
