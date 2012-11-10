@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/migdb.mm.errors/src"
+    modelPluginID="migdb.mm.errors" modelName="Mm-errors" importerID="org.eclipse.emf.importer.ecore"
+    complianceLevel="6.0" copyrightFields="false">
+  <foreignModel>mm-errors.ecore</foreignModel>
+  <genPackages prefix="Mm" disposableProviderFactory="true" ecorePackage="mm-errors.ecore#/">
+    <nestedGenPackages prefix="Errors" disposableProviderFactory="true" ecorePackage="mm-errors.ecore#//errors">
+      <genClasses ecoreClass="mm-errors.ecore#//errors/ErrorLog">
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference mm-errors.ecore#//errors/ErrorLog/errors"/>
+      </genClasses>
+      <genClasses image="false" ecoreClass="mm-errors.ecore#//errors/Error">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-errors.ecore#//errors/Error/message"/>
+        <genFeatures notify="false" createChild="false" propertySortChoices="true"
+            ecoreFeature="ecore:EReference mm-errors.ecore#//errors/Error/owningLog"/>
+      </genClasses>
+      <genClasses ecoreClass="mm-errors.ecore#//errors/ValidationError"/>
+      <genClasses ecoreClass="mm-errors.ecore#//errors/EvolutionError">
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-errors.ecore#//errors/EvolutionError/operationIndex"/>
+        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute mm-errors.ecore#//errors/EvolutionError/transformationName"/>
+      </genClasses>
+    </nestedGenPackages>
+  </genPackages>
+</genmodel:GenModel>

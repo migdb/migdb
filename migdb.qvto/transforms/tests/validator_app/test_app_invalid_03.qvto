@@ -3,7 +3,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation secondAPP(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy");	
+	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy - self parent");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var country : APP::StandardClass := object StandardClass{

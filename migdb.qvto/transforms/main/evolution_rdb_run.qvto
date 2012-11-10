@@ -1,0 +1,24 @@
+import evolution_rdb;
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation evolutionAtomicRdbRun(in inStructure : RDB, in inOperations : RDB ,out outStructure : RDB, out errorLog : ERR);
+
+main() {
+	var operations : OrderedSet(RDB::ops::ModelOperation) := inOperations.rootObjects()![RDB::Operations].operations;
+	var errorLog : ErrorLog := _errorLog(OrderedSet{});
+	//default copying root object to output model
+	inStructure.rootObjects().deepclone();
+	var structure : RDB::Structure := outStructure.rootObjects()![RDB::Structure];	
+	var isValid : Boolean := true;
+	var operationIndex : Integer := 1;
+	operations->forEach(op){
+		if(op.isValid(structure, errorLog, operationIndex))then{
+			op.apply(structure);
+		}else{
+			isValid := false;
+		}endif;
+	};
+	log("evolution rdb finished");		 
+}

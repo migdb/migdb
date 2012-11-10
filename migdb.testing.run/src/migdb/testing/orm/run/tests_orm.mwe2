@@ -5,7 +5,7 @@ import org.eclipse.xtext.mwe.*
 
 
 import org.eclipse.xtext.mwe.SlotEntry
-import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+//import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.xtext.mwe.Validator
 import org.eclipse.xtext.mwe.NameBasedFilter
 

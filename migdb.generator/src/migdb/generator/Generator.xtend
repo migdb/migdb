@@ -158,7 +158,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(AddUniqueImpl operation) '''
 		ALTER TABLE «operation.owningSchemaName».«operation.owningTableName»
-			ADD CONSTRAINT «operation.name» UNIQUE («operation.constrainedColumnName»);
+			ADD CONSTRAINT «operation.name» UNIQUE ((«FOR col : operation.constrainedColumnNames SEPARATOR ","»«col»«ENDFOR»));
 	'''	
 	
 	/**

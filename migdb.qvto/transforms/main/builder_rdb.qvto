@@ -40,11 +40,11 @@ helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name :
 	};
 }
 
-helper _addUnique(_owningSchemaName : String, _owningTableName : String, _constrainedColumnName : String, _name : String) : RDB::ops::AddUnique{
+helper _addUnique(_owningSchemaName : String, _owningTableName : String, _constrainedColumnNames : OrderedSet(String), _name : String) : RDB::ops::AddUnique{
 	return object RDB::ops::AddUnique {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
-		constrainedColumnName := _constrainedColumnName;
+		constrainedColumnNames := _constrainedColumnNames;
 		name := _name;
 		
 	};
@@ -305,10 +305,10 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
-  helper _unique(_name : String, _constrainedColumn : Column) : RDB::Unique{
+  helper _unique(_name : String, _constrainedColumns : OrderedSet(Column)) : RDB::Unique{
  	return object Unique{
  		name := _name;
- 		constrainedColumn := _constrainedColumn;
+ 		uniqueColumns := _constrainedColumns;
 	};
  }
  

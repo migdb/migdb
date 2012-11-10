@@ -239,6 +239,11 @@ query APP::Structure::containsGeneralClass(className : String) : Boolean {
 	return self.findEntity(className).oclIsKindOf(APP::GeneralClass);
 }
 
+query APP::Structure::containsStandardClass(className : String) : Boolean {
+	return self.findEntity(className).oclIsKindOf(APP::StandardClass);
+}
+
+
 query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
 	return self.entities![name = eName];
 }
@@ -314,7 +319,7 @@ query APP::Structure::findClass(className : String) : APP::StandardClass {
 	return self.findEntity(className).oclAsType(APP::StandardClass);
 }
 
-query APP::Structure::areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
+query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
@@ -430,4 +435,8 @@ query app::Operations::print(){
 	self->operations->forEach(op){
 		log(op.repr());
 	}
+}
+
+query app::StandardClass::isRoot():Boolean{
+	return self.parent = null;
 }

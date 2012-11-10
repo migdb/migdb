@@ -8,12 +8,14 @@ import orm;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
 
 /**
 	There is problem with the same types of models - if rOperations is inModel DbOperations are collected in outRStructure
 **/
 transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB);
+	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB, inout errorModel : ERR);
 
 main() {
 	//outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
@@ -22,11 +24,14 @@ main() {
 	inRStructure.rootObjects().deepclone();
 	
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
-	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];	
-	var isValid : Boolean := processedAStructure.isModelValid();
+	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];
+	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
+	processedAStructure.isModelValid(errorLog);
 	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
-	//forEach is also if due to isValid condition
-	appOperations.rootObjects()![APP::Operations]->operations->forEach(op | isValid){
+	var operationIndex : Integer := 1;
+	
+	//forEach operation - doesn't stop on invalid operation because errors in operations can be independent
+	appOperations.rootObjects()![APP::Operations]->operations->forEach(op){
 		var atomicOperations : OrderedSet(APP::ops::AtomicOperation); 
 		if(op.oclIsKindOf(APP::ops::DecomposableOperation))then{
 			atomicOperations := op.oclAsType(APP::ops::DecomposableOperation).decompose(processedAStructure);
@@ -37,27 +42,23 @@ main() {
 		}endif;
 		atomicOperations->forEach(atomicOp){
 		//check atomicOperation validity
-			if(atomicOp.isValid(processedAStructure))then{
+			if(atomicOp.isValid(processedAStructure, errorLog, operationIndex))then{
 				// map throught ORM - TODO
 				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(processedAStructure);
 				outRdbOps.operations+=dbOps;
 				//apply dbOps
 				dbOps->forEach(dbOp){
 					//log("check executer " + dbOp.isValid(processedRStructure).repr());
-					if(dbOp.isValid(processedRStructure))then{
+					if(dbOp.isValid(processedRStructure, errorLog, operationIndex))then{
 						dbOp.apply(processedRStructure);
 					}else{
-						//log and "break"
-						//isValid := false;
+						//log and "break" only set of Mapped operations from AtomicAppOp
 						log("rdb_operation not valid in current context " + dbOp.repr());
 						break;
 					}endif;
 				};
-				op.apply(processedAStructure);
-			}else{
-				//log and "break"
-				log("app_operation " + op.repr() +"not valid in current context ");
-				isValid := false;
+				atomicOp.apply(processedAStructure);
+				operationIndex := operationIndex + 1;
 			}endif;
 		};
 	};

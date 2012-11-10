@@ -47,93 +47,94 @@ query Structure::print(){
 	}	
 }
 
-query RDB::Structure::isSchemaInGeneration(sName : String) : Boolean {
-	return self.schemas->exists(name = sName);
+query RDB::Structure::containsSchema(schemaName : String) : Boolean {
+	return self.schemas->exists(name = schemaName);
 }
 
-query RDB::Structure::findSchema(sName : String) : RDB::Schema {
-	return self.schemas->selectOne(name = sName);
+query RDB::Structure::findSchema(schemaName : String) : RDB::Schema {
+	return self.schemas->selectOne(name = schemaName);
 }
 
 
 /********************************** SEQUENCE ************************************/
-query RDB::Structure::isSequenceInSchema(sName : String, qName : String) : Boolean {
-	return self.findSchema(sName).sequence != null;
+query RDB::Structure::containsSequenceInSchema(schemaName : String, sequenceName : String) : Boolean {
+	return self.findSchema(schemaName).sequence != null;
 }
 
 
 /************************************ INDEX *************************************/
-query RDB::Structure::isIndexInSchema(sName : String, iName : String) : Boolean {
-	return self.findSchema(sName).indexes->exists(name = iName);
+query RDB::Structure::containsIndexInSchema(schemaName : String, indexName : String) : Boolean {
+	return self.findSchema(schemaName).indexes->exists(name = indexName);
 }
 
-query RDB::Structure::findIndex(sName : String, iName : String) : RDB::Index {
-	return self.findSchema(sName).indexes->selectOne(name = iName);
+query RDB::Structure::findIndex(schemaName : String, indexName : String) : RDB::Index {
+	return self.findSchema(schemaName).indexes->selectOne(name = indexName);
 }
 
 /*********************************** TABLE *************************************/
-query RDB::Structure::isTableInSchema(sName : String, tName : String) : Boolean {
-	return self.findSchema(sName).tables->exists(name = tName);
+query RDB::Structure::containsTableInSchema(schemaName : String, tableName : String) : Boolean {
+	return self.findSchema(schemaName).tables->exists(name = tableName);
 }
 
-query RDB::Structure::areTablesInSchema(sName : String, tNames : OrderedSet(String)) : Boolean {
-	return tNames->forAll(name | self.isTableInSchema(sName, name));
+query RDB::Structure::containsTablesInSchema(schemaName : String, tableNames : OrderedSet(String)) : Boolean {
+	return tableNames->forAll(name | self.containsTableInSchema(schemaName, name));
 }
 
-query RDB::Structure::findTable(sName : String, tName : String) : RDB::Table {
-	return self.findSchema(sName).tables->selectOne(name = tName);
-}
-
-query RDB::Structure::isConstraintForTable(sName : String, tName : String, rName : String) : Boolean {
-	return self.findTable(sName, tName).constraints->exists(name = rName);
+query RDB::Structure::findTable(schemaName : String, tableName : String) : RDB::Table {
+	return self.findSchema(schemaName).tables->selectOne(name = tableName);
 }
 
 /*********************************** COLUMN ************************************/
-query RDB::Structure::isColumnInTable(sName : String, tName : String, cName : String) : Boolean {
-	return self.findTable(sName, tName).columns->exists(name = cName);
+
+query RDB::Structure::containsColumnInTable(schemaName : String, tableName : String, cName : String) : Boolean {
+    return self.findTable(schemaName, tableName).columns->exists(name = cName);
 }
 
-query RDB::Structure::areColumnsInTable(sName : String, tName : String, cNames : OrderedSet(String)) : Boolean {
-	return cNames->forAll(name | self.isColumnInTable(sName, tName, name));
+query RDB::Structure::containsColumnsInTable(schemaName : String, tableName : String, cNames : OrderedSet(String)) : Boolean {
+	return cNames->forAll(name | self.containsColumnInTable(schemaName, tableName, name));
 }
 
-query RDB::Structure::findColumn(sName : String, tName : String, cName : String) : RDB::Column {
-	return self.findTable(sName, tName).columns->selectOne(name = cName);
+query RDB::Structure::findColumn(schemaName : String, tableName : String, cName : String) : RDB::Column {
+	return self.findTable(schemaName, tableName).columns->selectOne(name = cName);
 }
 
-query RDB::Structure::findColumns(sName : String, tName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
+query RDB::Structure::findColumns(schemaName : String, tableName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
 	var columns : OrderedSet(RDB::Column);
 	cNames->forEach(cName) {
-		columns += self.findColumn(sName, tName, cName);
+		columns += self.findColumn(schemaName, tableName, cName);
 	};
 	return columns;
 }
 
 
 /********************************** CONSTRAINT **********************************/
-query RDB::Structure::findConstraint(sName : String, tName : String, rName : String) : RDB::Constraint {
-	return self.findTable(sName, tName).constraints->selectOne(name = rName);
+query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, constraintableName : String) : Boolean{
+	return self.findTable(owningSchema, owningTable).constraints->exists(c | c.name = constraintableName);	
 }
 
-query RDB::Structure::isConstrainedColumn(sName : String, tName : String, cName : String) : Boolean {
-	var table : RDB::Table = self.findTable(sName, tName);
-	return self.findTable(sName, tName).constraints->exists(constrainedColumn.name = cName);
+query RDB::Structure::hasConstraintUniqueName(constraintableName : String) : Boolean {
+		return self.schemas->tables->constraints->select(const | const.name = constraintableName)->size() = 1;
 }
+
+query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::Constraint {
+	return self.findTable(schemaName, tableName).constraints->selectOne(name = rName);
+}
+
 
 
 /********************************* COLUMN TYPE *********************************/
 
-query RDB::Structure::isSameColumnName(sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(sName, tNameA, cNameA).name = self.findColumn(sName, tNameB, cNameB).name;
+query RDB::Structure::isSameColumnName(schemaName : String, tableNameA : String, cNameA : String, tableNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(schemaName, tableNameA, cNameA).name = self.findColumn(schemaName, tableNameB, cNameB).name;
 }
 
-query RDB::Structure::isSameColumnType (sName : String, tNameA : String, cNameA : String, tNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(sName, tNameA, cNameA).type = self.findColumn(sName, tNameB, cNameB).type;
+query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String, cNameA : String, tableNameB : String, cNameB : String) : Boolean {
+	return self.findColumn(schemaName, tableNameA, cNameA).type = self.findColumn(schemaName, tableNameB, cNameB).type;
 }
 
-query RDB::Structure::areSameColumnsTypes (sName : String, tNameA : String, cNameA : OrderedSet(String), tNameB : String) : Boolean {
+query RDB::Structure::areSameColumnsTypes (schemaName : String, tableNameA : String, cNameA : OrderedSet(String), tableNameB : String) : Boolean {
 	// TODO there is no check for order of columns
-	return cNameA->forAll(name | self.findColumn(sName, tNameB, name).type = self.findColumn(sName, tNameA, name));
+	return cNameA->forAll(name | self.findColumn(schemaName, tableNameB, name).type = self.findColumn(schemaName, tableNameA, name));
 }
 
 /**+++++++++++++++++++++ Validator queries +++++++++++++++++++++++**/
@@ -150,16 +151,16 @@ query rdb::Table::containsDiscriminator():Boolean{
 	return self.columns->select(col | col.name ="discriminator")->size()=1;
 }
 
-query rdb::Schema::getFirstAvailableFKName(in firstName:String, in secondName:String):String{
+query rdb::Schema::getFirstAvailableFKName(in firstableName:String, in secondName:String):String{
 	var potencialIndex:Integer := 0;	
 	while(true){
 		potencialIndex := potencialIndex+1;
-		if(not self->tables->constraints[rdb::ForeignKey]->exists(fk | fk.name = "FK_" + firstName +"_" + secondName +"_" + potencialIndex.toString() ))then{		
+		if(not self->tables->constraints[rdb::ForeignKey]->exists(fk | fk.name = "FK_" + firstableName +"_" + secondName +"_" + potencialIndex.toString() ))then{		
 			break;
 		}endif;
 	};
 	
-	return "FK_" + firstName + "_" + secondName + "_" + potencialIndex.toString();
+	return "FK_" + firstableName + "_" + secondName + "_" + potencialIndex.toString();
 }
 
 query RDB::Table::hasRedundantId() : Boolean{

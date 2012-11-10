@@ -24,7 +24,7 @@ main() {
 	var fk : RDB::ForeignKey := _foreignKey("FK_first_second", table2, columnFK);
 	table.constraints += fk;
 
-	var uq : RDB::Unique := _unique("UQ_uniq", columnUQ);
+	var uq : RDB::Unique := _unique("UQ_uniq", OrderedSet{columnUQ});
 	table.constraints += uq;
 	
 	var nn : RDB::NotNull := _notNull("NN_uniq", columnUQ);
