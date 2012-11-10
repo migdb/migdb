@@ -30,7 +30,7 @@ main() {
 	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	
-	//forEach is also if due to isValid condition
+	//forEach operation - doesn't stop on invalid operation because errors in operations can be independent
 	appOperations.rootObjects()![APP::Operations]->operations->forEach(op){
 		var atomicOperations : OrderedSet(APP::ops::AtomicOperation); 
 		if(op.oclIsKindOf(APP::ops::DecomposableOperation))then{
@@ -42,27 +42,23 @@ main() {
 		}endif;
 		atomicOperations->forEach(atomicOp){
 		//check atomicOperation validity
-			if(atomicOp.isValid(processedAStructure))then{
+			if(atomicOp.isValid(processedAStructure, errorLog, operationIndex))then{
 				// map throught ORM - TODO
 				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(processedAStructure);
 				outRdbOps.operations+=dbOps;
 				//apply dbOps
 				dbOps->forEach(dbOp){
 					//log("check executer " + dbOp.isValid(processedRStructure).repr());
-					if(dbOp.isValid(processedRStructure))then{
+					if(dbOp.isValid(processedRStructure, errorLog, operationIndex))then{
 						dbOp.apply(processedRStructure);
 					}else{
-						//log and "break"
-						//isValid := false;
+						//log and "break" only set of Mapped operations from AtomicAppOp
 						log("rdb_operation not valid in current context " + dbOp.repr());
 						break;
 					}endif;
 				};
-				op.apply(processedAStructure);
-			}else{
-				//log and "break"
-				log("app_operation " + op.repr() +"not valid in current context ");
-				isValid := false;
+				atomicOp.apply(processedAStructure);
+				operationIndex := operationIndex + 1;
 			}endif;
 		};
 	};

@@ -21,7 +21,7 @@ main() {
 	var fk : RDB::ForeignKey := _foreignKey("FK_first_second", table2, columnFK);
 	table.constraints += fk;
 
-	var uq : RDB::Unique := _unique("UQ_uniq", columnUQ);
+	var uq : RDB::Unique := _unique("UQ_uniq", OrderedSet{columnUQ});
 	table.constraints += uq;
 	
 	var model : RDB::ModelRoot :=_rdbStructure(Set{_schema("public", OrderedSet{table, table2}, _sequence("seq_global", 1), OrderedSet{index})});

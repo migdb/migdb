@@ -245,10 +245,20 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("ADD CONSTRAINT ");
     String _name = operation.getName();
     _builder.append(_name, "	");
-    _builder.append(" UNIQUE (");
-    String _constrainedColumnName = operation.getConstrainedColumnName();
-    _builder.append(_constrainedColumnName, "	");
-    _builder.append(");");
+    _builder.append(" UNIQUE ((");
+    {
+      EList<String> _constrainedColumnNames = operation.getConstrainedColumnNames();
+      boolean _hasElements = false;
+      for(final String col : _constrainedColumnNames) {
+        if (!_hasElements) {
+          _hasElements = true;
+        } else {
+          _builder.appendImmediate(",", "	");
+        }
+        _builder.append(col, "	");
+      }
+    }
+    _builder.append("));");
     _builder.newLineIfNotEmpty();
     return _builder;
   }

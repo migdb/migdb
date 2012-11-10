@@ -120,10 +120,6 @@ query RDB::Structure::findConstraint(schemaName : String, tableName : String, rN
 	return self.findTable(schemaName, tableName).constraints->selectOne(name = rName);
 }
 
-query RDB::Structure::containsConstrainedColumn(schemaName : String, tableName : String, cName : String) : Boolean {
-	var table : RDB::Table = self.findTable(schemaName, tableName);
-	return self.findTable(schemaName, tableName).constraints->exists(constrainedColumn.name = cName);
-}
 
 
 /********************************* COLUMN TYPE *********************************/

@@ -5,6 +5,7 @@ import validator_app;
 	
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 transformation OrmPerformTest(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
 
@@ -14,6 +15,7 @@ main(){
 	
 	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
 	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
+	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	
 	log("In ops");
 	var appOps :APP::Operations := inOps.rootObjects()![APP::Operations];
@@ -22,7 +24,7 @@ main(){
 	var appStr :APP::Structure := inStr.rootObjects()![APP::Structure];
 	appStr.print();
 	
-	if(canProcessTest(appStr, appOps))then{
+	if(canProcessTest(appStr, appOps, errorLog))then{
 		appOps.operations[APP::ops::AtomicOperation]->forOne(op){
 			log("mapping op \n" + op.repr() + " \nresults:");
 				op.toRdb(appStr)->forEach(rdbOp){
@@ -37,7 +39,7 @@ main(){
 	}endif;
 }
 
-query canProcessTest(structure : APP::Structure, ops : APP::Operations) : Boolean{
+query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout errorLog : ErrorLog) : Boolean{
 	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
 		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->size().repr());
 		return false;
@@ -47,7 +49,7 @@ query canProcessTest(structure : APP::Structure, ops : APP::Operations) : Boolea
 		return false;
 	}endif;
 
-	if(not inStr.rootObjects()![APP::Structure].isModelValid())then{
+	if(not inStr.rootObjects()![APP::Structure].isModelValid(errorLog))then{
 		return false;
 	}endif;
 	return true;	
