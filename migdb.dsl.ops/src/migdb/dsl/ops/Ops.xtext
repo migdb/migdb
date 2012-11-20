@@ -10,7 +10,7 @@ ModelRoot returns app::ModelRoot:
 ;
 
 Operations returns app::Operations:
-	(operations+=ModelOperation ';')*
+	(operations+=ModelOperation)*
 ;
 
 ModelOperation returns ops::ModelOperation:
@@ -48,164 +48,97 @@ DecomposableOperation returns ops::DecomposableOperation:
  */
 //addPrimitiveClass(name, boolean) adds new primitive class by selected type
 AddPrimitiveClass returns ops::AddPrimitiveClass:
-	'addPrimitiveClass('
-		name=EString
-		',' primitiveType=PrimitiveType
-	')'
+	name=ID '=' 'new' 'primitive' primitiveType=PrimitiveType
 ;
 
 //addEmbeddedClass(name) adds new embedded class
 AddEmbeddedClass returns ops::AddEmbeddedClass:
-	'addEmbeddedClass('
-		name=EString
-	')'
+	name=ID '=' 'new' 'embedded'
 ;
 
 //addStandardClass(name, boolean, InheritanceType)
 //adds StandardClass with abstract flag and given maping type in DB
 AddStandardClass returns ops::AddStandardClass:
-	'addStandardClass('	
-		name=EString 
-		(',' ('false' | isAbstract?='true'))? //not required
-		',' inheritanceType=InheritanceType
-	')'
+	name=ID '=' 'new' (isAbstract?='abstract' & inheritanceType=InheritanceType?)? 'class'
 ;
 
 //renameEntity(A, B) renames entity A to B
 RenameEntity returns ops::RenameEntity:
-	'renameEntity('
-		name=EString
-		',' newName=EString
-	')'
+	'set' name=ID '->' newName=ID
 ;
 
 //setParent(A, B) sets A new parent B
 SetParent returns ops::SetParent:
-	'setParent('
-		name=EString
-		',' parentName=EString
-	')'
+	'set' name=ID ('subtype of' parentName=ID)
 ;
 
 //setAbstract(name, boolean) sets/unsets given class as abstract
 SetAbstract returns ops::SetAbstract:
-	'setAbstract('
-		name=EString
-		',' ('false' | isAbstract?='true')
-	')'
+	'set' name=ID ( isAbstract?='abstract' | 'not abstract') 
 ;
 
 //removeEntity(name) removes entity (GeneralClass, PrimitiveClass and all its subtypes)
 RemoveEntity returns ops::RemoveEntity:
-	'removeEntity('
-		name=EString
-	')'
+	'delete' name=ID
 ;
 
-//FIXME: see issue #104
-//addProperty(owningClass, propertyName, propertyType, defaultValue,
-// lowerBound, upperBound, isOrdered, isUnique)
+//addProperty(owningClass, propertyName, propertyType) adds property and its type to a class
 AddProperty returns ops::AddProperty:
-	'AddProperty('
-		owningClassName=EString
-		',' name=EString
-		',' type=EString
+	owningClassName=ID '+=' name=ID ':' type=ID 
 		(
-			',' defaultValue=EString
-			',' lowerBound=EInt
-			',' upperBound=EInt
-			',' ('false' | isOrdered?='true')
-			',' ('false' | isUnique?='true')
-		)?
-    '}';
+			('[' (lowerBound=INT '..')? upperBound=INT ']')?
+			& ('=' defaultValue=ID)?
+			& ('unordered' | isOrdered?='ordered')?
+			& ('not unique' | isUnique?='unique')?
+		)
+ ;
 
 //renamePropety(A, id, identifier) renames A's property id to identifier
 RenameProperty returns ops::RenameProperty:
-	'renameProperty(' 
-		owningClassName=EString
-		',' name=EString
-		',' newName=EString
-	')'
+	'set' owningClassName=ID '.' name=ID '->' newName=ID
 ;
 
 //removePropety(A, id) removes A's property id
 RemoveProperty returns ops::RemoveProperty:
-	'removeProperty('
-		owningClassName=EString
-		',' name=EString
-    ')'
+	owningClassName=ID '-=' name=ID
 ;
 
 //setType(A, id, int) changes type of A's propety id to int
 SetType returns ops::SetType:
-	'setType('
-		owningClassName=EString
-		',' name=EString
-		',' type=EString
-
-    ')'
+	'set' owningClassName=ID '.' name=ID ':' type=ID
 ;
 
 //setOpposite(A, key, B, id, true) creates link between A's key and B's id
 //setOpposite(A, key, B, id, false) destroys link between A's key and B's id
 SetOpposite returns ops::SetOpposite:
-	'setOpposite('
-		firstClassName=EString
-		',' firstPropertyName=EString
-		',' secondClassName=EString
-		',' secondPropertyName=EString
-		',' ('false' | isOpposite?='true')
-    ')'
+	(isOpposite?='link' | 'unlink') firstClassName=ID '.' firstPropertyName=ID '<->' secondClassName=ID '.' secondPropertyName=ID
 ;
 
 //setBounds(A, list, 0, 50) sets bounds to A's property list to 0,50 (lower, upper)
 SetBounds returns ops::SetBounds:
-	'setBounds('
-		owningClassName=EString
-		',' name=EString
-		',' lowerBound=EInt
-		',' upperBound=EInt
-    ')'
+	'set' owningClassName=ID '.' name=ID '['(lowerBound=INT '..')? upperBound=INT ']'
 ;
 
 //setOrdered(A, list, true) sets A's property list as ordered
 //setOrdered(A, list, false) sets A's property list as unordered
 SetOrdered returns ops::SetOrdered:
-	'setOrdered('
-		owningClassName=EString
-		',' name=EString
-		',' ('false' | isOrdered?='true')
-    ')'
+	'set' owningClassName=ID '.' name=ID (isOrdered?='ordered' | 'unordered')
 ;
 
 //setUnique(A, list, true) sets A's property list as unique
 //setUnique(A, list, false) unsets unique status of A's property list
 SetUnique returns ops::SetUnique:
-	'setUnique('
-		owningClassName=EString
-		',' name=EString
-		',' ('false' | isUnique?='true')
-    ')'
+	'set' owningClassName=ID '.' name=ID (isUnique?='unique' | 'not unique')
 ;
 
 //copyPropety(A, id, B, MergeType) copies A's property id to B by selected MergeType
 CopyProperty returns ops::CopyProperty:
-	'copyProperty('
-		owningClassName=EString
-		',' name=EString
-		',' targetClassName=EString
-		',' type=MergeType
-    ')'
+	 'copy' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
 ;
 
 //movePropety(A, id, B, MergeType) moves (and deletes) A's property id to B by selected MergeType
 MoveProperty returns ops::MoveProperty:
-	'moveProperty('
-		owningClassName=EString
-		',' name=EString
-		',' targetClassName=EString
-		',' type=MergeType
-    ')'
+	'move' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
 ;
 
 
@@ -214,30 +147,22 @@ MoveProperty returns ops::MoveProperty:
  */
 //extractClass(A, {id, name}, B) creates B and moves A's properties {id, name} to created B
 ExtractClass returns ops::ExtractClass:
-	'extractClass('
-		sourceClassName=EString
-		',' '{' extractPropertiesNames+=EString ( "," extractPropertiesNames+=EString)* '}' 
-		',' extractClassName=EString
-    ')'
+	'extract' sourceClassName=ID '.' '[' extractPropertiesNames+=ID ( "," extractPropertiesNames+=ID)* ']' '->' extractClassName=ID
 ;
 
 //extractParent({A, B}, {id, name}, C)
 // creates C, sets C as parent of A and B and moves A's and B's properties {id, name} to C
 ExtractParent returns ops::ExtractParent:
-	'extractParent('
-		'{' sourceClassesName+=EString ( "," sourceClassesName+=EString)* '}' 
-		',' '{' extractPropertiesName+=EString ( "," extractPropertiesName+=EString)* '}' 
-		',' extractParentName=EString
-    ')'
+	'extract' '[' sourceClassesName+=ID ( "," sourceClassesName+=ID)* ']' '.' '[' extractPropertiesName+=ID ( "," extractPropertiesName+=ID)* ']' 
+		'->' extractParentName=ID
 ;
-
 
 /**
  */
 enum MergeType returns ops::MergeType:
-	strict = 'strict'
-	| force = 'force'
-	| tolerant = 'tolerant'
+	strict = 'strictly'
+	| force = 'forcibly'
+	| tolerant = 'tolerantly'
 ;
 
 enum PrimitiveType returns app::PrimitiveType:
@@ -252,16 +177,9 @@ enum InheritanceType returns app::InheritanceType:
 	| singleTable = 'singleTable'
 ;
 
-EString returns ecore::EString:
-	STRING
-	| ID
-;
-
 EBoolean returns ecore::EBoolean:
 	'true'
 	| 'false'
 ;
 
-EInt returns ecore::EInt:
-	'-'? INT
-;
+terminal ID  		: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;

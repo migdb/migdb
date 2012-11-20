@@ -20,7 +20,6 @@ Workflow {
 		}
 		
 		registerGenModelFile = "platform:/resource/migdb.mm.app/models/mm-app.genmodel"
-	
 	}
 
 	component = DirectoryCleaner {
@@ -107,12 +106,11 @@ Workflow {
 
 			fragment = builder.BuilderIntegrationFragment {}
 
-			// project wizard (optional) 
-
-			// fragment = projectWizard.SimpleProjectWizardFragment {
-			//		generatorProjectName = "${projectName}.generator" 
-			//		modelFileExtension = file.extensions
-			// }
+//			// project wizard (optional) 
+//			 fragment = projectWizard.SimpleProjectWizardFragment {
+//					generatorProjectName = "${projectName}.generator" 
+//					modelFileExtension = file.extensions
+//			 }
 
 			// quickfix API 
 			fragment = quickfix.QuickfixProviderFragment {}
