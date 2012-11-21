@@ -8,7 +8,7 @@ ModelRoot returns app::ModelRoot:
 ;
 
 Structure returns app::Structure:
-	(entities+=ModelEntity ';')*
+	(entities+=ModelEntity)*
 ;
 
 ModelEntity returns app::ModelEntity:
@@ -22,7 +22,7 @@ GeneralClass returns app::GeneralClass:
 ;
 
 PrimitiveClass returns app::PrimitiveClass:
-	'primitive'	name=EString ':' primitiveType=PrimitiveType
+	'primitive'	name=ID ':' primitiveType=PrimitiveType
 ;
 
 /**
@@ -30,19 +30,18 @@ PrimitiveClass returns app::PrimitiveClass:
  */
 EmbeddedClass returns app::EmbeddedClass:
 	'embedded'
-	name=EString
+	name=ID
 	'{'
-		'id' idProperty=[app::EmbeddedProperty|EString] //FIXME: reference???
-		embeddedProperties+=[app::EmbeddedProperty|EString] (embeddedProperties+=[app::EmbeddedProperty|EString])* //FIXME: reference???
+		'id' idProperty=[app::EmbeddedProperty|ID] //FIXME: reference???
+		embeddedProperties+=[app::EmbeddedProperty|ID] (embeddedProperties+=[app::EmbeddedProperty|ID])* //FIXME: reference???
     '}'
 ;
 
 StandardClass returns app::StandardClass:
-	'standard'
-	(isAbstract?='abstract')?
-	name=EString ('extends' parent=[app::StandardClass|EString] 'by' inheritanceType=InheritanceType)?
+	(isAbstract?='abstract')? 'class'
+	name=ID ('extends' parent=[app::StandardClass|ID] 'by' inheritanceType=InheritanceType)?
 	'{'
-		('id' idProperty=[app::PrimitiveProperty|EString])? //FIXME: reference???
+		('id' idProperty=[app::PrimitiveProperty|ID])? //FIXME: reference???
 		(properties+=MultipliableProperty (properties+=MultipliableProperty)*)?
     '}'
 ;
@@ -60,7 +59,7 @@ MultipliableProperty returns app::MultipliableProperty:
 ;
 
 EmbeddedProperty returns app::EmbeddedProperty:
-	'EmbeddedProperty' isMandatory?='mandatory'	name=EString ':' type=[app::PrimitiveClass|EString]
+	'EmbeddedProperty' isMandatory?='mandatory'	name=ID ':' type=[app::PrimitiveClass|ID]
 ;
 
 
@@ -69,15 +68,15 @@ PrimitiveProperty returns app::PrimitiveProperty:
 	(
 		isOrdered?='ordered'? &	isUnique?='unique'?
 	)
-	name=EString
+	name=ID
 	(
 		'['
-			upperBound=EInt
-			| (lowerBound=EInt '..'upperBound=EInt)
+			upperBound=INT
+			| (lowerBound=INT '..'upperBound=INT)
 		']'
 	)?
-	':' type=[app::PrimitiveClass|EString]
-	('=' defaultValue=EString)?
+	':' type=[app::PrimitiveClass|ID]
+	('=' defaultValue=ID)?
 ;
 
 
@@ -86,15 +85,15 @@ AssociationProperty returns app::AssociationProperty:
 	(
 		isOrdered?='ordered'? &	isUnique?='unique'?
 	)
-	name=EString
+	name=ID
 	(
 		'['
-			upperBound=EInt
-			| (lowerBound=EInt '..'upperBound=EInt)
+			upperBound=INT
+			| (lowerBound=INT '..'upperBound=INT)
 		']'
 	)?
-	('oposite' oppositeProperty=[app::AssociationProperty|EString])?
-	':' type=[app::StandardClass|EString]
+	('oposite' oppositeProperty=[app::AssociationProperty|ID])?
+	':' type=[app::StandardClass|ID]
 ;
 
 NestedProperty returns app::NestedProperty:
@@ -102,14 +101,14 @@ NestedProperty returns app::NestedProperty:
 	(
 		isOrdered?='ordered'? &	isUnique?='unique'?
 	)
-	name=EString
+	name=ID
 		(
 		'['
-			upperBound=EInt
-			| (lowerBound=EInt '..'upperBound=EInt)
+			upperBound=INT
+			| (lowerBound=INT '..'upperBound=INT)
 		']'
 	)?
-	':' type=[app::EmbeddedClass|EString]
+	':' type=[app::EmbeddedClass|ID]
 ;
 
 enum PrimitiveType returns app::PrimitiveType:
@@ -118,16 +117,10 @@ enum PrimitiveType returns app::PrimitiveType:
 	| int = 'int'
 ;
 
-
 enum InheritanceType returns app::InheritanceType:
 	joined = 'joined'
 	| tablePerClass = 'tablePerClass'
 	| singleTable = 'singleTable'
-;
-
-EString returns ecore::EString:
-	STRING
-	| ID
 ;
 
 EBoolean returns ecore::EBoolean:
@@ -135,6 +128,6 @@ EBoolean returns ecore::EBoolean:
 	| 'false'
 ;
 
-EInt returns ecore::EInt:
-	'-'? INT
+terminal ID:
+	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 ;

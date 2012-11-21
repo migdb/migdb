@@ -48,54 +48,61 @@ DecomposableOperation returns ops::DecomposableOperation:
  */
 //addPrimitiveClass(name, boolean) adds new primitive class by selected type
 AddPrimitiveClass returns ops::AddPrimitiveClass:
-	name=ID '=' 'new' 'primitive' primitiveType=PrimitiveType
+	name=ID '=' /*'new'*/ 'primitive' primitiveType=PrimitiveType
 ;
 
 //addEmbeddedClass(name) adds new embedded class
 AddEmbeddedClass returns ops::AddEmbeddedClass:
-	name=ID '=' 'new' 'embedded'
+	name=ID '=' /*'new'*/ 'embedded'
 ;
 
 //addStandardClass(name, boolean, InheritanceType)
 //adds StandardClass with abstract flag and given maping type in DB
 AddStandardClass returns ops::AddStandardClass:
-	name=ID '=' 'new' (isAbstract?='abstract' & inheritanceType=InheritanceType?)? 'class'
+	name=ID '=' /*'new'*/ (isAbstract?='abstract' & inheritanceType=InheritanceType?)? 'class'
 ;
 
 //renameEntity(A, B) renames entity A to B
 RenameEntity returns ops::RenameEntity:
-	'set' name=ID '->' newName=ID
+//	'set'
+	 name=ID '->' newName=ID
 ;
 
 //setParent(A, B) sets A new parent B
 SetParent returns ops::SetParent:
-	'set' name=ID ('subtype of' parentName=ID)
+//	'set'
+//	 name=ID (('child-of' parentName=ID) | 'not child-of')
+	 name=ID (('<' parentName=ID) | '!<')
 ;
 
 //setAbstract(name, boolean) sets/unsets given class as abstract
 SetAbstract returns ops::SetAbstract:
-	'set' name=ID ( isAbstract?='abstract' | 'not abstract') 
+//	'set'
+	 name=ID ( isAbstract?='abstract' | '!abstract') 
 ;
 
 //removeEntity(name) removes entity (GeneralClass, PrimitiveClass and all its subtypes)
 RemoveEntity returns ops::RemoveEntity:
-	'delete' name=ID
+//	'delete'
+	'!'	name=ID
 ;
 
 //addProperty(owningClass, propertyName, propertyType) adds property and its type to a class
 AddProperty returns ops::AddProperty:
-	owningClassName=ID '+=' name=ID ':' type=ID 
+	owningClassName=ID '+=' 
 		(
-			('[' (lowerBound=INT '..')? upperBound=INT ']')?
-			& ('=' defaultValue=ID)?
-			& ('unordered' | isOrdered?='ordered')?
-			& ('not unique' | isUnique?='unique')?
+			('!ordered' | isOrdered?='ordered')?
+			& ('!unique' | isUnique?='unique')?
 		)
+		name=ID ':' type=ID 
+		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+		('=' defaultValue=ID)?
  ;
 
 //renamePropety(A, id, identifier) renames A's property id to identifier
 RenameProperty returns ops::RenameProperty:
-	'set' owningClassName=ID '.' name=ID '->' newName=ID
+//	'set'
+	owningClassName=ID '.' name=ID '->' newName=ID
 ;
 
 //removePropety(A, id) removes A's property id
@@ -105,30 +112,35 @@ RemoveProperty returns ops::RemoveProperty:
 
 //setType(A, id, int) changes type of A's propety id to int
 SetType returns ops::SetType:
-	'set' owningClassName=ID '.' name=ID ':' type=ID
+//	'set'
+	owningClassName=ID '.' name=ID ':' type=ID
 ;
 
 //setOpposite(A, key, B, id, true) creates link between A's key and B's id
 //setOpposite(A, key, B, id, false) destroys link between A's key and B's id
 SetOpposite returns ops::SetOpposite:
-	(isOpposite?='link' | 'unlink') firstClassName=ID '.' firstPropertyName=ID '<->' secondClassName=ID '.' secondPropertyName=ID
+//	'set'
+	firstClassName=ID '.' firstPropertyName=ID (isOpposite?='<->' | '!<->') secondClassName=ID '.' secondPropertyName=ID
 ;
 
 //setBounds(A, list, 0, 50) sets bounds to A's property list to 0,50 (lower, upper)
 SetBounds returns ops::SetBounds:
-	'set' owningClassName=ID '.' name=ID '['(lowerBound=INT '..')? upperBound=INT ']'
+	//set
+	owningClassName=ID '.' name=ID ('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
 ;
 
 //setOrdered(A, list, true) sets A's property list as ordered
 //setOrdered(A, list, false) sets A's property list as unordered
 SetOrdered returns ops::SetOrdered:
-	'set' owningClassName=ID '.' name=ID (isOrdered?='ordered' | 'unordered')
+	//set
+	 owningClassName=ID '.' name=ID (isOrdered?='ordered' | '!ordered')
 ;
 
 //setUnique(A, list, true) sets A's property list as unique
 //setUnique(A, list, false) unsets unique status of A's property list
 SetUnique returns ops::SetUnique:
-	'set' owningClassName=ID '.' name=ID (isUnique?='unique' | 'not unique')
+	//set
+	owningClassName=ID '.' name=ID (isUnique?='unique' | '!unique')
 ;
 
 //copyPropety(A, id, B, MergeType) copies A's property id to B by selected MergeType
@@ -160,9 +172,9 @@ ExtractParent returns ops::ExtractParent:
 /**
  */
 enum MergeType returns ops::MergeType:
-	strict = 'strictly'
-	| force = 'forcibly'
-	| tolerant = 'tolerantly'
+	strict = 'strict'
+	| force = 'force'
+	| tolerant = 'tolerant'
 ;
 
 enum PrimitiveType returns app::PrimitiveType:
@@ -182,4 +194,6 @@ EBoolean returns ecore::EBoolean:
 	| 'false'
 ;
 
-terminal ID  		: ('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*;
+terminal ID:
+	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+;
