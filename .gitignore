@@ -8,10 +8,10 @@ migdb.mm.rdb/src/*
 migdb.mm.rdb/bin/*
 
 #dsl
-migdb.dsl.app/bin/*
-migdb.dsl.app.ui/bin/*
-migdb.dsl.ops/bin/*
-migdb.dsl.ops.ui/bin/*
+migdb.dsl.app/bin/
+migdb.dsl.app.ui/bin/
+migdb.dsl.ops/bin/
+migdb.dsl.ops.ui/bin/
 
 #workflow binaries 
 migdb.testing.run/bin/*
