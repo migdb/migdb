@@ -9,13 +9,9 @@ migdb.mm.rdb/bin/*
 
 #dsl
 migdb.dsl.app/bin/*
-migdb.dsl.app/src-gen/*
 migdb.dsl.app.ui/bin/*
-migdb.dsl.app.ui/src-gen/*
 migdb.dsl.ops/bin/*
-migdb.dsl.ops/src-gen/*
 migdb.dsl.ops.ui/bin/*
-migdb.dsl.ops.ui/src-gen/*
 
 #workflow binaries 
 migdb.testing.run/bin/*

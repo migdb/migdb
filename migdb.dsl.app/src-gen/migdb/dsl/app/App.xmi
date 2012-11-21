@@ -1,0 +1,582 @@
+<?xml version="1.0" encoding="ASCII"?>
+<xmi:XMI xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" xmlns:xtext="http://www.eclipse.org/2008/Xtext">
+  <xtext:Grammar name="migdb.dsl.app.App" usedGrammars="/1">
+    <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="app">
+      <ePackage href="http://www.collectionspro.eu/jam/mm/app#/"/>
+    </metamodelDeclarations>
+    <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ecore">
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </metamodelDeclarations>
+    <rules xsi:type="xtext:ParserRule" name="ModelRoot">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//ModelRoot"/>
+      </type>
+      <alternatives xsi:type="xtext:RuleCall" rule="/0/@rules.1"/>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="Structure">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//Structure"/>
+      </type>
+      <alternatives xsi:type="xtext:Assignment" cardinality="*" feature="entities" operator="+=">
+        <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.2"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="ModelEntity">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//ModelEntity"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.3"/>
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.4"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="GeneralClass">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//GeneralClass"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.5"/>
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.6"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="PrimitiveClass">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveClass"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="primitive"/>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value=":"/>
+        <elements xsi:type="xtext:Assignment" feature="primitiveType" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.13"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="EmbeddedClass">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedClass"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="embedded"/>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value="{"/>
+        <elements xsi:type="xtext:Keyword" value="id"/>
+        <elements xsi:type="xtext:Assignment" feature="idProperty" operator="=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedProperty"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+        <elements xsi:type="xtext:Assignment" feature="embeddedProperties" operator="+=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedProperty"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+        <elements xsi:type="xtext:Assignment" cardinality="*" feature="embeddedProperties" operator="+=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedProperty"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value="}"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="StandardClass">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//StandardClass"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Assignment" cardinality="?" feature="isAbstract" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="abstract"/>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value="class"/>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" value="extends"/>
+          <elements xsi:type="xtext:Assignment" feature="parent" operator="=">
+            <terminal xsi:type="xtext:CrossReference">
+              <type metamodel="/0/@metamodelDeclarations.0">
+                <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//StandardClass"/>
+              </type>
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+            </terminal>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="by"/>
+          <elements xsi:type="xtext:Assignment" feature="inheritanceType" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.14"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value="{"/>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" value="id"/>
+          <elements xsi:type="xtext:Assignment" feature="idProperty" operator="=">
+            <terminal xsi:type="xtext:CrossReference">
+              <type metamodel="/0/@metamodelDeclarations.0">
+                <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveProperty"/>
+              </type>
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+            </terminal>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Assignment" feature="properties" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.8"/>
+          </elements>
+          <elements xsi:type="xtext:Assignment" cardinality="*" feature="properties" operator="+=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.8"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value="}"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="Property">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//Property"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.8"/>
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.9"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="MultipliableProperty">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//MultipliableProperty"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.11"/>
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.10"/>
+        <elements xsi:type="xtext:RuleCall" rule="/0/@rules.12"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="EmbeddedProperty">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedProperty"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="EmbeddedProperty"/>
+        <elements xsi:type="xtext:Assignment" feature="isMandatory" operator="?=">
+          <terminal xsi:type="xtext:Keyword" value="mandatory"/>
+        </elements>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value=":"/>
+        <elements xsi:type="xtext:Assignment" feature="type" operator="=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveClass"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="PrimitiveProperty">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveProperty"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="PrimitiveProperty"/>
+        <elements xsi:type="xtext:UnorderedGroup">
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isOrdered" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="ordered"/>
+          </elements>
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isUnique" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="unique"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Alternatives" cardinality="?">
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Keyword" value="["/>
+            <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+            </elements>
+          </elements>
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Group">
+              <elements xsi:type="xtext:Assignment" feature="lowerBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+              <elements xsi:type="xtext:Keyword" value=".."/>
+              <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+            </elements>
+            <elements xsi:type="xtext:Keyword" value="]"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value=":"/>
+        <elements xsi:type="xtext:Assignment" feature="type" operator="=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveClass"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" value="="/>
+          <elements xsi:type="xtext:Assignment" feature="defaultValue" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </elements>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="AssociationProperty">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//AssociationProperty"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="AssociationProperty"/>
+        <elements xsi:type="xtext:UnorderedGroup">
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isOrdered" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="ordered"/>
+          </elements>
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isUnique" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="unique"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Alternatives" cardinality="?">
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Keyword" value="["/>
+            <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+            </elements>
+          </elements>
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Group">
+              <elements xsi:type="xtext:Assignment" feature="lowerBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+              <elements xsi:type="xtext:Keyword" value=".."/>
+              <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+            </elements>
+            <elements xsi:type="xtext:Keyword" value="]"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" value="oposite"/>
+          <elements xsi:type="xtext:Assignment" feature="oppositeProperty" operator="=">
+            <terminal xsi:type="xtext:CrossReference">
+              <type metamodel="/0/@metamodelDeclarations.0">
+                <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//AssociationProperty"/>
+              </type>
+              <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+            </terminal>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value=":"/>
+        <elements xsi:type="xtext:Assignment" feature="type" operator="=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//StandardClass"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="NestedProperty">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//NestedProperty"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="NestedProperty"/>
+        <elements xsi:type="xtext:UnorderedGroup">
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isOrdered" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="ordered"/>
+          </elements>
+          <elements xsi:type="xtext:Assignment" cardinality="?" feature="isUnique" operator="?=">
+            <terminal xsi:type="xtext:Keyword" value="unique"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Assignment" feature="name" operator="=">
+          <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+        </elements>
+        <elements xsi:type="xtext:Alternatives" cardinality="?">
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Keyword" value="["/>
+            <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+              <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+            </elements>
+          </elements>
+          <elements xsi:type="xtext:Group">
+            <elements xsi:type="xtext:Group">
+              <elements xsi:type="xtext:Assignment" feature="lowerBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+              <elements xsi:type="xtext:Keyword" value=".."/>
+              <elements xsi:type="xtext:Assignment" feature="upperBound" operator="=">
+                <terminal xsi:type="xtext:RuleCall" rule="/1/@rules.1"/>
+              </elements>
+            </elements>
+            <elements xsi:type="xtext:Keyword" value="]"/>
+          </elements>
+        </elements>
+        <elements xsi:type="xtext:Keyword" value=":"/>
+        <elements xsi:type="xtext:Assignment" feature="type" operator="=">
+          <terminal xsi:type="xtext:CrossReference">
+            <type metamodel="/0/@metamodelDeclarations.0">
+              <classifier xsi:type="ecore:EClass" href="http://www.collectionspro.eu/jam/mm/app#//EmbeddedClass"/>
+            </type>
+            <terminal xsi:type="xtext:RuleCall" rule="/0/@rules.16"/>
+          </terminal>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:EnumRule" name="PrimitiveType">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EEnum" href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveType"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveType/boolean"/>
+          <literal value="boolean"/>
+        </elements>
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveType/char"/>
+          <literal value="char"/>
+        </elements>
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//PrimitiveType/int"/>
+          <literal value="int"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:EnumRule" name="InheritanceType">
+      <type metamodel="/0/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EEnum" href="http://www.collectionspro.eu/jam/mm/app#//InheritanceType"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//InheritanceType/joined"/>
+          <literal value="joined"/>
+        </elements>
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//InheritanceType/tablePerClass"/>
+          <literal value="tablePerClass"/>
+        </elements>
+        <elements xsi:type="xtext:EnumLiteralDeclaration">
+          <enumLiteral href="http://www.collectionspro.eu/jam/mm/app#//InheritanceType/singleTable"/>
+          <literal value="singleTable"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:ParserRule" name="EBoolean">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:Keyword" value="true"/>
+        <elements xsi:type="xtext:Keyword" value="false"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ID">
+      <type metamodel="/0/@metamodelDeclarations.1">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Alternatives">
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </elements>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="_"/>
+        </elements>
+        <elements xsi:type="xtext:Alternatives" cardinality="*">
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </elements>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="_"/>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="0"/>
+            <right value="9"/>
+          </elements>
+        </elements>
+      </alternatives>
+    </rules>
+  </xtext:Grammar>
+  <xtext:Grammar name="org.eclipse.xtext.common.Terminals" definesHiddenTokens="true" hiddenTokens="/1/@rules.5 /1/@rules.3 /1/@rules.4">
+    <metamodelDeclarations xsi:type="xtext:ReferencedMetamodel" alias="ecore">
+      <ePackage href="http://www.eclipse.org/emf/2002/Ecore#/"/>
+    </metamodelDeclarations>
+    <rules xsi:type="xtext:TerminalRule" name="ID">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" cardinality="?" value="^"/>
+        <elements xsi:type="xtext:Alternatives">
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </elements>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="_"/>
+        </elements>
+        <elements xsi:type="xtext:Alternatives" cardinality="*">
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="a"/>
+            <right value="z"/>
+          </elements>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="A"/>
+            <right value="Z"/>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="_"/>
+          <elements xsi:type="xtext:CharacterRange">
+            <left value="0"/>
+            <right value="9"/>
+          </elements>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="INT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+      </type>
+      <alternatives xsi:type="xtext:CharacterRange" cardinality="+">
+        <left value="0"/>
+        <right value="9"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="STRING">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:Group">
+          <elements xsi:type="xtext:Keyword" value="&quot;"/>
+          <elements xsi:type="xtext:Alternatives" cardinality="*">
+            <elements xsi:type="xtext:Group">
+              <elements xsi:type="xtext:Keyword" value="\"/>
+              <elements xsi:type="xtext:Alternatives">
+                <elements xsi:type="xtext:Keyword" value="b"/>
+                <elements xsi:type="xtext:Keyword" value="t"/>
+                <elements xsi:type="xtext:Keyword" value="n"/>
+                <elements xsi:type="xtext:Keyword" value="f"/>
+                <elements xsi:type="xtext:Keyword" value="r"/>
+                <elements xsi:type="xtext:Keyword" value="u"/>
+                <elements xsi:type="xtext:Keyword" value="&quot;"/>
+                <elements xsi:type="xtext:Keyword" value="'"/>
+                <elements xsi:type="xtext:Keyword" value="\"/>
+              </elements>
+            </elements>
+            <elements xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Alternatives">
+                <elements xsi:type="xtext:Keyword" value="\"/>
+                <elements xsi:type="xtext:Keyword" value="&quot;"/>
+              </terminal>
+            </elements>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="&quot;"/>
+        </elements>
+        <elements xsi:type="xtext:Group">
+          <elements xsi:type="xtext:Keyword" value="'"/>
+          <elements xsi:type="xtext:Alternatives" cardinality="*">
+            <elements xsi:type="xtext:Group">
+              <elements xsi:type="xtext:Keyword" value="\"/>
+              <elements xsi:type="xtext:Alternatives">
+                <elements xsi:type="xtext:Keyword" value="b"/>
+                <elements xsi:type="xtext:Keyword" value="t"/>
+                <elements xsi:type="xtext:Keyword" value="n"/>
+                <elements xsi:type="xtext:Keyword" value="f"/>
+                <elements xsi:type="xtext:Keyword" value="r"/>
+                <elements xsi:type="xtext:Keyword" value="u"/>
+                <elements xsi:type="xtext:Keyword" value="&quot;"/>
+                <elements xsi:type="xtext:Keyword" value="'"/>
+                <elements xsi:type="xtext:Keyword" value="\"/>
+              </elements>
+            </elements>
+            <elements xsi:type="xtext:NegatedToken">
+              <terminal xsi:type="xtext:Alternatives">
+                <elements xsi:type="xtext:Keyword" value="\"/>
+                <elements xsi:type="xtext:Keyword" value="'"/>
+              </terminal>
+            </elements>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="'"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ML_COMMENT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="/*"/>
+        <elements xsi:type="xtext:UntilToken">
+          <terminal xsi:type="xtext:Keyword" value="*/"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="SL_COMMENT">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Group">
+        <elements xsi:type="xtext:Keyword" value="//"/>
+        <elements xsi:type="xtext:NegatedToken" cardinality="*">
+          <terminal xsi:type="xtext:Alternatives">
+            <elements xsi:type="xtext:Keyword" value="&#xA;"/>
+            <elements xsi:type="xtext:Keyword" value="&#xD;"/>
+          </terminal>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" cardinality="?" value="&#xD;"/>
+          <elements xsi:type="xtext:Keyword" value="&#xA;"/>
+        </elements>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="WS">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Alternatives" cardinality="+">
+        <elements xsi:type="xtext:Keyword" value=" "/>
+        <elements xsi:type="xtext:Keyword" value="&#x9;"/>
+        <elements xsi:type="xtext:Keyword" value="&#xD;"/>
+        <elements xsi:type="xtext:Keyword" value="&#xA;"/>
+      </alternatives>
+    </rules>
+    <rules xsi:type="xtext:TerminalRule" name="ANY_OTHER">
+      <type metamodel="/1/@metamodelDeclarations.0">
+        <classifier xsi:type="ecore:EDataType" href="http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </type>
+      <alternatives xsi:type="xtext:Wildcard"/>
+    </rules>
+  </xtext:Grammar>
+</xmi:XMI>
