@@ -30,7 +30,6 @@ main() {
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	processedAStructure.isModelValid(errorLog);
 	var processedRStructure : RDB::Structure := processedAStructure.toRdb(errorLog);
-	
 	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	

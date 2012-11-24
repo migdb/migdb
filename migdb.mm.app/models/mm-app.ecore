@@ -11,7 +11,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//app/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
-          eType="#//app/ops/ModelOperation" containment="true"/>
+          eType="#//app/ops/ModelOperation" containment="true" eOpposite="#//app/ops/ModelOperation/owningOperations"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModelEntity">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
@@ -95,8 +95,8 @@
     </eClassifiers>
     <eSubpackages name="ops" nsURI="http://www.collectionspro.eu/jam/mm/app-ops" nsPrefix="app-ops">
       <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="modelRoot" lowerBound="1"
-            eType="#//app/ModelRoot" changeable="false" derived="true"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningOperations" lowerBound="1"
+            eType="#//app/Operations" changeable="false" derived="true" eOpposite="#//app/Operations/operations"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DecomposableOperation" abstract="true"
           eSuperTypes="#//app/ops/ModelOperation"/>
