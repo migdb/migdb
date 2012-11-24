@@ -218,7 +218,7 @@ helper _schema( _tables : OrderedSet(RDB::Table)) : RDB::Schema{
 	};
 }
 
-helper _schema( _name : String, _sequence : RDB::Sequence) : RDB::Schema{
+helper _schema(_name : String, _sequence : RDB::Sequence) : RDB::Schema{
 	var schema : RDB::Schema := _schema(_name);
 	schema.sequence := _sequence;
 	return schema;
@@ -291,11 +291,9 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  }
  
   helper _column(_name : String, _type : PrimitiveType, _defaultValue : String) : Column {
- 	return object Column {
- 		name := _name;
- 		type := _type;
- 		defaultValue := _defaultValue;
- 	};
+ 	var column : Column := _column(_name, _type);
+ 	column.defaultValue := _defaultValue;
+	return column;
  }
  
  helper _sequence(_name : String, _startValue : Integer) : RDB::Sequence {

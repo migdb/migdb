@@ -6,7 +6,7 @@ transformation DFSQueryTest(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _integer();
-	var root : StandardClass := _class("root", _idProperty(int), OrderedSet{}); 
+	var root : StandardClass := _class("root", _idProperty("idRoot", int), OrderedSet{}); 
 	var cl1 : StandardClass := _class("cl1", root, OrderedSet{});
 	var cl2 : StandardClass := _class("cl2", root, OrderedSet{});
 	var cl3 : StandardClass := _class("cl3", root, OrderedSet{});  

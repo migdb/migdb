@@ -5,6 +5,7 @@ import evolution_rdb;
 import validator_app;
 import validator_postgresql;
 import orm;
+import orm_structure;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -15,18 +16,21 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 	There is problem with the same types of models - if rOperations is inModel DbOperations are collected in outRStructure
 **/
 transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	in inRStructure:RDB, out outRStructure : RDB , inout rOperations :RDB, inout errorModel : ERR);
+	//in inRStructure:RDB, 
+	out outRStructure : RDB , inout rOperations :RDB, out errorModel : ERR);
 
 main() {
 	//outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
 	inAStructure.rootObjects().deepclone();
+	
 	//outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
-	inRStructure.rootObjects().deepclone();
+	//inRStructure.rootObjects().deepclone();
 	
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
-	var processedRStructure : RDB::Structure := outRStructure.rootObjects()![RDB::Structure];
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	processedAStructure.isModelValid(errorLog);
+	var processedRStructure : RDB::Structure := processedAStructure.toRdb(errorLog);
+	
 	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	
@@ -65,7 +69,7 @@ main() {
 	log("migdb_executer process finished");
 }
 
-query OrderedSet(APP::ops::DecomposableOperation)::appendOrderedSet( appendedSet : OrderedSet(app::ops::DecomposableOperation)) : OrderedSet(app::ops::DecomposableOperation){
+query OrderedSet(APP::ops::DecomposableOperation)::appendOrderedSet(appendedSet : OrderedSet(app::ops::DecomposableOperation)) : OrderedSet(app::ops::DecomposableOperation){
 	var returnedSet : OrderedSet(APP::ops::DecomposableOperation):= self;
 	appendedSet->forEach(op){
 		returnedSet:= returnedSet->append(op);
@@ -73,7 +77,7 @@ query OrderedSet(APP::ops::DecomposableOperation)::appendOrderedSet( appendedSet
 	return returnedSet;
 }
 
-query OrderedSet(APP::ops::AtomicOperation)::appendOrderedSet( appendedSet : OrderedSet(app::ops::AtomicOperation)) : OrderedSet(app::ops::AtomicOperation){
+query OrderedSet(APP::ops::AtomicOperation)::appendOrderedSet(appendedSet : OrderedSet(app::ops::AtomicOperation)) : OrderedSet(app::ops::AtomicOperation){
 	var returnedSet : OrderedSet(APP::ops::AtomicOperation):= self;
 	appendedSet->forEach(op){
 		returnedSet:= returnedSet->append(op);

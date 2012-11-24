@@ -4,11 +4,14 @@ transformation secondAPP(out inoutModel : APP);
 
 
 main() {
+	OrderedSet{"a", "b", "aa","a", "x", "l", "m"}->forEach(str){
+		log(str);
+	};
 	log("TEST_APP_01: valid");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::StandardClass := _class("Country", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
-	var party : APP::StandardClass := _class("Party", _idProperty(integer), OrderedSet{ _primitiveProperty("street", string),_primitiveProperty("city", string),
+	var country : APP::StandardClass := _class("Country", _idProperty("idCountry", integer), OrderedSet{ _primitiveProperty("name", string)});
+	var party : APP::StandardClass := _class("Party", _idProperty("idParty", integer), OrderedSet{ _primitiveProperty("street", string),_primitiveProperty("city", string),
 	 _primitiveProperty("zip", string), _associationProperty("country", country)});																		  									  												  												  									  	
 	
 	var legalPerson : APP::StandardClass :=	_class("LegalPerson", party, OrderedSet{_primitiveProperty("regNo", integer), _primitiveProperty("bisName", string)});

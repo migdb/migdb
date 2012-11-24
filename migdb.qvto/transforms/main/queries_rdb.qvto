@@ -28,10 +28,8 @@ modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 
 
 /********************************************************************************
- *									QUERIES										*
+ *									PRINTERS									*
  ********************************************************************************/
-
-/********************************** SCHEMA **************************************/
 query Operations::print(){
 	self.operations->forEach(op){
 		log(op.repr());
@@ -47,12 +45,31 @@ query Structure::print(){
 	}	
 }
 
+/********************************************************************************
+ *									QUERIES										*
+ ********************************************************************************/
+
+
+/********************************** SCHEMA **************************************/
+
+query getDefaultSchemaName() : String{
+	return "public";
+}
+
 query RDB::Structure::containsSchema(schemaName : String) : Boolean {
 	return self.schemas->exists(name = schemaName);
 }
 
 query RDB::Structure::findSchema(schemaName : String) : RDB::Schema {
-	return self.schemas->selectOne(name = schemaName);
+	return self.schemas->any(name = schemaName);
+}
+
+query RDB::Schema::containsTable(tableName : String) : Boolean{
+	return self.tables->exists(name = tableName);
+}
+
+query RDB::Schema::findTable(tableName : String) : RDB::Table{
+	return self.tables->any(name = tableName);
 }
 
 
@@ -68,20 +85,21 @@ query RDB::Structure::containsIndexInSchema(schemaName : String, indexName : Str
 }
 
 query RDB::Structure::findIndex(schemaName : String, indexName : String) : RDB::Index {
-	return self.findSchema(schemaName).indexes->selectOne(name = indexName);
+	return self.findSchema(schemaName).indexes->any(name = indexName);
 }
 
 /*********************************** TABLE *************************************/
 query RDB::Structure::containsTableInSchema(schemaName : String, tableName : String) : Boolean {
-	return self.findSchema(schemaName).tables->exists(name = tableName);
+	return self.findSchema(schemaName).containsTable(tableName);
 }
 
 query RDB::Structure::containsTablesInSchema(schemaName : String, tableNames : OrderedSet(String)) : Boolean {
-	return tableNames->forAll(name | self.containsTableInSchema(schemaName, name));
+	var schema : Schema := self.findSchema(schemaName);
+	return tableNames->forAll(name | schema.containsTable(name));
 }
 
 query RDB::Structure::findTable(schemaName : String, tableName : String) : RDB::Table {
-	return self.findSchema(schemaName).tables->selectOne(name = tableName);
+	return self.findSchema(schemaName).findTable(tableName);
 }
 
 /*********************************** COLUMN ************************************/
@@ -95,7 +113,7 @@ query RDB::Structure::containsColumnsInTable(schemaName : String, tableName : St
 }
 
 query RDB::Structure::findColumn(schemaName : String, tableName : String, cName : String) : RDB::Column {
-	return self.findTable(schemaName, tableName).columns->selectOne(name = cName);
+	return self.findTable(schemaName, tableName).columns->any(name = cName);
 }
 
 query RDB::Structure::findColumns(schemaName : String, tableName : String, cNames : OrderedSet(String)) : OrderedSet(RDB::Column) {
@@ -117,7 +135,7 @@ query RDB::Structure::hasConstraintUniqueName(constraintableName : String) : Boo
 }
 
 query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::Constraint {
-	return self.findTable(schemaName, tableName).constraints->selectOne(name = rName);
+	return self.findTable(schemaName, tableName).constraints->any(name = rName);
 }
 
 
@@ -143,26 +161,6 @@ query rdb::Table::getPKColumn():rdb::Column{
 	return self.constraints![rdb::PrimaryKey].constrainedColumn;
 }
 
-	
-/*
-	Overuje, jestli tabulka obsahuje diskriminacni sloupec
-*/
-query rdb::Table::containsDiscriminator():Boolean{
-	return self.columns->select(col | col.name ="discriminator")->size()=1;
-}
-
-query rdb::Schema::getFirstAvailableFKName(in firstableName:String, in secondName:String):String{
-	var potencialIndex:Integer := 0;	
-	while(true){
-		potencialIndex := potencialIndex+1;
-		if(not self->tables->constraints[rdb::ForeignKey]->exists(fk | fk.name = "FK_" + firstableName +"_" + secondName +"_" + potencialIndex.toString() ))then{		
-			break;
-		}endif;
-	};
-	
-	return "FK_" + firstableName + "_" + secondName + "_" + potencialIndex.toString();
-}
-
 query RDB::Table::hasRedundantId() : Boolean{
 	return self.constraints[PrimaryKey]->size() > 1;
 };
@@ -170,15 +168,15 @@ query RDB::Table::hasRedundantId() : Boolean{
 query isValidIdentifier(identifier : String):Boolean{
 	var valid : Boolean := true;
 	if(not beginsWithChar(identifier))then{
-			log("Model invalid - identifier \"" + identifier + "\" not begins with lower char");
+//			log("Model invalid - identifier \"" + identifier + "\" not begins with lower char");
 			valid := false;
 		}endif;
 		if(isKeyWord(identifier))then{
-			log("Model invalid - identifier \"" + identifier + "\" is Postgresql keyword");
+//			log("Model invalid - identifier \"" + identifier + "\" is Postgresql keyword");
 			valid := false;
 		}endif;
 		if(not containsAllowedChars(identifier))then{
-			log("Model invalid - identifier \"" + identifier + "\" contains forbidden characters");		
+//			log("Model invalid - identifier \"" + identifier + "\" contains forbidden characters");		
 			valid := false;
 		}endif;
 		return valid;
@@ -196,7 +194,7 @@ query containsAllowedChars(identifier : String):Boolean{
 	while(position < identifier.size()){
 		var char:String := identifier.substring(position, position);
 		if(not (isLatinCharacter(char) or char = "_" or isDigit(char)))then {
-			log("forbidden character \'" + char + "\'");
+//			log("forbidden character \'" + char + "\'");
 			valid := false;
 		}endif;
 		position := position + 1;

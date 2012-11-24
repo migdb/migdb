@@ -177,14 +177,14 @@ helper _integer() : PrimitiveClass{
 } 
 
 /** Name of this entity must be changed in _class constructor using it **/
-helper _idProperty(_integerReference : PrimitiveClass) : PrimitiveProperty{
-	return _primitiveProperty("id", _integerReference, 1, 1);
+helper _idProperty(name : String, _integerReference : PrimitiveClass) : PrimitiveProperty{
+	return _primitiveProperty(name, _integerReference, 1, 1);
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : PrimitiveProperty{
 	return object PrimitiveProperty{
 		name := _name;
-		type := _type;
+		type := _primitiveType;
 		lowerBound := 0;
 		upperBound := 1;
 	}

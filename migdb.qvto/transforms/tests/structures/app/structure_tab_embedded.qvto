@@ -7,9 +7,9 @@ transformation structure_tab_joined_hierarchy(out inoutModel : APP);
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	var tab : EmbeddedClass := _embeddedClass("Tab", OrderedSet{_embeddedProperty("emProperty", int)}, _embeddedIdProperty("id",int));
-	var cls1 : StandardClass := _class("Cls1", _idProperty(int), OrderedSet{_nestedProperty("tabEM", tab)});
-	var cls2 : StandardClass := _class("Cls2", _idProperty(int), OrderedSet{_nestedProperty("tabEM", tab)});
-	var cls3 : StandardClass := _class("Cls3", _idProperty(int), OrderedSet{_nestedProperty("tabEM", tab)});
+	var cls1 : StandardClass := _class("Cls1", _idProperty("idOneRoot", int), OrderedSet{_nestedProperty("tabEM", tab)});
+	var cls2 : StandardClass := _class("Cls2", _idProperty("idTwoRoot", int), OrderedSet{_nestedProperty("tabEM", tab)});
+	var cls3 : StandardClass := _class("Cls3", _idProperty("idThreeRoot", int), OrderedSet{_nestedProperty("tabEM", tab)});
 	
 	_appStructure(OrderedSet{int, tab, cls1, cls2, cls3});
 }

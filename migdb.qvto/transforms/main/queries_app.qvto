@@ -374,6 +374,14 @@ query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardC
 	return set;
 }
 
+query PrimitiveProperty::getPrimitiveType(): APP::PrimitiveType{
+	return self.type.primitiveType;
+}
+
+query EmbeddedProperty::getPrimitiveType(): APP::PrimitiveType{
+	return self.type.primitiveType;
+}
+
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
 /* Returns true if Property represents unidirectional 1:1 association */
 query app::MultipliableProperty::isOneToOneUnidirectional():Boolean{

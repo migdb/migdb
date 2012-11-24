@@ -6,9 +6,9 @@ main() {
 	log("TEST_APP_INVALID_06_b - invalid : ID upperBound ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	
-	var idProp : APP::PrimitiveProperty := _idProperty(integer);
-	idProp.upperBound := -1;
-	var person : APP::StandardClass := _class("Person",  idProp, OrderedSet{ _primitiveProperty("age", integer)});
+	var idPropPerson : APP::PrimitiveProperty := _idProperty("idPerson", integer);
+	idPropPerson.upperBound := -1;
+	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ _primitiveProperty("age", integer)});
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,person});	 
 }

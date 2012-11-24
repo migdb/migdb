@@ -8,7 +8,7 @@ main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	var tab : EmbeddedClass := _embeddedClass("Tab", OrderedSet{_embeddedProperty("emProperty", int)}, _embeddedIdProperty("id", int));
 	var emptyProps : OrderedSet(MultipliableProperty) := OrderedSet{};
-	var root : StandardClass := _class("Root", _idProperty(int), emptyProps, false, InheritanceType::tablePerClass);
+	var root : StandardClass := _class("Root", _idProperty("idRoot", int), emptyProps, false, InheritanceType::tablePerClass);
 	var child : StandardClass := _class("Child", root, OrderedSet{});
 	
 	_appStructure(OrderedSet{int, tab, root, child});

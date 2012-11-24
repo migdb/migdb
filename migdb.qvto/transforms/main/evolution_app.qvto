@@ -25,6 +25,7 @@
 import queries_app;
 import builder_app;
 import builder_errors;
+import orm;
 
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 modeltype ERR uses errors('http://www.collectionspro.eu/jam/mm/errors');
@@ -74,7 +75,7 @@ query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout erro
 }
 
 helper APP::ops::AddStandardClass::apply(inout structure : APP::Structure) {	
-	structure.entities += _class(self.name, _idProperty(structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
+	structure.entities += _class(self.name, _idProperty(getPrimaryKeyName(self.name.translate()), structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
 	return;
 }
 

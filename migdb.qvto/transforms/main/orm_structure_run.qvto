@@ -1,0 +1,17 @@
+import builder_app;
+import builder_errors;
+import builder_rdb;
+import orm_structure;
+
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation ormStructureRun(in inAppStructure : APP, out outRdbStructure : RDB, out errors : ERR);
+
+
+main() {
+	var errorLog : ErrorLog := _errorLog(OrderedSet{});
+	inAppStructure.rootObjects()![APP::Structure].toRdb(errors.rootObjects()![ErrorLog]);	 
+}

@@ -6,7 +6,7 @@ transformation DFSQueryTest(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _integer();
-	var hierarchyRoot : StandardClass := _class("hierarchyRoot", _idProperty(int), OrderedSet{}, InheritanceType::singleTable);
+	var hierarchyRoot : StandardClass := _class("hierarchyRoot", _idProperty("idHierarchyRoot", int), OrderedSet{}, InheritanceType::singleTable);
 	var hierarchyRootChild := _class("hierarchyRootChild", hierarchyRoot, OrderedSet{});
 	var root : StandardClass := _class("root", hierarchyRoot, OrderedSet{}); 
 	var cl1 : StandardClass := _class("cl1", root, OrderedSet{}, InheritanceType::joined);

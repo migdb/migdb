@@ -26,5 +26,13 @@ helper _validationError(_message : String, _transformationIdentifier : String ) 
 	return object ValidationError{
 		message := _message;
 		transformationId := _transformationIdentifier;
-	}
+	};
+}
+	
+helper _ormError(_message : String, _transformationIdentifier : String) : OrmError{	
+	assert(_message <> null and _message.size() > 0);
+	return object OrmError{
+		message := _message;
+		transformationId := _transformationIdentifier;
+	};
 }

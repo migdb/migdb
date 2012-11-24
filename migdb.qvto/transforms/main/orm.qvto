@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -393,10 +393,6 @@ query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
 	return mappedSet;
 }
 
-query getDefaultSchemaName() : String{
-	return "public";
-}
-
 /**
 	Translate identifier from app into db. Upper characters are transformed into lower chars,
  	words are divided by character '_'
@@ -436,9 +432,13 @@ query app::EmbeddedClass::getIdName() : String{
 /** Translates idProperty name into db "language" **/
 query app::StandardClass::translateIdName() : String{
 	if(self.parent = null)then{
-		return ("id_" + self.getId().name.translate());
+		return getIdPropertyName(self.name.translate());
 	}endif;
 	return self.parent.translateIdName();
+}
+
+query getIdPropertyName(tableName : String) : String{
+	return "id_" + tableName;
 }
 
 /** Helper query for String manipulation **/
@@ -449,5 +449,47 @@ query String::at(index : Integer) : String{
 /** Helper query for retrieving Fk name to parent class **/
 query StandardClass::getParentFkName() : String{
 	//currently implemented as a FK_ tableName + parent name is unique because of 1-N parent-child relationship  
-	return "fk_" + self.name.translate() + "_parent";
+	return "fk_parent_" + self.name.translate();
+}
+
+query MultipliableProperty::getUniqueConstraintName() : String{
+	return "ux_" + self.owningGeneralClass.name.translate() + "_" + self.name.translate();
+} 
+
+/**
+	There can be only one ordering column in table so tableName is also identifier for each 
+unique ordering constraint
+**/
+query getOrderingConstraintName(tableName : String ) : String{
+	return "ux_ordered_" + tableName;
+}
+
+// 
+query getPrimaryKeyName(tableName : String) : String{
+	return "pk_" + tableName;
+}
+
+query PrimitiveProperty::getFKCollectionName():String{
+	return "fk_col_" + self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
+}
+
+query PrimitiveProperty::getCollectionTableName():String{
+	return "col_" + self.name.translate() + "_" + self.owningGeneralClass.getDbRepresentative().name.translate();
+}
+
+/** Maps **/
+query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
+	return associationOwningClass.getDbRepresentative().name.translate() + "_" + associationProperty.name.translate();	
+}
+
+query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass) : String {
+	return "fk_" + associationTableName + "_" + originClass.name.translate();
+}
+
+query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
+	return "fk_" + sourceClass.name.translate() + "_" + self.name.translate() + "_" + targetClass.name.translate();
+}
+
+query getDiscriminatorColumnName() : String{
+	return "discriminator";
 }

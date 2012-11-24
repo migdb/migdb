@@ -32,11 +32,11 @@ transformation POSTGRESQL_VALIDATE(in inModel : RDB, inout errorModel : ERR);
 
 main() {	
 	log("Postgresql validation of model started...");
-	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::ModelRoot)))then{
+	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(RDB::Structure)))then{
 		inModel.rootObjects()![RDB::Structure].isModelValid(errorModel.rootObjects()![ErrorLog]);
 		log("");
 	}else{
-		log("modelRoots doesn't conform to RDB::ModelRoot type");
+		log("modelRoots doesn't conform to RDB::Structure type");
 	}endif;
 }
 query getValidatorPostgresqlId() : String{

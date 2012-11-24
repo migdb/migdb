@@ -170,7 +170,7 @@ helper RDB::ops::AddPrimaryKey::apply(inout structure : RDB::Structure) {
 query RDB::ops::AddForeignKey::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
 	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var  existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	var notExistConstraint : Boolean := checkNotExistConstraint(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	//existance of default id is expected and unchecked

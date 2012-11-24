@@ -6,9 +6,9 @@ main() {
 	log("TEST_APP_INVALID_04 - invalid : oppositeProperty - opposite");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var money : APP::StandardClass := _class("money", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
+	var money : APP::StandardClass := _class("money", _idProperty("idMoney", integer), OrderedSet{ _primitiveProperty("name", string)});
 	
-	var country : APP::StandardClass := _class("Country", _idProperty(integer), OrderedSet{ _primitiveProperty("name", string)});
+	var country : APP::StandardClass := _class("Country", _idProperty("idCountry", integer), OrderedSet{ _primitiveProperty("name", string)});
 	
 	var propCountry : APP::AssociationProperty := _associationProperty("currency", money);
 	var propCountry2 : APP::AssociationProperty := _associationProperty("debt", money);

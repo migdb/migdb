@@ -55,6 +55,9 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="oppositeProperty" eType="#//app/AssociationProperty"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="type" lowerBound="1"
           eType="#//app/StandardClass"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="isOwning" lowerBound="1"
+          eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="true"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="MultipliableProperty" abstract="true"
         eSuperTypes="#//app/Property">
