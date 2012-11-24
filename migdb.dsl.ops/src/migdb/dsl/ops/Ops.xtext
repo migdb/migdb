@@ -1,0 +1,199 @@
+grammar migdb.dsl.ops.Ops with org.eclipse.xtext.common.Terminals 
+
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+import "http://www.collectionspro.eu/jam/mm/app" as app //application meta-model
+import "http://www.collectionspro.eu/jam/mm/app-ops" as ops //operations
+
+
+ModelRoot returns app::ModelRoot:
+	Operations
+;
+
+Operations returns app::Operations:
+	(operations+=ModelOperation)*
+;
+
+ModelOperation returns ops::ModelOperation:
+	AtomicOperation
+	| DecomposableOperation
+;
+	
+AtomicOperation returns ops::AtomicOperation:
+	AddPrimitiveClass
+	| AddEmbeddedClass
+	| AddStandardClass
+	| RenameEntity
+	| SetParent
+	| SetAbstract
+	| RemoveEntity
+	| AddProperty
+	| RenameProperty
+	| RemoveProperty
+	| SetType
+	| SetOpposite
+	| SetBounds
+	| SetOrdered
+	| SetUnique
+	| CopyProperty
+	| MoveProperty
+;
+
+DecomposableOperation returns ops::DecomposableOperation:
+	ExtractClass
+	| ExtractParent
+;
+
+/**
+ * Atomic Operations:
+ */
+//addPrimitiveClass(name, boolean) adds new primitive class by selected type
+AddPrimitiveClass returns ops::AddPrimitiveClass:
+	name=ID '=' /*'new'*/ 'primitive' primitiveType=PrimitiveType
+;
+
+//addEmbeddedClass(name) adds new embedded class
+AddEmbeddedClass returns ops::AddEmbeddedClass:
+	name=ID '=' /*'new'*/ 'embedded'
+;
+
+//addStandardClass(name, boolean, InheritanceType)
+//adds StandardClass with abstract flag and given maping type in DB
+AddStandardClass returns ops::AddStandardClass:
+	name=ID '=' /*'new'*/ (isAbstract?='abstract' & inheritanceType=InheritanceType?)? 'class'
+;
+
+//renameEntity(A, B) renames entity A to B
+RenameEntity returns ops::RenameEntity:
+//	'set'
+	 name=ID '->' newName=ID
+;
+
+//setParent(A, B) sets A new parent B
+SetParent returns ops::SetParent:
+//	'set'
+//	 name=ID (('child-of' parentName=ID) | 'not child-of')
+	 name=ID (('<' parentName=ID) | '!<')
+;
+
+//setAbstract(name, boolean) sets/unsets given class as abstract
+SetAbstract returns ops::SetAbstract:
+//	'set'
+	 name=ID ( isAbstract?='abstract' | '!abstract') 
+;
+
+//removeEntity(name) removes entity (GeneralClass, PrimitiveClass and all its subtypes)
+RemoveEntity returns ops::RemoveEntity:
+//	'delete'
+	'!'	name=ID
+;
+
+//addProperty(owningClass, propertyName, propertyType) adds property and its type to a class
+AddProperty returns ops::AddProperty:
+	owningClassName=ID '+=' 
+		(
+			('!ordered' | isOrdered?='ordered')?
+			& ('!unique' | isUnique?='unique')?
+		)
+		name=ID ':' type=ID 
+		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+		('=' defaultValue=ID)?
+ ;
+
+//renamePropety(A, id, identifier) renames A's property id to identifier
+RenameProperty returns ops::RenameProperty:
+//	'set'
+	owningClassName=ID '.' name=ID '->' newName=ID
+;
+
+//removePropety(A, id) removes A's property id
+RemoveProperty returns ops::RemoveProperty:
+	owningClassName=ID '-=' name=ID
+;
+
+//setType(A, id, int) changes type of A's propety id to int
+SetType returns ops::SetType:
+//	'set'
+	owningClassName=ID '.' name=ID ':' type=ID
+;
+
+//setOpposite(A, key, B, id, true) creates link between A's key and B's id
+//setOpposite(A, key, B, id, false) destroys link between A's key and B's id
+SetOpposite returns ops::SetOpposite:
+//	'set'
+	firstClassName=ID '.' firstPropertyName=ID (isOpposite?='<->' | '!<->') secondClassName=ID '.' secondPropertyName=ID
+;
+
+//setBounds(A, list, 0, 50) sets bounds to A's property list to 0,50 (lower, upper)
+SetBounds returns ops::SetBounds:
+	//set
+	owningClassName=ID '.' name=ID ('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+;
+
+//setOrdered(A, list, true) sets A's property list as ordered
+//setOrdered(A, list, false) sets A's property list as unordered
+SetOrdered returns ops::SetOrdered:
+	//set
+	 owningClassName=ID '.' name=ID (isOrdered?='ordered' | '!ordered')
+;
+
+//setUnique(A, list, true) sets A's property list as unique
+//setUnique(A, list, false) unsets unique status of A's property list
+SetUnique returns ops::SetUnique:
+	//set
+	owningClassName=ID '.' name=ID (isUnique?='unique' | '!unique')
+;
+
+//copyPropety(A, id, B, MergeType) copies A's property id to B by selected MergeType
+CopyProperty returns ops::CopyProperty:
+	 'copy' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
+;
+
+//movePropety(A, id, B, MergeType) moves (and deletes) A's property id to B by selected MergeType
+MoveProperty returns ops::MoveProperty:
+	'move' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
+;
+
+
+/**
+ * Decomposable Operations:
+ */
+//extractClass(A, {id, name}, B) creates B and moves A's properties {id, name} to created B
+ExtractClass returns ops::ExtractClass:
+	'extract' sourceClassName=ID '.' '[' extractPropertiesNames+=ID ( "," extractPropertiesNames+=ID)* ']' '->' extractClassName=ID
+;
+
+//extractParent({A, B}, {id, name}, C)
+// creates C, sets C as parent of A and B and moves A's and B's properties {id, name} to C
+ExtractParent returns ops::ExtractParent:
+	'extract' '[' sourceClassesName+=ID ( "," sourceClassesName+=ID)* ']' '.' '[' extractPropertiesName+=ID ( "," extractPropertiesName+=ID)* ']' 
+		'->' extractParentName=ID
+;
+
+/**
+ */
+enum MergeType returns ops::MergeType:
+	strict = 'strict'
+	| force = 'force'
+	| tolerant = 'tolerant'
+;
+
+enum PrimitiveType returns app::PrimitiveType:
+	boolean = 'boolean'
+	| char = 'char'
+	| int = 'int'
+;
+
+enum InheritanceType returns app::InheritanceType:
+	joined = 'joined'
+	| tablePerClass = 'tablePerClass'
+	| singleTable = 'singleTable'
+;
+
+EBoolean returns ecore::EBoolean:
+	'true'
+	| 'false'
+;
+
+terminal ID:
+	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+;

@@ -9,6 +9,12 @@ migdb.mm.rdb/bin/*
 migdb.mm.errors/bin/*
 migdb.mm.errors/src/*
 
+#dsl
+migdb.dsl.app/bin/
+migdb.dsl.app.ui/bin/
+migdb.dsl.ops/bin/
+migdb.dsl.ops.ui/bin/
+
 #workflow binaries 
 migdb.testing.run/bin/*
 migdb.run/bin/*
