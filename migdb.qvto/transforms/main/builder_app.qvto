@@ -88,11 +88,17 @@ helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _seco
 	}
 }
 
-helper _setParent(_className : String , _parentName : String) : APP::ops::SetParent{
-	return object APP::ops::SetParent{
-		name := _className;
-		parentName := _parentName;
-	}
+helper _addParent(_className : String , _parentName : String) : APP::ops::AddParent{
+	return object APP::ops::AddParent{
+		className := _className;
+		parentClassName := _parentName;
+	};
+}
+
+helper _removeParent(_className : String) : APP::ops::RemoveParent{
+	return object APP::ops::RemoveParent{
+		className := _className;
+	};
 }
 
 helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {

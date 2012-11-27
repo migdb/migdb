@@ -315,9 +315,9 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 }
 
 /** Currently implemented only adding parent **/
-helper APP::ops::SetParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
-	var parentClass : StandardClass := appStructure.findStandardClass(self.parentName);
-	var childClass : StandardClass := appStructure.findStandardClass(self.name);
+helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
+	var parentClass : StandardClass := appStructure.findStandardClass(self.parentClassName);
+	var childClass : StandardClass := appStructure.findStandardClass(self.className);
 	var parentRepresentative : StandardClass := parentClass.getDbRepresentative();
 	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
