@@ -60,7 +60,7 @@ AddEmbeddedClass returns ops::AddEmbeddedClass:
 //addStandardClass(name, boolean, InheritanceType)
 //adds StandardClass with abstract flag and given maping type in DB
 AddStandardClass returns ops::AddStandardClass:
-	name=ID '=' /*'new'*/ (isAbstract?='abstract' & inheritanceType=InheritanceType?)? 'class'
+	name=ID '=' /*'new'*/ ((isAbstract?='abstract' | '!abstract')? & inheritanceType=InheritanceType?) 'class'
 ;
 
 //renameEntity(A, B) renames entity A to B
@@ -195,13 +195,13 @@ enum InheritanceType returns app::InheritanceType:
 	| singleTable = 'singleTable'
 ;
 
-EBoolean returns ecore::EBoolean:
+Boolean returns ecore::EBoolean:
 	'true'
 	| 'false'
 ;
 
 DefaultValue returns ecore::EString:
-	ID | INT
+	ID | INT | Boolean
 ;
 
 terminal ID:

@@ -38,18 +38,18 @@ EmbeddedClass returns app::EmbeddedClass:
 ;
 
 StandardClass returns app::StandardClass:
-	(isAbstract?='abstract')? 'class'
-	name=ID ('extends' parent=[app::StandardClass|ID] 'by' inheritanceType=InheritanceType)?
+	((isAbstract?='abstract' | '!abstract')? & inheritanceType=InheritanceType?)
+	'class'
+	name=ID ('<:' parent=[app::StandardClass|ID])?
 	'{'
 		('id' idProperty=[app::PrimitiveProperty|ID])? //FIXME: reference???
 		(properties+=MultipliableProperty (properties+=MultipliableProperty)*)?
     '}'
 ;
 
-
-Property returns app::Property:
-	MultipliableProperty
-	| EmbeddedProperty
+EmbeddedProperty returns app::EmbeddedProperty:
+	('!required' | isMandatory?='required')?
+	name=ID ':' type=[app::PrimitiveClass|ID]
 ;
 
 MultipliableProperty returns app::MultipliableProperty:
@@ -58,59 +58,46 @@ MultipliableProperty returns app::MultipliableProperty:
 	| NestedProperty
 ;
 
-EmbeddedProperty returns app::EmbeddedProperty:
-	'EmbeddedProperty' isMandatory?='mandatory'	name=ID ':' type=[app::PrimitiveClass|ID]
-;
-
-
+/**
+ * MultipliableProperties
+ */
 PrimitiveProperty returns app::PrimitiveProperty:
-	'PrimitiveProperty'
 	(
-		isOrdered?='ordered'? &	isUnique?='unique'?
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
 	)
 	name=ID
-	(
-		'['
-			upperBound=INT
-			| (lowerBound=INT '..'upperBound=INT)
-		']'
-	)?
-	':' type=[app::PrimitiveClass|ID]
-	('=' defaultValue=ID)?
+	 ':' => type=[app::PrimitiveClass|ID] //only Primitive type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+	('=' defaultValue=DefaultValue)? //default value can be set
 ;
-
 
 AssociationProperty returns app::AssociationProperty:
-	'AssociationProperty'
 	(
-		isOrdered?='ordered'? &	isUnique?='unique'?
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
 	)
 	name=ID
-	(
-		'['
-			upperBound=INT
-			| (lowerBound=INT '..'upperBound=INT)
-		']'
-	)?
-	('oposite' oppositeProperty=[app::AssociationProperty|ID])?
-	':' type=[app::StandardClass|ID]
+	':'  => type=[app::StandardClass|ID] //only Standard type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+	
+	//TODO: These features need to be revised
+	(isOwning?='owning')
+	('<->' oppositeProperty=[app::AssociationProperty|ID])? //opposite
 ;
 
 NestedProperty returns app::NestedProperty:
-	'NestedProperty'
 	(
-		isOrdered?='ordered'? &	isUnique?='unique'?
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
 	)
 	name=ID
-		(
-		'['
-			upperBound=INT
-			| (lowerBound=INT '..'upperBound=INT)
-		']'
-	)?
-	':' type=[app::EmbeddedClass|ID]
+	':'  => type=[app::EmbeddedClass|ID] //only Embedded type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
 ;
 
+/**
+ */
 enum PrimitiveType returns app::PrimitiveType:
 	boolean = 'boolean'
 	| char = 'char'
@@ -123,9 +110,13 @@ enum InheritanceType returns app::InheritanceType:
 	| singleTable = 'singleTable'
 ;
 
-EBoolean returns ecore::EBoolean:
+Boolean returns ecore::EBoolean:
 	'true'
 	| 'false'
+;
+
+DefaultValue returns ecore::EString:
+	ID | INT | Boolean
 ;
 
 terminal ID:
