@@ -23,7 +23,6 @@ AtomicOperation returns ops::AtomicOperation:
 	| AddEmbeddedClass
 	| AddStandardClass
 	| RenameEntity
-	| SetParent
 	| SetAbstract
 	| RemoveEntity
 	| AddProperty
@@ -36,6 +35,8 @@ AtomicOperation returns ops::AtomicOperation:
 	| SetUnique
 	| CopyProperty
 	| MoveProperty
+	| AddParent
+	| RemoveParent
 ;
 
 DecomposableOperation returns ops::DecomposableOperation:
@@ -68,11 +69,16 @@ RenameEntity returns ops::RenameEntity:
 	 name=ID '->' newName=ID
 ;
 
-//setParent(A, B) sets A new parent B
-SetParent returns ops::SetParent:
+//addParent(A, B) sets A new parent B
+AddParent returns ops::AddParent:
 //	'set'
-//	 name=ID (('child-of' parentName=ID) | 'not child-of')
-	 name=ID (('<' parentName=ID) | '!<')
+	 className=ID '<:' parentClassName=ID
+;
+
+//addParent(A, B) sets A new parent B
+RemoveParent returns ops::RemoveParent:
+//	'set'
+	 className=ID '!<:'
 ;
 
 //setAbstract(name, boolean) sets/unsets given class as abstract
@@ -96,7 +102,7 @@ AddProperty returns ops::AddProperty:
 		)
 		name=ID ':' type=ID 
 		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
-		('=' defaultValue=ID)?
+		('=' defaultValue=DefaultValue)?
  ;
 
 //renamePropety(A, id, identifier) renames A's property id to identifier
@@ -192,6 +198,10 @@ enum InheritanceType returns app::InheritanceType:
 EBoolean returns ecore::EBoolean:
 	'true'
 	| 'false'
+;
+
+DefaultValue returns ecore::EString:
+	ID | INT
 ;
 
 terminal ID:
