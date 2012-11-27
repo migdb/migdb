@@ -16,6 +16,6 @@ main() {
 	 root.operations += _addProperty("Party", "city", "String");
 	 root.operations += _addProperty("Party", "zip", "String");
 	 root.operations += _addProperty("Party", "country", "Country");
-	 root.operations += _setParent("LegalPerson", "Party");
-	 root.operations += _setParent("NaturalPerson", "Party");
+	 root.operations += _addParent("LegalPerson", "Party");
+	 root.operations += _addParent("NaturalPerson", "Party");
 }

@@ -339,6 +339,29 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 	return operations;
 }
 
+helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
+	var childClass : StandardClass := appStructure.findStandardClass(self.className);
+	var parentClass : StandardClass := childClass.parent;
+	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+		
+	// Remove PK from all child classes include childClass itself	
+	mappedSet ->forEach(cls | cls <> childClass){
+		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), getPrimaryKeyName(parentClass.name));
+	};
+	mappedSet ->forEach(cls){
+//		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, childClass.translateIdName());
+	};
+	mappedSet->forEach(cls){
+//		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
+	
+	};
+	mappedSet->forEach(cls){
+//		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
+	};
+	return operations;
+}
+
 helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
 	var sourceClass : StandardClass := appStructure.findStandardClass(self.owningClassName);
