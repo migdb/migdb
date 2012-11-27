@@ -223,7 +223,7 @@ query isDigit(char : String) : Boolean{
 }
 
 query rdb::Schema::hasUniqueName() : Boolean{
-    var schemas : OrderedSet(Schema) := self.owningModel->schemas->asOrderedSet();
+    var schemas : OrderedSet(Schema) := self.owningStructure->schemas->asOrderedSet();
 	return schemas->forAll(schema | schema.name <> self.name or schema = self); 
 }
 

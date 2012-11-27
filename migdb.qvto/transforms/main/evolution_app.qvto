@@ -230,21 +230,20 @@ helper APP::ops::SetAbstract::apply(inout structure : APP::Structure) {
 	return; 
 }
 
-query APP::ops::SetParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
-	var existChild : Boolean := checkStandardClassExists(self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existParent : Boolean := checkStandardClassExists(self.parentName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var isChildRootClass : Boolean := checkIsRootClass(self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var notIsParentDescendantOfChild := checkNotIsDescendant(self.parentName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
+	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existParent : Boolean := checkStandardClassExists(self.parentClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var isChildRootClass : Boolean := checkIsRootClass(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var notIsParentDescendantOfChild := checkNotIsDescendant(self.parentClassName, self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 
 	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild;
 }
 
-helper APP::ops::SetParent::apply(inout structure : APP::Structure) {
-	var c : APP::StandardClass := structure.findClass(self.name);	
-	c.parent := structure.findClass(self.parentName);
-	// smazani ID atributu
-	c.properties := c.properties->excluding(c.idProperty);
-	c.idProperty := null;
+helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
+	var childClass : APP::StandardClass := structure.findClass(self.className);	
+	childClass.parent := structure.findClass(self.parentClassName);
+	childClass.properties := childClass.properties->excluding(childClass.idProperty);
+	childClass.idProperty := null;
 	return;
 }
 

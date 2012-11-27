@@ -6,6 +6,7 @@ import validator_app;
 import validator_postgresql;
 import orm;
 import orm_structure;
+import creator_rdb_operations;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -13,19 +14,15 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 
 /**
-	There is problem with the same types of models - if rOperations is inModel DbOperations are collected in outRStructure
+	There is problem with the same types of models - solution find in creator_rdb_operations.qvto
 **/
 transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	//in inRStructure:RDB, 
-	out outRStructure : RDB , inout rOperations :RDB, out errorModel : ERR);
+	out outRStructure : RDB , out rOperations :RDB, out errorModel : ERR);
 
 main() {
-	//outAStructure.rootObjects()![APP::Structure].entities := inAStructure.rootObjects().deepclone()![APP::Structure].entities;
 	inAStructure.rootObjects().deepclone();
-	
-	//outRStructure.rootObjects()![RDB::Structure].schemas := inRStructure.rootObjects().deepclone()![RDB::Structure].schemas;
-	//inRStructure.rootObjects().deepclone();
-	
+	// hack - creating root model of rOperations by creator_rdb_operations.qvto
+	new creator_rdb_operations(rOperations);
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	processedAStructure.isModelValid(errorLog);
@@ -66,20 +63,4 @@ main() {
 		};
 	};
 	log("migdb_executer process finished");
-}
-
-query OrderedSet(APP::ops::DecomposableOperation)::appendOrderedSet(appendedSet : OrderedSet(app::ops::DecomposableOperation)) : OrderedSet(app::ops::DecomposableOperation){
-	var returnedSet : OrderedSet(APP::ops::DecomposableOperation):= self;
-	appendedSet->forEach(op){
-		returnedSet:= returnedSet->append(op);
-	};
-	return returnedSet;
-}
-
-query OrderedSet(APP::ops::AtomicOperation)::appendOrderedSet(appendedSet : OrderedSet(app::ops::AtomicOperation)) : OrderedSet(app::ops::AtomicOperation){
-	var returnedSet : OrderedSet(APP::ops::AtomicOperation):= self;
-	appendedSet->forEach(op){
-		returnedSet:= returnedSet->append(op);
-	};
-	return returnedSet;
 }

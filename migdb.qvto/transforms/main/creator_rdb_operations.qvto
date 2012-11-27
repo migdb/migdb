@@ -1,0 +1,9 @@
+import builder_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation creator_rdb_operations(out inStructure : RDB);
+
+main() {
+	_rdbOperations(OrderedSet{});	 
+}
