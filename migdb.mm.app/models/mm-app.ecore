@@ -26,7 +26,7 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="EmbeddedClass" eSuperTypes="#//app/GeneralClass">
       <eStructuralFeatures xsi:type="ecore:EReference" name="embeddedProperties" lowerBound="1"
-          upperBound="-1" eType="#//app/EmbeddedProperty" eOpposite="#//app/EmbeddedProperty/owningEmbeddedClass"/>
+          upperBound="-1" eType="#//app/EmbeddedProperty" containment="true" eOpposite="#//app/EmbeddedProperty/owningEmbeddedClass"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" lowerBound="1"
           eType="#//app/EmbeddedProperty"/>
     </eClassifiers>
