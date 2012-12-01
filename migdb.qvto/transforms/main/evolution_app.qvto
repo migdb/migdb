@@ -247,6 +247,13 @@ helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
 	return;
 }
 
+/**
+ * REMOVE PARENT
+ * Delete connection between child and parent class. 
+ * After performing this operation is CHILD class a ROOT.
+ * @restriction : child with @className must exist in model
+ * @restriction : parent class must exists in model
+ */
 query APP::ops::RemoveParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var existParent : Boolean := checkStandardClassExists(structure.findStandardClass(self.className).parent.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
@@ -257,7 +264,6 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
 	var idProperty : APP::PrimitiveProperty := _idProperty(getPrimaryKeyName(self.className.translate()), structure.findDefaultIdType());	
 	childClass.parent := null;
-	// TODO Must set IdProperty in CHILD class because now is ROOT
 	childClass.idProperty = idProperty;
 	childClass.properties += idProperty;
 	return;

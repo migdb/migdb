@@ -463,6 +463,24 @@ helper RDB::ops::InsertRows::apply(inout structure : RDB::Structure) {
 }
 
 /**
+ * DELETE ROWS
+ * This operation delete instances (rows) which not belong to @tableName
+ * @restriction : table with @tableName must exists in structure
+ * @restriction : child tables with @descendantNames must exists in structure
+ */
+query RDB::ops::DeleteRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.tableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existDescendantTables := checkExistTableSet(self.owningSchemaName, self.descendantsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+
+	return existSchema and existTable and existDescendantTables;
+}
+
+helper RDB::ops::DeleteRows::apply(inout structure : RDB::Structure) {
+	//this is just data operation
+}
+
+/**
  * GENERATE SEQUENCE NUMBERS
  * This operation structureerate new sequence numbers to defined columns.
  * @restriction : column with @columnName must exists in defined table
@@ -478,7 +496,7 @@ query RDB::ops::GenerateSequenceNumbers::isValid(structure : RDB::Structure, ino
 }
 
 helper RDB::ops::GenerateSequenceNumbers::apply(inout structure : RDB::Structure) {
-	//DATA operation??
+	//this is just data operation
 }
 
 /**
@@ -496,7 +514,7 @@ query RDB::ops::HasNoOwnInstances::isValid(structure : RDB::Structure, inout err
 }
 
 helper RDB::ops::HasNoOwnInstances::apply(inout structure : RDB::Structure) {
-
+	//this is just data operation
 }
 
 /**
@@ -512,7 +530,7 @@ query RDB::ops::HasNoInstances::isValid(structure : RDB::Structure, inout errorL
 }
 
 helper RDB::ops::HasNoInstances::apply(inout structure : RDB::Structure) {
-
+	//this is just data operation
 }
 
 

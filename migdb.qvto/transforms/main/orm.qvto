@@ -339,16 +339,26 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 	return operations;
 }
 
+/**
+ * REMOVE PARENT
+ * Delete connection between child and parent class. 
+ * After performing this operation is CHILD class a ROOT.
+ */
 helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var childClass : StandardClass := appStructure.findStandardClass(self.className);
 	var parentClass : StandardClass := childClass.parent;
 	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 		
-	// Remove PK from all child classes include childClass itself	
-	mappedSet ->forEach(cls | cls <> childClass){
+	// Remove PK from all classes in new hierarchy
+	mappedSet ->forEach(cls){
 		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), getPrimaryKeyName(parentClass.name));
 	};
+	
+	// Remove instances from parent class - only instances which not belong to parent class
+	operations += null;
+	
+	// Rename ID column in all classes in new hierarchy
 	mappedSet ->forEach(cls){
 //		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, childClass.translateIdName());
 	};
