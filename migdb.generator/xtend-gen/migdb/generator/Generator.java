@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mm.rdb.PrimitiveType;
-import mm.rdb.ops.MergeType;
+import mm.rdb.ToleranceType;
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
 import mm.rdb.ops.impl.AddIndexImpl;
@@ -822,7 +822,7 @@ public class Generator extends BaseCodeGenerator {
    * This operation copy data from one column to another.
    * That means update of one column in target table.
    * Target and source column can be in the same table.
-   * MergeType:
+   * ToleranceType:
    * strict -> Can not transfer data if a tables have different number of instances (rows).
    * tolerant -> Can transfer data if source table has less number of instances (rows).
    * force -> Delete rows if there is more instancef in source table. If source table has less number
@@ -830,8 +830,8 @@ public class Generator extends BaseCodeGenerator {
    * @param UpdateRowsImpl op : op of type UpdateRowsImpl
    */
   protected CharSequence _genOperation(final UpdateRowsImpl op) {
-      MergeType _type = op.getType();
-      String _string = _type.toString();
+      ToleranceType _lerance = op.getTolerance();
+      String _string = _lerance.toString();
       boolean _equals = _string.equals("strict");
       if (_equals) {
         {
@@ -873,8 +873,8 @@ public class Generator extends BaseCodeGenerator {
           return _builder;
         }
       }
-      MergeType _type_1 = op.getType();
-      String _string_1 = _type_1.toString();
+      ToleranceType _lerance_1 = op.getTolerance();
+      String _string_1 = _lerance_1.toString();
       boolean _equals_1 = _string_1.equals("force");
       if (_equals_1) {
         StringConcatenation _builder_1 = new StringConcatenation();
@@ -908,8 +908,8 @@ public class Generator extends BaseCodeGenerator {
         _builder_1.append(" );");
         return _builder_1;
       }
-      MergeType _type_2 = op.getType();
-      String _string_2 = _type_2.toString();
+      ToleranceType _lerance_2 = op.getTolerance();
+      String _string_2 = _lerance_2.toString();
       boolean _equals_2 = _string_2.equals("tolerant");
       if (_equals_2) {
         {
@@ -985,7 +985,7 @@ public class Generator extends BaseCodeGenerator {
     }
     _builder.append(")");
     _builder.newLineIfNotEmpty();
-    _builder.append("\t\t\t\t");
+    _builder.append("\t");
     _builder.append("SELECT ");
     {
       EList<String> _sourceColumnsNames_1 = op.getSourceColumnsNames();
@@ -994,14 +994,14 @@ public class Generator extends BaseCodeGenerator {
         if (!_hasElements_1) {
           _hasElements_1 = true;
         } else {
-          _builder.appendImmediate(",", "				");
+          _builder.appendImmediate(",", "	");
         }
-        _builder.append(col_1, "				");
+        _builder.append(col_1, "	");
       }
     }
     _builder.append(" FROM ");
     String _sourceTableName = op.getSourceTableName();
-    _builder.append(_sourceTableName, "				");
+    _builder.append(_sourceTableName, "	");
     _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
@@ -1021,7 +1021,24 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _tableName = op.getTableName();
     _builder.append(_tableName, "");
-    _builder.append(" AS parent");
+    _builder.append(" WHERE ");
+    String _idName = op.getIdName();
+    _builder.append(_idName, "");
+    _builder.append(" IN");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("(SELECT ");
+    String _tableName_1 = op.getTableName();
+    _builder.append(_tableName_1, "	");
+    _builder.append(".");
+    String _idName_1 = op.getIdName();
+    _builder.append(_idName_1, "	");
+    _builder.append(" FROM ");
+    String _owningSchemaName_1 = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName_1, "	");
+    _builder.append(".");
+    String _tableName_2 = op.getTableName();
+    _builder.append(_tableName_2, "	");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     {
@@ -1032,11 +1049,11 @@ public class Generator extends BaseCodeGenerator {
         _builder.append(" ON ");
         _builder.append(tab, "	");
         _builder.append(".");
-        String _idName = op.getIdName();
-        _builder.append(_idName, "	");
+        String _idName_2 = op.getIdName();
+        _builder.append(_idName_2, "	");
         _builder.append(" = parent.");
-        String _idName_1 = op.getIdName();
-        _builder.append(_idName_1, "	");
+        String _idName_3 = op.getIdName();
+        _builder.append(_idName_3, "	");
       }
     }
     _builder.newLineIfNotEmpty();
@@ -1053,12 +1070,12 @@ public class Generator extends BaseCodeGenerator {
         }
         _builder.append(tab_1, "	");
         _builder.append(".");
-        String _idName_2 = op.getIdName();
-        _builder.append(_idName_2, "	");
+        String _idName_4 = op.getIdName();
+        _builder.append(_idName_4, "	");
         _builder.append(" IS null ");
       }
     }
-    _builder.append(";");
+    _builder.append(");");
     _builder.newLineIfNotEmpty();
     return _builder;
   }

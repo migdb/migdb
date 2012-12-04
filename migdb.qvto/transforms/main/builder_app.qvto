@@ -145,12 +145,12 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
  *				COMPLEX HELPERS			 	*
  ********************************************/
 
-helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _type : APP::ops::MergeType) : APP::ops::MoveProperty {
+helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
 	return object APP::ops::MoveProperty {
 		owningClassName := _owningClassName;
 		name := _name;
 		targetClassName := _targetClassName;
-		type := _type;
+		tolerance := _tolerance;
 	}
 }
 

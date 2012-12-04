@@ -349,6 +349,7 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(
 	var parentClass : StandardClass := childClass.parent;
 	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	// CREATE just for JOIND inheritance type
 		
 	// Remove PK from all classes in new hierarchy
 	mappedSet ->forEach(cls){
@@ -389,7 +390,7 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 		sourceColumnName := self.name + '_old';
 		targetTableName := self.targetClassName.toLower();
 		targetColumnName := self.name;
-		type := mergeTypeInAppToMergeTypeInRdb(self.type);
+		tolerance := mergeTypeInAppToMergeTypeInRdb(self.tolerance);
 	};
 
 		operations += object RDB::ops::RemoveColumn {
@@ -400,11 +401,11 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 	return operations;
 }
 
-query mergeTypeInAppToMergeTypeInRdb(type : APP::ops::MergeType) : RDB::ops::MergeType {
+query mergeTypeInAppToMergeTypeInRdb(type : APP::ToleranceType) : RDB::ToleranceType {
 	switch {
-		case (type = APP::ops::MergeType::strict) return RDB::ops::MergeType::strict;
-		case (type = APP::ops::MergeType::force) return RDB::ops::MergeType::force;
-		case (type = APP::ops::MergeType::tolerant) return RDB::ops::MergeType::tolerant;
+		case (type = APP::ToleranceType::strict) return RDB::ToleranceType::strict;
+		case (type = APP::ToleranceType::force) return RDB::ToleranceType::force;
+		case (type = APP::ToleranceType::tolerant) return RDB::ToleranceType::tolerant;
 	};
 	return null;
 }

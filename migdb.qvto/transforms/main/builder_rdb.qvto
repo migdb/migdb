@@ -159,14 +159,14 @@ helper _removeSequence(_owningSchemaName : String, _sequenceName : String) : RDB
 	};
 }
 
-helper _updateRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targetTableName : String, _targerColumnName : String, _type : RDB::ops::MergeType, _idName : String) : RDB::ops::UpdateRows{
+helper _updateRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targetTableName : String, _targerColumnName : String, _tolerance : RDB::ToleranceType, _idName : String) : RDB::ops::UpdateRows{
 	return object RDB::ops::UpdateRows {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
 		sourceColumnName := _sourceColumnName;
 		targetTableName := _targetTableName;
 		targetColumnName := _targerColumnName;
-		type := _type;
+		tolerance := _tolerance;
 		idName := _idName;
 	};
 }

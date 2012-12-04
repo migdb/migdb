@@ -382,7 +382,7 @@ class Generator extends BaseCodeGenerator {
 	 * This operation copy data from one column to another.
 	 * That means update of one column in target table. 
  	 * Target and source column can be in the same table.
- 	 * MergeType:
+ 	 * ToleranceType:
  	 * strict -> Can not transfer data if a tables have different number of instances (rows).
  	 * tolerant -> Can transfer data if source table has less number of instances (rows).
  	 * force -> Delete rows if there is more instancef in source table. If source table has less number
@@ -390,16 +390,16 @@ class Generator extends BaseCodeGenerator {
 	 * @param UpdateRowsImpl op : op of type UpdateRowsImpl
 	 */
 	def dispatch genOperation(UpdateRowsImpl op){
-		if(op.type.toString().equals("strict")){
+		if(op.tolerance.toString().equals("strict")){
 			generateFile(op.getFileName(".q"), this.isSameTableSize(op.owningSchemaName, op.sourceTableName, op.targetTableName));
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
 		}
-		if(op.type.toString().equals("force")){
+		if(op.tolerance.toString().equals("force")){
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
 		}
-		if(op.type.toString().equals("tolerant")){
+		if(op.tolerance.toString().equals("tolerant")){
 			generateFile(op.getFileName(".q"), this.targetTableHasMoreRows(op.owningSchemaName, op.sourceTableName, op.targetTableName));
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
@@ -419,7 +419,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(InsertRowsImpl op)'''
 		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-						SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»;
+			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»;
 	'''
 	
 	/**
@@ -430,9 +430,10 @@ class Generator extends BaseCodeGenerator {
 	 */
 	 //TODO this SQL not work
 	def dispatch genOperation(DeleteRowsImpl op)'''
-		DELETE FROM «op.owningSchemaName».«op.tableName» AS parent
+		DELETE FROM «op.owningSchemaName».«op.tableName» WHERE «op.idName» IN
+			(SELECT «op.tableName».«op.idName» FROM «op.owningSchemaName».«op.tableName»
 			«FOR tab : op.descendantsNames» LEFT JOIN «tab» ON «tab».«op.idName» = parent.«op.idName»«ENDFOR»
-			WHERE «FOR tab : op.descendantsNames SEPARATOR "AND"»«tab».«op.idName» IS null «ENDFOR»;
+			WHERE «FOR tab : op.descendantsNames SEPARATOR "AND"»«tab».«op.idName» IS null «ENDFOR»);
 	'''	
 	
 	/** 		 QUERRIES	 		**/

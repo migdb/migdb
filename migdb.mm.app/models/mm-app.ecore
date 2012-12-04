@@ -46,6 +46,11 @@
       <eLiterals name="tablePerClass" value="1"/>
       <eLiterals name="singleTable" value="2"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EEnum" name="ToleranceType">
+      <eLiterals name="strict"/>
+      <eLiterals name="force" value="1"/>
+      <eLiterals name="tolerant" value="2"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EEnum" name="PrimitiveType">
       <eLiterals name="boolean"/>
       <eLiterals name="char" value="1"/>
@@ -216,8 +221,8 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
-            eType="#//app/ops/MergeType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tolerance" lowerBound="1"
+            eType="#//app/ToleranceType"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MoveProperty" eSuperTypes="#//app/ops/AtomicOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningClassName" lowerBound="1"
@@ -226,8 +231,8 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1"
-            eType="#//app/ops/MergeType"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tolerance" lowerBound="1"
+            eType="#//app/ToleranceType"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ExtractClass" eSuperTypes="#//app/ops/DecomposableOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
@@ -245,11 +250,6 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractParentName"
             lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EEnum" name="MergeType">
-        <eLiterals name="strict"/>
-        <eLiterals name="force" value="1"/>
-        <eLiterals name="tolerant" value="2"/>
-      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddParent" eSuperTypes="#//app/ops/AtomicOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -259,6 +259,8 @@
       <eClassifiers xsi:type="ecore:EClass" name="RemoveParent" eSuperTypes="#//app/ops/AtomicOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tolerance" lowerBound="1"
+            eType="#//app/ToleranceType" defaultValueLiteral=""/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>
