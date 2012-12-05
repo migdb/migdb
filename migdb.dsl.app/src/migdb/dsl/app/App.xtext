@@ -32,8 +32,8 @@ EmbeddedClass returns app::EmbeddedClass:
 	'embedded'
 	name=ID
 	'{'
-		'id' idProperty=[app::EmbeddedProperty|ID] //FIXME: reference???
-		embeddedProperties+=[app::EmbeddedProperty|ID] (embeddedProperties+=[app::EmbeddedProperty|ID])* //FIXME: reference???
+		'id' idProperty=[app::EmbeddedProperty|ID]
+		embeddedProperties+=EmbeddedProperty (embeddedProperties+=EmbeddedProperty)*
     '}'
 ;
 
@@ -42,7 +42,7 @@ StandardClass returns app::StandardClass:
 	'class'
 	name=ID ('<:' parent=[app::StandardClass|ID])?
 	'{'
-		('id' idProperty=[app::PrimitiveProperty|ID])? //FIXME: reference???
+		('id' idProperty=[app::PrimitiveProperty|ID])?
 		(properties+=MultipliableProperty (properties+=MultipliableProperty)*)?
     '}'
 ;

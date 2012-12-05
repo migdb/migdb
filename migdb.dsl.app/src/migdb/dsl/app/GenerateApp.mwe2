@@ -15,7 +15,7 @@ Workflow {
 		platformUri = "${runtimeProject}/.."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 		uriMap = {
-			from = "platform:/resource/migdb.mm.app/models/mm-app.ecore"
+			from = "platform:/plugin/migdb.mm.app/models/mm-app.ecore"
 			to = "http://www.collectionspro.eu/jam/mm/app"
 		}
 		
