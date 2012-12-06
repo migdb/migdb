@@ -1,0 +1,259 @@
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+package mm;
+
+@namespace(uri="http://www.collectionspro.eu/jam/mm/rdb", prefix="rdb")
+package rdb {
+  abstract class ModelRoot {
+  }
+
+  class Operations extends ModelRoot {
+    val ops.ModelOperation[*]#owningOperations operations;
+  }
+
+  class Structure extends ModelRoot {
+    !ordered val Schema[*]#owningStructure schemas;
+  }
+
+  class Schema {
+    derived ref Structure[1]#schemas owningStructure;
+    attr String[1] name;
+    !ordered val Table[*]#owningSchema tables;
+    !ordered val Sequence[1]#owningSchema sequence;
+    !ordered val Index[*]#owningSchema indexes;
+  }
+
+  class Sequence {
+    readonly derived ref Schema[1]#sequence owningSchema;
+    attr String[1] name;
+    attr int[1] startValue;
+  }
+
+  class Index {
+    readonly derived ref Schema[1]#indexes owningSchema;
+    attr String[1] name;
+    !ordered ref Column[+] columns;
+  }
+
+  class Table {
+    readonly derived ref Schema[1]#tables owningSchema;
+    attr String[1] name;
+    !ordered val Column[*]#owningTable columns;
+    !ordered val Constraint[*]#owningTable constraints;
+  }
+
+  class Column {
+    readonly derived ref Table[1]#columns owningTable;
+    attr String[1] name;
+    attr PrimitiveType[1] type;
+    attr String defaultValue;
+  }
+
+  abstract class Constraint {
+    attr String[1] name;
+    derived ref Table[1]#constraints owningTable;
+  }
+
+  abstract class ColumnConstraint extends Constraint {
+    ref Column[1] constrainedColumn;
+  }
+
+  class Unique extends Constraint {
+    ref Column[*] uniqueColumns;
+  }
+
+  class PrimaryKey extends ColumnConstraint {
+  }
+
+  class ForeignKey extends ColumnConstraint {
+    ref Table[1] targetTable;
+  }
+
+  class NotNull extends ColumnConstraint {
+  }
+
+  enum PrimitiveType {
+    boolean = 0;
+    char = 1;
+    int = 2;
+    float = 3;
+  }
+
+  enum ToleranceType {
+    strict = 0;
+    force = 1;
+    tolerant = 2;
+  }
+
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-ops", prefix="rdb-ops")
+  package ops {
+    abstract class ModelOperation {
+      derived ref Operations[1]#operations owningOperations;
+    }
+
+    class AddSchema extends ModelOperation {
+      attr String[1] name;
+    }
+
+    class AddSequence extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+      attr int[1] startValue;
+    }
+
+    class AddTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class AddIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[+] columnsNames;
+    }
+
+    class AddColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr PrimitiveType[1] type;
+      attr String defaultValue;
+    }
+
+    class AddPrimaryKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] constrainedColumnName = "";
+      attr String[1] name;
+    }
+
+    class AddForeignKey extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] constrainedColumnName;
+      attr String[1] name;
+      attr String[1] targetTableName;
+    }
+
+    class AddUnique extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[+] constrainedColumnNames;
+      attr String[1] name;
+    }
+
+    class AddNotNull extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] constrainedColumnName;
+      attr String[1] name;
+    }
+
+    class RenameTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class RenameColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class SetColumnType extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+      attr PrimitiveType[1] newType;
+      attr PrimitiveType[1] oldType;
+    }
+
+    class SetDefaultValue extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+      attr String[1] newDefaultValue;
+    }
+
+    class RemoveTable extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class RemoveColumn extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+    }
+
+    class RemoveConstraint extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] name;
+    }
+
+    class RemoveIndex extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class RemoveDefaultValue extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+    }
+
+    class RemoveSequence extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] name;
+    }
+
+    class UpdateRows extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] sourceTableName;
+      attr String[1] sourceColumnName;
+      attr String[1] targetTableName;
+      attr String[1] targetColumnName;
+      attr ToleranceType[1] tolerance;
+      attr String[1] idName;
+    }
+
+    class InsertRows extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] sourceTableName;
+      attr String[+] sourceColumnsNames;
+      attr String[1] targetTableName;
+    }
+
+    class DeleteRows extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] tableName;
+      attr String[*] descendantsNames;
+      attr String[1] idName;
+    }
+
+    class HasNoOwnInstances extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] tableName;
+      attr String[*] descendantsNames;
+      attr String[1] idName;
+    }
+
+    class HasNoInstances extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] tableName;
+    }
+
+    class GenerateSequenceNumbers extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] tableName;
+      attr String[1] columnName;
+      attr String[1] sequenceName;
+    }
+
+  }
+
+}
+
