@@ -235,8 +235,8 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 	var existParent : Boolean := checkStandardClassExists(self.parentClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isChildRootClass : Boolean := checkIsRootClass(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var notIsParentDescendantOfChild := checkNotIsDescendant(self.parentClassName, self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-
-	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild;
+	var haveSameInheritanceType := checkHaveSameInheritanceType(self.parentClassName, self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild and haveSameInheritanceType;
 }
 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
@@ -541,8 +541,22 @@ helper checkAreClassesRelatives(firstClassName : String, secondClassName : Strin
 	}endif;
 	var areClassesRelatives : Boolean := structure.areClassesRelatives(firstClassName, secondClassName);
 	if(not areClassesRelatives)then{
-		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName+ " are not relatives";
+		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + " are not relatives";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return areClassesRelatives;
+}
+
+helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(firstClassName) or not structure.containsStandardClass(secondClassName))then{
+		return false;
+	}endif;
+	var firstClass : StandardClass := structure.findStandardClass(firstClassName);
+	var secondClass : StandardClass := structure.findStandardClass(secondClassName);
+	var haveSameInheritanceType : Boolean := firstClass.inheritanceType = secondClass.inheritanceType;
+	if(not haveSameInheritanceType)then{
+		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + " have distinct inheritance types";
+		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);		
+	}endif;
+	return haveSameInheritanceType;
 }
