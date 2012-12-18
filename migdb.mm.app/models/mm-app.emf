@@ -219,8 +219,11 @@ package app {
 
     class RemoveParent extends AtomicOperation {
       attr String[1] className;
-      attr ToleranceType[1] tolerance = "";
     }
+    
+    class ZipperHierarchy extends DecomposableOperation {
+      attr String[1] className;
+    }    
 
   }
 

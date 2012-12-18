@@ -251,6 +251,8 @@ helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
  * REMOVE PARENT
  * Delete connection between child and parent class. 
  * After performing this operation is CHILD class a ROOT.
+ * If you can remove parent (just connection not the parent class itself)
+ * you must check that parent class don't have any instances -> [ORM problem]
  * @restriction : child with @className must exist in model
  * @restriction : parent class must exists in model
  */
@@ -267,6 +269,38 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 	childClass.idProperty = idProperty;
 	childClass.properties += idProperty;
 	return;
+}
+
+/**
+ * ZIPPER HIERARCHY
+ * Create copy of parent class and create new hierarchical connection 
+ * beetwen this class and copy of parent
+ * @restriction : child with @className must exist in model
+ * @restriction : parent class must exists in model
+ * @restriction : No class from model may not point to the parent class
+ */
+query APP::ops::ZipperHierarchy::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
+	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existParent : Boolean := checkStandardClassExists(structure.findStandardClass(self.className).parent.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var pointToParent : Boolean := checkExistsSomePointersToClass(structure.findStandardClass(self.className).parent.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existChild and existParent and not pointToParent;
+}
+
+helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+	var childClass : StandardClass := structure.findStandardClass(self.className);
+	var parentClass :StandardClass := childClass.parent; 
+	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
+	// Create copy of parentClass - new name <parentClass.name>_copy
+	var newName : String := parentClass.name+"_copy";
+	operations += _addStandardClass(newName, parentClass.isAbstract, parentClass.inheritanceType);
+	// Add attributes from parentClass to newParentClass
+	parentClass.properties->forEach(p){
+		//TODO - p.type - cannot exist because p is type MultipliableProperty and this object don't have type attribute in interface
+		//operations += _addProperty(newName, p.name, p.type., p.lowerBound, p.upperBound);
+	};
+	//TODO - If old parentClass have a parent for example with name ROOT - add this ROOT as a parent to newParentClass
+	//TODO - Add childClass new parent - newParentClass
+	return operations;
 }
 
 
@@ -559,4 +593,13 @@ helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : S
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);		
 	}endif;
 	return haveSameInheritanceType;
+}
+
+helper checkExistsSomePointersToClass(className : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	var pointer : Boolean := structure.entities[APP::StandardClass]->properties[AssociationProperty]->exists(pr | pr.type = structure.findStandardClass(className));
+	if(pointer) then {
+		var errorMessage : String := "Class " + className + " is target of some pointers";
+		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);	
+	}endif;
+	return pointer;
 }

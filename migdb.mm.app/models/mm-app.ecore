@@ -259,8 +259,10 @@
       <eClassifiers xsi:type="ecore:EClass" name="RemoveParent" eSuperTypes="#//app/ops/AtomicOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tolerance" lowerBound="1"
-            eType="#//app/ToleranceType" defaultValueLiteral=""/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ZipperHierarchy" eSuperTypes="#//app/ops/DecomposableOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>
