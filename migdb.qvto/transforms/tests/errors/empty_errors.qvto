@@ -1,0 +1,8 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation empty_errors(out inoutModel : ERR);
+
+main(){
+	_errorLog(OrderedSet{});
+}

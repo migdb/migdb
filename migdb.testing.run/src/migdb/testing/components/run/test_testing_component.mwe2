@@ -1,0 +1,74 @@
+module migb.testing.run.test_testing_component
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_PROJECT = "../migdb.qvto/transforms"
+var TEST_BASE_DIR  = "${QVTO_PROJECT}/tests"
+var TEST_STRUCTURES_DIR = "${TEST_BASE_DIR}/structures/app"
+var TEST_OPS_DIR = "${TEST_BASE_DIR}/operations/app"
+var TEST_ERRORS_DIR = "${TEST_BASE_DIR}/errors"
+var OUTPUT_BASE = "output-tests/test_testing_component"
+var EVO_APP_RUN = "${QVTO_PROJECT}/main/evolution_app_run.qvto"
+/**
+ * Test of the ComparatorComponent. Test is unsuccesful - eg, models are different.
+ */
+Workflow{
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE}"
+	}
+	
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel - hack wrong divided projects*/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+	
+	/* Define of ERR metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+	
+	component=TestComponent{
+		qvtInput = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
+		qvtInput = "${TEST_OPS_DIR}/emptyOperations.qvto"
+		
+		qvtComparison = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
+		qvtComparison = "${TEST_ERRORS_DIR}/empty_errors.qvto"
+		
+		transformationFile = "${EVO_APP_RUN}"
+		outputParentUri = "${OUTPUT_BASE}/TEST1"
+	} 	
+	
+	component=TestComponent{
+		qvtInput = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
+		qvtInput = "${TEST_OPS_DIR}/emptyOperations.qvto"
+		
+		qvtComparison = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
+		qvtComparison = ""
+		
+		transformationFile = "${EVO_APP_RUN}"
+		outputParentUri = "${OUTPUT_BASE}/TEST2"
+		testDescription = "test Component with description and just one comparison"
+	} 		
+
+}
