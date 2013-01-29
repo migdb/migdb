@@ -1,5 +1,6 @@
-modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 library builder_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 
 helper _addSchema(_name : String) : RDB::ops::AddSchema {
 	return object RDB::ops::AddSchema {

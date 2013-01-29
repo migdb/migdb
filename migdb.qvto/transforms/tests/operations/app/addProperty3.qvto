@@ -2,7 +2,7 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation addProperty2(out inoutModel : APP);
+transformation addProperty3(out inoutModel : APP);
 
 main(){
 	var addProperty : APP::ops::AddProperty :=_addProperty( "Root", "EmbeddedAss", "Tab");

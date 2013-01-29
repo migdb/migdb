@@ -28,7 +28,7 @@ import builder_errors;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 modeltype ERR uses 'http://www.collectionspro.eu/jam/mm/errors';
 
-transformation POSTGRESQL_VALIDATE(in inModel : RDB, inout errorModel : ERR);
+transformation validator_postgresql(in inModel : RDB, inout errorModel : ERR);
 
 main() {	
 	log("Postgresql validation of model started...");

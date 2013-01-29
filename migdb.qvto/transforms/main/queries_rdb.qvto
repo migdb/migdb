@@ -22,7 +22,7 @@
  * THE SOFTWARE.
  * 
  */
-library RDB_queries;
+library queries_rdb;
 
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 

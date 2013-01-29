@@ -4,9 +4,6 @@ transformation secondAPP(out inoutModel : APP);
 
 
 main() {
-	OrderedSet{"a", "b", "aa","a", "x", "l", "m"}->forEach(str){
-		log(str);
-	};
 	log("TEST_APP_01: valid");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);

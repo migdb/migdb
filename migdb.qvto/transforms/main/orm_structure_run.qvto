@@ -8,7 +8,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 
-transformation ormStructureRun(in inAppStructure : APP, out outRdbStructure : RDB, out errors : ERR);
+transformation orm_structure_run(in inAppStructure : APP, out outRdbStructure : RDB, out errors : ERR);
 
 
 main() {

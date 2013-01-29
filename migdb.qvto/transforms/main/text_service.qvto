@@ -1,0 +1,86 @@
+library text_service;
+
+/*
+	This file provides String constants and methods to manipulate with Strings. It is independent 
+	to any metamodel.
+*/
+
+/**
+	returns discriminator column constant 
+**/
+query getDiscriminatorColumnName() : String{
+	return "discriminator";
+}
+
+/**
+	Translate identifier from app into db. Upper characters are transformed into lower chars,
+ 	words are divided by character '_'
+**/
+query String :: translate() : String{
+	var dbName : String := self.at(1).toLower();
+	var i : Integer := 2; 
+	while(self.size() >= i){
+		if(self.at(i).toLower() != self.at(i))then{
+			dbName := dbName + "_" + self.at(i).toLower();
+		}else{
+			dbName := dbName + self.at(i);
+		}endif;
+		i:= i+1;
+	};
+	return dbName;
+}
+
+/** returns column name for ordered collections **/ 
+query getOrderingColumnName() : String {
+	return "_ordering";
+}
+
+query getIdPrefix() : String{
+	return "id_";
+}
+
+query getIdPropertyName(tableName : String) : String{
+	return getIdPrefix() + tableName;
+}
+
+/** Helper query for String manipulation **/
+query String::at(index : Integer) : String{
+	return self.substring(index,index);
+}
+
+query getFkParentPrefix() : String{
+	return getFkPrefix() + "parent_";
+}
+
+query getUniquePrefix() : String{
+	return "ux_";
+}
+
+query getOrderedPrefix() : String{
+	return "ordered_";
+}
+
+query getPkPrefix() : String{
+	return "pk_";
+}
+
+query getFkPrefix() : String{
+	return "fk_";	
+}
+
+query getCollectionPrefix() : String{
+	return "col_";
+}
+
+/**
+	There can be only one ordering column in table so tableName is also identifier for each 
+unique ordering constraint
+**/
+query getOrderingConstraintName(tableName : String ) : String{
+	return getUniquePrefix() + getOrderedPrefix() + tableName;
+}
+
+// 
+query getPrimaryKeyName(tableName : String) : String{
+	return getPkPrefix() + tableName;
+}

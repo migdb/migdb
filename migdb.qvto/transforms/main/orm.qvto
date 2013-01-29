@@ -26,6 +26,7 @@ import queries_app;
 import queries_rdb;
 import builder_app;
 import builder_rdb;
+import name_service_app;
  
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
@@ -49,7 +50,9 @@ helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : Ordere
 	return OrderedSet{};
 }
 
-
+/**	
+	Helper used to map APP primitiveType to RDB primitiveType
+**/
 helper toRdbType(type : APP::PrimitiveType) : RDB::PrimitiveType{
 	if(type = APP::PrimitiveType::boolean)then{
 		return RDB::PrimitiveType::boolean;
@@ -410,10 +413,6 @@ query mergeTypeInAppToMergeTypeInRdb(type : APP::ToleranceType) : RDB::Tolerance
 	return null;
 }
 
-/* ++++++++++ Decomposable OPERATIONS ++++++++++++++++++++ */
-
-
-
 //get set of classes that will be transformed by operation
 query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
 	var mappedSet : OrderedSet(StandardClass); 
@@ -427,103 +426,3 @@ query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
 	return mappedSet;
 }
 
-/**
-	Translate identifier from app into db. Upper characters are transformed into lower chars,
- 	words are divided by character '_'
-**/
-query String :: translate() : String{
-	var dbName : String := self.at(1).toLower();
-	var i : Integer := 2; 
-	while(self.size() >= i){
-		if(self.at(i).toLower() != self.at(i))then{
-			dbName := dbName + "_" + self.at(i).toLower();
-		}else{
-			dbName := dbName + self.at(i);
-		}endif;
-		i:= i+1;
-	};
-	return dbName;
-}
-
-/** Returns class representative - e.g. origin class of table where are stored instances of this cls.  */
-query StandardClass::getDbRepresentative(): StandardClass{
-	var representant : StandardClass := self;
-	while(representant.parent <> null and representant.hasSingleTableInheritanceType()){
-		representant := representant.parent;
-	};
-	return self;
-}
-
-/** returns column name for ordered collections **/ 
-query getOrderingColumnName() : String {
-	return "_ordering";
-}
-
-query app::EmbeddedClass::getIdName() : String{
-	return "id_" + self.name.translate();
-}
-
-/** Translates idProperty name into db "language" **/
-query app::StandardClass::translateIdName() : String{
-	if(self.parent = null)then{
-		return getIdPropertyName(self.name.translate());
-	}endif;
-	return self.parent.translateIdName();
-}
-
-query getIdPropertyName(tableName : String) : String{
-	return "id_" + tableName;
-}
-
-/** Helper query for String manipulation **/
-query String::at(index : Integer) : String{
-	return self.substring(index,index);
-}
-
-/** Helper query for retrieving Fk name to parent class **/
-query StandardClass::getParentFkName() : String{
-	//currently implemented as a FK_ tableName + parent name is unique because of 1-N parent-child relationship  
-	return "fk_parent_" + self.name.translate();
-}
-
-query MultipliableProperty::getUniqueConstraintName() : String{
-	return "ux_" + self.owningGeneralClass.name.translate() + "_" + self.name.translate();
-} 
-
-/**
-	There can be only one ordering column in table so tableName is also identifier for each 
-unique ordering constraint
-**/
-query getOrderingConstraintName(tableName : String ) : String{
-	return "ux_ordered_" + tableName;
-}
-
-// 
-query getPrimaryKeyName(tableName : String) : String{
-	return "pk_" + tableName;
-}
-
-query PrimitiveProperty::getFKCollectionName():String{
-	return "fk_col_" + self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
-}
-
-query PrimitiveProperty::getCollectionTableName():String{
-	return "col_" + self.name.translate() + "_" + self.owningGeneralClass.getDbRepresentative().name.translate();
-}
-
-/** Maps **/
-query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
-	return associationOwningClass.getDbRepresentative().name.translate() + "_" + associationProperty.name.translate();	
-}
-
-query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass) : String {
-	return "fk_" + associationTableName + "_" + originClass.name.translate();
-}
-
-query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
-	return "fk_" + sourceClass.name.translate() + "_" + self.name.translate() + "_" + targetClass.name.translate();
-}
-
-query getDiscriminatorColumnName() : String{
-	return "discriminator";
-}

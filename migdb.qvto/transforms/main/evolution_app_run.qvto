@@ -5,7 +5,7 @@ import builder_errors;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation evolutionAtomicRdbRun(in inStructure : APP,in inOperations : APP ,out outStructure : APP, out errors : ERR);
+transformation evolution_app_run(in inStructure : APP,in inOperations : APP ,out outStructure : APP, out errors : ERR);
 
 
 main() {

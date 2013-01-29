@@ -7,7 +7,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation OrmPerformTest(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
+transformation orm_run(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
 
 main(){
 	log("Orm runner started");

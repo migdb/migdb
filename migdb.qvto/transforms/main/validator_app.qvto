@@ -29,7 +29,7 @@ import builder_errors;
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype ERR uses 'http://www.collectionspro.eu/jam/mm/errors';
 
-transformation APP_VALIDATE(in inModel : APP, inout errorModel : ERR);
+transformation validator_app(in inModel : APP, inout errorModel : ERR);
 
 main() {	
 	log("Validation aplication model started...");

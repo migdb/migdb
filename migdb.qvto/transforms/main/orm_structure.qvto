@@ -2,6 +2,9 @@ import queries_app;
 import builder_rdb;
 import queries_rdb;
 import builder_errors;
+import name_service_app;
+import text_service;
+// imported because of toRdbType(APP::TYPE) RDB::Type
 import orm;
 
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";

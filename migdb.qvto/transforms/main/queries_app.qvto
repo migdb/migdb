@@ -22,7 +22,8 @@
  * THE SOFTWARE.
  * 
  */
-library APP_queries;
+library queries_app;
+
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
@@ -432,6 +433,20 @@ query StandardClass::getId():PrimitiveProperty{
 	return self.idProperty;
 }
 
+/** Returns class representative - e.g. origin class of table where are stored instances of this cls.  */
+query StandardClass::getDbRepresentative(): StandardClass{
+	var representant : StandardClass := self;
+	while(representant.parent <> null and representant.hasSingleTableInheritanceType()){
+		representant := representant.parent;
+	};
+	return self;
+}
+
+query app::StandardClass::isRoot():Boolean{
+	return self.parent = null;
+}
+
+
 /**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/
 query app::Structure::print(){
 	self->entities->forEach(ent){
@@ -443,8 +458,4 @@ query app::Operations::print(){
 	self->operations->forEach(op){
 		log(op.repr());
 	}
-}
-
-query app::StandardClass::isRoot():Boolean{
-	return self.parent = null;
 }

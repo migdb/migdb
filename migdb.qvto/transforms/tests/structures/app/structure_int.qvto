@@ -2,7 +2,7 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation OrmAddClassFirstTest(out inoutModel : APP);
+transformation structureInt(out inoutModel : APP);
 
 main(){
 	_appStructure(OrderedSet{_primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int)});

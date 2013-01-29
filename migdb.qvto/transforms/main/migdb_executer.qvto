@@ -16,7 +16,7 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 /**
 	There is problem with the same types of models - solution find in creator_rdb_operations.qvto
 **/
-transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
+transformation migdb_executer(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
 	out outRStructure : RDB , out rOperations :RDB, out errorModel : ERR);
 
 main() {

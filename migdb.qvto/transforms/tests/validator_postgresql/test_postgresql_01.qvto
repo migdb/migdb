@@ -6,4 +6,7 @@ transformation secondAPP(out inoutModel : RDB);
 main() {
 	log("TEST_RDB_01: valid");	
 	var root : rdb::ModelRoot := _rdbStructure(Set{_schema("valid_schema")});
+	//var root : rdb::ModelRoot := object RDB::Structure{
+	//	schemas := Set{object rdb::Schema{name := "valid_schema"}}
+	//}
 }

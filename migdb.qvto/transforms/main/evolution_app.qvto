@@ -22,15 +22,16 @@
  * THE SOFTWARE.
  * 
  */
+library evolution_app;
+
 import queries_app;
 import builder_app;
 import builder_errors;
-import orm;
+import text_service;
 
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 modeltype ERR uses errors('http://www.collectionspro.eu/jam/mm/errors');
 
-library evolution_app;
 
 /** Returns id of transformation app evolution **/
 query getEvolutionAppTransformationId() : String {

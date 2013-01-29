@@ -1,0 +1,54 @@
+library name_service_app;
+
+import queries_app;
+import text_service;
+
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+
+/*
+	This file provides names for elements in app metamodel. 
+*/
+/** Maps **/
+query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
+	return associationOwningClass.getDbRepresentative().name.translate() + "_" + associationProperty.name.translate();	
+}
+
+query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass) : String {
+	return getFkPrefix() + associationTableName + "_" + originClass.name.translate();
+}
+
+query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
+	return getFkPrefix() + sourceClass.name.translate() + "_" + self.name.translate() + "_" + targetClass.name.translate();
+}
+
+query EmbeddedClass::getIdName() : String{
+	return getIdPrefix() + self.name.translate();
+}
+
+/** Translates idProperty name into db "language" **/
+query StandardClass::translateIdName() : String{
+	if(self.parent = null)then{
+		return getIdPropertyName(self.name.translate());
+	}endif;
+	return self.parent.translateIdName();
+}
+
+/** Helper query for retrieving Fk name to parent class **/
+query StandardClass::getParentFkName() : String{
+	//currently implemented as a FK_ tableName + parent name is unique because of 1-N parent-child relationship  
+	return getFkParentPrefix() + self.name.translate();
+}
+
+query MultipliableProperty::getUniqueConstraintName() : String{
+	return getUniquePrefix() + self.owningGeneralClass.name.translate() + "_" + self.name.translate();
+}
+
+query PrimitiveProperty::getFKCollectionName():String{
+	return getFkPrefix() + getCollectionPrefix() + 
+	self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
+}
+
+query PrimitiveProperty::getCollectionTableName():String{
+	return getCollectionPrefix() + self.name.translate() + "_" + 
+	self.owningGeneralClass.getDbRepresentative().name.translate();
+}

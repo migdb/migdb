@@ -1,6 +1,6 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_ordered_input(out inoutModel : APP);
 
 
 main() {
