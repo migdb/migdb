@@ -1,0 +1,10 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation renameProperty1(out inoutModel : APP);
+
+main(){
+	var renameProperty : APP::ops::RenameProperty :=_renameProperty("Tab", "pr", "newPropertyName"); 
+	_appOperations(OrderedSet{renameProperty});	
+}

@@ -47,30 +47,15 @@ query APP::NestedProperty::isID() : Boolean{
 	return false;	
 }
 
-/**
-	Must has owningClass as a parameter - member method cannot change member fields.
-**/
-helper removeProperty(inout owningClass : GeneralClass, removedPropertyName : String){
-	if(owningClass.oclIsTypeOf(StandardClass))then {
-		removeProperty(owningClass.oclAsType(StandardClass), removedPropertyName);
-	}else {
-		if(owningClass.oclIsTypeOf(EmbeddedClass))then {
-			removeProperty(owningClass.oclAsType(EmbeddedClass), removedPropertyName);
-		}else {
-			log("Removing from not StandardClass neither EmbeddedClass not allowed");
-			assert(false);
-		}endif;
-	} endif;
-}
+abstract query app::GeneralClass::removeProperty(removedPropertyName : String);
 
-helper removeProperty(inout owningClass : EmbeddedClass ,removedPropertyName : String){
-	owningClass.embeddedProperties := owningClass.embeddedProperties->
-		reject(pr | pr.name = removedPropertyName);
+helper EmbeddedClass::removeProperty(removedPropertyName : String){
+	self.embeddedProperties->excluding(self.getProperty(removedPropertyName).oclAsType(EmbeddedProperty));
 	return;
 }
 
-helper removeProperty(inout owningClass : StandardClass, removedPropertyName : String){
-	owningClass.properties := owningClass.properties->reject(pr | pr.name = removedPropertyName);
+helper StandardClass::removeProperty(removedPropertyName : String){
+	self.properties->excluding(self.getProperty(removedPropertyName).oclAsType(MultipliableProperty));
 	return;
 }
 
@@ -296,20 +281,16 @@ query EmbeddedClass::containsProperty(propertyName : String) : Boolean{
 
 abstract query GeneralClass::containsProperty(primitiveType : PrimitiveClass) : Boolean;
 
-query StandardClass::containsPropertyOfType(_primitiveType : PrimitiveClass) : Boolean{
+query StandardClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean{
 	return self.properties[PrimitiveProperty]->exists(prop | prop.type = _primitiveType);
 }
 
-query EmbeddedClass::containsPropertyOfType(_primitiveType : PrimitiveClass) : Boolean{
+query StandardClass::containsProperty(_type : EmbeddedClass) : Boolean{
+	return self.properties[NestedProperty]->exists(prop | prop.type) = _type;
+}
+
+query EmbeddedClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean{
 	return self.embeddedProperties->exists(prop | prop.type = _primitiveType);
-}
-
-query StandardClass::containsPropertyOfType(_type : EmbeddedClass) : Boolean{
-	return self.properties[NestedProperty]->exists(prop | prop.type = _type );
-}
-
-query StandardClass::containsPropertyOfType(_standardClasstype : StandardClass) : Boolean{
-	return self->properties[AssociationProperty]->exists(prop | prop.type);	
 }
 
 query APP::Structure::arePropertiesInClass(className : String, propertyNames : OrderedSet(String)) : Boolean {
@@ -449,14 +430,7 @@ query app::MultipliableProperty::hasUniqueNameInHierarchy():Boolean{
 }
 
 query StandardClass::getId():PrimitiveProperty{ 
-	if(self.isRoot())then{
-		return self.idProperty;
-	}endif;
-	if(self.idProperty = null)then{
-		log("Invalid getId call - no root, no ID: " + self.repr());
-		assert(false);
-	}endif;
-	return self.parent.getId();
+	return self.idProperty;
 }
 
 /** Returns class representative - e.g. origin class of table where are stored instances of this cls.  */
@@ -471,6 +445,7 @@ query StandardClass::getDbRepresentative(): StandardClass{
 query app::StandardClass::isRoot():Boolean{
 	return self.parent = null;
 }
+
 
 /**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/
 query app::Structure::print(){

@@ -124,7 +124,7 @@ helper app::StandardClass::toSingleTable(inout schema : RDB::Schema, inout error
 	schema.tables+=table;
 	self.getAllDescendants()->properties->asSet()->toColumns(table, errorLog);
 	//needs existance of String Class
-	table.columns += _column(getDiscriminatorColumnName(), RDB::PrimitiveType::char);
+	table.columns += _column(getDbDiscriminatorColumnName(), RDB::PrimitiveType::char);
 	return;
 }
 
@@ -184,7 +184,7 @@ helper app::PrimitiveProperty::toPrimitive(inout table : Table, inout errorLog :
 	var column : Column;
 	column := _column(self.name.translate(), toRdbType(self.getPrimitiveType()), self.defaultValue);
 	if(self.isID())then{
-		table.constraints += _primaryKey(getPrimaryKeyName(table.name), column);
+		table.constraints += _primaryKey(getDbPrimaryKeyName(table.name), column);
 	}endif;
 	table.columns += column;
 	return;	
@@ -209,9 +209,9 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout
 	schema.tables+= collectionTable;
 	//adds ordering column
 	if(self.isOrdered)then{
-		var orderingColumn : Column :=_column(getOrderingColumnName(), RDB::PrimitiveType::int);
+		var orderingColumn : Column :=_column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
 		collectionTable.columns += orderingColumn;
-		collectionTable.constraints+= _unique(getOrderingConstraintName(collectionTable.name), OrderedSet{orderingColumn, idColumn});
+		collectionTable.constraints+= _unique(getDbOrderingConstraintName(collectionTable.name), OrderedSet{orderingColumn, idColumn});
 	}endif;
 	//adding unique constraint
 	if(self.isUnique)then{
@@ -256,9 +256,9 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, 
 			associationTable.constraints+= fkReferencingOpposite;
 			// adding ordering column
 			if(self.isOrdered or (self.oppositeProperty != null and self.oppositeProperty.isOrdered)) then{
-				var orderingColumn : rdb::Column := _column(getOrderingColumnName(), RDB::PrimitiveType::int);
+				var orderingColumn : rdb::Column := _column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
 				associationTable.columns += orderingColumn;
-				var uniqueOrder : rdb::Unique := _unique(getOrderingConstraintName(associationTable.name), OrderedSet{owningAssociationColumn, orderingColumn});
+				var uniqueOrder : rdb::Unique := _unique(getDbOrderingConstraintName(associationTable.name), OrderedSet{owningAssociationColumn, orderingColumn});
 			}endif;
 			// adding uniqueness to collection		
 			if(self.isUnique or (self.oppositeProperty != null and self.oppositeProperty.isUnique))then{

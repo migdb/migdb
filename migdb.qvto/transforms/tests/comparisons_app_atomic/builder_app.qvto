@@ -1,0 +1,346 @@
+import queries_app;
+
+library builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+/********************************************
+ *				OPERATION HELPERS			 	*
+ ********************************************/
+
+helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
+	return object APP::ops::AddPrimitiveClass {
+		name := _name;
+		primitiveType := _primitiveType;
+	}
+}
+
+helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
+	return object APP::ops::AddEmbeddedClass {
+		name := _name;
+	}
+}
+
+helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
+	return object APP::ops::AddStandardClass {
+		name := _name;
+		isAbstract := _isAbstract;
+		inheritanceType := _inheritanceType;
+	}
+}
+
+helper _renameEntity(_name : String, _newName : String) : APP::ops::RenameEntity {
+	return object APP::ops::RenameEntity {
+		name := _name;
+		newName := _newName;
+	}
+}
+
+helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
+	return object APP::ops::RemoveEntity {
+		name := _name;
+	}
+}
+
+helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
+	return object APP::ops::AddProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		type := _type;
+	}
+}
+
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type); 
+	addProperty.lowerBound := _lowerBound;
+	addProperty.upperBound := _upperBound;
+	return addProperty;
+}
+
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, _lowerBound, _upperBound); 
+	addProperty.defaultValue := _defaultValue;
+	return addProperty;
+}
+
+
+helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
+	return object APP::ops::RenameProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		newName := _newName;
+	}
+}
+
+helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::RemoveProperty {
+	return object APP::ops::RemoveProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+	}
+}
+
+helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
+	return object APP::ops::SetOpposite {
+		firstClassName := _firstClassName;
+		firstPropertyName := _firstPropertyName;
+		secondClassName := _secondClassName;
+		secondPropertyName := _secondPropertyName;
+		isOpposite := _isOpposite;
+	}
+}
+
+helper _addParent(_className : String , _parentName : String) : APP::ops::AddParent{
+	return object APP::ops::AddParent{
+		className := _className;
+		parentClassName := _parentName;
+	};
+}
+
+helper _removeParent(_className : String) : APP::ops::RemoveParent{
+	return object APP::ops::RemoveParent{
+		className := _className;
+	};
+}
+
+helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
+	return object APP::ops::SetAbstract {
+		name := _name;
+		isAbstract := _isAbstract;
+	}
+}
+
+helper _setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
+	return object APP::ops::SetType {
+		owningClassName := _owningClassName;
+		name := _name;
+		type := _type;
+	}
+}
+
+helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBounds {
+	return object APP::ops::SetBounds {
+		owningClassName := _owningClassName;
+		name := _name;
+		lowerBound := _lowerBound;
+		upperBound := _upperBound;
+	}
+}
+
+helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
+	return object APP::ops::SetOrdered {
+		owningClassName := _owningClassName;
+		name := _name;
+		isOrdered := _isOrdered;
+	}
+}
+
+helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
+	return object APP::ops::SetUnique {
+		owningClassName := _owningClassName;
+		name := _name;
+		isUnique := _isUnique;
+	}
+}
+
+/********************************************
+ *				COMPLEX HELPERS			 	*
+ ********************************************/
+
+helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
+	return object APP::ops::MoveProperty {
+		owningClassName := _owningClassName;
+		name := _name;
+		targetClassName := _targetClassName;
+		tolerance := _tolerance;
+	}
+}
+
+helper _extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), _extractClassName : String) : APP::ops::ExtractClass {
+	return object APP::ops::ExtractClass {
+		sourceClassName := _sourceClassName;
+		extractPropertiesNames := _extractPropertiesNames;
+		extractClassName := _extractClassName;
+	}
+}
+
+/********************************************
+ *				BUILD MODEL				 	*
+ ********************************************/
+helper _appStructure(_entities : Set(ModelEntity)) : Structure{
+	return object Structure{
+		entities := _entities;
+	};
+}
+
+helper _appOperations(_appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
+	return object Operations{
+		operations := _appOperations;
+	}
+}
+
+
+helper _integer() : PrimitiveClass{
+	return _primitiveClass(getAppDefaultIdTypeName(), PrimitiveType::int);
+} 
+
+/** Name of this entity must be changed in _class constructor using it **/
+helper _idProperty(name : String, _integerReference : PrimitiveClass) : PrimitiveProperty{
+	return _primitiveProperty(name, _integerReference, 1, 1);
+}
+
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : PrimitiveProperty{
+	return object PrimitiveProperty{
+		name := _name;
+		type := _primitiveType;
+		lowerBound := 0;
+		upperBound := 1;
+	}
+}
+
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
+	assert(_primitiveType <> null and _name <> "" and _name <> null and (_upperBound >= _lowerBound or 
+	(_upperBound = -1 and _lowerBound >= 0)));
+	return object PrimitiveProperty{
+		name := _name;
+		type := _primitiveType;
+		lowerBound := _lowerBound;
+		upperBound := _upperBound;
+	}
+}
+
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound);
+	prop.defaultValue := _defaultValue;
+	return prop;
+}
+
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound, _defaultValue);
+	prop.isOrdered := _isOrdered;
+	prop.isUnique := _isUnique;
+	return prop;
+}
+
+
+helper _associationProperty(_name : String, _type : StandardClass) : AssociationProperty {
+ 	assert(_type <> null and _name <> "" and _name <> null);
+ 	return object AssociationProperty{
+ 		name := _name;
+ 		type := _type;
+ 	};
+}
+
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
+	var prop : AssociationProperty := _associationProperty(_name, _type);
+ 	prop.lowerBound := _lowerBound;
+ 	prop.upperBound := _upperbound;
+ 	return prop;
+}
+
+helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
+	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperbound);
+	prop.oppositeProperty := _oppositeProperty;
+	return prop;
+}
+
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
+	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
+	prop.isOrdered := _isOrdered;
+	prop.isUnique := _isUnique;
+	return prop;
+}
+
+helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
+	var emb : EmbeddedProperty := object EmbeddedProperty{
+		name := _name;
+		type := _type;
+	};
+	return emb;
+}
+
+helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean) : EmbeddedProperty{
+	var emb : EmbeddedProperty := _embeddedProperty(_name, _type);
+	emb.isMandatory := _isMandatory;
+	return emb;
+}
+
+helper _embeddedIdProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
+	return _embeddedProperty(_name, _type, true);
+		
+}
+
+helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
+	return object NestedProperty{
+		name := _name;
+		type := _type;
+		lowerBound := 0;
+		upperBound := 1;
+	}
+}
+
+helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
+ 	assert(_parent <> null);
+ 	var cls : StandardClass := object StandardClass {
+ 		name := _name;
+ 		properties := _properties;
+ 		parent := _parent;
+ 		inheritanceType := _parent.inheritanceType;
+ 	};
+ 	return cls;
+}
+
+helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass {
+ 	var cls : StandardClass := _class(_name, _parent, _properties);
+ 	cls.inheritanceType := _inheritanceType;
+ 	return cls;
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass{
+	assert(_idProperty <> null);
+	var cls : StandardClass := object StandardClass {
+ 		name := _name;
+ 		properties := _properties->append(_idProperty);
+ 		idProperty := _idProperty;	
+ 	};
+	return cls;
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass{
+	var cls : StandardClass := 	_class(_name, _idProperty, _properties);
+	cls.inheritanceType := _inheritanceType;
+	return cls;
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
+	cls.inheritanceType := type;
+	cls.isAbstract := _isAbstract;
+	return cls;	
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+	var cls : StandardClass := _class(_name, _idProperty, _properties);
+	cls.inheritanceType := type;
+	cls.isAbstract := _isAbstract;
+	return cls;	
+}
+ 
+helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
+ 	return object PrimitiveClass {
+ 		name := _name;
+ 		primitiveType := _primitiveType;
+ 	}
+}
+
+helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : EmbeddedClass {
+ 	return object EmbeddedClass {
+ 		name := _name;
+ 		embeddedProperties := OrderedSet{_idProperty};
+ 		idProperty := _idProperty;
+ 	}
+}
+
+helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), _idProperty : EmbeddedProperty) : EmbeddedClass {
+ 	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
+ 	embClass.embeddedProperties += _properties;
+ 	return embClass;
+}

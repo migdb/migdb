@@ -199,7 +199,7 @@ helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Struct
 				operations += _addForeignKey(getDefaultSchemaName(), newTableName, idOriginColName, "fk_" + (cls.name+"_" +self.name).translate(), cls.name.translate());
 				operations += _addForeignKey(getDefaultSchemaName(), newTableName, idOriginColName, "fk_" + (cls.name+"_" +self.name).translate(), type.name.translate());
 				if(self.isOrdered)then{
-					operations += _addColumn(getDefaultSchemaName(), newTableName, getOrderingColumnName(), idDbType);
+					operations += _addColumn(getDefaultSchemaName(), newTableName, getDbOrderingColumnName(), idDbType);
 				//	TODO addUnique nad sloupci s id entity v kolekci, vlastnika a orderingColumn	
 				}endif;
 				if(self.isUnique)then{
@@ -356,7 +356,7 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(
 		
 	// Remove PK from all classes in new hierarchy
 	mappedSet ->forEach(cls){
-		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), getPrimaryKeyName(parentClass.name));
+		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), getDbPrimaryKeyName(parentClass.name));
 	};
 	
 	// Remove instances from parent class - only instances which not belong to parent class

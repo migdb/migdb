@@ -1,7 +1,7 @@
 /*
  * The MIT License
  * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -76,7 +76,7 @@ query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout erro
 }
 
 helper APP::ops::AddStandardClass::apply(inout structure : APP::Structure) {	
-	structure.entities += _class(self.name, _idProperty(getPrimaryKeyName(self.name.translate()), structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
+	structure.entities += _class(self.name, _idProperty(getIdName(self.name), structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
 	return;
 }
 
@@ -89,6 +89,10 @@ query APP::ops::RenameEntity::isValid(structure : APP::Structure, inout errorLog
 helper APP::ops::RenameEntity::apply(inout structure : APP::Structure) {
 	var entity : APP::ModelEntity := structure.findEntity(self.name);
 	entity.name := self.newName;
+	if(entity.oclIsKindOf(StandardClass) and entity.oclAsType(StandardClass).parent = null)then{
+		var prop : PrimitiveProperty := entity.oclAsType(StandardClass).idProperty;
+		prop.name := getIdName(entity.name);
+	}endif;
 	return;
 }
 
@@ -98,24 +102,8 @@ query APP::ops::RemoveEntity::isValid(structure : APP::Structure, inout errorLog
 	return entityExists and isRemovable;
 }
 
-abstract query  APP::ModelEntity::isRemoveable(structure : APP::Structure) : Boolean;
-
-query APP::PrimitiveClass::isRemoveable(structure : APP::Structure) : Boolean {
-	return not structure.entities[APP::GeneralClass]->exists(cls | cls.containsProperty(self));
-}
-
-query APP::EmbeddedClass::isRemoveable(structure : APP::Structure) : Boolean {
-	return not structure.entities[APP::StandardClass]->exists(cls | cls.containsProperty(self)) and self.embeddedProperties->isEmpty();
-}
-
-query APP::StandardClass::isRemoveable(structure : APP::Structure) : Boolean {
-	return not structure.entities[APP::StandardClass]->properties[AssociationProperty]->exists(pr | pr.type = self)
-		   and (self.properties->isEmpty() or self.properties->forAll(pr | pr.isID()))
-		   and not structure.entities[APP::StandardClass]->exists(parent = self);
-}
-
 helper APP::ops::RemoveEntity::apply(inout structure : APP::Structure) {
-	structure.entities := structure.entities->excluding(structure.findEntity(self.name));
+	structure.entities := structure.entities->reject(ent | ent.name = self.name);
 	return;
 }
 
@@ -127,12 +115,12 @@ query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog 
 	return generalClassExists and notIsPropertyInGeneralClass and isPropertyTypeValid and areBoundsValid;
 }
 
-query APP::GeneralClass::isTypeValid(structure : APP::Structure, type : String) : Boolean {
+query APP::GeneralClass::isTypeValid(type : String) : Boolean {
 	if (self.oclIsTypeOf(APP::EmbeddedClass)) then {
-		return structure.containsPrimitiveClass(type);
+		return self.owningModel.containsPrimitiveClass(type);
 	} endif;
 	if (self.oclIsTypeOf(APP::StandardClass)) then {
-		return structure.containsPrimitiveClass(type) or structure.containsGeneralClass(type);
+		return self.owningModel.containsPrimitiveClass(type) or self.owningModel.containsGeneralClass(type);
 	} endif;
 	return false;
 }
@@ -140,7 +128,6 @@ query APP::GeneralClass::isTypeValid(structure : APP::Structure, type : String) 
 helper APP::ops::AddProperty::apply(inout structure : APP::Structure) {
 	var owningClass : APP::StandardClass := structure.findStandardClass(self.owningClassName);
 	var typeEnity : APP::ModelEntity := structure.findEntity(self.type);
-	log("type:" +(typeEnity = null).repr());
 	if(typeEnity.oclIsKindOf(PrimitiveClass))then{
 		owningClass.properties += _primitiveProperty(self.name, typeEnity.oclAsType(PrimitiveClass), self.lowerBound, self.upperBound, self.defaultValue, self.isOrdered, self.isUnique);	
 	}else{
@@ -159,7 +146,7 @@ helper APP::ops::AddProperty::apply(inout structure : APP::Structure) {
 query APP::ops::RenameProperty::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var owningGeneralClassExist : Boolean := checkGeneralClassExists(self.owningClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isOldPropertyInGeneralClass : Boolean := checkIsPropertyInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var notIsNewPropertyInGenegalClass : Boolean := checkNotIsPropertyInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var notIsNewPropertyInGenegalClass : Boolean := checkNotIsPropertyInGeneralClass(self.owningClassName, self.newName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	return owningGeneralClassExist and isOldPropertyInGeneralClass and notIsNewPropertyInGenegalClass;
 }
 
@@ -177,8 +164,8 @@ query APP::ops::RemoveProperty::isValid(structure : APP::Structure, inout errorL
 }
 
 helper APP::ops::RemoveProperty::apply(inout structure : APP::Structure) {
-	var c : APP::GeneralClass := structure.findGeneralClass(self.owningClassName);
-	c.removeProperty(self.name);
+	var owningClass : APP::GeneralClass := structure.findGeneralClass(self.owningClassName);
+	removeProperty(owningClass, self.name);
 	return;
 }
 
@@ -243,7 +230,7 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
 	childClass.parent := structure.findClass(self.parentClassName);
-	childClass.properties := childClass.properties->excluding(childClass.idProperty);
+	childClass.properties := childClass.properties->reject(pr | pr = childClass.idProperty);
 	childClass.idProperty := null;
 	return;
 }
@@ -265,9 +252,9 @@ query APP::ops::RemoveParent::isValid(structure : APP::Structure, inout errorLog
 
 helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
-	var idProperty : APP::PrimitiveProperty := _idProperty(getPrimaryKeyName(self.className.translate()), structure.findDefaultIdType());	
+	var idProperty : APP::PrimitiveProperty := _idProperty(getIdName(self.className), structure.findDefaultIdType());	
 	childClass.parent := null;
-	childClass.idProperty = idProperty;
+	childClass.idProperty := idProperty;
 	childClass.properties += idProperty;
 	return;
 }
@@ -449,13 +436,68 @@ helper checkStandardClassExists(standardClassName : String, structure : APP::Str
 	return exist;
 }
 
-helper checkIsRemoveable(entityName : String , structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
-	var isRemoveable : Boolean := structure.findEntity(entityName).isRemoveable(structure);
-	if(not isRemoveable)then{
-		var errorMessage : String := "Entity " + entityName + " can't be removed - structure contains references to it";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+helper checkIsRemoveable(entityName : String , structure : APP::Structure, inout errorLog : ErrorLog, 
+		operationIndex : Integer, transformationId : String ) : Boolean {
+	if(not structure.containsEntity(entityName))then{
+		return false;
+	}endif;		
+	return structure.findEntity(entityName).checkIsRemoveable(structure, 
+		errorLog, operationIndex, transformationId);
+}
+
+helper ModelEntity::checkIsRemoveable(structure : APP::Structure, 
+		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean;
+
+helper EmbeddedClass::checkIsRemoveable(structure : APP::Structure, 
+		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
+	var notExisPropertyOfType : Boolean :=  not self.owningModel->entities[APP::StandardClass]->
+			exists(cls | cls.containsPropertyOfType(self));
+	var isEmbeddedEmpty : Boolean := self.embeddedProperties->isEmpty();		
+	if(not notExisPropertyOfType)then{
+		var message : String := "Model contains entity containing property of property of type " + 
+			self.repr();
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
 	}endif;
-	return isRemoveable;
+	if(not isEmbeddedEmpty)then{
+		var message : String := "entity is not empty";
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	
+	return notExisPropertyOfType and isEmbeddedEmpty;
+}
+
+helper StandardClass::checkIsRemoveable(structure : APP::Structure, 
+		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
+	var notExisPropertyOfType : Boolean :=  not self.owningModel->entities[APP::StandardClass]->
+			exists(cls | cls.containsPropertyOfType(self));
+	var isEmpty : Boolean := self.properties->isEmpty() or 
+		self.properties->forAll(pr | pr.isID());		
+	var notIsParent := not self.owningModel->entities[APP::StandardClass]
+		->exists(parent = self);	
+	if(not notExisPropertyOfType)then{
+		var message : String := "Model contains entity containing property of type " + self.repr();
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	if(not isEmpty)then{
+		var message : String := "entity is not empty";
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	if(not notIsParent)then{
+		var message : String := "entity to remove has subclasses";
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	return notIsParent and isEmpty and notExisPropertyOfType;
+}
+
+helper PrimitiveClass::checkIsRemoveable(structure : APP::Structure, 
+			inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
+	var notIsReferenceExisting : Boolean := not self.owningModel->
+		entities[APP::GeneralClass]->exists(cls | cls.containsProperty(self));
+	if(not notIsReferenceExisting)then{
+		var message : String := "Model contains properties with type " + self.repr();
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	return notIsReferenceExisting;
 }
 
 helper checkIsPropertyInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
@@ -500,7 +542,7 @@ helper checkIsPropertyTypeValid(owningClassName : String, propertyTypeName : Str
 	if(not structure.containsEntity(owningClassName))then{
 		return false;
 	}endif;
-	var isPropertyTypeValid : Boolean := structure.findGeneralClass(owningClassName).isTypeValid(structure, propertyTypeName);
+	var isPropertyTypeValid : Boolean := structure.findGeneralClass(owningClassName).isTypeValid(propertyTypeName);
 	if(not isPropertyTypeValid)then{
 		var errorMessage : String := "Property of type " + propertyTypeName + " can't be added to class " + owningClassName;
 		errorLog.errors+=_evolutionError(operationIndex, errorMessage, transformationId);	

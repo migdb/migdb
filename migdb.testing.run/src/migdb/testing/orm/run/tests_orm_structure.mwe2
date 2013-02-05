@@ -1,0 +1,215 @@
+module migb.testing.orm.run.orm_runner
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var OUTPUT = "output-tests/orm_structure/"
+var INPUT_PREFIX ="../migdb.qvto/transforms/tests/structures/app"
+var TRANSFORMATION = "../migdb.qvto/transforms/main/orm_structure_run.qvto"
+
+Workflow{	
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT}"
+	}
+	
+		
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+	//structureTab
+	component = QVTOExecutor{
+		outputSlot = "structureAPP1"
+		transformationFile = "${INPUT_PREFIX}/structure_tab.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "structureAPP1"
+		outputSlot = "structureRDB1"
+		outputSlot = "errors1"		
+		transformationFile = "${TRANSFORMATION}" 
+	}
+	
+	component = Writer {
+		modelSlot = "structureAPP1"
+		uri = "${OUTPUT}/structureAPP1.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	component = Writer {
+		modelSlot = "structureRDB1"
+		uri = "${OUTPUT}/structureRDB1.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "errors1"
+		uri = "${OUTPUT}/errors1.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//structure_ST_hierarchy
+	component = QVTOExecutor{
+		outputSlot = "structureAPP2"
+		transformationFile = "${INPUT_PREFIX}/structure_tab_ST_hierarchy.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "structureAPP2"
+		outputSlot = "structureRDB2"
+		outputSlot = "errors2"		
+		transformationFile = "${TRANSFORMATION}" 
+	}
+	
+	component = Writer {
+		modelSlot = "structureAPP2"
+		uri = "${OUTPUT}/structureAPP2.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	component = Writer {
+		modelSlot = "structureRDB2"
+		uri = "${OUTPUT}/structureRDB2.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "errors2"
+		uri = "${OUTPUT}/errors2.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//structure_joined_hierarchy
+	component = QVTOExecutor{
+		outputSlot = "structureAPP3"
+		transformationFile = "${INPUT_PREFIX}/structure_tab_joined_hierarchy.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "structureAPP3"
+		outputSlot = "structureRDB3"
+		outputSlot = "errors3"		
+		transformationFile = "${TRANSFORMATION}" 
+	}
+	
+	component = Writer {
+		modelSlot = "structureAPP3"
+		uri = "${OUTPUT}/structureAPP3.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	component = Writer {
+		modelSlot = "structureRDB3"
+		uri = "${OUTPUT}/structureRDB3.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "errors3"
+		uri = "${OUTPUT}/errors3.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//structure_TPC_hierarchy
+	component = QVTOExecutor{
+		outputSlot = "structureAPP4"
+		transformationFile = "${INPUT_PREFIX}/structure_tab_TPC_hierarchy.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "structureAPP4"
+		outputSlot = "structureRDB4"
+		outputSlot = "errors4"		
+		transformationFile = "${TRANSFORMATION}" 
+	}
+	
+	component = Writer {
+		modelSlot = "structureAPP4"
+		uri = "${OUTPUT}/structureAPP4.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	component = Writer {
+		modelSlot = "structureRDB4"
+		uri = "${OUTPUT}/structureRDB4.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "errors4"
+		uri = "${OUTPUT}/errors4.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	//structure_complex_app
+	component = QVTOExecutor{
+		outputSlot = "structureAPP5"
+		transformationFile = "${INPUT_PREFIX}/structure_complex_app.qvto" 
+	}
+	
+	component = QVTOExecutor{
+		inputSlot = "structureAPP5"
+		outputSlot = "structureRDB5"
+		outputSlot = "errors5"		
+		transformationFile = "${TRANSFORMATION}" 
+	}
+	
+	component = Writer {
+		modelSlot = "structureAPP5"
+		uri = "${OUTPUT}/structureAPP5.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+	component = Writer {
+		modelSlot = "structureRDB5"
+		uri = "${OUTPUT}/structureRDB5.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "errors5"
+		uri = "${OUTPUT}/errors5.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+}

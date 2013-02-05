@@ -1,0 +1,534 @@
+module migb.testing.rdb.atomic.run.test_rdb_atomic
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var EVOLUTION_URI = "../migdb.qvto/transforms/main/evolution_rdb_run.qvto"
+var OUTPUT_DIR ="output-tests/test_rdb_atomic/"
+var IN_PREFIX = "../migdb.qvto/transforms/tests/tests_rdb_atomic"
+
+Workflow{
+/***** DEFINE META-MODELS *****/	
+/**/
+//Define Rdb metamodel
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+
+	//define Errors metamodel
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/		
+/**/	
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_DIR}/"
+	}
+	
+	
+
+		
+/**** op: ADDSCHEMA *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSchema_ops.qvto"
+		outputSlot = "test_ops"
+	}
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSchema.qvto"
+		outputSlot = "test_prepare"
+	}
+	
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSchema_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addSchema.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addSchema.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+
+/**** op: ADDSEQUENCE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSequence_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSequence.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addSequence_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addSequence.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addSequence.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	
+/**** op: ADDTABLE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addTable_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addTable.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addTable_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+/**** op: ADDCOLUMN *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addColumn_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addColumn.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addColumn_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+	
+/**** op: ADDINDEX *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addIndex_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addIndex.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addIndex_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addIndex.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addIndex.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: ADDPRIMARYKEY *****/
+/**/
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addPrimaryKey_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addPrimaryKey.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addPrimaryKey_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addPrimaryKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addPrimaryKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: ADDFOREIGNKEY *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addForeignKey_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addForeignKey.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addForeignKey_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addForeignKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addForeignKey.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}						
+	
+/**** op: ADDUNIQUE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addUnique_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addUnique.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addUnique_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addUnique.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addUnique.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: ADDNOTNULL *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addNotNull_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addNotNull.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//addNotNull_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_addNotNull.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_addNotNull.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+/**** op: RENAMETABLE *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameTable_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameTable.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameTable_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_renameTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_renameTable.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}	
+	
+/**** op: RENAMECOLUMN *****/
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameColumn_ops.qvto"
+		outputSlot = "test_ops"
+	}
+
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameColumn.qvto"
+		outputSlot = "test_prepare"
+	}
+/**/
+	component = QVTOExecutor {
+		inputSlot = "test_prepare"
+		inputSlot = "test_ops"
+		transformationFile = "${EVOLUTION_URI}"
+		outputSlot = "test"
+	}
+/**/
+	component = QVTOExecutor {
+		transformationFile = "${IN_PREFIX}//renameColumn_required.qvto"
+		outputSlot = "required"
+	}		
+/**/
+	component = Writer {
+		modelSlot = "test"
+		uri = "${OUTPUT_DIR}/test_renameColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/**/
+	component = Writer {
+		modelSlot = "required"
+		uri = "${OUTPUT_DIR}/required_renameColumn.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}			
+			
+/**** COMPARATORS *****/
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDCHEMA"
+		resultURI = "${OUTPUT_DIR}/required_addSchema.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addSchema.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDSEQUENCE"
+		resultURI = "${OUTPUT_DIR}/required_addSequence.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addSequence.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDTABLE"
+		resultURI = "${OUTPUT_DIR}/required_addTable.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addTable.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDCOLUMN"
+		resultURI = "${OUTPUT_DIR}/required_addColumn.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addColumn.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDINDEX"
+		resultURI = "${OUTPUT_DIR}/required_addIndex.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addIndex.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDPRIMARYKEY"
+		resultURI = "${OUTPUT_DIR}/required_addPrimaryKey.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addPrimaryKey.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDFOREIGNKEY"
+		resultURI = "${OUTPUT_DIR}/required_addForeignKey.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addForeignKey.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDUNIQUE"
+		resultURI = "${OUTPUT_DIR}/required_addUnique.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addUnique.xmi"
+	}
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR ADDNOTNULL"
+		resultURI = "${OUTPUT_DIR}/required_addNotNull.xmi"
+		testedURI = "${OUTPUT_DIR}/test_addNotNull.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR RENAMETABLE"
+		resultURI = "${OUTPUT_DIR}/required_renameTable.xmi"
+		testedURI = "${OUTPUT_DIR}/test_renameTable.xmi"
+	}	
+/**/	
+	component = ModelComparator {
+		testDescription = "COMPARATOR RENAMECOLUMN"
+		resultURI = "${OUTPUT_DIR}/required_renameColumn.xmi"
+		testedURI = "${OUTPUT_DIR}/test_renameColumn.xmi"
+	}										
+}

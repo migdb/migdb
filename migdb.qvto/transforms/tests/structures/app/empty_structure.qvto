@@ -5,5 +5,5 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation structure_int(out inoutModel : APP);
 
 main(){
-	_appStructure(OrderedSet{_primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int)});
+	_appStructure(OrderedSet{});
 }

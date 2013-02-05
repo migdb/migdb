@@ -2,13 +2,13 @@ library text_service;
 
 /*
 	This file provides String constants and methods to manipulate with Strings. It is independent 
-	to any metamodel.
+	to any metamodel. Methods connected with database metamodel contains Db word.
 */
 
 /**
-	returns discriminator column constant 
+	Returns discriminator column constant 
 **/
-query getDiscriminatorColumnName() : String{
+query getDbDiscriminatorColumnName() : String{
 	return "discriminator";
 }
 
@@ -25,22 +25,30 @@ query String :: translate() : String{
 		}else{
 			dbName := dbName + self.at(i);
 		}endif;
-		i:= i+1;
+		i:= i + 1;
 	};
 	return dbName;
 }
 
 /** returns column name for ordered collections **/ 
-query getOrderingColumnName() : String {
-	return "_ordering";
+query getDbOrderingColumnName() : String {
+	return "ordering";
+}
+
+query getIdName(className : String) : String{
+	return getIdPrefix() + className;
 }
 
 query getIdPrefix() : String{
+	return "id";
+}
+
+query getDbIdPrefix() : String{
 	return "id_";
 }
 
-query getIdPropertyName(tableName : String) : String{
-	return getIdPrefix() + tableName;
+query getDbIdColumnName(tableName : String) : String{
+	return getDbIdPrefix() + tableName;
 }
 
 /** Helper query for String manipulation **/
@@ -48,27 +56,27 @@ query String::at(index : Integer) : String{
 	return self.substring(index,index);
 }
 
-query getFkParentPrefix() : String{
-	return getFkPrefix() + "parent_";
+query getDbFkParentPrefix() : String{
+	return getDbFkPrefix() + "parent_";
 }
 
-query getUniquePrefix() : String{
+query getDbUniquePrefix() : String{
 	return "ux_";
 }
 
-query getOrderedPrefix() : String{
+query getDbOrderedPrefix() : String{
 	return "ordered_";
 }
 
-query getPkPrefix() : String{
+query getDbPkPrefix() : String{
 	return "pk_";
 }
 
-query getFkPrefix() : String{
+query getDbFkPrefix() : String{
 	return "fk_";	
 }
 
-query getCollectionPrefix() : String{
+query getDbCollectionPrefix() : String{
 	return "col_";
 }
 
@@ -76,11 +84,11 @@ query getCollectionPrefix() : String{
 	There can be only one ordering column in table so tableName is also identifier for each 
 unique ordering constraint
 **/
-query getOrderingConstraintName(tableName : String ) : String{
-	return getUniquePrefix() + getOrderedPrefix() + tableName;
+query getDbOrderingConstraintName(tableName : String ) : String{
+	return getDbUniquePrefix() + getDbOrderedPrefix() + tableName;
 }
 
 // 
-query getPrimaryKeyName(tableName : String) : String{
-	return getPkPrefix() + tableName;
+query getDbPrimaryKeyName(tableName : String) : String{
+	return getDbPkPrefix() + tableName;
 }
