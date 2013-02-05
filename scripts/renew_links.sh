@@ -25,8 +25,13 @@ BUILDER_ERRORS_LINK=builder_errors.qvto
 rm $D_MIGDB_QVTO/tests/code_generation/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/code_generation/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/code_generation/$BUILDER_RDB_LINK
+
 rm $D_MIGDB_QVTO/tests/comparator_component/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparator_component/$QUERIES_APP_LINK
+
+rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
+
 
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK
@@ -62,6 +67,9 @@ ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_RDB_L
 
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparator_component/$QUERIES_APP_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparator_component/$BUILDER_APP_LINK
+
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK
