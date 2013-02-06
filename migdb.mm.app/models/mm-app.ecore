@@ -13,13 +13,13 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//app/ops/ModelOperation" containment="true" eOpposite="#//app/ops/ModelOperation/owningOperations"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="ModelEntity">
+    <eClassifiers xsi:type="ecore:EClass" name="ModelEntity" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
           eType="#//app/Structure" changeable="false" derived="true" eOpposite="#//app/Structure/entities"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="GeneralClass" eSuperTypes="#//app/ModelEntity"/>
+    <eClassifiers xsi:type="ecore:EClass" name="GeneralClass" abstract="true" eSuperTypes="#//app/ModelEntity"/>
     <eClassifiers xsi:type="ecore:EClass" name="PrimitiveClass" eSuperTypes="#//app/ModelEntity">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="primitiveType" lowerBound="1"
           eType="#//app/PrimitiveType"/>

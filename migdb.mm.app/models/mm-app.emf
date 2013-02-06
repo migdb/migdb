@@ -14,12 +14,12 @@ package app {
     val ops.ModelOperation[*]#owningOperations operations;
   }
 
-  class ModelEntity {
+  abstract class ModelEntity {
     readonly derived ref Structure[1]#entities owningModel;
     attr String[1] name;
   }
 
-  class GeneralClass extends ModelEntity {
+  abstract class GeneralClass extends ModelEntity {
   }
 
   class PrimitiveClass extends ModelEntity {

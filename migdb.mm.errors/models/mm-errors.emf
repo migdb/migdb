@@ -9,7 +9,7 @@ package errors {
 
   abstract class Error {
     attr String[1] message;
-    derived ref ErrorLog#errors owningLog;
+    readonly derived ref ErrorLog[1]#errors owningLog;
     attr String transformationId;
   }
 
