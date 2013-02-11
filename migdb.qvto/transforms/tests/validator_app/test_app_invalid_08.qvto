@@ -1,17 +1,16 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_08(out inoutModel : APP);
 
 
 main() {
-	log("TEST_APP_INVALID_08 - invalid : Root id count 0");	
+//	log("TEST_APP_INVALID_08 - invalid : Missing root ID");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
 	var zipProperty : PrimitiveProperty := _primitiveProperty("zip", string);
 	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{_primitiveProperty("street", string),_primitiveProperty("city", string)});																		  									  												  												  									  	
 	
-	//@TODO check if this test hack is valid
 	party.idProperty := null;
 	
 	var model : APP::ModelRoot := _appStructure(Set{integer,string,party});	 

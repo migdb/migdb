@@ -1,12 +1,12 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_05(out inoutModel : APP);
 
 main() {
 /**	
 *	condition "ambiguous property in class" is also violated 
 **/
-	log("TEST_APP_INVALID_05 - invalid : Non root ID");	
+//	log("TEST_APP_INVALID_05 - invalid : Non root ID");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	

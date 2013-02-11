@@ -1,0 +1,12 @@
+import builder_app;
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_01_required(out outModel : ERR);
+
+
+main() {
+	var error : Error := _validationError("Structure contains ambigous Class name \"Party\"",
+		"validator_app.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

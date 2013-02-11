@@ -1,10 +1,10 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_01(out inoutModel : APP);
 
 
 main() {
-	log("TEST_APP_INVALID_01 - invalid : Class name");	
+//	log("TEST_APP_INVALID_01 - invalid : Class name");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	var party : APP::StandardClass := _class("Party", _idProperty("idParty", integer), OrderedSet{_primitiveProperty("street", string),

@@ -1,9 +1,9 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_02(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_02 - valid : TPC M-N associations ");	
+//	log("TEST_APP_02 - valid : TPC M-N associations ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	

@@ -1,0 +1,17 @@
+import builder_app;
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_04_required(out outModel : ERR);
+
+
+main() {
+	var errorMessage1 : String := "Structure contains property \"currency\" property in class "+
+	"\"Country\" opposite not correctly set";
+	var error1 : Error := _validationError(errorMessage1, "validator_app.qvto");
+	var errorMessage2 : String := "Structure contains property \"owningCountry\" property in class "+
+	"\"money\" opposite not correctly set";
+	var error2 : Error := _validationError(errorMessage2, "validator_app.qvto");
+	 
+	_errorLog(OrderedSet{error1, error2});	 
+}

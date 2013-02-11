@@ -1,0 +1,43 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation getTPCDescendantsTest(out inoutModel : APP);
+
+main(){
+	var a : String := "c";
+	
+	var ab : String := "ac";
+	
+	log((a < ab).repr() + " " + (a > ab).repr());
+/*	var int : PrimitiveClass := _integer();
+	var cl1 : StandardClass := _class("cl1", _idProperty("idRoot", int), OrderedSet{}, InheritanceType::joined);
+	var cl2 : StandardClass := _class("cl2", cl1, OrderedSet{}, InheritanceType::joined);
+	var cl3 : StandardClass := _class("cl3", cl2, OrderedSet{}, InheritanceType::joined);  
+	cl1.parent := cl3;
+	var cl4 : StandardClass := _class("cl4", cl3, OrderedSet{}, InheritanceType::joined);  
+	
+	
+	var structure : Structure := _appStructure(OrderedSet{});
+	structure.entities:= OrderedSet{ cl1, cl2, cl3};
+	log("cl4 " + cl4.isContainedInCycle(OrderedSet{}, cl4).repr());
+	log("cl1 " + cl1.isContainedInCycle(OrderedSet{}, cl1).repr());
+	cl4.getPath(OrderedSet{})->forEach(cls){
+		log(cls.repr());
+	};
+	log("fafafaf");
+	cl1.getPath(OrderedSet{})->forEach(cls){
+		log(cls.repr());
+	};
+/*	cl1.getPathToRoot()->forEach(cls){
+		log(cls.repr());
+	};
+	
+	cl1.parent := null;
+
+	log(cl1.isContainedInCycle(OrderedSet{}, cl1).repr());
+	cl1.getPathToRoot()->forEach(cls){
+		log(cls.repr());
+	};
+	*/	
+}

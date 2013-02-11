@@ -40,7 +40,7 @@ query app::EmbeddedProperty::isID():Boolean{
 }
 
 query app::PrimitiveProperty::isID() : Boolean{
-	return self.owningGeneralClass.getId() = self;
+	return self.owningGeneralClass.parent = null and self.owningGeneralClass.getId() = self;
 }
 
 query APP::NestedProperty::isID() : Boolean{
@@ -115,27 +115,27 @@ query app::MultipliableProperty::isPrimitive():Boolean{
 }
 
 /**
-	Returns path to rootClass starting with self and ending with root. 
-	NOTE: In the case of cyclic hierarchy returns empty OrderedSet.
+	Returns path to root class or to strong component (including classes in Strong component).
 **/
 query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 	var emptyOrderedSet : OrderedSet(app::StandardClass) := OrderedSet{};
-	if(not self.containsCycle(emptyOrderedSet)) then{
-			return self.getPath(emptyOrderedSet);
-		}endif;
-	return OrderedSet{};	
-		
+	return self.getPath(emptyOrderedSet);		
 }
 
 /** 
-	Returns path to root class in class hierarchy.
-	NOTE - accyclity of self class hierarchy is not checked 
-	NOTE - this query should not be called dirrectly
+	Recursive helper for getPathToRoot method - hides collection parameter. Returns path to root 
+	class or to strong component (including classes in Strong component). 
 **/
 query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
+	//return path + strong component
+	if(collection->includes(self))then{
+		return collection
+	}endif;
+	// return path
 	if(self.parent = null)then{
 		return collection->append(self);
 	}endif;
+	//continue recursively
 	return self.parent.getPath(collection->append(self));
 }
 
@@ -218,19 +218,22 @@ query app::GeneralClass::isNonleafTPCClass():Boolean{
 }
 
 /** 
-	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cyklu v hierarchii dedicnosti. 
-	Inout parametr addedClasses 
+	This query checks whether self Class is contained in cycle - not CYCLED hierarchy. In first call
+	 it should has self as actualClass parameter. 
 **/
-query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardClass)) :Boolean{
-	if(addedClasses->includes(self)) then {
+query app::StandardClass::isContainedInCycle(inout visitedClasses : Set(app::StandardClass), 
+		in actualClass : StandardClass) :Boolean{
+	//if it iterated to self and actualClass is already visited (preventing starting call)
+	if(actualClass = self and visitedClasses->includes(actualClass)) then {
 		return true;
 	} endif;
 
-	if(self.parent = null) then {
+	//stop when comes to root or class already visited
+	if(actualClass.parent = null or visitedClasses->includes(actualClass)) then {
 		return false;
 	}endif;
 
-	return self.parent.containsCycle(addedClasses->including(self));
+	return self.isContainedInCycle(visitedClasses->including(actualClass), actualClass.parent);
 }
 
 
@@ -343,7 +346,7 @@ query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
-// overime, zda-li je trida potomkem tridy precedessorName
+//checks if self class is descendantOf class precedessorName
 query APP::Structure::isDescendantOf(className : String, precedessorName : String ) : Boolean {
 	var cls : StandardClass := self.findStandardClass(className);
 	return cls.isDescendantOf(precedessorName);
@@ -420,11 +423,12 @@ query app::Structure::containsNonleafTPCAssociation():Boolean{
 }
 
 query app::StandardClass::areIDTypesCorrectlySet() : Boolean{
-    return self.getId().type.name = getAppDefaultIdTypeName();
+    return self.parent <> null or self.getId().type.name = getAppDefaultIdTypeName();
 }
 
 query app::StandardClass::areIDBoundsCorrectlySet() : Boolean{
-    return self.getId().lowerBound = 1 and self.getId().upperBound = 1;
+    return self.parent <> null or 
+    (self.getId().lowerBound = 1 and self.getId().upperBound = 1);
 }
 
 query app::AssociationProperty::isOppositeCorrectlySet():Boolean{

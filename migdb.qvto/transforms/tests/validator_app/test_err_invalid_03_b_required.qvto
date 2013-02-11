@@ -1,0 +1,13 @@
+import builder_app;
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_03_b_required(out outModel : ERR);
+
+
+main() {
+	var errorMessage : String := "Structure contains cycled hierarchy:\"Cycle\", \"Cycle2\", "
+	+"\"Cycle1\", \"Cycle\"...";
+	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

@@ -1,0 +1,13 @@
+import builder_app;
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_06_required(out outModel : ERR);
+
+
+main() {
+	var errorMessage : String := "Structure contains class \"Person\" with id bounds not correctly"+
+	" set";
+	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

@@ -1,9 +1,9 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_07(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_07 - invalid : nonInteger ID ");	
+//	log("TEST_APP_INVALID_07 - invalid : nonInteger ID ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	

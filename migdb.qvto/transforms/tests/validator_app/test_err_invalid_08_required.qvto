@@ -1,0 +1,12 @@
+import builder_app;
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_08_required(out outModel : ERR);
+
+
+main() {
+	var errorMessage : String := "Structure contains root class \"Party\" with no id property";
+	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

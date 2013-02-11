@@ -1,140 +1,158 @@
-module migb.testing.run.app
+module migb.testing.run.tests_app_validator
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
-
 
 import org.eclipse.xtext.mwe.SlotEntry
 import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.xtext.mwe.Validator
 import org.eclipse.xtext.mwe.NameBasedFilter
-
+               
 import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.emf.mwe.utils.Reader
 
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
+var OUTPUT_BASE_DIR = "output-tests/validator_app/"
+var QVTO_DIR = "../migdb.qvto/transforms"
+var TEST_TRANSFORMATION ="${QVTO_DIR}/main/validator_app.qvto"
+var INPUT_DIR = "${QVTO_DIR}/tests/validator_app"
+var EMPTY_ERRORS = "${QVTO_DIR}/tests/errors/empty_errors.qvto"
+
 Workflow{
 		
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/validator_app/"
+		directory = "${OUTPUT_BASE_DIR}"
 	}
 	/* Define of APP metamodel */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-		
-	/* Test01 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_01_APP"
-		outputUri = "output-tests/validator_app/test_01_app.xmi"
+
+	/* Define of ERR metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
 	
-	/* Test02 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_02_APP"
-		outputUri = "output-tests/validator_app/test_02_app.xmi"
-	}
-
-	/* Test_invalid_01 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_01_APP"
-		outputUri = "output-tests/validator_app/test_invalid_01_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/valid_01"
+		qvtInput = "${INPUT_DIR}/test_app_01.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "TEST 01 VALID"
 	}
 	
-	/* Test_invalid_02 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_02_APP"
-		outputUri = "output-tests/validator_app/test_invalid_02_app.xmi"
-	}
-
-	/* Test_invalid_02_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_02_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_02_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_02_b_app.xmi"
-	}
-
-	/* Test_invalid_03 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_03.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_03_APP"
-		outputUri = "output-tests/validator_app/test_invalid_03_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/valid_02"
+		qvtInput = "${INPUT_DIR}/test_app_02.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "TEST 02 VALID TPC M-N Association"
 	}
 	
-	/* Test_invalid_03_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_03_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_03_B_APP"
-		outputUri = "output-tests/validator_app/test_invalid_03_b_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_01"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_01.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_01_required.qvto"
+		testDescription = "TEST 01 INVALID - CLASS NAME"
 	}
 
-	/* Test_invalid_04 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_04.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_04_APP"
-		outputUri = "output-tests/validator_app/test_invalid_04_app.xmi"
-	}
-			
-	/* Test_invalid_05 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_05.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_05_APP"
-		outputUri = "output-tests/validator_app/test_invalid_05_app.xmi"
-	}
-		
-	/* Test_invalid_06 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_06.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_06_APP"
-		outputUri = "output-tests/validator_app/test_invalid_06_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_02"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_02.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_02_required.qvto"
+		testDescription = "TEST 02 INVALID "
 	}
 
-	/* Test_invalid_06_b app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_06_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_06_APP"
-		outputUri = "output-tests/validator_app/test_invalid_06_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_03"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_03.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_03_required.qvto"
+		testDescription = "TEST 03 INVALID - SELF PARENT"
 	}
-				
-	/* Test_invalid_07 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_07.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_07_APP"
-		outputUri = "output-tests/validator_app/test_invalid_07_app.xmi"
-	}
-		
-	/* Test_invalid_08 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_08.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_08_APP"
-		outputUri = "output-tests/validator_app/test_invalid_08_app.xmi"
-	}	
 	
-	/* Test_invalid_09 app*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_app/test_app_invalid_09.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_app.qvto"
-		modelSlot = "TEST_INVALID_09_APP"
-		outputUri = "output-tests/validator_app/test_invalid_09_app.xmi"
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_03_b"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_03_b.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_03_b_required.qvto"
+		testDescription = "TEST 03 B INVALID - CYCLED HIERARCHY "
 	}
+	
+	//can lead to a problem with ordering of errors
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_04"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_04.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_04_required.qvto"
+		testDescription = "TEST 04 INVALID - oppositeProperty's OPPOSITE "
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_05"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_05.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_05_required.qvto"
+		testDescription = "TEST 05 INVALID - non root ID"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_06"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_06.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_06_required.qvto"
+		testDescription = "TEST 06 INVALID - ID LOWER BOUND"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_06_b"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_06_b.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_06_b_required.qvto"
+		testDescription = "TEST 06 B INVALID - ID UPPER BOUND"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_07"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_07.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_07_required.qvto"
+		testDescription = "TEST 07 INVALID - nonInteger ID"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_08"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_08.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_08_required.qvto"
+		testDescription = "TEST 08 INVALID - missing root ID"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_09"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_09.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_09_required.qvto"
+		testDescription = "TEST 09 INVALID - TPC M-N association"
+	}
+	
 }
