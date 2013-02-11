@@ -20,7 +20,7 @@ var TEST_TRANSFORMATION ="${QVTO_DIR}/main/validator_app.qvto"
 var INPUT_DIR = "${QVTO_DIR}/tests/validator_app"
 var EMPTY_ERRORS = "${QVTO_DIR}/tests/errors/empty_errors.qvto"
 
-Workflow{
+TestWorkflow{
 		
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "${OUTPUT_BASE_DIR}"

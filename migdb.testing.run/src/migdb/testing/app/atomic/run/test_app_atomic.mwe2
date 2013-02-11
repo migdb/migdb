@@ -22,7 +22,7 @@ var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_atomic"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_app_run.qvto"
 
-Workflow {
+TestWorkflow {
 /***** DEFINE META-MODELS *****/
 /**/
 	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
