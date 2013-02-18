@@ -291,6 +291,37 @@ helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : Orde
 	return operations;
 }
 
+/**
+ * EXTRACT CLASS
+ * Create new class with selecter properties from source class.
+ * Extracted Class is not part of hierarchy - Source class and Extracted Class are 
+ * connected by pointer.
+ * In source class we create  new property which is poiner to extractClass.
+ * @restriction : Class with @sourceClassName must exists in model
+ * @restriction : Class with @extractClassName cannot exist in model
+ * @restriction : Properties must exists in @sourceClass
+ */
+ query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
+ 	var existSourceClass : Boolean := checkStandardClassExists(self.sourceClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existExtractClass : Boolean := checkStandardClassExists(self.extractClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existProperties : Boolean := checkArePropertiesInGeneralClass(self.sourceClassName, self.extractPropertiesNames, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existSourceClass and not existExtractClass and existProperties;
+ }
+
+helper APP::ops::ExtractClass::apply(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+	var sourceClass : StandardClass := structure.findStandardClass(self.sourceClassName);
+	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
+	// Create new class - Extracted Class
+	operations += _addStandardClass(self.sourceClassName, false, InheritanceType::joined);
+	
+	// Create attributes in Extracted Class
+	self.extractPropertiesNames->forEach(p){
+		var sourceClassProperty : Property := structure.findProperty(self.sourceClassName, p);
+		//TODO - check type of property - i must know type of property and so on...
+		//operations += _addProperty(self.extractClassName, sourceClassProperty.name, sourceClassProperty,  )
+	};
+	return operations;
+}
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 query APP::ops::SetType::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
@@ -510,6 +541,21 @@ helper checkIsPropertyInGeneralClass(generalClassName : String, propertyName : S
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return propertyExist;
+}
+
+helper checkArePropertiesInGeneralClass(generalClassName : String, propertyNames : OrderedSet(String), structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
+	if(not structure.containsGeneralClass(generalClassName))then{
+		return false;
+	}endif;
+	propertyNames->forEach(p){
+		var propertyExist : Boolean := structure.isPropertyInGeneralClass(generalClassName, p);
+		if(not propertyExist) then{
+			var errorMessage : String := "Property called " + p + " doesn't exist in class " + generalClassName;
+			errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+			return false;
+		}endif;		
+	};
+	return true;
 }
 
 helper checkNotIsPropertyInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
