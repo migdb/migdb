@@ -316,9 +316,40 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure) : Ordered
 	
 	// Create attributes in Extracted Class
 	self.extractPropertiesNames->forEach(p){
-		var sourceClassProperty : Property := structure.findProperty(self.sourceClassName, p);
-		//TODO - check type of property - i must know type of property and so on...
-		//operations += _addProperty(self.extractClassName, sourceClassProperty.name, sourceClassProperty,  )
+		var prop : Property := structure.findProperty(self.sourceClassName, p);
+		//TODO - Add this test do query
+		if(prop.oclIsKindOf(APP::AssociationProperty)) then {
+			operations += _addProperty(
+							self.extractClassName, 
+							prop.name, 
+							prop.oclAsType(APP::AssociationProperty).type.name, 
+							prop.oclAsType(APP::AssociationProperty).lowerBound, 
+							prop.oclAsType(APP::AssociationProperty).upperBound );
+		}endif;
+		if(prop.oclIsKindOf(APP::PrimitiveProperty)) then {
+			operations += _addProperty(
+							self.extractClassName, 
+							prop.name, 
+							prop.oclAsType(APP::PrimitiveProperty).type.name, 
+							prop.oclAsType(APP::PrimitiveProperty).lowerBound, 
+							prop.oclAsType(APP::PrimitiveProperty).upperBound );		
+		}endif;
+		if(prop.oclIsKindOf(APP::NestedProperty)) then {
+			operations += _addProperty(
+							self.extractClassName, 
+							prop.name, 
+							prop.oclAsType(APP::NestedProperty).type.name, 
+							prop.oclAsType(APP::NestedProperty).lowerBound, 
+							prop.oclAsType(APP::NestedProperty).upperBound );		
+		}endif;
+		if(prop.oclIsKindOf(APP::EmbeddedProperty)) then {
+			operations += _addProperty(
+							self.extractClassName, 
+							prop.name, 
+							prop.oclAsType(APP::EmbeddedProperty).type.name );			
+		}endif;
+		
+		//
 	};
 	return operations;
 }
