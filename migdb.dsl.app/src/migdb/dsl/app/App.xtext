@@ -80,9 +80,6 @@ AssociationProperty returns app::AssociationProperty:
 	name=ID
 	':'  => type=[app::StandardClass|ID] //only Standard type
 	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
-	
-	//TODO: These features need to be revised
-	(isOwning?='owning')
 	('<->' oppositeProperty=[app::AssociationProperty|ID])? //opposite
 ;
 
