@@ -349,7 +349,7 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure) : Ordered
 							prop.oclAsType(APP::EmbeddedProperty).type.name );			
 		}endif;
 		
-		//
+		// TODO ostatni operace
 	};
 	return operations;
 }
