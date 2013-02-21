@@ -274,7 +274,7 @@ query APP::ops::ZipperHierarchy::isValid(structure : APP::Structure, inout error
 	return existChild and existParent and not pointToParent;
 }
 
-helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+helper APP::ops::ZipperHierarchy::dekompose(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
 	var childClass : StandardClass := structure.findStandardClass(self.className);
 	var parentClass :StandardClass := childClass.parent; 
 	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
@@ -308,7 +308,7 @@ helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : Orde
 	return existSourceClass and not existExtractClass and existProperties;
  }
 
-helper APP::ops::ExtractClass::apply(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+helper APP::ops::ExtractClass::dekompose(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
 	var sourceClass : StandardClass := structure.findStandardClass(self.sourceClassName);
 	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
 	// Create new class - Extracted Class
@@ -319,34 +319,19 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure) : Ordered
 		var prop : Property := structure.findProperty(self.sourceClassName, p);
 		//TODO - Add this test do query
 		if(prop.oclIsKindOf(APP::AssociationProperty)) then {
-			operations += _addProperty(
-							self.extractClassName, 
-							prop.name, 
-							prop.oclAsType(APP::AssociationProperty).type.name, 
-							prop.oclAsType(APP::AssociationProperty).lowerBound, 
-							prop.oclAsType(APP::AssociationProperty).upperBound );
+			var pr : AssociationProperty := prop.oclAsType(APP::AssociationProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);
 		}endif;
 		if(prop.oclIsKindOf(APP::PrimitiveProperty)) then {
-			operations += _addProperty(
-							self.extractClassName, 
-							prop.name, 
-							prop.oclAsType(APP::PrimitiveProperty).type.name, 
-							prop.oclAsType(APP::PrimitiveProperty).lowerBound, 
-							prop.oclAsType(APP::PrimitiveProperty).upperBound );		
+			var pr : PrimitiveProperty := prop.oclAsType(APP::PrimitiveProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);		
 		}endif;
 		if(prop.oclIsKindOf(APP::NestedProperty)) then {
-			operations += _addProperty(
-							self.extractClassName, 
-							prop.name, 
-							prop.oclAsType(APP::NestedProperty).type.name, 
-							prop.oclAsType(APP::NestedProperty).lowerBound, 
-							prop.oclAsType(APP::NestedProperty).upperBound );		
+			var pr : NestedProperty := prop.oclAsType(APP::NestedProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);		
 		}endif;
 		if(prop.oclIsKindOf(APP::EmbeddedProperty)) then {
-			operations += _addProperty(
-							self.extractClassName, 
-							prop.name, 
-							prop.oclAsType(APP::EmbeddedProperty).type.name );			
+			operations += _addProperty(self.extractClassName, prop.name, prop.oclAsType(APP::EmbeddedProperty).type.name );			
 		}endif;
 		
 		// TODO ostatni operace
@@ -429,26 +414,6 @@ query APP::ops::MoveProperty::isValid(structure : APP::Structure, inout errorLog
 	var areClassesRelatives : Boolean := checkAreClassesRelatives(self.owningClassName, self.targetClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	
 	return existSourceClass and existTargetClass and existPropertyInSourceClass and notExistPropInTargetClass and areClassesRelatives;
-}
-
-
-mapping APP::ops::MoveProperty::apply(inout structure : APP::Structure){
-	var target : APP::StandardClass := structure.findStandardClass(self.targetClassName);
-	var prop : APP::MultipliableProperty := structure.findProperty(self.owningClassName, self.name).oclAsType(MultipliableProperty);
-	
-	//unsetting property from it's former owner is done by asserting property to collection in target class
-	target.properties += prop;
-}
-
-query APP::ops::ExtractClass::decompose(inout appStructure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
-	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
-	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{_addStandardClass(self.extractClassName, false, sourceClass.inheritanceType)};
-	
-	self.extractPropertiesNames->forEach( pName) {
-		var p : APP::Property := appStructure.findProperty(self.sourceClassName, pName);
-		//operations+= MoveProperty
-	};
-	return operations;
 }
 
 /* ++++++++++ HELPERS FOR LOGGING AND CHECKING ++++++++++++++++++++ */
