@@ -631,7 +631,7 @@ helper checkNotIsColumnConstrained(owningSchemaName : String, tableName : String
 		return false;
 	}endif;
 	var checkedColumn : Column := structure.findColumn(owningSchemaName, tableName, columnName);
-	var constraints : Bag(Constraint) := structure.schemas->tables->constraints;
+	var constraints : Sequence(Constraint) := structure.schemas->tables->constraints;
 	var isColumnNotConstrained : Boolean := constraints[ForeignKey]->select(fk | fk.constrainedColumn = checkedColumn)->size()=0 
 			and constraints[Unique]->select(unique | unique.uniqueColumns->includes(checkedColumn))->size()=0;
 	if(not isColumnNotConstrained)then{

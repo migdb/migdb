@@ -7,7 +7,7 @@ package app {
   }
 
   class Structure extends ModelRoot {
-    !ordered val ModelEntity[*]#owningModel entities;
+    val ModelEntity[*]#owningModel entities;
   }
 
   class Operations extends ModelRoot {
@@ -35,8 +35,8 @@ package app {
     ref StandardClass parent;
     attr boolean isAbstract = false;
     attr InheritanceType[1] inheritanceType;
-    !ordered val MultipliableProperty[*]#owningGeneralClass properties;
-    !unique !ordered !resolve ref PrimitiveProperty idProperty;
+    val MultipliableProperty[*]#owningGeneralClass properties;
+    !unique !resolve ref PrimitiveProperty idProperty;
   }
 
   enum InheritanceType {

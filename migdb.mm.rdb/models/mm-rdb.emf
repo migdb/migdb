@@ -11,15 +11,15 @@ package rdb {
   }
 
   class Structure extends ModelRoot {
-    !ordered val Schema[*]#owningStructure schemas;
+    val Schema[*]#owningStructure schemas;
   }
 
   class Schema {
     derived ref Structure[1]#schemas owningStructure;
     attr String[1] name;
-    !ordered val Table[*]#owningSchema tables;
-    !ordered val Sequence[1]#owningSchema sequence;
-    !ordered val Index[*]#owningSchema indexes;
+    val Table[*]#owningSchema tables;
+    val Sequence[1]#owningSchema sequence;
+    val Index[*]#owningSchema indexes;
   }
 
   class Sequence {
@@ -31,14 +31,14 @@ package rdb {
   class Index {
     readonly derived ref Schema[1]#indexes owningSchema;
     attr String[1] name;
-    !ordered ref Column[+] columns;
+    ref Column[+] columns;
   }
 
   class Table {
     readonly derived ref Schema[1]#tables owningSchema;
     attr String[1] name;
-    !ordered val Column[*]#owningTable columns;
-    !ordered val Constraint[*]#owningTable constraints;
+    val Column[*]#owningTable columns;
+    val Constraint[*]#owningTable constraints;
   }
 
   class Column {

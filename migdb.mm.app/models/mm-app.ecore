@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm" nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
+    nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="app" nsURI="http://www.collectionspro.eu/jam/mm/app" nsPrefix="app">
     <eClassifiers xsi:type="ecore:EClass" name="ModelRoot" abstract="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//app/ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="entities" ordered="false"
-          upperBound="-1" eType="#//app/ModelEntity" containment="true" eOpposite="#//app/ModelEntity/owningModel"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="entities" upperBound="-1"
+          eType="#//app/ModelEntity" containment="true" eOpposite="#//app/ModelEntity/owningModel"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//app/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
@@ -34,10 +36,10 @@
           defaultValueLiteral="false"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
           eType="#//app/InheritanceType"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="properties" ordered="false"
-          upperBound="-1" eType="#//app/MultipliableProperty" containment="true" eOpposite="#//app/MultipliableProperty/owningGeneralClass"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" ordered="false"
-          unique="false" eType="#//app/PrimitiveProperty" resolveProxies="false"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+          eType="#//app/MultipliableProperty" containment="true" eOpposite="#//app/MultipliableProperty/owningGeneralClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" unique="false"
+          eType="#//app/PrimitiveProperty" resolveProxies="false"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EEnum" name="InheritanceType">
       <eLiterals name="joined"/>

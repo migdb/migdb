@@ -10,20 +10,20 @@
           eType="#//rdb/ops/ModelOperation" containment="true" eOpposite="#//rdb/ops/ModelOperation/owningOperations"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//rdb/ModelRoot">
-      <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" ordered="false"
-          upperBound="-1" eType="#//rdb/Schema" containment="true" eOpposite="#//rdb/Schema/owningStructure"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" upperBound="-1"
+          eType="#//rdb/Schema" containment="true" eOpposite="#//rdb/Schema/owningStructure"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Schema">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningStructure" lowerBound="1"
           eType="#//rdb/Structure" derived="true" eOpposite="#//rdb/Structure/schemas"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="tables" ordered="false"
-          upperBound="-1" eType="#//rdb/Table" containment="true" eOpposite="#//rdb/Table/owningSchema"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="sequence" ordered="false"
-          lowerBound="1" eType="#//rdb/Sequence" containment="true" eOpposite="#//rdb/Sequence/owningSchema"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="indexes" ordered="false"
-          upperBound="-1" eType="#//rdb/Index" containment="true" eOpposite="#//rdb/Index/owningSchema"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="tables" upperBound="-1"
+          eType="#//rdb/Table" containment="true" eOpposite="#//rdb/Table/owningSchema"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="sequence" lowerBound="1"
+          eType="#//rdb/Sequence" containment="true" eOpposite="#//rdb/Sequence/owningSchema"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="indexes" upperBound="-1"
+          eType="#//rdb/Index" containment="true" eOpposite="#//rdb/Index/owningSchema"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Sequence">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
@@ -38,18 +38,18 @@
           eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/indexes"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
-          lowerBound="1" upperBound="-1" eType="#//rdb/Column"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="columns" lowerBound="1"
+          upperBound="-1" eType="#//rdb/Column"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Table">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningSchema" lowerBound="1"
           eType="#//rdb/Schema" changeable="false" derived="true" eOpposite="#//rdb/Schema/tables"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
           eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="columns" ordered="false"
-          upperBound="-1" eType="#//rdb/Column" containment="true" eOpposite="#//rdb/Column/owningTable"/>
-      <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" ordered="false"
-          upperBound="-1" eType="#//rdb/Constraint" containment="true" eOpposite="#//rdb/Constraint/owningTable"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="columns" upperBound="-1"
+          eType="#//rdb/Column" containment="true" eOpposite="#//rdb/Column/owningTable"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="constraints" upperBound="-1"
+          eType="#//rdb/Constraint" containment="true" eOpposite="#//rdb/Constraint/owningTable"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Column">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningTable" lowerBound="1"
