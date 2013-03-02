@@ -31,24 +31,18 @@ Workflow{
 	}
 	
 	/* Define of APP metamodel */
-	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
-		platformUri=".."
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-	
-	/* Define of RDB metamodel - hack wrong divided projects*/
-	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
-		platformUri=".."
-		registerGeneratedEPackage = "mm.rdb.RdbPackage"
-	}
-	
+		
 	/* Define of ERR metamodel */
-	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
 	
-	component=TestComponent{
+	component = TestComponent{
 		qvtInput = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
 		qvtInput = "${TEST_OPS_DIR}/emptyOperations.qvto"
 		
@@ -59,7 +53,7 @@ Workflow{
 		outputParentUri = "${OUTPUT_BASE}/TEST1"
 	} 	
 	
-	component=TestComponent{
+	component = TestComponent{
 		qvtInput = "${TEST_STRUCTURES_DIR}/structure_int.qvto"
 		qvtInput = "${TEST_OPS_DIR}/emptyOperations.qvto"
 		
@@ -69,6 +63,14 @@ Workflow{
 		transformationFile = "${EVO_APP_RUN}"
 		outputParentUri = "${OUTPUT_BASE}/TEST2"
 		testDescription = "test Component with description and just one comparison"
-	} 		
+	}
+	
+	component = TestComponent{
+		qvtComparison = "${TEST_ERRORS_DIR}/empty_errors.qvto"
+		transformationFile = "${TEST_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "testing only creating emptyErrors"
+		outputParentUri = "${OUTPUT_BASE}/TEST3"
+		
+	}		
 
 }
