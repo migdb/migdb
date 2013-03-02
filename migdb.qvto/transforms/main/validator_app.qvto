@@ -39,7 +39,7 @@ main() {
 		 var errorLog : ErrorLog := outErrorModel.rootObjects()![ErrorLog];
 		 inModel.rootObjects()![Structure].isModelValid(errorLog);
 		 errorLog.print();
-		log("");
+		 log("");
 	}else{
 		log("Root element doesn't conform to APP::Structure type");
 	}endif;

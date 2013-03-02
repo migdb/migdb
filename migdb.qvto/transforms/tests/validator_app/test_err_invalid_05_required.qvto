@@ -1,4 +1,3 @@
-import builder_app;
 import builder_errors;
 
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";

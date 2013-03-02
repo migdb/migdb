@@ -61,6 +61,8 @@ rm $D_MIGDB_QVTO/tests/validator_app/$BUILDER_ERRORS_LINK
 rm $D_MIGDB_QVTO/tests/validator_app/$QUERIES_APP_LINK
 
 rm $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
+rm $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_ERRORS_LINK
+
 
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$QUERIES_APP_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_APP_LINK
@@ -100,3 +102,6 @@ ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/validator_app/$BUILDER_ERRO
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/validator_app/$QUERIES_APP_LINK
 
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
+ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_ERRORS_LINK
+
+

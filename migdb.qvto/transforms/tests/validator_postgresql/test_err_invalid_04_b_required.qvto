@@ -1,0 +1,11 @@
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_04_b_required(out outModel : ERR);
+
+
+main() {
+	var error : Error := _validationError("Schema \"public\" contains constraint with duplicit "+
+	"name \"collision_constraint\"", "validator_postgresql.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

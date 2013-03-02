@@ -5,8 +5,8 @@ transformation test_err_invalid_02_required(out outModel : ERR);
 
 
 main() {
-	var errorMessage : String := "Structure contains ambigous property name \"name\" in"+
-	" class \"Country\"";
-	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
+	var error : Error := _validationError("Schema \"public\" contains duplicit table name - \"" +
+	"collision\"",
+		"validator_postgresql.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }
