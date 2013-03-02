@@ -274,7 +274,7 @@ query APP::ops::ZipperHierarchy::isValid(structure : APP::Structure, inout error
 	return existChild and existParent and not pointToParent;
 }
 
-helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+helper APP::ops::ZipperHierarchy::dekompose(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
 	var childClass : StandardClass := structure.findStandardClass(self.className);
 	var parentClass :StandardClass := childClass.parent; 
 	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
@@ -291,6 +291,53 @@ helper APP::ops::ZipperHierarchy::apply(inout structure : APP::Structure) : Orde
 	return operations;
 }
 
+/**
+ * EXTRACT CLASS
+ * Create new class with selecter properties from source class.
+ * Extracted Class is not part of hierarchy - Source class and Extracted Class are 
+ * connected by pointer.
+ * In source class we create  new property which is poiner to extractClass.
+ * @restriction : Class with @sourceClassName must exists in model
+ * @restriction : Class with @extractClassName cannot exist in model
+ * @restriction : Properties must exists in @sourceClass
+ */
+ query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
+ 	var existSourceClass : Boolean := checkStandardClassExists(self.sourceClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existExtractClass : Boolean := checkStandardClassExists(self.extractClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existProperties : Boolean := checkArePropertiesInGeneralClass(self.sourceClassName, self.extractPropertiesNames, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existSourceClass and not existExtractClass and existProperties;
+ }
+
+helper APP::ops::ExtractClass::dekompose(inout structure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
+	var sourceClass : StandardClass := structure.findStandardClass(self.sourceClassName);
+	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
+	// Create new class - Extracted Class
+	operations += _addStandardClass(self.sourceClassName, false, InheritanceType::joined);
+	
+	// Create attributes in Extracted Class
+	self.extractPropertiesNames->forEach(p){
+		var prop : Property := structure.findProperty(self.sourceClassName, p);
+		//TODO - Add this test do query
+		if(prop.oclIsKindOf(APP::AssociationProperty)) then {
+			var pr : AssociationProperty := prop.oclAsType(APP::AssociationProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);
+		}endif;
+		if(prop.oclIsKindOf(APP::PrimitiveProperty)) then {
+			var pr : PrimitiveProperty := prop.oclAsType(APP::PrimitiveProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);		
+		}endif;
+		if(prop.oclIsKindOf(APP::NestedProperty)) then {
+			var pr : NestedProperty := prop.oclAsType(APP::NestedProperty);
+			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, pr.upperBound);		
+		}endif;
+		if(prop.oclIsKindOf(APP::EmbeddedProperty)) then {
+			operations += _addProperty(self.extractClassName, prop.name, prop.oclAsType(APP::EmbeddedProperty).type.name );			
+		}endif;
+		
+		// TODO ostatni operace
+	};
+	return operations;
+}
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 query APP::ops::SetType::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
@@ -367,26 +414,6 @@ query APP::ops::MoveProperty::isValid(structure : APP::Structure, inout errorLog
 	var areClassesRelatives : Boolean := checkAreClassesRelatives(self.owningClassName, self.targetClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	
 	return existSourceClass and existTargetClass and existPropertyInSourceClass and notExistPropInTargetClass and areClassesRelatives;
-}
-
-
-mapping APP::ops::MoveProperty::apply(inout structure : APP::Structure){
-	var target : APP::StandardClass := structure.findStandardClass(self.targetClassName);
-	var prop : APP::MultipliableProperty := structure.findProperty(self.owningClassName, self.name).oclAsType(MultipliableProperty);
-	
-	//unsetting property from it's former owner is done by asserting property to collection in target class
-	target.properties += prop;
-}
-
-query APP::ops::ExtractClass::decompose(inout appStructure : APP::Structure) : OrderedSet(app::ops::AtomicOperation){
-	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
-	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{_addStandardClass(self.extractClassName, false, sourceClass.inheritanceType)};
-	
-	self.extractPropertiesNames->forEach( pName) {
-		var p : APP::Property := appStructure.findProperty(self.sourceClassName, pName);
-		//operations+= MoveProperty
-	};
-	return operations;
 }
 
 /* ++++++++++ HELPERS FOR LOGGING AND CHECKING ++++++++++++++++++++ */
@@ -510,6 +537,21 @@ helper checkIsPropertyInGeneralClass(generalClassName : String, propertyName : S
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return propertyExist;
+}
+
+helper checkArePropertiesInGeneralClass(generalClassName : String, propertyNames : OrderedSet(String), structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
+	if(not structure.containsGeneralClass(generalClassName))then{
+		return false;
+	}endif;
+	propertyNames->forEach(p){
+		var propertyExist : Boolean := structure.isPropertyInGeneralClass(generalClassName, p);
+		if(not propertyExist) then{
+			var errorMessage : String := "Property called " + p + " doesn't exist in class " + generalClassName;
+			errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+			return false;
+		}endif;		
+	};
+	return true;
 }
 
 helper checkNotIsPropertyInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
