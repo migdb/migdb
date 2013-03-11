@@ -16,5 +16,5 @@ main() {
 	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _primitiveProperty("sallary", string), idPropTeacher});
 	teacher.idProperty := idPropTeacher;
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, teacher});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,person, teacher});
 }

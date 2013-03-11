@@ -13,5 +13,5 @@ main() {
 	
 	party.idProperty := null;
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,party});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,party});	 
 }

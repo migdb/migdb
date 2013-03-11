@@ -12,5 +12,5 @@ main() {
 	var idProperty : PrimitiveProperty := _idProperty("idThing", string);
 	var thing : APP::StandardClass := _class("Thing", idProperty, OrderedSet{ _primitiveProperty("name", string)});	
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, thing});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,person, thing});
 }

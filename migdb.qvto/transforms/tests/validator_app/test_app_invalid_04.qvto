@@ -21,5 +21,5 @@ main() {
 	money.properties += propMoney;
 
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,country, money});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country, money});
 }

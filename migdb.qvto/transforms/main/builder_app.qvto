@@ -7,7 +7,8 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
  *				OPERATION HELPERS			 	*
  ********************************************/
 
-helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
+helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType
+		) : APP::ops::AddPrimitiveClass {
 	return object APP::ops::AddPrimitiveClass {
 		name := _name;
 		primitiveType := _primitiveType;
@@ -20,7 +21,8 @@ helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
 	}
 }
 
-helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
+helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType
+		) : APP::ops::AddStandardClass {
 	return object APP::ops::AddStandardClass {
 		name := _name;
 		isAbstract := _isAbstract;
@@ -41,7 +43,8 @@ helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String
+		) : APP::ops::AddProperty {
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -49,21 +52,26 @@ helper _addProperty(_owningClassName : String, _name : String, _type : String) :
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String, 
+		_lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
 	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type); 
 	addProperty.lowerBound := _lowerBound;
 	addProperty.upperBound := _upperBound;
 	return addProperty;
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
-	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, _lowerBound, _upperBound); 
+helper _addProperty(_owningClassName : String, _name : String, _type : String, 
+		_lowerBound : Integer, _upperBound : Integer, _defaultValue : String
+		) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, 
+		_lowerBound, _upperBound); 
 	addProperty.defaultValue := _defaultValue;
 	return addProperty;
 }
 
 
-helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
+helper _renameProperty(_owningClassName : String, _name : String, _newName : String
+		) : APP::ops::RenameProperty {
 	return object APP::ops::RenameProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -78,7 +86,9 @@ helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::Re
 	}
 }
 
-helper _setOpposite(_firstClassName : String, _firstPropertyName : String, _secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean) : APP::ops::SetOpposite {
+helper _setOpposite(_firstClassName : String, _firstPropertyName : String, 
+		_secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean
+		) : APP::ops::SetOpposite {
 	return object APP::ops::SetOpposite {
 		firstClassName := _firstClassName;
 		firstPropertyName := _firstPropertyName;
@@ -116,7 +126,8 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 	}
 }
 
-helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBounds {
+helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, 
+		_upperBound : Integer) : APP::ops::SetBounds {
 	return object APP::ops::SetBounds {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -125,7 +136,8 @@ helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integ
 	}
 }
 
-helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
+helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean
+		) : APP::ops::SetOrdered {
 	return object APP::ops::SetOrdered {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -133,7 +145,8 @@ helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boole
 	}
 }
 
-helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
+helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
+		) : APP::ops::SetUnique {
 	return object APP::ops::SetUnique {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -145,7 +158,8 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
  *				COMPLEX HELPERS			 	*
  ********************************************/
 
-helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, _tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
+helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, 
+		_tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
 	return object APP::ops::MoveProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -154,7 +168,8 @@ helper _moveProperty(_owningClassName : String, _name : String, _targetClassName
 	}
 }
 
-helper _extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), _extractClassName : String) : APP::ops::ExtractClass {
+helper _extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), 
+		_extractClassName : String) : APP::ops::ExtractClass {
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractPropertiesNames := _extractPropertiesNames;
@@ -165,7 +180,7 @@ helper _extractClass(_sourceClassName : String, _extractPropertiesNames : Ordere
 /********************************************
  *				BUILD MODEL				 	*
  ********************************************/
-helper _appStructure(_entities : Set(ModelEntity)) : Structure{
+helper _appStructure(_entities : OrderedSet(ModelEntity)) : Structure{
 	return object Structure{
 		entities := _entities;
 	};
@@ -196,9 +211,10 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : Pri
 	}
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
-	assert(_primitiveType <> null and _name <> "" and _name <> null and (_upperBound >= _lowerBound or 
-	(_upperBound = -1 and _lowerBound >= 0)));
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
+		_upperBound : Integer) : PrimitiveProperty{
+	assert(_primitiveType <> null and _name <> "" and _name <> null and 
+		(_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
 	return object PrimitiveProperty{
 		name := _name;
 		type := _primitiveType;
@@ -207,14 +223,19 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 	}
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
-	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound);
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
+		_upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, 
+		_upperBound);
 	prop.defaultValue := _defaultValue;
 	return prop;
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean) : PrimitiveProperty{
-	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound, _defaultValue);
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
+		_upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean
+		) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, 
+		_upperBound, _defaultValue);
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
 	return prop;
@@ -229,20 +250,26 @@ helper _associationProperty(_name : String, _type : StandardClass) : Association
  	};
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, 
+		_upperbound : Integer) : AssociationProperty {
+	assert(_lowerBound <= _upperbound or ((_lowerBound = 0 or _lowerBound = 1) 
+		 and _upperbound = -1 ));	
 	var prop : AssociationProperty := _associationProperty(_name, _type);
  	prop.lowerBound := _lowerBound;
  	prop.upperBound := _upperbound;
  	return prop;
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
+helper _associationProperty(_name : String, _type : StandardClass, 
+		_oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer
+		) : AssociationProperty {
 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperbound);
 	prop.oppositeProperty := _oppositeProperty;
 	return prop;
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, 
+		_upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
@@ -257,7 +284,8 @@ helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedPrope
 	return emb;
 }
 
-helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean) : EmbeddedProperty{
+helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean
+		) : EmbeddedProperty{
 	var emb : EmbeddedProperty := _embeddedProperty(_name, _type);
 	emb.isMandatory := _isMandatory;
 	return emb;
@@ -277,7 +305,8 @@ helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
 	}
 }
 
-helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
+helper _class(_name : String, _parent : StandardClass, 
+		_properties : OrderedSet(MultipliableProperty)) : StandardClass {
  	assert(_parent <> null);
  	var cls : StandardClass := object StandardClass {
  		name := _name;
@@ -288,13 +317,16 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
  	return cls;
 }
 
-helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass {
+helper _class(_name : String, _parent : StandardClass, 
+		_properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType
+		) : StandardClass {
  	var cls : StandardClass := _class(_name, _parent, _properties);
  	cls.inheritanceType := _inheritanceType;
  	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, 
+		_properties : OrderedSet(MultipliableProperty)) : StandardClass{
 	assert(_idProperty <> null);
 	var cls : StandardClass := object StandardClass {
  		name := _name;
@@ -304,20 +336,25 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
 	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, 
+		_properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType
+		) : StandardClass{
 	var cls : StandardClass := 	_class(_name, _idProperty, _properties);
 	cls.inheritanceType := _inheritanceType;
 	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, 
+		type : APP::InheritanceType) : StandardClass{
 	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
 	return cls;	
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, 
+		_properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, 
+		type : APP::InheritanceType) : StandardClass{
 	var cls : StandardClass := _class(_name, _idProperty, _properties);
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
@@ -339,7 +376,8 @@ helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : Embedded
  	}
 }
 
-helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), _idProperty : EmbeddedProperty) : EmbeddedClass {
+helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), 
+		_idProperty : EmbeddedProperty) : EmbeddedClass {
  	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
  	embClass.embeddedProperties += _properties;
  	return embClass;

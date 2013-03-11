@@ -44,7 +44,7 @@ main() {
 		log("Root element doesn't conform to APP::Structure type");
 	}endif;
 }
-///////////////---------------------------------Validacni query --------------------------------///////////
+///////////////---------------------------------Validacni query ------------------------///////////
 
 query getValidatorAppId() : String{
 	return "validator_app.qvto";
@@ -62,11 +62,11 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 	var rootsId : Boolean := true;
 	var areHierarchyTypesHomogenous : Boolean := true;
 	
-	var entities : Set(ModelEntity) := self.oclAsType(Structure).entities;
-	var stdClasses : Set(StandardClass) := entities[StandardClass];
-	var stdClassProps : Bag(MultipliableProperty) := stdClasses->properties;
+	var entities : OrderedSet(ModelEntity) := self.oclAsType(Structure).entities;
+	var stdClasses : OrderedSet(StandardClass) := entities[StandardClass];
+	var stdClassProps : Sequence(MultipliableProperty) := stdClasses->properties;
 	//classes leading to cycle
-	var cycles : Set(StandardClass) := Set{};
+	var cycles : OrderedSet(StandardClass) := OrderedSet{};
 	entities->forEach(ent | not ent.hasUniqueName()) {
 		var errorMessage : String := "Structure contains ambigous Class name \"" + ent.name + "\"";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
@@ -80,7 +80,8 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 	};
 	// logs only one cycle + path leading to cycle to prevent from expansion Error amount
 	// logs firstly FIRST class in alphabetical ordering - eg "a" < "ab", "c" > "ab"
-	stdClasses->forEach(cls | cls.isContainedInCycle(OrderedSet{}, cls) and not cycles->includes(cls)) {
+	stdClasses->forEach(cls | cls.isContainedInCycle(OrderedSet{}, cls) and 
+			not cycles->includes(cls)) {
 		var errorMessage : String := "Structure contains cycled hierarchy:";
 		var topologicallyFirst : StandardClass := cls;
 		cls.getPath(OrderedSet{})->forEach(cycleClass){
@@ -99,19 +100,38 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		notCycledHierarchies := false;
 	};
 	stdClassProps[AssociationProperty]->forEach(assocProp | not assocProp.isOppositeCorrectlySet()){
-		var errorMessage : String := "Structure contains property \""+ assocProp.name + "\" property in class \""
-		 + assocProp.owningGeneralClass.name + "\" opposite not correctly set";
+		var errorMessage : String := "Structure contains property \""+ assocProp.name + 
+				"\" property in class \""
+		 		+ assocProp.owningGeneralClass.name + "\" opposite not correctly set";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		oppositeProperty := false;
 	};
+		
+/*	entities->forEach(ent){
+		if(ent.oclIsTypeOf(StandardClass))then{
+			ent.oclAsType(StandardClass).properties->forEach(prop){
+				if(prop.oclIsKindOf(AssociationProperty) and not prop.oclAsType(AssociationProperty).isOppositeCorrectlySet())then{	
+					var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
+					var errorMessage : String := "Structure contains property \""+ assocProp.name + 
+					"\" property in class \""
+		 			+ assocProp.owningGeneralClass.name + "\" opposite not correctly set";
+					addValidationError(errorLog, errorMessage, getValidatorAppId());		
+					oppositeProperty := false;
+				}endif;
+			};				
+			
+		}endif;
+	};
+	*/
     stdClasses->forEach(cls | cls.parent <> null and cls.hasId()){
-    	var errorMessage : String := "Structure contains Non-root class \"" + cls.name + "\" containing id property " 
-    	+ "\"" + cls.idProperty.name + "\".";
+    	var errorMessage : String := "Structure contains Non-root class \"" + cls.name + 
+    		"\" containing id property \"" + cls.idProperty.name + "\".";
     	addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notHasNonRootId := false;
     };
 	stdClasses->forEach(cls | not cls.areIDBoundsCorrectlySet()){
-		var errorMessage : String := "Structure contains class \"" + cls.name + "\" with id bounds not correctly set";
+		var errorMessage : String := "Structure contains class \"" + cls.name + 
+			"\" with id bounds not correctly set";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		idBounds := false;
 	};
@@ -131,12 +151,15 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 	
 	stdClassProps->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and
 	  (prop.upperBound > 1 or prop.upperBound = -1))){
-	  var errorMessage : String := "Structure contains TPC hierarchy causing table expansion class \""
-		 + prop.owningGeneralClass.name + "\" property\"" + prop.name + "\"";
+	  var errorMessage : String := "Structure contains TPC hierarchy causing table expansion "+ 
+	  		"class \"" + prop.owningGeneralClass.name + "\" property\"" + prop.name + "\"";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notTpcExpansion := false;
 	};
-	var valid : Boolean := classUniqueName and propUniqueName and notCycledHierarchies and oppositeProperty
-	 	 and notHasNonRootId and idBounds and idTypes and notTpcExpansion and rootsId;
+	var valid : Boolean := classUniqueName and propUniqueName and notCycledHierarchies and 
+		oppositeProperty and notHasNonRootId and idBounds and idTypes and notTpcExpansion and 
+		rootsId;	
 	return  valid;
+	//entities->logFirstPropName();
+	return false;
 }

@@ -10,5 +10,5 @@ main() {
 	idPropPerson.upperBound := -1;
 	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ _primitiveProperty("age", integer)});
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,person});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,person});	 
 }

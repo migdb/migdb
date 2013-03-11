@@ -9,5 +9,5 @@ main() {
 	var country : APP::StandardClass := _class("Country", _idProperty("idCountry", integer), OrderedSet{_primitiveProperty("name", string), 
 	_primitiveProperty("name", integer)});
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,country});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country});	 
 }

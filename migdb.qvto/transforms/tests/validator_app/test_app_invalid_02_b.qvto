@@ -9,6 +9,6 @@ main() {
 	var person : APP::StandardClass := _class("Person", _idProperty("idPerson" ,integer), OrderedSet{_primitiveProperty("name", string)});
 	var naturalPerson : APP::StandardClass := _class("NaturalPerson", person, OrderedSet{ _primitiveProperty("name", string)});
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer, string, person, naturalPerson});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer, string, person, naturalPerson});
 	 
 }

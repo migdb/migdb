@@ -13,5 +13,5 @@ main() {
 	};
 	country.parent := country;
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,country});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country});	 
 }

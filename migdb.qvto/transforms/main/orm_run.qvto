@@ -39,12 +39,16 @@ main(){
 	}endif;
 }
 
-query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout errorLog : ErrorLog) : Boolean{
-	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
-		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->size().repr());
+query canProcessTest(structure : APP::Structure, ops : APP::Operations, 
+		inout errorLog : ErrorLog) : Boolean{
+	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or 
+			inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
+		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->
+			size().repr());
 		return false;
 	}endif;
-	if(not inOps.rootObjects()![APP::Operations].operations->first().oclIsKindOf(APP::ops::AtomicOperation))then{
+	if(not inOps.rootObjects()![APP::Operations].operations->
+			first().oclIsKindOf(APP::ops::AtomicOperation))then{
 		log("orm_run.qvto cannot be executed for nonatomic operations");
 		return false;
 	}endif;

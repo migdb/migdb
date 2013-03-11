@@ -5,7 +5,8 @@ import builder_errors;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation evolution_app_run(in inStructure : APP,in inOperations : APP ,out outStructure : APP, out errors : ERR);
+transformation evolution_app_run(in inStructure : APP,in inOperations : APP,out outStructure : APP, 
+	out errors : ERR);
 
 
 main() {
@@ -17,13 +18,14 @@ main() {
 	inOperations.rootObjects()![Operations].operations->forEach(op){
 		//process AtomicOperation
 		if(op.oclIsKindOf(app::ops::AtomicOperation))then{
-			if(op.oclAsType(app::ops::AtomicOperation).isValid(processedStructure, errorLog, operationIndex))then{
+			if(op.oclAsType(app::ops::AtomicOperation).isValid(processedStructure, errorLog, 
+					operationIndex))then{
 				op.oclAsType(app::ops::AtomicOperation).apply(processedStructure);
 			}endif;
 		//process DecompossableOperation	
 		}else{
-			var atomicOpsSet : OrderedSet(app::ops::AtomicOperation) := op.oclAsType(app::ops::DecomposableOperation).
-				decompose(processedStructure);
+			var atomicOpsSet : OrderedSet(app::ops::AtomicOperation) := op.oclAsType(
+				app::ops::DecomposableOperation).decompose(processedStructure);
 			var isValid : Boolean := true;
 			//process decomposed operations	
 			atomicOpsSet->forEach(atomicOp | isValid){

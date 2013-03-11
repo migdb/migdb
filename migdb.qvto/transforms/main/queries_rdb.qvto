@@ -74,7 +74,8 @@ query RDB::Schema::findTable(tableName : String) : RDB::Table{
 
 
 /********************************** SEQUENCE ************************************/
-query RDB::Structure::containsSequenceInSchema(schemaName : String, sequenceName : String) : Boolean {
+query RDB::Structure::containsSequenceInSchema(schemaName : String, sequenceName : String
+		) : Boolean {
 	return self.findSchema(schemaName).sequence != null;
 }
 
@@ -93,7 +94,8 @@ query RDB::Structure::containsTableInSchema(schemaName : String, tableName : Str
 	return self.findSchema(schemaName).containsTable(tableName);
 }
 
-query RDB::Structure::containsTablesInSchema(schemaName : String, tableNames : OrderedSet(String)) : Boolean {
+query RDB::Structure::containsTablesInSchema(schemaName : String, tableNames : OrderedSet(String)
+		) : Boolean {
 	var schema : Schema := self.findSchema(schemaName);
 	return tableNames->forAll(name | schema.containsTable(name));
 }
@@ -104,12 +106,9 @@ query RDB::Structure::findTable(schemaName : String, tableName : String) : RDB::
 
 /*********************************** COLUMN ************************************/
 
-query RDB::Structure::containsColumnInTable(schemaName : String, tableName : String, cName : String) : Boolean {
-    return self.findTable(schemaName, tableName).columns->exists(name = cName);
-}
-
-query RDB::Structure::containsColumnsInTable(schemaName : String, tableName : String, cNames : OrderedSet(String)) : Boolean {
-	return cNames->forAll(name | self.containsColumnInTable(schemaName, tableName, name));
+query RDB::Structure::containsColumnInTable(schemaName : String, tableName : String, 
+	constraintName : String) : Boolean {
+    return self.findTable(schemaName, tableName).columns->exists(name = constraintName);
 }
 
 query RDB::Structure::findColumn(schemaName : String, tableName : String, cName : String) : RDB::Column {
@@ -126,15 +125,19 @@ query RDB::Structure::findColumns(schemaName : String, tableName : String, cName
 
 
 /********************************** CONSTRAINT **********************************/
-query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, constraintableName : String) : Boolean{
-	return self.findTable(owningSchema, owningTable).constraints->exists(c | c.name = constraintableName);	
+query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, 
+		constraintableName : String) : Boolean{
+	return self.findTable(owningSchema, owningTable).constraints->exists(constraint |
+	 	constraint.name = constraintableName);	
 }
 
 query RDB::Structure::hasConstraintUniqueName(constraintableName : String) : Boolean {
-		return self.schemas->tables->constraints->select(const | const.name = constraintableName)->size() = 1;
+	return self.schemas->tables->constraints->select(const | 
+		const.name = constraintableName)->size() = 1;
 }
 
-query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::Constraint {
+query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String
+		) : RDB::Constraint {
 	return self.findTable(schemaName, tableName).constraints->any(name = rName);
 }
 
@@ -142,17 +145,10 @@ query RDB::Structure::findConstraint(schemaName : String, tableName : String, rN
 
 /********************************* COLUMN TYPE *********************************/
 
-query RDB::Structure::isSameColumnName(schemaName : String, tableNameA : String, cNameA : String, tableNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(schemaName, tableNameA, cNameA).name = self.findColumn(schemaName, tableNameB, cNameB).name;
-}
-
-query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String, cNameA : String, tableNameB : String, cNameB : String) : Boolean {
-	return self.findColumn(schemaName, tableNameA, cNameA).type = self.findColumn(schemaName, tableNameB, cNameB).type;
-}
-
-query RDB::Structure::areSameColumnsTypes (schemaName : String, tableNameA : String, cNameA : OrderedSet(String), tableNameB : String) : Boolean {
-	// TODO there is no check for order of columns
-	return cNameA->forAll(name | self.findColumn(schemaName, tableNameB, name).type = self.findColumn(schemaName, tableNameA, name));
+query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String, 
+		columnNameA : String, tableNameB : String, columnNameB : String) : Boolean {
+	return self.findColumn(schemaName, tableNameA, columnNameA).type = self.
+		findColumn(schemaName, tableNameB, columnNameB).type;
 }
 
 /**+++++++++++++++++++++ Validator queries +++++++++++++++++++++++**/
@@ -182,8 +178,7 @@ query isValidIdentifier(identifier : String):Boolean{
 		return valid;
 }
 
-query beginsWithChar(identifier : String ):Boolean{
-
+query beginsWithChar(identifier : String ) : Boolean{
 	var firstChar: String  := identifier.substring(1,1);
 	return isLatinCharacter(firstChar);
 }
@@ -236,7 +231,8 @@ query rdb::Column::hasUniqueName() : Boolean{
 }
 
 query rdb::Constraint::hasUniqueName() : Boolean{
-	return self.owningTable->owningSchema->tables->constraints->forAll(const | const.name <> self.name or const = self);
+	return self.owningTable->owningSchema->tables->constraints->forAll(const | 
+		const.name <> self.name or const = self);
 }
 
 query isKeyWord(name: String ):Boolean{

@@ -30,11 +30,13 @@ main() {
 	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	
-	//forEach operation - doesn't stop on invalid operation because errors in operations can be independent
+	//forEach operation - doesn't stop on invalid operation because errors in operations 
+	// can be independent
 	appOperations.rootObjects()![APP::Operations]->operations->forEach(op){
 		var atomicOperations : OrderedSet(APP::ops::AtomicOperation); 
 		if(op.oclIsKindOf(APP::ops::DecomposableOperation))then{
-			atomicOperations := op.oclAsType(APP::ops::DecomposableOperation).decompose(processedAStructure);
+			atomicOperations := op.oclAsType(APP::ops::DecomposableOperation).decompose(
+				processedAStructure);
 		}else {
 			if(op.oclIsKindOf(APP::ops::AtomicOperation))then{
 				atomicOperations := OrderedSet{op.oclAsType(APP::ops::AtomicOperation)};
@@ -44,7 +46,8 @@ main() {
 		//check atomicOperation validity
 			if(atomicOp.isValid(processedAStructure, errorLog, operationIndex))then{
 				// map throught ORM - TODO
-				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(processedAStructure);
+				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(
+					processedAStructure);
 				outRdbOps.operations+=dbOps;
 				//apply dbOps
 				dbOps->forEach(dbOp){

@@ -3,10 +3,12 @@ import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation evolution_rdb_run(in inStructure : RDB, in inOperations : RDB ,out outStructure : RDB, out errorLog : ERR);
+transformation evolution_rdb_run(in inStructure : RDB, in inOperations : RDB, 
+	out outStructure : RDB, out errorLog : ERR);
 
 main() {
-	var operations : OrderedSet(RDB::ops::ModelOperation) := inOperations.rootObjects()![RDB::Operations].operations;
+	var operations : OrderedSet(RDB::ops::ModelOperation) := inOperations.
+		rootObjects()![RDB::Operations].operations;
 	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	//default copying root object to output model
 	inStructure.rootObjects().deepclone();

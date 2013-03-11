@@ -18,5 +18,5 @@ main() {
 	thing.inheritanceType := app::InheritanceType::tablePerClass;
 	syntheticThing.inheritanceType := app::InheritanceType::tablePerClass;
 		
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, teacher, thing, syntheticThing}); 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,person, teacher, thing, syntheticThing}); 
 }

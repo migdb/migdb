@@ -25,7 +25,8 @@ helper APP::Structure::toRdb(inout errorLog : ErrorLog ): RDB::Structure{
 	var rdbStructure : RDB::Structure := _rdbStructure(OrderedSet{publicSchema});
 	log("ORM structure transformation started");
 	var standardClasses : Set(StandardClass) := self.entities[StandardClass];
-	var owningAssociationProperties : Bag(AssociationProperty) := standardClasses->properties[AssociationProperty]->select(prop | prop.isOwning);
+	var owningAssociationProperties : Bag(AssociationProperty) := standardClasses->
+		properties[AssociationProperty]->select(prop | prop.isOwning);
 	standardClasses->forEach(stcls){
 		log(stcls.repr());
 	};
@@ -33,14 +34,17 @@ helper APP::Structure::toRdb(inout errorLog : ErrorLog ): RDB::Structure{
 	standardClasses->forEach(stCls | stCls.isRoot() or not stCls.hasSingleTableInheritanceType()){
 		stCls.toTable(publicSchema, errorLog);
 	};
-	//2. mapping of associations transformed to column, e.g. unidirectional 1-1, bidirectional 1-1, M-1 unidirectional, 1-M bidirectional
+	//2. mapping of associations transformed to column, e.g. unidirectional 1-1, bidirectional 1-1,
+	// M-1 unidirectional, 1-M bidirectional
 	owningAssociationProperties->forEach(prop | prop.isOneToOneUnidirectional()
-		or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or prop.isOneToManyBidirectional()){
+			or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+			prop.isOneToManyBidirectional()){
 		prop.toAssociationColumn(publicSchema, errorLog);
 	};
 
 	//3. mapping of associations transformed to additional column in a table
-	owningAssociationProperties->forEach(prop | prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()){
+	owningAssociationProperties->forEach(prop | prop.isManyToManyUnidirectional() or 
+			prop.isManyToManyBidirectional()){
 		prop.toAssociationTable(publicSchema, errorLog);
 	};
 	//4. adding foreign keys to parent tables applies only on joined hierarchy 
@@ -75,12 +79,13 @@ helper app::StandardClass::toTable(schema : RDB::Schema, inout errorLog : ErrorL
 
 
 /**
-	Mapping joined Class to table - maps properties owned by the chosen class. Doesn't add foreign key 
-	referencing parent table because existence of parent cannot be ensured in that moment
+	Mapping joined Class to table - maps properties owned by the chosen class. Doesn't add foreign 
+	key referencing parent table because existence of parent cannot be ensured in that moment
 **/
 helper app::StandardClass::toJoinedTable(inout schema : RDB::Schema, inout errorLog : ErrorLog){
 	if(not self.hasJoinedInheritanceType())then{
-		var errorMessage : String := "Mapping non joined class " + self.repr() + " by joined mapping";
+		var errorMessage : String := "Mapping non joined class " + self.repr() + 
+			" by joined mapping";
 		errorLog.errors +=_ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
@@ -93,19 +98,21 @@ helper app::StandardClass::toJoinedTable(inout schema : RDB::Schema, inout error
 }
 
 /**
-	Maps class with inheritanceType table per class. Maps collected properties around the path from class to 
-	the root of the hierarchy. No FK is added 
+	Maps class with inheritanceType table per class. Maps collected properties around the path 
+	from class to the root of the hierarchy. No FK is added 
 **/
 helper app::StandardClass::toTablePerClass(inout schema : RDB::Schema, inout errorLog : ErrorLog){
 	if(not self.hasTablePerClassInheritanceType())then{
-		var errorMessage : String := "Implementation fault : Mapping non table per class " + self.repr() + " by TPC mapping";
+		var errorMessage : String := "Implementation fault : Mapping non table per class " + 
+			self.repr() + " by TPC mapping";
 		errorLog.errors +=_ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
 	//log("toTablePerClass section " + self.name);
 	var table : Table := _table(self.name.translate());
 	schema.tables+= table;
-	var columns : OrderedSet(Column) := self.getPathToRoot()->properties[PrimitiveProperty]->asSet()->toColumns(table, errorLog);
+	var columns : OrderedSet(Column) := self.getPathToRoot()->properties[PrimitiveProperty]->
+		asSet()->toColumns(table, errorLog);
 	return;
 }
 
@@ -141,7 +148,8 @@ helper Set(app::MultipliableProperty)::toColumns(inout table : Table, inout erro
 				if(primitiveProperty.upperBound = -1 or primitiveProperty.upperBound > 1)then{
 					primitiveProperty.toCollection(table, errorLog);
 				} else{
-					var errorMessage : String := "Property " + prop.repr() + " has invalid upperBound - cannot be mapped";
+					var errorMessage : String := "Property " + prop.repr() + 
+						" has invalid upperBound - cannot be mapped";
 					errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 				}endif;
 			}endif;
@@ -149,7 +157,8 @@ helper Set(app::MultipliableProperty)::toColumns(inout table : Table, inout erro
 			if(prop.oclIsTypeOf(NestedProperty))then{
 				prop.oclAsType(NestedProperty).toColumns(table, errorLog);
 			}else{
-				var errorMessage : String := "property " + prop.repr() + " has unknown type - can't be mapped";
+				var errorMessage : String := "property " + prop.repr() + 
+					" has unknown type - can't be mapped";
 				errorLog.errors+= _ormError(errorMessage, getOrmStructureTransformationId());
 				return;
 			}endif;		
@@ -193,17 +202,22 @@ helper app::PrimitiveProperty::toPrimitive(inout table : Table, inout errorLog :
 /**
 	Maps primitive property with upperBound more than 1 or -1.
 **/
-helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout errorLog : ErrorLog){
+helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, 
+		inout errorLog : ErrorLog){
 	if(not(self.upperBound > 1 or self.upperBound = -1)) then {
 		var errorMessage : String := "error attempt to map " + self.repr() + " to collection table";
 		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
 	log("To collection " + self.repr());
-	var collectionPropertyColumn : rdb::Column := _column(self.name.translate() , toRdbType(self.getPrimitiveType()));
-	var idColumn := _column(self.owningGeneralClass.translateIdName(), toRdbType(self.owningGeneralClass.getId().getPrimitiveType()));
-	var fkOwningTableProjection : rdb::ForeignKey := _foreignKey(self.getFKCollectionName(), referencedTable, idColumn);
-	var collectionTable : rdb::Table := _table(self.getCollectionTableName(), OrderedSet{collectionPropertyColumn, idColumn}, OrderedSet{fkOwningTableProjection});
+	var collectionPropertyColumn : rdb::Column := _column(self.name.translate() , 
+		toRdbType(self.getPrimitiveType()));
+	var idColumn := _column(self.owningGeneralClass.translateIdName(), toRdbType(
+		self.owningGeneralClass.getId().getPrimitiveType()));
+	var fkOwningTableProjection : rdb::ForeignKey := _foreignKey(self.getFKCollectionName(), 
+		referencedTable, idColumn);
+	var collectionTable : rdb::Table := _table(self.getCollectionTableName(), 
+		OrderedSet{collectionPropertyColumn, idColumn}, OrderedSet{fkOwningTableProjection});
 	log("Before:" + (referencedTable.owningSchema.tables->size()).toString());
 	var schema : Schema := referencedTable.owningSchema;
 	schema.tables+= collectionTable;
@@ -211,11 +225,13 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout
 	if(self.isOrdered)then{
 		var orderingColumn : Column :=_column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
 		collectionTable.columns += orderingColumn;
-		collectionTable.constraints+= _unique(getDbOrderingConstraintName(collectionTable.name), OrderedSet{orderingColumn, idColumn});
+		collectionTable.constraints+= _unique(getDbOrderingConstraintName(collectionTable.name), 
+			OrderedSet{orderingColumn, idColumn});
 	}endif;
 	//adding unique constraint
 	if(self.isUnique)then{
-		collectionTable.constraints+= _unique(self.getUniqueConstraintName(), OrderedSet{collectionPropertyColumn, idColumn});
+		collectionTable.constraints+= _unique(self.getUniqueConstraintName(), 
+			OrderedSet{collectionPropertyColumn, idColumn});
 	}endif;
 	log("After:" + referencedTable.owningSchema.tables->size().toString());	
 	return;
@@ -224,9 +240,12 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout
 /**
 	This mapping maps Property to Table referencing associated tables
 **/
-helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, inout errorLog : ErrorLog) {
-	if((not self.isManyToManyBidirectional() and not self.isManyToManyUnidirectional()) or not self.isOwning) then {
-		var errorMessage : String := "error attempt to map not owning associationProperty" + self.repr() + " to association table";
+helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, 
+		inout errorLog : ErrorLog) {
+	if((not self.isManyToManyBidirectional() and not self.isManyToManyUnidirectional()) or 
+			not self.isOwning) then {
+		var errorMessage : String := "error attempt to map not owning associationProperty" + 
+			self.repr() + " to association table";
 		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
@@ -234,36 +253,50 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, 
 	var mappedClassSet : OrderedSet(StandardClass) := self.owningGeneralClass.getMappedClassSet();
 	mappedClassSet->forEach(associationOwningClass){
 		//projection table of owningClass 
-		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.translate());
+		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.
+			translate());
 		var oppositeClassSet : OrderedSet(StandardClass) := self.type.getMappedClassSet();
 		var ownerIdProjection : Column := owningClassProjection.getPKColumn();
 		oppositeClassSet->forEach(oppositeClass){
-			var oppositeClassProjection:rdb::Table := schema.findTable(oppositeClass.name.translate());
+			var oppositeClassProjection:rdb::Table := schema.findTable(oppositeClass.name.
+				translate());
 			var oppositeIdProjection : Column := oppositeClassProjection.getPKColumn();
 			//create association table
-			var associationTable : Table := _table(getAssociationTableName(self, associationOwningClass));
+			var associationTable : Table := _table(getAssociationTableName(self, 
+				associationOwningClass));
 			//reference to owningClassProjection
-			var owningAssociationColumn : Column := _column(ownerIdProjection.name, ownerIdProjection.type);		
+			var owningAssociationColumn : Column := _column(ownerIdProjection.name, 
+				ownerIdProjection.type);		
 			associationTable.columns += owningAssociationColumn;				
-			var fkReferencingOwnerName : String := getFKAssociationTableRefOriginName(associationTable.name, associationOwningClass);
-			var fkReferencingOwner : rdb::ForeignKey := _foreignKey(fkReferencingOwnerName, owningClassProjection, owningAssociationColumn);
+			var fkReferencingOwnerName : String := getFKAssociationTableRefOriginName(
+				associationTable.name, associationOwningClass);
+			var fkReferencingOwner : rdb::ForeignKey := _foreignKey(fkReferencingOwnerName,
+				owningClassProjection, owningAssociationColumn);
 			associationTable.constraints += fkReferencingOwner;
 			//reference to oppositteClassProjection
-			var oppositeAssociationColumn : Column := _column(oppositeIdProjection.name, oppositeIdProjection.type);
+			var oppositeAssociationColumn : Column := _column(oppositeIdProjection.name,
+				oppositeIdProjection.type);
 			associationTable.columns += oppositeAssociationColumn;
-			var fkReferencingOppositeName : String := getFKAssociationTableRefOriginName(associationTable.name, oppositeClass);
-			var fkReferencingOpposite : rdb::ForeignKey := _foreignKey(fkReferencingOppositeName, owningClassProjection, oppositeAssociationColumn);
+			var fkReferencingOppositeName : String := getFKAssociationTableRefOriginName(
+				associationTable.name, oppositeClass);
+			var fkReferencingOpposite : rdb::ForeignKey := _foreignKey(fkReferencingOppositeName, 
+				owningClassProjection, oppositeAssociationColumn);
 			associationTable.constraints+= fkReferencingOpposite;
 			// adding ordering column
-			if(self.isOrdered or (self.oppositeProperty != null and self.oppositeProperty.isOrdered)) then{
-				var orderingColumn : rdb::Column := _column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
+			if(self.isOrdered or (self.oppositeProperty != null and self.
+					oppositeProperty.isOrdered)) then{
+				var orderingColumn : rdb::Column := _column(getDbOrderingColumnName(), 
+					RDB::PrimitiveType::int);
 				associationTable.columns += orderingColumn;
-				var uniqueOrder : rdb::Unique := _unique(getDbOrderingConstraintName(associationTable.name), OrderedSet{owningAssociationColumn, orderingColumn});
+				var uniqueOrder : rdb::Unique := _unique(getDbOrderingConstraintName(
+					associationTable.name), OrderedSet{owningAssociationColumn, orderingColumn});
 			}endif;
 			// adding uniqueness to collection		
-			if(self.isUnique or (self.oppositeProperty != null and self.oppositeProperty.isUnique))then{
+			if(self.isUnique or (self.oppositeProperty != null and 
+					self.oppositeProperty.isUnique))then{
 				var uniqueConstraintName : String := self.getUniqueConstraintName();
-				var uniqueConstraint :rdb::Unique := _unique(uniqueConstraintName, OrderedSet{owningAssociationColumn, oppositeAssociationColumn});
+				var uniqueConstraint :rdb::Unique := _unique(uniqueConstraintName, 
+					OrderedSet{owningAssociationColumn, oppositeAssociationColumn});
 				associationTable.constraints += uniqueConstraint;
 			}endif;
 			schema.tables+=associationTable;		
@@ -275,24 +308,30 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, 
 /**
 	Mapping association property to addition column into owning table
 **/
-helper app::AssociationProperty::toAssociationColumn(inout schema : RDB::Schema, inout errorLog : ErrorLog){
-	if((not self.isOneToOneBidirectional() and not self.isOneToOneUnidirectional() and not self.isOneToManyUnidirectional() and not self.isManyToManyBidirectional())
-		or not self.isOwning)then{
-			var errorMessage : String := ("Mapping associationProperty" + self.repr() + " to association column");
-			errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
-			return;
+helper app::AssociationProperty::toAssociationColumn(inout schema : RDB::Schema, 
+		inout errorLog : ErrorLog){
+	if((not self.isOneToOneBidirectional() and not self.isOneToOneUnidirectional() and 
+			not self.isOneToManyUnidirectional() and not self.isManyToManyBidirectional()) or 
+			not self.isOwning)then{
+		var errorMessage : String := ("Mapping associationProperty" + self.repr() + 
+			" to association column");
+		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
+		return;
 	}endif;
 	var mappedClassSet : OrderedSet(StandardClass) := self.owningGeneralClass.getMappedClassSet();
 	mappedClassSet->forEach(associationOwningClass){
 		//projection table of owningClass 
-		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.translate());
+		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.
+			translate());
 		var oppositeClassSet : OrderedSet(StandardClass) := self.type.getMappedClassSet();
 		oppositeClassSet->forEach(oppositeClass){
 			var oppositeProjection : Table := schema.findTable(oppositeClass.name.translate()); 
 			var oppositeIdColumn : Column := oppositeProjection.getPKColumn();
-			var oppositeReferencingColumn : Column := _column(oppositeIdColumn.name, oppositeIdColumn.type);
+			var oppositeReferencingColumn : Column := _column(oppositeIdColumn.name, 
+				oppositeIdColumn.type);
 			owningClassProjection.columns += oppositeReferencingColumn;
-			var fkReferencingOpposite : ForeignKey := _foreignKey(self.getFkRefencingOppositeName(associationOwningClass, oppositeClass), oppositeProjection, oppositeIdColumn);
+			var fkReferencingOpposite : ForeignKey := _foreignKey(self.getFkRefencingOppositeName(
+				associationOwningClass, oppositeClass), oppositeProjection, oppositeIdColumn);
 			owningClassProjection.constraints += fkReferencingOpposite;
 		};
 	};	
@@ -303,15 +342,18 @@ helper app::AssociationProperty::toAssociationColumn(inout schema : RDB::Schema,
 **/
 helper app::StandardClass::addReferenceToParent(inout schema : Schema, inout errorLog : ErrorLog){
 	if(not self.hasJoinedInheritanceType() or self.isRoot())then{
-		var errorMessage : String := ("Implementation error - adding reference to parent of class " + self.repr());
+		var errorMessage : String := ("Implementation error - adding reference to parent of class "
+			+ self.repr());
 		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 		return;		
 	}endif;
 	var childProjection : Table := schema.findTable(self.name.translate());
-	var parentProjection : Table := schema.findTable(self.parent.getDbRepresentative().name.translate());
+	var parentProjection : Table := schema.findTable(self.parent.getDbRepresentative().name.
+		translate());
 	var childId : Column := childProjection.getPKColumn();
 	log("child id " + childId.repr());
-	var fkReferencingParent : ForeignKey := _foreignKey(self.getParentFkName(), parentProjection, childId);
+	var fkReferencingParent : ForeignKey := _foreignKey(self.getParentFkName(), parentProjection, 
+		childId);
 	childProjection.constraints+= fkReferencingParent;
 	return;
 }

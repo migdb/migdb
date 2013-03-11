@@ -13,5 +13,5 @@ main() {
 	
 	var legalPerson : APP::StandardClass :=	_class("LegalPerson", party, OrderedSet{_primitiveProperty("regNo", integer), _primitiveProperty("bisName", string)});
 	var naturalPerson : APP::StandardClass :=	_class("NaturalPerson",party, OrderedSet{_primitiveProperty("name", string), _primitiveProperty("surname", string)});
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,country,party, legalPerson, naturalPerson});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country,party, legalPerson, naturalPerson});
 }
