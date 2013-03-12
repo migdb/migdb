@@ -11,5 +11,5 @@ main() {
 	
 	var table1 : Table := _table("collision", OrderedSet{col}, OrderedSet{pk1, pk2});
 	
-	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table1})});
+	var root : rdb::ModelRoot := _rdbStructure(OrderedSet{_schema(OrderedSet{table1})});
 }

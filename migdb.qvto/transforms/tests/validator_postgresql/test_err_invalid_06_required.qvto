@@ -5,7 +5,7 @@ transformation test_err_invalid_06_required(out outModel : ERR);
 
 
 main() {
-	var error : Error := _validationError("Invalid column identifier \"POPOCATEPETL\""
-	, "validator_postgresql.qvto"); 
+	var error : Error := _validationError("Invalid column identifier \"POPOCATEPETL\"",
+		"validator_postgresql.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }

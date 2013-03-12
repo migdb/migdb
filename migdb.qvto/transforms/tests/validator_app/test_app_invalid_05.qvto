@@ -10,10 +10,12 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", _idProperty("idPerson", integer), OrderedSet{ _primitiveProperty("name", string) });
+	var person : APP::StandardClass := _class("Person", _idProperty("idPerson", integer), 
+		OrderedSet{ _primitiveProperty("name", string) });
 	
 	var idPropTeacher := _idProperty("idTeacher", integer);
-	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _primitiveProperty("sallary", string), idPropTeacher});
+	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ 
+		_primitiveProperty("sallary", string), idPropTeacher});
 	teacher.idProperty := idPropTeacher;
 	
 	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,person, teacher});

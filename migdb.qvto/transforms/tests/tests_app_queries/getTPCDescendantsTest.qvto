@@ -6,7 +6,8 @@ transformation getTPCDescendantsTest(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _integer();
-	var hierarchyRoot : StandardClass := _class("hierarchyRoot", _idProperty("idHierarchyRoot", int), OrderedSet{}, InheritanceType::singleTable);
+	var hierarchyRoot : StandardClass := _class("hierarchyRoot", _idProperty("idHierarchyRoot", 
+			int), OrderedSet{}, InheritanceType::singleTable);
 	var hierarchyRootChild := _class("hierarchyRootChild", hierarchyRoot, OrderedSet{});
 	var root : StandardClass := _class("root", hierarchyRoot, OrderedSet{}); 
 	var cl1 : StandardClass := _class("cl1", root, OrderedSet{}, InheritanceType::joined);
@@ -18,7 +19,8 @@ main(){
 	var cl7 : StandardClass := _class("cl7", cl6, OrderedSet{}, InheritanceType::joined);  
 	
 	var structure : Structure := _appStructure(OrderedSet{});
-	structure.entities:= OrderedSet{int, hierarchyRoot, hierarchyRootChild, root, cl1, cl2, cl3, cl4, cl5, cl6, cl7};
+	structure.entities:= OrderedSet{int, hierarchyRoot, hierarchyRootChild, root, cl1, cl2, cl3, 
+		cl4, cl5, cl6, cl7};
 	structure.print();
 	
 	var rootTPCDescendants := root.getDescendantsOfType(InheritanceType::tablePerClass);

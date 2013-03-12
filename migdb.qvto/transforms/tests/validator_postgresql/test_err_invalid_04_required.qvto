@@ -6,6 +6,6 @@ transformation test_err_invalid_04_required(out outModel : ERR);
 
 main() {
 	var error : Error := _validationError("Schema \"public\" contains constraint with duplicit "+
-	"name \"collision_constraint\"", "validator_postgresql.qvto"); 
+		"name \"collision_constraint\"", "validator_postgresql.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }

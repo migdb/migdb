@@ -5,6 +5,6 @@ transformation test_ordered_input(out inoutModel : APP);
 
 main() {
 	var ops : OrderedSet(APP::ops::ModelOperation) := OrderedSet{_renameEntity("cls", "newCls"),
-							 _addProperty("cls", "prop", "int")};
+		_addProperty("cls", "prop", "int")};
 	var root : Operations := _appOperations(ops);	
 }

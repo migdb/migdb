@@ -6,7 +6,8 @@ main() {
 //	log("TEST_APP_INVALID_02 - invalid : Property name");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var country : APP::StandardClass := _class("Country", _idProperty("idCountry", integer), OrderedSet{_primitiveProperty("name", string), 
+	var country : APP::StandardClass := _class("Country", _idProperty("idCountry", integer), 
+		OrderedSet{_primitiveProperty("name", string), 
 	_primitiveProperty("name", integer)});
 	
 	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country});	 

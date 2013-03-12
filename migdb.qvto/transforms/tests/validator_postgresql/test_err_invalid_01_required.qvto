@@ -5,8 +5,7 @@ transformation test_err_invalid_01_required(out outModel : ERR);
 
 
 main() {
-	var error : Error := _validationError("Schema \"collision_schema\" has duplicit name as another"
-	+ " schema in generation",
-		"validator_postgresql.qvto"); 
+	var error : Error := _validationError("Schema \"collision_schema\" has duplicit name as "+
+		"another schema in generation", "validator_postgresql.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }

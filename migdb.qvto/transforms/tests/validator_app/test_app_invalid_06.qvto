@@ -7,7 +7,8 @@ main() {
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var idPropPerson : APP::PrimitiveProperty := _idProperty("idPerson",integer);
 	idPropPerson.lowerBound := 0;
-	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ _primitiveProperty("age", integer)});
+	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ 
+			_primitiveProperty("age", integer)});
 	
 	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,person});
 }

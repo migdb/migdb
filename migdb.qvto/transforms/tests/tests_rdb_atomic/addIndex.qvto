@@ -7,7 +7,7 @@ main() {
 	log("TEST_RDB");
 	log("op: ADDINDEX");	
 	
-	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", 
-								   OrderedSet{_table("first", OrderedSet{_column("col", RDB::PrimitiveType::char)})}, 
-								   _sequence("seq_global", 1))});	 
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{_schema("public", 
+			OrderedSet{_table("first", OrderedSet{_column("col", RDB::PrimitiveType::char)})}, 
+						_sequence("seq_global", 1))});	 
 }

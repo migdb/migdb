@@ -6,6 +6,6 @@ transformation test_err_invalid_03_required(out outModel : ERR);
 
 main() {
 	var error : Error := _validationError("Schema \"public\" contains duplicit column name \""+
-	"collision_column\"", "validator_postgresql.qvto"); 
+		"collision_column\"", "validator_postgresql.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }

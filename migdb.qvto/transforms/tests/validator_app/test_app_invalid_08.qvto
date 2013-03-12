@@ -9,7 +9,8 @@ main() {
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
 	var zipProperty : PrimitiveProperty := _primitiveProperty("zip", string);
-	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{_primitiveProperty("street", string),_primitiveProperty("city", string)});																		  									  												  												  									  	
+	var party : APP::StandardClass := _class("Party", zipProperty, OrderedSet{
+			_primitiveProperty("street", string),_primitiveProperty("city", string)});																		  									  												  												  									  	
 	
 	party.idProperty := null;
 	

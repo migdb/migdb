@@ -11,7 +11,8 @@ main(){
 	
 	log((a < ab).repr() + " " + (a > ab).repr());
 /*	var int : PrimitiveClass := _integer();
-	var cl1 : StandardClass := _class("cl1", _idProperty("idRoot", int), OrderedSet{}, InheritanceType::joined);
+	var cl1 : StandardClass := _class("cl1", _idProperty("idRoot", int), OrderedSet{}, 
+		InheritanceType::joined);
 	var cl2 : StandardClass := _class("cl2", cl1, OrderedSet{}, InheritanceType::joined);
 	var cl3 : StandardClass := _class("cl3", cl2, OrderedSet{}, InheritanceType::joined);  
 	cl1.parent := cl3;

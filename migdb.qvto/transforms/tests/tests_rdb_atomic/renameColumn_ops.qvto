@@ -6,6 +6,7 @@ transformation addcolumnOps(out inoutModel : RDB);
 main() {
 	log("TEST_RDB");
 	log("op: ADDCOLUMN");	
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{_renameColumn("public", "first", "uniq", "not")};
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+		_renameColumn("public", "first", "uniq", "not")};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

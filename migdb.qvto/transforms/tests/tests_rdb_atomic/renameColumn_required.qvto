@@ -27,6 +27,8 @@ main() {
 	var nn : RDB::NotNull := _notNull("NN_uniq", columnUQ);
 	table.constraints += nn;
 	
-	var model : RDB::ModelRoot := _rdbStructure(Set{_schema("public", OrderedSet{table, table2}, _sequence("seq_global", 1), OrderedSet{index})});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{
+		_schema("public", OrderedSet{table, table2}, _sequence("seq_global", 1), 
+			OrderedSet{index})});
 		
 }

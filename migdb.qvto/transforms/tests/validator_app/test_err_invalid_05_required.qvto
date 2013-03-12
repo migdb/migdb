@@ -6,7 +6,7 @@ transformation test_err_invalid_05_required(out outModel : ERR);
 
 main() {
 	var errorMessage : String := "Structure contains Non-root class \"Teacher\" containing id " + 
-	"property \"idTeacher\".";
+		"property \"idTeacher\".";
 	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
 	_errorLog(OrderedSet{error});	 
 }

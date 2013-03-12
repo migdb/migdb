@@ -7,9 +7,11 @@ main() {
 //	log("TEST_APP_INVALID_01 - invalid : Class name");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
-	var party : APP::StandardClass := _class("Party", _idProperty("idParty", integer), OrderedSet{_primitiveProperty("street", string),
-	_primitiveProperty("city", string), _primitiveProperty("zip", string)});																		  									  												  												  									  	
+	var party : APP::StandardClass := _class("Party", _idProperty("idParty", integer), 
+		OrderedSet{_primitiveProperty("street", string), _primitiveProperty("city", string), 
+			_primitiveProperty("zip", string)});																		  									  												  												  									  	
 	
-	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,party, party.deepclone().oclAsType(app::StandardClass)});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{
+		integer,string,party, party.deepclone().oclAsType(app::StandardClass)});
 	 
 }

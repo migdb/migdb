@@ -5,5 +5,5 @@ transformation test_postgresql_01(out inoutModel : RDB);
 
 main() {
 	log("TEST_RDB_01: valid");	
-	var root : rdb::ModelRoot := _rdbStructure(Set{_schema("valid_schema")});
+	var root : rdb::ModelRoot := _rdbStructure(OrderedSet{_schema("valid_schema")});
 }

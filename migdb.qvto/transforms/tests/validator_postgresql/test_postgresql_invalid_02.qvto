@@ -5,8 +5,10 @@ transformation secondAPP(out inoutModel : RDB);
 
 main() {
 	log("TEST_RDB_INVALID_02: table name");	
-	var table1 : Table := _table("collision", OrderedSet{_column("col_first_table", PrimitiveType::int)});
-	var table2 : Table := _table("collision", OrderedSet{_column("col_second_table", PrimitiveType::int)});
+	var table1 : Table := _table("collision", OrderedSet{_column("col_first_table", 
+		PrimitiveType::int)});
+	var table2 : Table := _table("collision", OrderedSet{_column("col_second_table", 
+		PrimitiveType::int)});
 	
-	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table1, table2})});
+	var root : rdb::ModelRoot := _rdbStructure(OrderedSet{_schema(OrderedSet{table1, table2})});
 }
