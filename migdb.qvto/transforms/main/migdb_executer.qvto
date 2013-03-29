@@ -17,17 +17,17 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 	There is problem with the same types of models - solution find in creator_rdb_operations.qvto
 **/
 transformation migdb_executer(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	out outRStructure : RDB , out rOperations :RDB, out errorModel : ERR);
+	out outRStructure : RDB , inout outROperations :RDB, out errorModel : ERR);
 
 main() {
 	inAStructure.rootObjects().deepclone();
 	// hack - creating root model of rOperations by creator_rdb_operations.qvto
-	new creator_rdb_operations(rOperations);
+	//new creator_rdb_operations(outROperations);
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	processedAStructure.isModelValid(errorLog);
 	var processedRStructure : RDB::Structure := processedAStructure.toRdb(errorLog);
-	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
+	var outRdbOps : RDB::Operations := outROperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	
 	//forEach operation - doesn't stop on invalid operation because errors in operations 
