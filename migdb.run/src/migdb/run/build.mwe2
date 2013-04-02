@@ -15,16 +15,12 @@ module migdb.run.build
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
-
-
 import org.eclipse.xtext.mwe.SlotEntry
 import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.xtext.mwe.Validator
 import org.eclipse.xtext.mwe.NameBasedFilter
-
 import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.emf.mwe.utils.Reader
-
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
@@ -99,11 +95,12 @@ Workflow {
 	component = QVTOExecutor{
 		inputSlot="opsApp"
 		inputSlot="strApp"
-		inputSlot="strRdb"
-		inOutSlot="opsRdb"
-		transformationFile="../migdb.qvto/transforms/main/migdb_executer.qvto"
 		outputSlot="outStrApp"
 		outputSlot="outStrRdb"
+		inOutSlot="opsRdb"
+		outputSlot="errorLog"
+		transformationFile="../migdb.qvto/transforms/main/migdb_executer.qvto"
+
 	}	
 	
 /***** WRITE XMI FILES *****/	
@@ -127,7 +124,14 @@ Workflow {
 		uri = "output_xmi_build/ops_Rdb.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
-	}	
+	}
+/**/
+	component = Writer {
+		modelSlot = "errorLog"
+		uri = "output_xmi_build/error_log.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}			
 	
 /***** SQL GENERATOR *****/		
 /**/
@@ -138,14 +142,11 @@ Workflow {
 		outputPath = "output_sql_build/"
 	}
 	
-/***** DATABASE CONNECT *****/		
-/**
+/***** DATABASE CONNECTION *****/		
+/**/
 	component = CommandLineExec{
-		command = "ruby ../migdb.ruby.sql/script.rb output_sql_build postgres postgres 123456"
-	}		
-/**
-	component = CommandLineExec{
-		command = "ruby ../migdb.ruby.sql/script.rb cg_sql_insert postgres postgres 123456"
-	}		
-/**/	
+		// ruby <location of script> <location of SQL files> <DB name> <USER name> <USER password>
+		command = "ruby ../migdb.ruby.sql/script.rb output_sql_build migdb postgres 123456"
+	}
+/**/			
 }

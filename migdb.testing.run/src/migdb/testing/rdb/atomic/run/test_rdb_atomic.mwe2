@@ -2,19 +2,20 @@ module migb.testing.rdb.atomic.run.test_rdb_atomic
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
-
-
 import org.eclipse.xtext.mwe.SlotEntry
 import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
 import org.eclipse.xtext.mwe.Validator
 import org.eclipse.xtext.mwe.NameBasedFilter
-
 import org.eclipse.emf.mwe.utils.Writer
 import org.eclipse.emf.mwe.utils.Reader
-
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/rdb_atomic"
+var TESTS = "${QVTO_DIR}/tests/tests_rdb_atomic"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_rdb_run.qvto"
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 
 Workflow{
 /***** DEFINE META-MODELS *****/	
@@ -23,500 +24,35 @@ Workflow{
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
+	
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}	
 
-/***** CLEAN DIRECTORIES [XMI] *****/		
-/**/	
+	/***** CLEAN DIRECTORIES [XMI] *****/
+	/**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/test_rdb_atomic/"
+		directory = "${OUTPUT_BASE_DIR}"
 	}
 
-		
-/**** op: ADDSCHEMA *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSchema_ops.qvto"
-		outputSlot = "test_ops"
-	}
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSchema.qvto"
-		outputSlot = "test_prepare"
-	}
-	
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSchema_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addSchema.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addSchema.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-
-
-/**** op: ADDSEQUENCE *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSequence_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSequence.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addSequence_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addSequence.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addSequence.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	
-/**** op: ADDTABLE *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addTable_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addTable.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addTable_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addTable.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addTable.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-
-/**** op: ADDCOLUMN *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addColumn_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addColumn.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addColumn_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addColumn.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addColumn.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/1_addSchema"
+		qvtInput = "${TESTS}/addSchema_str.qvto"
+		qvtInput = "${TESTS}/addSchema_ops.qvto"
+		qvtComparison = "${TESTS}/addSchema_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addSchema"
 	}	
 	
-/**** op: ADDINDEX *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addIndex_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addIndex.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addIndex_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addIndex.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addIndex.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-/**** op: ADDPRIMARYKEY *****/
-/**/
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addPrimaryKey_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addPrimaryKey.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addPrimaryKey_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addPrimaryKey.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addPrimaryKey.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-/**** op: ADDFOREIGNKEY *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addForeignKey_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addForeignKey.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addForeignKey_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addForeignKey.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addForeignKey.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}						
-	
-/**** op: ADDUNIQUE *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addUnique_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addUnique.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addUnique_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addUnique.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addUnique.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-/**** op: ADDNOTNULL *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addNotNull_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addNotNull.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/addNotNull_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_addNotNull.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_addNotNull.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-/**** op: RENAMETABLE *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameTable_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameTable.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameTable_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_renameTable.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_renameTable.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}	
-	
-/**** op: RENAMECOLUMN *****/
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameColumn_ops.qvto"
-		outputSlot = "test_ops"
-	}
-
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameColumn.qvto"
-		outputSlot = "test_prepare"
-	}
-/**/
-	component = QVTOExecutor {
-		inputSlot = "test_prepare"
-		inputSlot = "test_ops"
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/evolution_rdb_run.qvto"
-		outputSlot = "test"
-	}
-/**/
-	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/tests_rdb_atomic/renameColumn_required.qvto"
-		outputSlot = "required"
-	}		
-/**/
-	component = Writer {
-		modelSlot = "test"
-		uri = "output-tests/test_rdb_atomic/test_renameColumn.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-/**/
-	component = Writer {
-		modelSlot = "required"
-		uri = "output-tests/test_rdb_atomic/required_renameColumn.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}			
-			
-/**** COMPARATORS *****/
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDCHEMA"
-		resultURI = "output-tests/test_rdb_atomic/required_addSchema.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addSchema.xmi"
-	}
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDSEQUENCE"
-		resultURI = "output-tests/test_rdb_atomic/required_addSequence.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addSequence.xmi"
-	}
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDTABLE"
-		resultURI = "output-tests/test_rdb_atomic/required_addTable.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addTable.xmi"
-	}
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDCOLUMN"
-		resultURI = "output-tests/test_rdb_atomic/required_addColumn.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addColumn.xmi"
-	}	
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDINDEX"
-		resultURI = "output-tests/test_rdb_atomic/required_addIndex.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addIndex.xmi"
-	}	
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDPRIMARYKEY"
-		resultURI = "output-tests/test_rdb_atomic/required_addPrimaryKey.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addPrimaryKey.xmi"
-	}
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDFOREIGNKEY"
-		resultURI = "output-tests/test_rdb_atomic/required_addForeignKey.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addForeignKey.xmi"
-	}	
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDUNIQUE"
-		resultURI = "output-tests/test_rdb_atomic/required_addUnique.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addUnique.xmi"
-	}
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR ADDNOTNULL"
-		resultURI = "output-tests/test_rdb_atomic/required_addNotNull.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_addNotNull.xmi"
-	}	
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR RENAMETABLE"
-		resultURI = "output-tests/test_rdb_atomic/required_renameTable.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_renameTable.xmi"
-	}	
-/**/	
-	component = ModelComparator {
-		testDescription = "COMPARATOR RENAMECOLUMN"
-		resultURI = "output-tests/test_rdb_atomic/required_renameColumn.xmi"
-		testedURI = "output-tests/test_rdb_atomic/test_renameColumn.xmi"
-	}										
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/2_removeConstraint"
+		qvtInput = "${TESTS}/removeConstraint_str.qvto"
+		qvtInput = "${TESTS}/removeConstraint_ops.qvto"
+		qvtComparison = "${TESTS}/removeConstraint_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "RemoveConstraint"
+	}									
 }

@@ -428,7 +428,6 @@ class Generator extends BaseCodeGenerator {
 	 * Delete rows which not belong to table 
 	 * @param DeleteRowsImpl op : op of type DeleteRowsImpl
 	 */
-	 //TODO this SQL not work
 	def dispatch genOperation(DeleteRowsImpl op)'''
 		DELETE FROM «op.owningSchemaName».«op.tableName» WHERE «op.idName» IN
 			(SELECT «op.tableName».«op.idName» FROM «op.owningSchemaName».«op.tableName»
