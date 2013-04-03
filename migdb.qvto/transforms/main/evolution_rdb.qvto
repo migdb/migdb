@@ -450,7 +450,7 @@ query RDB::ops::RemoveConstraint::isValid(structure : RDB::Structure, inout erro
 	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, 
 		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	var existConstraint : Boolean := checkExistConstraint(self.owningSchemaName, 
-		self.owningTableName, structure, errorLog, operationIndex, 
+		self.name, structure, errorLog, operationIndex, 
 		getEvolutionRdbTransformationId());
 	
 	return existSchema and existTable and existConstraint;
