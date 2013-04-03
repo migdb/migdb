@@ -377,14 +377,14 @@ helper APP::ops::ZipperHierarchy::decompose(inout structure : APP::Structure
  */
  query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
  		operationIndex : Integer) : Boolean {
- 	var existSourceClass : Boolean := checkStandardClassExists(self.sourceClassName, structure, 
+ 	var existSourceClass : Boolean := checkStandardClassNotExists(self.sourceClassName, structure, 
  		errorLog, operationIndex, getEvolutionAppTransformationId());
 	var existExtractClass : Boolean := checkStandardClassExists(self.extractClassName, structure, 
 		errorLog, operationIndex, getEvolutionAppTransformationId());
 	var existProperties : Boolean := checkArePropertiesInGeneralClass(self.sourceClassName, 
 		self.extractPropertiesNames, structure, errorLog, operationIndex, 
 		getEvolutionAppTransformationId());
-	return existSourceClass and not existExtractClass and existProperties;
+	return existSourceClass and existExtractClass and existProperties;
  }
 
 helper APP::ops::ExtractClass::dekompose(inout structure : APP::Structure
@@ -585,6 +585,17 @@ helper checkStandardClassExists(standardClassName : String, structure : APP::Str
 	var exist : Boolean := structure.containsGeneralClass(standardClassName);
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains standardClass called " + 
+			standardClassName;
+		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+	}endif;
+	return exist;
+}
+
+helper checkStandardClassNotExists(standardClassName : String, structure : APP::Structure, 
+		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	var exist : Boolean := structure.containsGeneralClass(standardClassName);
+	if(exist)then{
+		var errorMessage : String := "Structure contains standardClass called " + 
 			standardClassName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;

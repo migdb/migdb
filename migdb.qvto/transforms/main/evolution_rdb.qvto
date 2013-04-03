@@ -403,8 +403,7 @@ query RDB::ops::RemoveTable::isValid(structure : RDB::Structure, inout errorLog 
 
 helper RDB::ops::RemoveTable::apply(inout structure : RDB::Structure) {
 	var schema : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	schema.tables := schema.tables->excluding(structure.findTable(self.owningSchemaName, 
-		self.name));
+	schema.tables := schema.tables->reject(table | table.name = self.name);
 	return;
 }
 
@@ -432,9 +431,7 @@ query RDB::ops::RemoveColumn::isValid(structure : RDB::Structure, inout errorLog
 
 helper RDB::ops::RemoveColumn::apply(inout structure : RDB::Structure) {
 	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	var column : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName,
-		self.name);
-	table.columns := table.columns->excluding(column);
+	table.columns := table.columns->reject(column | column.name = self.name);
 	return;
 }
 
@@ -480,8 +477,7 @@ query RDB::ops::RemoveIndex::isValid(structure : RDB::Structure, inout errorLog 
 
 helper RDB::ops::RemoveIndex::apply(inout structure : RDB::Structure) {
 	var updatedSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	updatedSchema.indexes := updatedSchema.indexes->excluding(structure.findIndex(
-		self.owningSchemaName, self.name));
+	updatedSchema.indexes := updatedSchema.indexes->reject(index | index.name = self.name);
 	return;
 }
 
