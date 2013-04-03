@@ -51,10 +51,8 @@ abstract query APP::ops::DecomposableOperation::
 
 /* ++++++++++ BASIC OPERATIONS ++++++++++++++++++++ */
 
-query APP::ops::AddPrimitiveClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {	
-	return checkEntityNotExists(self.name, structure, errorLog, operationIndex, 
-		getEvolutionAppTransformationId());
+query APP::ops::AddPrimitiveClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {	
+	return checkEntityNotExists(self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 }
 
 helper APP::ops::AddPrimitiveClass::apply(inout structure : APP::Structure) {
@@ -62,20 +60,16 @@ helper APP::ops::AddPrimitiveClass::apply(inout structure : APP::Structure) {
 	return;
 }
 
-query APP::ops::AddEmbeddedClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	return checkEntityNotExists(self.name, structure, errorLog, operationIndex, 
-		getEvolutionAppTransformationId());
+query APP::ops::AddEmbeddedClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	return checkEntityNotExists(self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 }
 
 helper APP::ops::AddEmbeddedClass::apply(inout structure : APP::Structure) {
-	structure.entities += _embeddedClass(self.name, _embeddedProperty("id",
-		structure.findDefaultIdType(), false));
+	structure.entities += _embeddedClass(self.name, _embeddedProperty("id", structure.findDefaultIdType(), false));
 	return;
 }
 
-query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
+query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
 	var notExistEntity : Boolean := checkEntityNotExists(self.name, structure, errorLog, 
 		operationIndex, getEvolutionAppTransformationId());
 	var primitiveExists : Boolean := checkPrimitiveClassExists(getAppDefaultIdTypeName(), structure,
@@ -84,8 +78,7 @@ query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout erro
 }
 
 helper APP::ops::AddStandardClass::apply(inout structure : APP::Structure) {	
-	structure.entities += _class(self.name, _idProperty(getIdName(self.name), 
-		structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
+	structure.entities += _class(self.name, _idProperty(getIdName(self.name), structure.findDefaultIdType()), self.isAbstract, self.inheritanceType);
 	return;
 }
 
@@ -367,60 +360,29 @@ helper APP::ops::ZipperHierarchy::decompose(inout structure : APP::Structure
 
 /**
  * EXTRACT CLASS
- * Create new class with selecter properties from source class.
+ * Create new class from source class.
  * Extracted Class is not part of hierarchy - Source class and Extracted Class are 
  * connected by pointer.
- * In source class we create  new property which is poiner to extractClass.
+ * In source class we create  new property which is poiner to extractClass with kardinality 1:1.
  * @restriction : Class with @sourceClassName must exists in model
  * @restriction : Class with @extractClassName cannot exist in model
- * @restriction : Properties must exists in @sourceClass
  */
- query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
- 		operationIndex : Integer) : Boolean {
- 	var existSourceClass : Boolean := checkStandardClassNotExists(self.sourceClassName, structure, 
- 		errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existExtractClass : Boolean := checkStandardClassExists(self.extractClassName, structure, 
-		errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existProperties : Boolean := checkArePropertiesInGeneralClass(self.sourceClassName, 
-		self.extractPropertiesNames, structure, errorLog, operationIndex, 
-		getEvolutionAppTransformationId());
-	return existSourceClass and existExtractClass and existProperties;
+ query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+ 	var existSourceClass : Boolean := checkStandardClassExists(self.sourceClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existExtractClass : Boolean := checkStandardClassNotExists(self.extractClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existSourceClass and existExtractClass;
  }
 
-helper APP::ops::ExtractClass::dekompose(inout structure : APP::Structure
-		) : OrderedSet(app::ops::AtomicOperation){
+helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
+	// find Source class
 	var sourceClass : StandardClass := structure.findStandardClass(self.sourceClassName);
-	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
-	// Create new class - Extracted Class
-	operations += _addStandardClass(self.sourceClassName, false, InheritanceType::joined);
-	
-	// Create attributes in Extracted Class
-	self.extractPropertiesNames->forEach(p){
-		var prop : Property := structure.findProperty(self.sourceClassName, p);
-		//TODO - Add this test do query
-		if(prop.oclIsKindOf(APP::AssociationProperty)) then {
-			var pr : AssociationProperty := prop.oclAsType(APP::AssociationProperty);
-			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound,
-			 	pr.upperBound);
-		}endif;
-		if(prop.oclIsKindOf(APP::PrimitiveProperty)) then {
-			var pr : PrimitiveProperty := prop.oclAsType(APP::PrimitiveProperty);
-			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, 
-				pr.upperBound);		
-		}endif;
-		if(prop.oclIsKindOf(APP::NestedProperty)) then {
-			var pr : NestedProperty := prop.oclAsType(APP::NestedProperty);
-			operations += _addProperty(self.extractClassName, pr.name, pr.type.name, pr.lowerBound, 
-				pr.upperBound);		
-		}endif;
-		if(prop.oclIsKindOf(APP::EmbeddedProperty)) then {
-			operations += _addProperty(self.extractClassName, prop.name, 
-				prop.oclAsType(APP::EmbeddedProperty).type.name );			
-		}endif;
-		
-		// TODO ostatni operace
-	};
-	return operations;
+	// create new "Extracted" class with name self.extractClassName, isAbstract = false, inheritance = joined
+	var extractedClass : StandardClass = _class(self.extractClassName, _idProperty(getIdName(self.extractClassName), structure.findDefaultIdType()));
+	structure.entities += extractedClass;
+	// create new pointer to Source class with name self.extractClassName, type = extractedClass, lowerBound = 1, upperBound = 1 
+	//TODO - new name of property must start with small character but self.extractClassName has big
+	sourceClass.properties += _associationProperty(self.extractClassName, extractedClass);
+	return;
 }
 
 /* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
@@ -580,23 +542,19 @@ helper checkPrimitiveClassExists(primitiveClassName : String, structure : APP::S
 	return exist;
 }
 
-helper checkStandardClassExists(standardClassName : String, structure : APP::Structure, 
-		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+helper checkStandardClassExists(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
 	var exist : Boolean := structure.containsGeneralClass(standardClassName);
 	if(not exist)then{
-		var errorMessage : String := "Structure doesn't contains standardClass called " + 
-			standardClassName;
+		var errorMessage : String := "Structure doesn't contains standardClass called " + standardClassName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return exist;
 }
 
-helper checkStandardClassNotExists(standardClassName : String, structure : APP::Structure, 
-		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+helper checkStandardClassNotExists(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
 	var exist : Boolean := structure.containsGeneralClass(standardClassName);
 	if(exist)then{
-		var errorMessage : String := "Structure contains standardClass called " + 
-			standardClassName;
+		var errorMessage : String := "Structure contains standardClass called " + standardClassName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return exist;

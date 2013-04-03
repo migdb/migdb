@@ -209,23 +209,21 @@ package app {
       attr String[1] className;
     }    
     
+    class ExtractClass extends AtomicOperation{
+      attr String[1] sourceClassName;
+      attr String[1] extractClassName;
+    }    
+
+    class ExtractSuperClass extends AtomicOperation {
+      attr String[+] sourceClassesName;
+      attr String[1] extractParentName;
+    }    
+    
     class MergeClasses extends DecomposableOperation {
       attr String[1] class1;
       attr String[1] class2;
       attr String[1] mergedClassName;
     }        
-
-    class ExtractClass extends DecomposableOperation {
-      attr String[1] sourceClassName;
-      attr String[+] extractPropertiesNames;
-      attr String[1] extractClassName;
-    }
-
-    class ExtractSuperClass extends DecomposableOperation {
-      attr String[+] sourceClassesName;
-      attr String[+] extractPropertiesName;
-      attr String[1] extractParentName;
-    }
     
     class ZipperHierarchy extends DecomposableOperation {
       attr String[1] className;

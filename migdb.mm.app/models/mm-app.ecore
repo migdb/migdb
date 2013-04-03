@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ecore:EPackage xmi:version="2.0"
-    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm"
-    nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="mm" nsURI="http://www.collectionspro.eu/jam/mm" nsPrefix="mm">
   <eSubpackages name="app" nsURI="http://www.collectionspro.eu/jam/mm/app" nsPrefix="app">
     <eClassifiers xsi:type="ecore:EClass" name="ModelRoot" abstract="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//app/ModelRoot">
@@ -244,6 +242,18 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractClass" eSuperTypes="#//app/ops/AtomicOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractClassName" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractSuperClass" eSuperTypes="#//app/ops/AtomicOperation">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassesName"
+            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractParentName"
+            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MergeClasses" eSuperTypes="#//app/ops/DecomposableOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="class1" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -251,22 +261,6 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="mergedClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ExtractClass" eSuperTypes="#//app/ops/DecomposableOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractPropertiesNames"
-            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractClassName" lowerBound="1"
-            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ExtractSuperClass" eSuperTypes="#//app/ops/DecomposableOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassesName"
-            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractPropertiesName"
-            lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="extractParentName"
-            lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ZipperHierarchy" eSuperTypes="#//app/ops/DecomposableOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" lowerBound="1"

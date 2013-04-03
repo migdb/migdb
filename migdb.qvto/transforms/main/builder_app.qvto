@@ -168,11 +168,9 @@ helper _moveProperty(_owningClassName : String, _name : String, _targetClassName
 	}
 }
 
-helper _extractClass(_sourceClassName : String, _extractPropertiesNames : OrderedSet(String), 
-		_extractClassName : String) : APP::ops::ExtractClass {
+helper _extractClass(_sourceClassName : String, _extractClassName : String) : APP::ops::ExtractClass {
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
-		extractPropertiesNames := _extractPropertiesNames;
 		extractClassName := _extractClassName;
 	}
 }
@@ -325,8 +323,7 @@ helper _class(_name : String, _parent : StandardClass,
  	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, 
-		_properties : OrderedSet(MultipliableProperty)) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
 	assert(_idProperty <> null);
 	var cls : StandardClass := object StandardClass {
  		name := _name;
@@ -336,25 +333,28 @@ helper _class(_name : String, _idProperty : PrimitiveProperty,
 	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, 
-		_properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType
-		) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType ) : StandardClass{
 	var cls : StandardClass := 	_class(_name, _idProperty, _properties);
 	cls.inheritanceType := _inheritanceType;
 	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, 
-		type : APP::InheritanceType) : StandardClass{
+helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass {
 	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;
 	return cls;	
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, 
-		_properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, 
-		type : APP::InheritanceType) : StandardClass{
+// create not abstract class with joined inheritance type
+helper _class(_name : String, _idProperty : PrimitiveProperty ) : StandardClass {
+	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
+	cls.inheritanceType := InheritanceType::joined;
+	cls.isAbstract := false;
+	return cls;	
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
 	var cls : StandardClass := _class(_name, _idProperty, _properties);
 	cls.inheritanceType := type;
 	cls.isAbstract := _isAbstract;

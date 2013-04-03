@@ -13,9 +13,12 @@ import migdb.generator.*
 
 var QVTO_DIR = "../migdb.qvto/transforms"
 var OUTPUT_BASE_DIR = "output-tests/rdb_atomic"
-var TESTS = "${QVTO_DIR}/tests/tests_rdb_atomic"
+var IN_OPS = "${QVTO_DIR}/tests/operations/rdb"
+var IN_STR = "${QVTO_DIR}/tests/structures/rdb"
+var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_rdb_atomic"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_rdb_run.qvto"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+
 
 Workflow{
 /***** DEFINE META-MODELS *****/	
@@ -36,12 +39,14 @@ Workflow{
 		directory = "${OUTPUT_BASE_DIR}"
 	}
 
+	/***** MAIN TESTING *****/
+	/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/1_addSchema"
-		qvtInput = "${TESTS}/addSchema_str.qvto"
-		qvtInput = "${TESTS}/addSchema_ops.qvto"
-		qvtComparison = "${TESTS}/addSchema_required.qvto"
+		qvtInput = "${IN_STR}/addSchema_str.qvto"
+		qvtInput = "${IN_OPS}/addSchema_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addSchema_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addSchema"
 	}	
@@ -49,10 +54,10 @@ Workflow{
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/2_removeConstraint"
-		qvtInput = "${TESTS}/removeConstraint_str.qvto"
-		qvtInput = "${TESTS}/removeConstraint_ops.qvto"
-		qvtComparison = "${TESTS}/removeConstraint_required.qvto"
+		qvtInput = "${IN_STR}/removeConstraint_str.qvto"
+		qvtInput = "${IN_OPS}/removeConstraint_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeConstraint_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "RemoveConstraint"
-	}									
+		testDescription = "removeConstraint"
+	}										
 }

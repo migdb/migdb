@@ -1,8 +1,0 @@
-import builder_rdb;
-
-modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation empty_rdb_structure(out outAstr : RDB);
-
-main(){
-	_rdbStructure(OrderedSet{});
-}

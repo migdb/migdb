@@ -41,6 +41,18 @@ TestWorkflow {
 		directory = "${OUTPUT_BASE_DIR}"
 	}
 
+	/***** MAIN TESTING *****/
+	/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/2_extractClass"
+		qvtInput = "${IN_STR}/extractClass_str.qvto"
+		qvtInput = "${IN_OPS}/extractClass_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "extractClass"
+	}		
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/1_addClass"
