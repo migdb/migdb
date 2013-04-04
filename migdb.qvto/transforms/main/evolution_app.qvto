@@ -379,9 +379,8 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
 	// create new "Extracted" class with name self.extractClassName, isAbstract = false, inheritance = joined
 	var extractedClass : StandardClass = _class(self.extractClassName, _idProperty(getIdName(self.extractClassName), structure.findDefaultIdType()));
 	structure.entities += extractedClass;
-	// create new pointer to Source class with name self.extractClassName, type = extractedClass, lowerBound = 1, upperBound = 1 
-	//TODO - new name of property must start with small character but self.extractClassName has big
-	sourceClass.properties += _associationProperty(self.extractClassName, extractedClass);
+	// create new pointer to Source class with name self.extractClassName (small first character), type = extractedClass, lowerBound = 1, upperBound = 1 
+	sourceClass.properties += _associationProperty(self.extractClassName.getAttribute(), extractedClass);
 	return;
 }
 
@@ -557,7 +556,7 @@ helper checkStandardClassNotExists(standardClassName : String, structure : APP::
 		var errorMessage : String := "Structure contains standardClass called " + standardClassName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
-	return exist;
+	return not exist;
 }
 
 helper checkIsRemoveable(entityName : String , structure : APP::Structure, 

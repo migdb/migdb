@@ -256,15 +256,15 @@ query APP::Structure::containsEntity(eName : String) : Boolean {
 }
 
 query APP::Structure::containsPrimitiveClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsTypeOf(APP::PrimitiveClass);
+	return self.containsEntity(className);
 }
 
 query APP::Structure::containsGeneralClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsKindOf(APP::GeneralClass);
+	return self.containsEntity(className);
 }
 
 query APP::Structure::containsStandardClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsKindOf(APP::StandardClass);
+	return self.containsEntity(className);
 }
 
 

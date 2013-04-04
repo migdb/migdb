@@ -17,17 +17,33 @@ query getDbDiscriminatorColumnName() : String{
  	words are divided by character '_'
 **/
 query String :: translate() : String{
-	var dbName : String := self.at(1).toLower();
+	var dbName : String := self.substring(1,1).toLower();
 	var i : Integer := 2; 
 	while(self.size() >= i){
-		if(self.at(i).toLower() != self.at(i))then{
-			dbName := dbName + "_" + self.at(i).toLower();
+		if(self.substring(i,i).toLower() != self.substring(i,i))then{
+			dbName := dbName + "_" + self.substring(i,i).toLower();
 		}else{
-			dbName := dbName + self.at(i);
+			dbName := dbName + self.substring(i,i);
 		}endif;
 		i:= i + 1;
 	};
 	return dbName;
+}
+
+/**
+ * GETATTRIBUTE
+ * From class name create attribute name
+ * First character must be lower
+ * @example : "SomeClass" -> "someClass"
+ */
+query String :: getAttribute() : String{
+	var attName : String := self.substring(1,1).toLower();
+	var i : Integer := 2; 
+	while(self.size() >= i){
+		attName := attName + self.substring(i,i);
+		i:= i + 1;
+	};
+	return attName;
 }
 
 /** returns column name for ordered collections **/ 
