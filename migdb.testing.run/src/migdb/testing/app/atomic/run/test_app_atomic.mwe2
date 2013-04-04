@@ -17,7 +17,7 @@ import migdb.generator.*
 var QVTO_DIR = "../migdb.qvto/transforms"
 var OUTPUT_BASE_DIR = "output-tests/app_atomic"
 var IN_OPS = "${QVTO_DIR}/tests/operations/app"
-var IN_STR = "${QVTO_DIR}/tests/structures/app/"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_atomic"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_app_run.qvto"
@@ -29,20 +29,20 @@ TestWorkflow {
 		platformUri = ".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-
+/**/
 	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri = ".."
 		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
 
-	/***** CLEAN DIRECTORIES [XMI] *****/
-	/**/
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "${OUTPUT_BASE_DIR}"
 	}
 
-	/***** MAIN TESTING *****/
-	/**/
+/***** MAIN TESTING *****/
+/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/2_extractClass"
@@ -52,7 +52,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "extractClass"
 	}		
-
+/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/1_addClass"
@@ -62,7 +62,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addClass"
 	}
-	
+/**/	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/2_addProperty"
@@ -72,7 +72,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addProperty"
 	}	
-	
+/**/	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/3_addPrimitiveClass"
@@ -82,7 +82,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addPrimitiveClass"
 	}
-
+/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/4_renameEntity"
@@ -92,7 +92,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "renameEntity standardClass"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/5_removeEntity1"
@@ -102,7 +102,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeEntity standardClass"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/5b_removeEntity2"
@@ -112,7 +112,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeEntity PrimitiveClass"
 	}
-	
+/**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/6_renameProperty1"
@@ -122,7 +122,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "renameProperty pr -> newPropertyName"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/8_removeProperty1"
@@ -132,7 +132,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeProperty pr"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/9_setOpposite1"
@@ -142,7 +142,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "setOpposite pr"
 	}
-	
+/**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/10_setAbstract1"
@@ -152,7 +152,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "setAbstract tab"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/11_addParent1"
@@ -162,7 +162,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addParent tab parent"
 	}
-	
+/**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/12_RemoveParent1"
@@ -172,7 +172,7 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeParent tab parent"
 	}
-
+/**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/13_zipperHierarchy1"
@@ -182,5 +182,4 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeParent tab parent"
 	}
-
 }

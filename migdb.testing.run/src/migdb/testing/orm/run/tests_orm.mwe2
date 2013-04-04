@@ -1,4 +1,4 @@
-module migb.testing.orm.run.orm_runner
+module migbb.testing.orm.run.tests_orm
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -15,39 +15,88 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/orm_atomic"
+var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
+var IN_RDB_OPS = "${QVTO_DIR}/tests/operations/rdb"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_run.qvto"
+
 Workflow{	
-	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/orm/"
-	}
-	
-	/* Define of APP metamodel */
+/***** DEFINE META-MODELS *****/
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-	
-	/* Define of RDB metamodel */
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}		
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+
+/***** MAIN TESTING *****/
+
+/***** EXTRACT CLASS *****/
+/**/
+	component = QVTOExecutor{
+		outputSlot = "extractClass_ops"
+		transformationFile = "${IN_APP_OPS}/extractClass_ops.qvto" 
+	}
+/**/	
+	component = QVTOExecutor{
+		outputSlot = "extractClass_str"
+		transformationFile = "${IN_APP_STR}/extractClass_str.qvto" 
+	}	
+/**/	
+	component = QVTOExecutor{
+		outputSlot = "emptyRdbOps"
+		transformationFile = "${IN_RDB_OPS}/empty_rdb_ops.qvto" 
+	}
+/**/	
+	component = QVTOExecutor{
+		inputSlot = "extractClass_ops"
+		inputSlot = "extractClass_str"
+		inputSlot = "emptyRdbOps"
+		outputSlot = "extractClass-out"
+		transformationFile = "${TEST_TRANSFORMATION}" 
+	}
+/**/	
+	component = Writer {
+		modelSlot = "extractClass-out"
+		uri = "${OUTPUT_BASE_DIR}/extractClass_out.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+/*************************/
 	
 	//str Integer
 	component = QVTOExecutor{
 		outputSlot = "structureInteger"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_int.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_int.qvto" 
 	}
 	
 	//addClass1
 	component = QVTOExecutor{
 		outputSlot = "addClass1"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addClass1.qvto" 
+		transformationFile = "${IN_APP_OPS}/addClass1.qvto" 
 	}
 	
 	//helper - empty rdbOps
 	component = QVTOExecutor{
 		outputSlot = "emptyRdbOps"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/rdb/empty_rdb_ops.qvto" 
+		transformationFile = "${IN_RDB_OPS}/empty_rdb_ops.qvto" 
 	}
 	
 	component = QVTOExecutor{
@@ -55,12 +104,12 @@ Workflow{
 		inputSlot = "structureInteger"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addClass1-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addClass1-out"
-		uri = "output-tests/orm/addClass1_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addClass1_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -68,13 +117,13 @@ Workflow{
 	//addProperty1
 	component = QVTOExecutor{
 		outputSlot = "addProperty1"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty1.qvto" 
+		transformationFile = "${IN_APP_OPS}/addProperty1.qvto" 
 	}
 
 	//structureTab
 	component = QVTOExecutor{
 		outputSlot = "structureTab"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab.qvto" 
 	}
 	
 	component = QVTOExecutor{
@@ -82,12 +131,12 @@ Workflow{
 		inputSlot = "structureTab"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty1-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty1-out"
-		uri = "output-tests/orm/addProperty1_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty1_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -95,7 +144,7 @@ Workflow{
 	//str_tab_joined
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_joined_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_joined_hierarchy.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -103,12 +152,12 @@ Workflow{
 		inputSlot = "structure_tab_joined_hierarchy"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty1a-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty1a-out"
-		uri = "output-tests/orm/addProperty1a_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty1a_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -116,7 +165,7 @@ Workflow{
 	//str_tab_ST
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_ST_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_ST_hierarchy.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab_ST_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -124,12 +173,12 @@ Workflow{
 		inputSlot = "structure_tab_ST_hierarchy"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty1b-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty1b-out"
-		uri = "output-tests/orm/addProperty1b_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty1b_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -137,7 +186,7 @@ Workflow{
 	//str_tab_TPC
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_TPC_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_TPC_hierarchy.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab_TPC_hierarchy.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -145,12 +194,12 @@ Workflow{
 		inputSlot = "structure_tab_TPC_hierarchy"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty1c-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty1c-out"
-		uri = "output-tests/orm/addProperty1c_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty1c_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -158,7 +207,7 @@ Workflow{
 	//str_tab_embedded
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_embedded"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_embedded.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab_embedded.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -166,12 +215,12 @@ Workflow{
 		inputSlot = "structure_tab_embedded"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty1d-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty1d-out"
-		uri = "output-tests/orm/addProperty1d_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty1d_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -179,13 +228,13 @@ Workflow{
 	//addProperty2
 	component = QVTOExecutor{
 		outputSlot = "addProperty2"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty2.qvto" 
+		transformationFile = "${IN_APP_OPS}/addProperty2.qvto" 
 	}
 	
 	//str_tab_type
 	component = QVTOExecutor{
 		outputSlot = "structure_tab_type"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_type.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_tab_type.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -193,12 +242,12 @@ Workflow{
 		inputSlot = "structure_tab_type"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty2-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty2-out"
-		uri = "output-tests/orm/addProperty2_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty2_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -206,13 +255,13 @@ Workflow{
 	//addProperty3
 	component = QVTOExecutor{
 		outputSlot = "addProperty3"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty3.qvto" 
+		transformationFile = "${IN_APP_OPS}/addProperty3.qvto" 
 	}
 	
 	//str_embedded_type
 	component = QVTOExecutor{
 		outputSlot = "structure_embedded_hierarchy_TPC"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_embedded_hierarchy_TPC.qvto" 
+		transformationFile = "${IN_APP_STR}/structure_embedded_hierarchy_TPC.qvto" 
 	}
 
 	component = QVTOExecutor{
@@ -220,19 +269,19 @@ Workflow{
 		inputSlot = "structure_embedded_hierarchy_TPC"
 		inputSlot = "emptyRdbOps"
 		outputSlot = "addProperty3-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		transformationFile = "${TEST_TRANSFORMATION}" 
 	}
 	
 	component = Writer {
 		modelSlot = "addProperty3-out"
-		uri = "output-tests/orm/addProperty3_out.xmi"
+		uri = "${OUTPUT_BASE_DIR}/addProperty3_out.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
 	
 	component = Writer {
 		modelSlot = "structure_embedded_hierarchy_TPC"
-		uri = "output-tests/orm/structure_embedded_hierarchy_TPC.xmi"
+		uri = "${OUTPUT_BASE_DIR}/structure_embedded_hierarchy_TPC.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}

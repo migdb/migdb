@@ -34,8 +34,7 @@ helper _addIndex(_owningSchemaName : String, _owningTableName : String, _name : 
 	};
 }
 
-helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name : String, 
-		_type : PrimitiveType) : RDB::ops::AddColumn{
+helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name : String, _type : PrimitiveType) : RDB::ops::AddColumn{
 	return object RDB::ops::AddColumn {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -65,9 +64,7 @@ helper _addPrimaryKey(_owningSchemaName : String, _owningTableName : String,
 	};
 }
 
-helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, 
-		_constraineColumnName : String, _name : String, _targetTableName : String
-		) : RDB::ops::AddForeignKey{
+helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String, _targetTableName : String) : RDB::ops::AddForeignKey{
 	return object RDB::ops::AddForeignKey {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
