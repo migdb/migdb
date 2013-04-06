@@ -1,4 +1,4 @@
-/*
+/**
  * The MIT License
  * 
  * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
@@ -461,7 +461,10 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure
 	return operations;
 }
 /**
- *
+ * EXTRACT CLASS
+ * Create new class from source class.
+ * Extracted Class is not part of hierarchy - Source class and Extracted Class are 
+ * connected by pointer.
  */
 helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
@@ -471,13 +474,13 @@ helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet
 	// addition of the extracted table to the schema
 	operations += _addTable(getDefaultSchemaName(), extractClassName);
 	var idType : app::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
-	var idExtractClassName : String := ("id_" + self.extractClassName).translate();
+	var idExtractClassName : String := ("id" + self.extractClassName).translate();
 	
 	// addition of a column to extracted table
 	operations += _addColumn(getDefaultSchemaName(), extractClassName, idExtractClassName, toRdbType(idType));
 	
 	// addition of a primary key to extracted table
-	operations += _addPrimaryKey(getDefaultSchemaName(), extractClassName, idExtractClassName, ("pk_" + self.extractClassName).translate());
+	operations += _addPrimaryKey(getDefaultSchemaName(), extractClassName, idExtractClassName, ("pk" + self.extractClassName).translate());
 		
 	// addition of a new column (pointer to extracted class) to source class
 	operations += _addColumn(getDefaultSchemaName(), sourceClassName, idExtractClassName, toRdbType(idType));

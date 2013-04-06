@@ -10,5 +10,5 @@ main(){
 	var tab : StandardClass := _class("Tab", root, OrderedSet{_primitiveProperty("pr", integer)});
 	var descendant : StandardClass := _class("Descendant", tab, OrderedSet{});
 	
-	_appStructure(OrderedSet{integer, tab, root, descendant});
+	_appStructure(OrderedSet{integer, root, tab, descendant});
 }

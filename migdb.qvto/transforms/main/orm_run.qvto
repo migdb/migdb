@@ -7,15 +7,17 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation orm_run(in inOps : APP, in inStr : APP, in emptyRdbOps : RDB, out rdbOutOps : RDB);
+transformation orm_run(in inOps : APP, in inStr : APP, out rdbOutOps : RDB, out errorModel : ERR);
 
 main(){
 	log("Orm runner started");
-	emptyRdbOps.rootObjects().deepclone();
 	
 	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
+	rdbOps := _rdbOperations(OrderedSet{});
 	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
-	var errorLog : ErrorLog := _errorLog(OrderedSet{});
+	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
+	errorLog := object ErrorLog{ errors:= OrderedSet{};};
+
 	
 	log("In ops");
 	var appOps :APP::Operations := inOps.rootObjects()![APP::Operations];
@@ -39,16 +41,12 @@ main(){
 	}endif;
 }
 
-query canProcessTest(structure : APP::Structure, ops : APP::Operations, 
-		inout errorLog : ErrorLog) : Boolean{
-	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or 
-			inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
-		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->
-			size().repr());
+query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout errorLog : ErrorLog) : Boolean{
+	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
+		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->size().repr());
 		return false;
 	}endif;
-	if(not inOps.rootObjects()![APP::Operations].operations->
-			first().oclIsKindOf(APP::ops::AtomicOperation))then{
+	if(not inOps.rootObjects()![APP::Operations].operations->first().oclIsKindOf(APP::ops::AtomicOperation))then{
 		log("orm_run.qvto cannot be executed for nonatomic operations");
 		return false;
 	}endif;

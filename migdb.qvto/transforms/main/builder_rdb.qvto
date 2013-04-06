@@ -54,8 +54,7 @@ helper _addUnique(_owningSchemaName : String, _owningTableName : String,
 	};
 }
 
-helper _addPrimaryKey(_owningSchemaName : String, _owningTableName : String, 
-		_constraineColumnName : String, _name : String) : RDB::ops::AddPrimaryKey{
+helper _addPrimaryKey(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String) : RDB::ops::AddPrimaryKey{
 	return object RDB::ops::AddPrimaryKey {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;

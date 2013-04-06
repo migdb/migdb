@@ -9,21 +9,16 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 	This file provides names for elements in app metamodel. 
 */
 /** Maps **/
-query getAssociationTableName(associationProperty : AssociationProperty, 
-		associationOwningClass : StandardClass) : String{
-	return associationOwningClass.getDbRepresentative().name.translate() + "_" + 
-		associationProperty.name.translate();	
+query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
+	return associationOwningClass.getDbRepresentative().name.translate() + "_" + associationProperty.name.translate();	
 }
 
-query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass
-		) : String {
+query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass) : String {
 	return getDbFkPrefix() + associationTableName + "_" + originClass.name.translate();
 }
 
-query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, 
-		targetClass : StandardClass): String{
-	return getDbFkPrefix() + sourceClass.name.translate() + "_" + self.name.translate() + "_" + 
-		targetClass.name.translate();
+query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
+	return getDbFkPrefix() + sourceClass.name.translate() + "_" + self.name.translate() + "_" + targetClass.name.translate();
 }
 
 query EmbeddedClass::getIdName() : String{
@@ -45,17 +40,48 @@ query StandardClass::getParentFkName() : String{
 	return getDbFkParentPrefix() + self.name.translate();
 }
 
+/**
+ * GETATTRIBUTE
+ * From class name create attribute name
+ * First character must be lower
+ * @example : "SomeClass" -> "someClass"
+ */
+query StandardClass::getAttribute() : String{
+	var attName : String := self.name.substring(1,1).toLower();
+    attName := attName + self.name.substring(2,self.name.toString().size());
+    return attName;
+}
+
 query MultipliableProperty::getUniqueConstraintName() : String{
-	return getDbUniquePrefix() + self.owningGeneralClass.name.translate() + "_" + 
-		self.name.translate();
+	return getDbUniquePrefix() + self.owningGeneralClass.name.translate() + "_" + self.name.translate();
 }
 
 query PrimitiveProperty::getFKCollectionName():String{
-	return getDbFkPrefix() + getDbCollectionPrefix() + 
-	self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
+	return getDbFkPrefix() + getDbCollectionPrefix() + self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
 }
 
 query PrimitiveProperty::getCollectionTableName():String{
-	return getDbCollectionPrefix() + self.name.translate() + "_" + 
-	self.owningGeneralClass.getDbRepresentative().name.translate();
+	return getDbCollectionPrefix() + self.name.translate() + "_" + self.owningGeneralClass.getDbRepresentative().name.translate();
+}
+
+/** BOOLEAN QUERIES **/
+
+query isRightClassName(name : String) : Boolean {
+	if(name = "") then { return false; } endif;
+	if(name.substring(1,1).toUpper() != name.substring(1,1)) then { 
+		if(name = "char" or name = "int" or name = "boolean") then {
+			return true;
+		} else {
+			return false;
+		} endif;
+	} endif;
+	if(isFirstCharNumber(name.substring(1,1))) then { return false; } endif;
+	return true;
+}
+
+query isRightPropertyName(name : String) : Boolean {
+	if(name = "") then { return false; } endif;
+	if(name.substring(1,1).toLower() != name.substring(1,1)) then { return false; } endif;
+	if(isFirstCharNumber(name.substring(1,1))) then {return false;} endif;
+	return true;
 }

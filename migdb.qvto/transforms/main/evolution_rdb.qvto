@@ -1,13 +1,38 @@
+/**
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+library evolution_rdb;
+ 
 import queries_rdb;
 import builder_rdb; 
 import builder_errors;
 
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
-library evolution_rdb;
 
-abstract query RDB::ops::ModelOperation::isValid(structure : RDB::Structure, 
-		inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
+
+abstract query RDB::ops::ModelOperation::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
 
 abstract helper RDB::ops::ModelOperation::
 	apply(inout structure : RDB::Structure);
@@ -26,10 +51,8 @@ query getEvolutionRdbTransformationId():String {
  * Operation create new database schema in structure model
  * @restriction : schema with @name must not exists in current structure
  */
-query RDB::ops::AddSchema::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	return return checkNotExistSchema(self.name, structure, errorLog, operationIndex, 
-		getEvolutionRdbTransformationId());
+query RDB::ops::AddSchema::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	return return checkNotExistSchema(self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 }
 
 helper RDB::ops::AddSchema::apply(inout structure : RDB::Structure) {
@@ -44,12 +67,9 @@ helper RDB::ops::AddSchema::apply(inout structure : RDB::Structure) {
  * @restriction : sequence with @newDefaultValue must not exists in structure
  * @restriction : in the schema must not be other sequence
  */
-query RDB::ops::AddSequence::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, 
-		operationIndex, getEvolutionRdbTransformationId());
-	var notExistSequence : Boolean := checkNotExistSequence(self.owningSchemaName, self.name, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+query RDB::ops::AddSequence::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var notExistSequence : Boolean := checkNotExistSequence(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	return existSchema and notExistSequence;
 }
 
@@ -65,19 +85,14 @@ helper RDB::ops::AddSequence::apply(inout structure : RDB::Structure) {
  * @restriction : in the schema must not be an index with the same @name.
  * @restriction : columns with @columnsNames must exists in table
  */
-query RDB::ops::AddIndex::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, 
-		operationIndex, getEvolutionRdbTransformationId());
-	var notExistIndex : Boolean := checkNotExistIndex(self.owningSchemaName, self.name, structure, 
-		errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+query RDB::ops::AddIndex::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var notExistIndex : Boolean := checkNotExistIndex(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
 	var existsColumns := true;
 	self.columnsNames->forEach(name){
 		//logic multiplication used to log all errors and not stop loop
-		existsColumns := checkExistColumn(self.owningSchemaName, self.owningTableName, name, structure, errorLog, 
-			operationIndex, getEvolutionRdbTransformationId()) and existsColumns;
+		existsColumns := checkExistColumn(self.owningSchemaName, self.owningTableName, name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId()) and existsColumns;
 	};
 		
 	return existSchema and notExistIndex and existsColumns;
@@ -85,8 +100,7 @@ query RDB::ops::AddIndex::isValid(structure : RDB::Structure, inout errorLog : E
 
 helper RDB::ops::AddIndex::apply(inout structure : RDB::Structure) {
 	var owningSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	owningSchema.indexes += _index(self.name, structure.findColumns(self.owningSchemaName, 
-		self.owningTableName, self.columnsNames));
+	owningSchema.indexes += _index(self.name, structure.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames));
 	return; 
 }
 
