@@ -140,6 +140,19 @@ query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)
 	return self.parent.getPath(collection->append(self));
 }
 
+/* Returns true if Property represents unidirectional 1:1 association */
+query app::MultipliableProperty::isOneToOneUnidirectional() : Boolean{
+	return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and self.oclAsType(AssociationProperty).oppositeProperty = null;
+}
+
+query app::MultipliableProperty::isPropertyTypeOf(typeClass : StandardClass) : Boolean{
+	if(not self.oclIsKindOf(AssociationProperty)) then{
+		return false;
+	}endif;
+	return self.oclAsType(AssociationProperty).type = typeClass;
+}
+
+
 /**
 	Overuje, jestli dana Property reprezentuje bidirectional (oboustranne navigabilni) vazbu 1-1
 **/
@@ -353,6 +366,12 @@ query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
 	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
+query APP::Structure::areClassesRelativesByAssociation(className : String , secondClassName : String ) : Boolean{
+	var firstClass := self.findStandardClass(className);
+	var secondClass := self.findStandardClass(secondClassName);
+	return firstClass.properties->exists(prop | prop.isOneToOneUnidirectional() and prop.isPropertyTypeOf(secondClass));
+}
+
 //checks if self class is descendantOf class precedessorName
 query APP::Structure::isDescendantOf(className : String, precedessorName : String ) : Boolean {
 	var cls : StandardClass := self.findStandardClass(className);
@@ -364,8 +383,7 @@ query APP::StandardClass::isDescendantOf(precedessorName : String): Boolean {
 }
 
 query APP::Structure::areClassesRelatives(className : String , secondClassName : String ) : Boolean{
-	return  self.isDescendantOf(className, secondClassName) or self.isDescendantOf(
-		secondClassName, className);
+	return  self.isDescendantOf(className, secondClassName) or self.isDescendantOf(secondClassName, className);
 }
 
 /**
@@ -418,11 +436,6 @@ query EmbeddedProperty::getPrimitiveType(): APP::PrimitiveType{
 }
 
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
-/* Returns true if Property represents unidirectional 1:1 association */
-query app::MultipliableProperty::isOneToOneUnidirectional():Boolean{
-	return false;
-}
-
 /** Returns true if class has idProperty, false otherwise **/
 query StandardClass::hasId():Boolean{
 	return self.idProperty <> null;

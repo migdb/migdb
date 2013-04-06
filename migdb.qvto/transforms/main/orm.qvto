@@ -75,8 +75,7 @@ helper toRdbType(type : APP::PrimitiveType) : RDB::PrimitiveType{
 /**
 	This operation is mapped independently(if isValid() is true) on any state of database
 **/
-helper APP::ops::AddStandardClass::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation) {
+helper APP::ops::AddStandardClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	// addition of a table to the schema
 	var operations : OrderedSet(RDB::ops::ModelOperation) = OrderedSet{};
 	operations += _addTable(getDefaultSchemaName(), self.name.translate());
@@ -435,7 +434,7 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure
 helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure
 		) : OrderedSet(rdb::ops::ModelOperation) {
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
-	var sourceClass : StandardClass := appStructure.findStandardClass(self.owningClassName);
+	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
 	var targetClass : StandardClass := appStructure.findStandardClass(self.targetClassName);
 	operations += object RDB::ops::AddColumn {
 		owningSchemaName := "public";
@@ -446,7 +445,7 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure
 
 	operations += object RDB::ops::UpdateRows {
 		owningSchemaName := "public";
-		sourceTableName := self.owningClassName.toLower();
+		sourceTableName := self.sourceClassName.toLower();
 		sourceColumnName := self.name + '_old';
 		targetTableName := self.targetClassName.toLower();
 		targetColumnName := self.name;
@@ -455,7 +454,7 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure
 
 		operations += object RDB::ops::RemoveColumn {
 		owningSchemaName := "public";
-		owningTableName := self.owningClassName.toLower();
+		owningTableName := self.sourceClassName.toLower();
 		name := self.name + "_old";
 	};
 	return operations;
@@ -470,21 +469,16 @@ helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
 	var sourceClassName : String =  self.sourceClassName.translate();
 	var extractClassName : String =  self.extractClassName.translate();
-	
 	// addition of the extracted table to the schema
 	operations += _addTable(getDefaultSchemaName(), extractClassName);
 	var idType : app::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
 	var idExtractClassName : String := ("id" + self.extractClassName).translate();
-	
 	// addition of a column to extracted table
 	operations += _addColumn(getDefaultSchemaName(), extractClassName, idExtractClassName, toRdbType(idType));
-	
 	// addition of a primary key to extracted table
 	operations += _addPrimaryKey(getDefaultSchemaName(), extractClassName, idExtractClassName, ("pk" + self.extractClassName).translate());
-		
 	// addition of a new column (pointer to extracted class) to source class
 	operations += _addColumn(getDefaultSchemaName(), sourceClassName, idExtractClassName, toRdbType(idType));
-
 	// add FK contraint on new pointer column
 	operations += _addForeignKey(getDefaultSchemaName(), sourceClassName, idExtractClassName, "fk_" + (idExtractClassName+self.extractClassName).translate(), extractClassName);
 	return operations;

@@ -223,7 +223,7 @@
             eType="#//app/ToleranceType"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="MoveProperty" eSuperTypes="#//app/ops/AtomicOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningClassName" lowerBound="1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

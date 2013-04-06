@@ -194,7 +194,7 @@ package app {
     }
 
     class MoveProperty extends AtomicOperation {
-      attr String[1] owningClassName;
+      attr String[1] sourceClassName;
       attr String[1] name;
       attr String[1] targetClassName;
       attr ToleranceType[1] tolerance;

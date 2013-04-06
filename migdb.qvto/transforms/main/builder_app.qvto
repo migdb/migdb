@@ -4,7 +4,7 @@ library builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
 /********************************************
- *				OPERATION HELPERS			 	*
+ *				OPERATION HELPERS			*
  ********************************************/
 
 helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType
@@ -154,14 +154,9 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
 	}
 }
 
-/********************************************
- *				COMPLEX HELPERS			 	*
- ********************************************/
-
-helper _moveProperty(_owningClassName : String, _name : String, _targetClassName : String, 
-		_tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
+helper _moveProperty(_sourceClassName : String, _name : String, _targetClassName : String, _tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
 	return object APP::ops::MoveProperty {
-		owningClassName := _owningClassName;
+		sourceClassName := _sourceClassName;
 		name := _name;
 		targetClassName := _targetClassName;
 		tolerance := _tolerance;
@@ -248,8 +243,7 @@ helper _associationProperty(_name : String, _type : StandardClass) : Association
  	};
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, 
-		_upperbound : Integer) : AssociationProperty {
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
 	assert(_lowerBound <= _upperbound or ((_lowerBound = 0 or _lowerBound = 1) 
 		 and _upperbound = -1 ));	
 	var prop : AssociationProperty := _associationProperty(_name, _type);
@@ -258,16 +252,13 @@ helper _associationProperty(_name : String, _type : StandardClass, _lowerBound :
  	return prop;
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, 
-		_oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer
-		) : AssociationProperty {
+helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperbound);
 	prop.oppositeProperty := _oppositeProperty;
 	return prop;
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, 
-		_upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
@@ -321,6 +312,15 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
  		properties := _properties->append(_idProperty);
  		idProperty := _idProperty;	
  	};
+	return cls;
+}
+
+helper _class(_name : String, _properties : OrderedSet(MultipliableProperty)) : StandardClass{
+	var cls : StandardClass := object StandardClass{
+		name := _name;
+		properties := _properties;
+		inheritanceType := InheritanceType::joined;
+	};
 	return cls;
 }
 

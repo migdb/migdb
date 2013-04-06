@@ -45,7 +45,17 @@ TestWorkflow {
 /**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/2_extractClass"
+		outputParentUri = "${OUTPUT_BASE_DIR}/15_moveProperty"
+		qvtInput = "${IN_STR}/moveProperty_str.qvto"
+		qvtInput = "${IN_OPS}/moveProperty_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/moveProperty_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "moveProperty"
+	}
+/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/14_extractClass"
 		qvtInput = "${IN_STR}/extractClass_str.qvto"
 		qvtInput = "${IN_OPS}/extractClass_ops.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
