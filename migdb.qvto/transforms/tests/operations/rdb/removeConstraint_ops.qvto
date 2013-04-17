@@ -1,0 +1,11 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addcolumnOps(out inoutModel : RDB);
+
+
+main() {
+	log("op: REMOVECONSTRAINT");	
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+		_removeConstraint("public", "first", "PK_first")};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

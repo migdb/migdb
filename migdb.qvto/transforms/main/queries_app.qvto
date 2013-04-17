@@ -126,8 +126,7 @@ query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 	Recursive helper for getPathToRoot method - hides collection parameter. Returns path to root 
 	class or to strong component (including classes in Strong component). 
 **/
-query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)
-		):OrderedSet(app::StandardClass){
+query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
 	//return path + strong component
 	if(collection->includes(self))then{
 		return collection

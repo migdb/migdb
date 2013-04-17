@@ -186,20 +186,6 @@ package app {
       attr boolean[1] isUnique;
     }
 
-    class CopyProperty extends AtomicOperation {
-      attr String[1] owningClassName;
-      attr String[1] name;
-      attr String[1] targetClassName;
-      attr ToleranceType[1] tolerance;
-    }
-
-    class MoveProperty extends AtomicOperation {
-      attr String[1] sourceClassName;
-      attr String[1] name;
-      attr String[1] targetClassName;
-      attr ToleranceType[1] tolerance;
-    }
-
     class AddParent extends AtomicOperation {
       attr String[1] className;
       attr String[1] parentClassName;
@@ -209,26 +195,45 @@ package app {
       attr String[1] className;
     }    
     
+    // Create new class witch is connect by pointer from source class
     class ExtractClass extends AtomicOperation{
       attr String[1] sourceClassName;
       attr String[1] extractClassName;
+      attr String[1] associationPropertyName;
     }    
 
+	// Create new parent to class
     class ExtractSuperClass extends AtomicOperation {
       attr String[+] sourceClassesName;
       attr String[1] extractParentName;
-    }    
+    }
+
+	// Move of attribute between two strange classes
+    class MoveProperty extends AtomicOperation {
+      attr String[1] sourceClassName;
+      attr String[1] name;
+      attr String[1] targetClassName;
+      attr ToleranceType[1] tolerance;
+    }
     
+    // Move of attribte from child to parent in hierarchy
+    class PullUp extends AtomicOperation {
+      attr String[1] childClassName;
+      attr String[1] propertyName;
+    }
+
+	// Move of attribte from parent to its childs in hierarchy
+    class PushDown extends AtomicOperation {
+      attr String[1] parentClassName;
+      attr String[1] propertyName;
+    }                  
+    
+    // Merge two classes to one
     class MergeClasses extends DecomposableOperation {
       attr String[1] class1;
       attr String[1] class2;
       attr String[1] mergedClassName;
-    }        
-    
-    class ZipperHierarchy extends DecomposableOperation {
-      attr String[1] className;
-    }    
-
+    }         
   }
 
 }

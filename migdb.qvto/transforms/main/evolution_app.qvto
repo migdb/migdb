@@ -116,7 +116,7 @@ helper APP::ops::RemoveEntity::apply(inout structure : APP::Structure) {
 
 query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var generalClassExists : Boolean :=  checkGeneralClassExists(self.owningClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var notIsPropertyInGeneralClass : Boolean := checkNotIsPropertyInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var notIsPropertyInGeneralClass : Boolean := checkPropertyNotExistInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isPropertyTypeValid : Boolean := checkIsPropertyTypeValid(self.owningClassName, self.type, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var areBoundsValid : Boolean := checkAreBoundsValid(self.lowerBound, self.upperBound, errorLog,operationIndex, getEvolutionAppTransformationId());
 	var formOfName : Boolean := checkPropertyName(self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
@@ -165,8 +165,8 @@ helper APP::ops::AddProperty::apply(inout structure : APP::Structure) {
 
 query APP::ops::RenameProperty::isValid(structure : APP::Structure, inout errorLog : ErrorLog,operationIndex : Integer) : Boolean {
 	var owningGeneralClassExist : Boolean := checkGeneralClassExists(self.owningClassName,structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var isOldPropertyInGeneralClass : Boolean := checkIsPropertyInGeneralClass(self.owningClassName,self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var notIsNewPropertyInGenegalClass : Boolean := checkNotIsPropertyInGeneralClass(self.owningClassName, self.newName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var isOldPropertyInGeneralClass : Boolean := checkPropertyExistInGeneralClass(self.owningClassName,self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var notIsNewPropertyInGenegalClass : Boolean := checkPropertyNotExistInGeneralClass(self.owningClassName, self.newName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var formOfNewName : Boolean := checkPropertyName(self.newName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	return owningGeneralClassExist and isOldPropertyInGeneralClass and notIsNewPropertyInGenegalClass and formOfNewName;
 }
@@ -179,7 +179,7 @@ helper APP::ops::RenameProperty::apply(inout structure : APP::Structure) {
 
 query APP::ops::RemoveProperty::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var owningGeneralClassExist : Boolean := checkGeneralClassExists(self.owningClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var isPropertyInGeneralClass : Boolean := checkIsPropertyInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var isPropertyInGeneralClass : Boolean := checkPropertyExistInGeneralClass(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var notIsId : Boolean := checkNotIsPropertyId(self.owningClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	return owningGeneralClassExist and isPropertyInGeneralClass and notIsId;
 }
@@ -193,8 +193,8 @@ helper APP::ops::RemoveProperty::apply(inout structure : APP::Structure) {
 query APP::ops::SetOpposite::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var firstClassExist : Boolean := checkStandardClassExists(self.firstClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var secondClassExist : Boolean := checkStandardClassExists(self.secondClassName, structure,errorLog, operationIndex, getEvolutionAppTransformationId());
-	var isFirstPropContained : Boolean := checkIsPropertyInGeneralClass(self.firstClassName,self.firstPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var isSecondPropContained : Boolean := checkIsPropertyInGeneralClass(self.secondClassName, self.secondPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var isFirstPropContained : Boolean := checkPropertyExistInGeneralClass(self.firstClassName,self.firstPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var isSecondPropContained : Boolean := checkPropertyExistInGeneralClass(self.secondClassName, self.secondPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isFirstPropertyAssociation : Boolean := checkIsAssociationProperty(self.firstClassName, self.firstPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isSecondPropertyAssociation : Boolean := checkIsAssociationProperty(self.firstClassName, self.firstPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	
@@ -258,7 +258,6 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
 	childClass.parent := structure.findClass(self.parentClassName);
-	childClass.properties := childClass.properties->reject(pr | pr = childClass.idProperty);
 	childClass.idProperty := null;
 	return;
 }
@@ -272,23 +271,17 @@ helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
  * @restriction : child with @className must exist in model
  * @restriction : parent class must exists in model
  */
-query APP::ops::RemoveParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog, 
-		operationIndex, getEvolutionAppTransformationId());
-	var existParent : Boolean := checkStandardClassExists(
-		structure.findStandardClass(self.className).parent.name, structure, errorLog, 
-		operationIndex, getEvolutionAppTransformationId());
+query APP::ops::RemoveParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existParent : Boolean := checkStandardClassExists(structure.findStandardClass(self.className).parent.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	return existChild and existParent;
 }
 
 helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
-	var idProperty : APP::PrimitiveProperty := _idProperty(getIdName(self.className), 
-		structure.findDefaultIdType());	
+	var idProperty : APP::PrimitiveProperty := _idProperty(getIdName(self.className), structure.findDefaultIdType());	
 	childClass.parent := null;
 	childClass.idProperty := idProperty;
-	childClass.properties += idProperty;
 	return;
 }
 
@@ -302,13 +295,15 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
  * In source class we create  new property which is poiner to extractClass with kardinality 1:1.
  * @restriction : Class with @sourceClassName must exist in model
  * @restriction : Class with @extractClassName cannot exist in model
- * @restriction : Name @extractClassName must be valid
+ * @restriction : Class name @extractClassName must be valid
+ * @rwstriction : Property name @associationPropertyName cannot exists in class
  */
  query APP::ops::ExtractClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
  	var existSourceClass : Boolean := checkStandardClassExists(self.sourceClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var existExtractClass : Boolean := checkEntityNotExists(self.extractClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var formOfExtractClassName : Boolean := checkEntityName(self.extractClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	return existSourceClass and existExtractClass and formOfExtractClassName;
+	var propertyNotExistInClass : Boolean := checkPropertyNotExistInGeneralClass(self.sourceClassName, self.associationPropertyName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	return existSourceClass and existExtractClass and formOfExtractClassName and propertyNotExistInClass;
  }
 
 helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
@@ -317,8 +312,8 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
 	// create new "Extracted" class with name self.extractClassName, isAbstract = false, inheritance = joined
 	var extractedClass : StandardClass = _class(self.extractClassName, _idProperty(getIdName(self.extractClassName), structure.findDefaultIdType()));
 	structure.entities += extractedClass;
-	// create new pointer to Source class with name self.extractClassName (small first character), type = extractedClass, lowerBound = 1, upperBound = 1 
-	sourceClass.properties += _associationProperty(extractedClass.getAttribute(), extractedClass);
+	// create new pointer to Source class with name self.associationPropertyName (small first character), type = extractedClass, lowerBound = 1, upperBound = 1 
+	sourceClass.properties += _associationProperty(self.associationPropertyName, extractedClass);
 	return;
 }
 
@@ -337,8 +332,8 @@ helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
 query APP::ops::MoveProperty::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean{	
 	var existSourceClass : Boolean := checkGeneralClassExists(self.sourceClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var existTargetClass : Boolean := checkGeneralClassExists(self.targetClassName, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existPropertyInSourceClass : Boolean := checkIsPropertyInGeneralClass(self.sourceClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var notExistPropInTargetClass : Boolean := checkNotIsPropertyInGeneralClass(self.targetClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var existPropertyInSourceClass : Boolean := checkPropertyExistInGeneralClass(self.sourceClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
+	var notExistPropInTargetClass : Boolean := checkPropertyNotExistInGeneralClass(self.targetClassName, self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var areClassesRelativesByAssociation : Boolean := checkAreClassesRelativesByAssociation(self.sourceClassName,  self.targetClassName, structure, errorLog, operationIndex,  getEvolutionAppTransformationId());
 	var notAreClassesRelativesInHierarchy : Boolean := checkNotAreClassesRelatives(self.sourceClassName,  self.targetClassName, structure, errorLog, operationIndex,  getEvolutionAppTransformationId());
 	return existSourceClass and existTargetClass and existPropertyInSourceClass and notExistPropInTargetClass and areClassesRelativesByAssociation;
@@ -355,12 +350,12 @@ helper APP::ops::MoveProperty::apply(inout structure : APP::Structure){
 	return;
 }
 
-/* ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
+/** ++++++++++ SET OPERATIONS FOR PROPERTIES ++++++++++++++++++++ */
 query APP::ops::SetType::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
 		operationIndex : Integer) : Boolean {
 	var existStandardClass : Boolean := checkStandardClassExists(self.owningClassName, structure,
 		errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existPropertyInClass : Boolean := checkIsPropertyInGeneralClass(self.owningClassName,
+	var existPropertyInClass : Boolean := checkPropertyExistInGeneralClass(self.owningClassName,
 		self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 // refactoring
 	assert(false);
@@ -378,7 +373,7 @@ query APP::ops::SetBounds::isValid(structure : APP::Structure, inout errorLog : 
 		operationIndex : Integer) : Boolean {
 	var existsStandardClass : Boolean := checkStandardClassExists(self.owningClassName, structure, 
 		errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existsPropertyInStdCls : Boolean := checkIsPropertyInGeneralClass(self.owningClassName, 
+	var existsPropertyInStdCls : Boolean := checkPropertyExistInGeneralClass(self.owningClassName, 
 		self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	assert(false);
 	return structure.containsGeneralClass(self.owningClassName)
@@ -405,7 +400,7 @@ query APP::ops::SetOrdered::isValid(structure : APP::Structure, inout errorLog :
 		operationIndex : Integer) : Boolean {
 	var existsStandardClass : Boolean := checkStandardClassExists(self.owningClassName, 
 		structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existPropertyInStdCls : Boolean := checkIsPropertyInGeneralClass(self.owningClassName, 
+	var existPropertyInStdCls : Boolean := checkPropertyExistInGeneralClass(self.owningClassName, 
 		self.name, structure, errorLog, operationIndex, getEvolutionAppTransformationId());
 	var isCollection : Boolean := checkIsCollection(self.owningClassName, self.name, structure, 
 		errorLog, operationIndex, getEvolutionAppTransformationId());
@@ -425,7 +420,7 @@ query APP::ops::SetUnique::isValid(structure : APP::Structure, inout errorLog : 
 		operationIndex : Integer) : Boolean {
 	var existsStandardClass : Boolean := checkStandardClassExists(self.owningClassName, 
 		structure, errorLog, operationIndex, getEvolutionAppTransformationId());
-	var existPropertyInStdCls : Boolean := checkIsPropertyInGeneralClass(
+	var existPropertyInStdCls : Boolean := checkPropertyExistInGeneralClass(
 		self.owningClassName, self.name, structure, errorLog, operationIndex, 
 		getEvolutionAppTransformationId());
 	var isCollection : Boolean := checkIsCollection(self.owningClassName, self.name, structure, 
@@ -442,50 +437,23 @@ helper APP::ops::SetUnique::apply(inout structure : APP::Structure) {
 	return;
 }
 
-/* ++++++++++ COMPLEX OPERATIONS ++++++++++++++++++++ */
+/** +++++++++++++++++++++++++ DECOMPOSABLE OPERATIONS +++++++++++++++++++++++++ */
 
 /**
- * ZIPPER HIERARCHY
- * Create copy of parent class and create new hierarchical connection 
- * beetwen this class and copy of parent
- * @restriction : child with @className must exist in model
- * @restriction : parent class must exists in model
- * @restriction : No class from model may not point to the parent class
+ * EXAMPLE OF DECOMPOSABLE OPERATION
+ * This is just example for developers. This operation is not in meta-model.
+ *
+ * helper APP::ops::MoveProperties::decompose(inout structure : APP::Structure): OrderedSet(app::ops::AtomicOperation){
+ *  // Returned set of operations
+ *  var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
+ *  propertiesNames->forAll(p){
+ *    operations += _moveProperty(self.sourceClass, p, self.targetClass, self.toleranceForAppProperties);
+ *  };
+ *  return operations;
+ * }
  */
-query APP::ops::ZipperHierarchy::isValid(structure : APP::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existChild : Boolean := checkStandardClassExists(self.className, structure, errorLog,
-		operationIndex, getEvolutionAppTransformationId());
-	var existParent : Boolean := checkStandardClassExists(
-		structure.findStandardClass(self.className).parent.name, structure, errorLog, 
-		operationIndex, getEvolutionAppTransformationId());
-	var pointToParent : Boolean := checkExistsSomePointersToClass(
-		structure.findStandardClass(self.className).parent.name, structure, errorLog, 
-		operationIndex, getEvolutionAppTransformationId());
-	return existChild and existParent and not pointToParent;
-}
 
-helper APP::ops::ZipperHierarchy::decompose(inout structure : APP::Structure
-	 	): OrderedSet(app::ops::AtomicOperation){
-	var childClass : StandardClass := structure.findStandardClass(self.className);
-	var parentClass :StandardClass := childClass.parent; 
-	var operations : OrderedSet(app::ops::AtomicOperation) = OrderedSet{};
-	// Create copy of parentClass - new name <parentClass.name>_copy
-	var newName : String := parentClass.name+"_copy";
-	operations += _addStandardClass(newName, parentClass.isAbstract, parentClass.inheritanceType);
-	// Add attributes from parentClass to newParentClass
-	parentClass.properties->forEach(p){
-		//TODO - p.type - cannot exist because p is type MultipliableProperty and this object 
-		//TODO don't have type attribute in interface
-		//operations += _addProperty(newName, p.name, p.type., p.lowerBound, p.upperBound);
-	};
-	//TODO - If old parentClass have a parent for example with name ROOT - add this ROOT as a 
-	//TODO parent to newParentClass
-	//TODO - Add childClass new parent - newParentClass
-	return operations;
-}
-
-/* ++++++++++ HELPERS FOR LOGGING AND CHECKING ++++++++++++++++++++ */
+/** ++++++++++ HELPERS FOR LOGGING AND CHECKING ++++++++++++++++++++ */
 // This helpers are logging "invalid state message" when condition suggested by check method name 
 // is violated and returns value signalizing result of check
 // Eg use checkEntityNotExist when you need to be sure that Entity with that name is not present 
@@ -616,7 +584,7 @@ helper PrimitiveClass::checkIsRemoveable(structure : APP::Structure,
 	return notIsReferenceExisting;
 }
 
-helper checkIsPropertyInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure,
+helper checkPropertyExistInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure,
  		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
 	if(not structure.containsGeneralClass(generalClassName))then{
 		return false;
@@ -648,7 +616,7 @@ structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer,
 	return true;
 }
 
-helper checkNotIsPropertyInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure,
+helper checkPropertyNotExistInGeneralClass(generalClassName : String, propertyName : String, structure : APP::Structure,
 inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean {
 	if(not structure.containsGeneralClass(generalClassName))then{
 		return false;

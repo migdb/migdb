@@ -26,8 +26,9 @@ import mm.rdb.ops.impl.RenameTableImpl
 import mm.rdb.ops.impl.SetDefaultValueImpl
 import org.eclipse.emf.ecore.EObject
 import mm.rdb.ops.impl.SetColumnTypeImpl
-import mm.rdb.ops.impl.UpdateRowsImpl
+import mm.rdb.ops.impl.UpdateRowImpl
 import mm.rdb.ops.impl.InsertRowsImpl
+import mm.rdb.ops.impl.InsertRowImpl
 import mm.rdb.ops.impl.DeleteRowsImpl
 
 
@@ -378,7 +379,7 @@ class Generator extends BaseCodeGenerator {
     '''    
     
 	/**
-	 * UPDATE ROWS
+	 * UPDATE ROW
 	 * This operation copy data from one column to another.
 	 * That means update of one column in target table. 
  	 * Target and source column can be in the same table.
@@ -387,22 +388,22 @@ class Generator extends BaseCodeGenerator {
  	 * tolerant -> Can transfer data if source table has less number of instances (rows).
  	 * force -> Delete rows if there is more instancef in source table. If source table has less number
  	 * of instances add default value or null.
-	 * @param UpdateRowsImpl op : op of type UpdateRowsImpl
+	 * @param UpdateRowsImpl op : op of type UpdateRowImpl
 	 */
-	def dispatch genOperation(UpdateRowsImpl op){
+	def dispatch genOperation(UpdateRowImpl op){
 		if(op.tolerance.toString().equals("strict")){
 			generateFile(op.getFileName(".q"), this.isSameTableSize(op.owningSchemaName, op.sourceTableName, op.targetTableName));
-			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
+			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
+							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}
 		if(op.tolerance.toString().equals("force")){
-			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
+			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
+							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}
 		if(op.tolerance.toString().equals("tolerant")){
 			generateFile(op.getFileName(".q"), this.targetTableHasMoreRows(op.owningSchemaName, op.sourceTableName, op.targetTableName));
-			return '''UPDATE «op.owningSchemaName».«op.targetTableName» AS target SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» AS source WHERE target.«op.idName» = source.«op.idName» );''';
+			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
+							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}		
 		return "";
 	}
@@ -413,7 +414,7 @@ class Generator extends BaseCodeGenerator {
 	 * INSERT ROWS
 	 * This operation copy data from source columns to target columns.
 	 * That means insert rows from source table to target table. 
- 	 * Target and source column must have same name and data type.
+ 	 * Target and source columns must have same name and data type.
  	 * Target table must not have instances.
 	 * @param InsertRowsImpl op : op of type InsertRowsImpl
 	 */
@@ -421,6 +422,19 @@ class Generator extends BaseCodeGenerator {
 		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR»)
 			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»;
 	'''
+	
+	/**
+	 * INSERT ROW
+	 * This operation copy data from source column to target column.
+	 * That means insert row from source table to target table. 
+ 	 * Target and source column must have same name and data type.
+ 	 * Target table must not have instances.
+	 * @param InsertRowImpl op : op of type InsertRowImpl
+	 */
+	def dispatch genOperation(InsertRowImpl op)'''
+		INSERT INTO «op.owningSchemaName».«op.targetTableName» («op.sourceColumnName»)
+			SELECT «op.sourceColumnName» FROM «op.sourceTableName»;
+	'''	
 	
 	/**
 	 * DELETE ROWS

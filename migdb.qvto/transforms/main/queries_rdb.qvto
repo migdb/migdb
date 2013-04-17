@@ -1,7 +1,7 @@
-/*
+/**
  * The MIT License
  * 
- * Copyright (c) 2010-2011 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -74,8 +74,12 @@ query RDB::Schema::findTable(tableName : String) : RDB::Table{
 
 
 /********************************** SEQUENCE ************************************/
-query RDB::Structure::containsSequenceInSchema(schemaName : String, sequenceName : String
-		) : Boolean {
+
+query getDefaultSequenceName() : String {
+	return "seq_global";
+}
+
+query RDB::Structure::containsSequenceInSchema(schemaName : String, sequenceName : String) : Boolean {
 	return self.findSchema(schemaName).sequence != null;
 }
 
@@ -151,7 +155,7 @@ query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String
 		findColumn(schemaName, tableNameB, columnNameB).type;
 }
 
-/**+++++++++++++++++++++ Validator queries +++++++++++++++++++++++**/
+/********************************* VALIDATOR QUERIES *********************************/
 
 query rdb::Table::getPKColumn():rdb::Column{
 	return self.constraints![rdb::PrimaryKey].constrainedColumn;

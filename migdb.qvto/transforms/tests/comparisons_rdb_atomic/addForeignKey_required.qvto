@@ -1,0 +1,26 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addforeignkey_r(out inoutModel : RDB);
+
+
+main() {
+	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
+	var columnFK : RDB::Column := _column("cizi", RDB::PrimitiveType::int);
+	var index : RDB::Index := _index("IX_col_first", OrderedSet{column});
+	var table : RDB::Table := _table("first", OrderedSet{column, columnFK});
+	var pk : RDB::PrimaryKey := _primaryKey("PK_first", column);
+	table.constraints += pk;
+	
+	
+	var column2 : RDB::Column := _column("id_second", RDB::PrimitiveType::int);	
+	var table2 : RDB::Table := _table("second", OrderedSet{column2});
+	var pk2 : RDB::PrimaryKey := _primaryKey("PK_second", column2);
+	table2.constraints += pk2;
+	
+	var fk : RDB::ForeignKey := _foreignKey("FK_first_second", table2, columnFK);
+	table.constraints += fk;
+
+	
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{_schema("public", 
+			OrderedSet{table, table2}, _sequence("seq_global", 1), OrderedSet{index})});
+}

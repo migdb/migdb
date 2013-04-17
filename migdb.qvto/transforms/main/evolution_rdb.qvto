@@ -540,29 +540,39 @@ helper RDB::ops::RemoveDefaultValue::apply(inout structure : RDB::Structure){
  * @restriction : target column with @targetColumnName must exists in table
  * @restriction : target and source column type must be same
  */
-query RDB::ops::UpdateRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, 
-		operationIndex, getEvolutionRdbTransformationId());
-	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceColumn : Boolean := checkExistColumn(self.owningSchemaName, self.sourceTableName,
-		self.sourceColumnName, structure, errorLog, operationIndex, 
-		getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetColumn : Boolean := checkExistColumn(self.owningSchemaName, self.targetTableName,
-		self.targetColumnName, structure, errorLog, operationIndex, 
-		getEvolutionRdbTransformationId());
-	var isSameType : Boolean := checkIsSameColumnType(self.owningSchemaName, self.sourceTableName, 
-		self.sourceColumnName, self.targetTableName, self.targetColumnName, structure, errorLog, 
-		operationIndex, getEvolutionRdbTransformationId());
-
-	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
-		existTargetColumn and isSameType;
+query RDB::ops::UpdateRow::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceColumn : Boolean := checkExistColumn(self.owningSchemaName, self.sourceTableName,self.sourceColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetColumn : Boolean := checkExistColumn(self.owningSchemaName, self.targetTableName,self.targetColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var isSameType : Boolean := checkIsSameColumnType(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	return existSchema and existSourceTable and existSourceColumn and existTargetTable and existTargetColumn and isSameType;
 }
 
-helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
+helper RDB::ops::UpdateRow::apply(inout structure : RDB::Structure){
+}
+
+/**
+ * INSERT ROW
+ * This operation copy one column.
+ * That means insert data from source table column to target table column.
+ * Columns in source and target table must have same name and same order.
+ * @restriction : columns with @sourceColumnName must exists in source table
+ * @restriction : columns with @sourceColumnName must exists in target table
+ * @restriction : columns must have same name and column type
+ */
+query RDB::ops::InsertRow::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceColumn : Boolean := checkExistColumn(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetColumn : Boolean := checkExistColumn(self.owningSchemaName, self.targetTableName, self.sourceColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	return existSchema and existSourceTable and existSourceColumn and existTargetTable and existTargetColumn;
+}
+
+helper RDB::ops::InsertRow::apply(inout structure : RDB::Structure) {
+	//this is just data operation
 }
 
 /**
@@ -574,23 +584,13 @@ helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
  * @restriction : columns with @sourceColumnNames must exists in target table
  * @restriction : columns must have same name and column type
  */
-query RDB::ops::InsertRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, 
-		operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, 
-		operationIndex, getEvolutionRdbTransformationId());
-	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceColumn : Boolean := checkExistColumnSet(self.owningSchemaName, 
-		self.sourceTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, 
-		getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, 
-		structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetColumn : Boolean := checkExistColumnSet(self.owningSchemaName, 
-		self.targetTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, 
-		getEvolutionRdbTransformationId());
-
-	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
-		existTargetColumn;
+query RDB::ops::InsertRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSourceColumn : Boolean := checkExistColumnSet(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existTargetColumn : Boolean := checkExistColumnSet(self.owningSchemaName, self.targetTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	return existSchema and existSourceTable and existSourceColumn and existTargetTable and existTargetColumn;
 }
 
 helper RDB::ops::InsertRows::apply(inout structure : RDB::Structure) {

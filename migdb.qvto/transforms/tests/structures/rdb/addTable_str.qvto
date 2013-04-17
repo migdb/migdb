@@ -1,0 +1,12 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addtable(out inoutModel : RDB);
+
+
+main() {
+	log("TEST_RDB");
+	log("op: ADDTABLE");	
+	
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{
+		_schema("public", _sequence("seq_global", 1))}); 
+}

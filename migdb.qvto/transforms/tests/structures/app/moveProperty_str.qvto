@@ -1,0 +1,14 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation moveProperty_str(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
+	var second : StandardClass := _class("Second", _idProperty("idSecond", int), OrderedSet{});
+	var first : StandardClass := _class("First", _idProperty("idFirst", int), OrderedSet{_primitiveProperty("address", string), _associationProperty("asoc",second,1,1)});
+	
+	_appStructure(OrderedSet{int, string, first, second});
+}

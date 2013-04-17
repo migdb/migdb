@@ -1,0 +1,9 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addsequence_r(out inoutModel : RDB);
+
+
+main() {
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{
+		_schema("public", _sequence("seq_global", 1))});
+}

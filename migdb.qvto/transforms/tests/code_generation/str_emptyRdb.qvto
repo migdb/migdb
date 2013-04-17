@@ -1,0 +1,8 @@
+import builder_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation str_emptyRdb(out outAstr : RDB);
+
+main(){
+	_rdbStructure(OrderedSet{_schema("public", OrderedSet{}, _sequence("seq_global",1))});
+}

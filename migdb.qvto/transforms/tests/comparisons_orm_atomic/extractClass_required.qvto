@@ -1,0 +1,13 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation extractClass_required(out inoutModel : RDB);
+
+main() {
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{_addTable("public", "second"),
+																_addColumn("public", "second","id_second", PrimitiveType::int),
+																_addPrimaryKey("public", "second","id_second", "pk_second"),
+																_addColumn("public", "first", "id_second", PrimitiveType::int),
+																_addForeignKey("public", "first", "id_second", "fk_id_second_second", "second")};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

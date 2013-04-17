@@ -173,22 +173,19 @@ helper _removeSequence(_owningSchemaName : String, _sequenceName : String
 	};
 }
 
-helper _updateRows(_owningSchemaName : String, _sourceTableName : String, 
-		_sourceColumnName : String, _targetTableName : String, _targerColumnName : String, 
-		_tolerance : RDB::ToleranceType, _idName : String) : RDB::ops::UpdateRows{
-	return object RDB::ops::UpdateRows {
+helper _updateRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targetTableName : String, _targerColumnName : String, _tolerance : RDB::ToleranceType, _WHERE_CONDITION : String) : RDB::ops::UpdateRow{
+	return object RDB::ops::UpdateRow {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
 		sourceColumnName := _sourceColumnName;
 		targetTableName := _targetTableName;
 		targetColumnName := _targerColumnName;
 		tolerance := _tolerance;
-		idName := _idName;
+		WHERE_CONDITION := _WHERE_CONDITION;
 	};
 }
 
-helper _insertRows(_owningSchemaName : String, _sourceTableName : String, 
-		_sourceColumnsNames : OrderedSet(String), _targeTableName : String) : RDB::ops::InsertRows{
+helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnsNames : OrderedSet(String), _targeTableName : String) : RDB::ops::InsertRows{
 	return object RDB::ops::InsertRows {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
@@ -197,8 +194,16 @@ helper _insertRows(_owningSchemaName : String, _sourceTableName : String,
 	};
 }
 
-helper _deleteRows(_owningSchemaName : String, _tableName : String, 
-		_descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::DeleteRows{
+helper _insertRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targeTableName : String) : RDB::ops::InsertRow{
+	return object RDB::ops::InsertRow {
+		owningSchemaName := _owningSchemaName;
+		sourceTableName := _sourceTableName;
+		sourceColumnName := _sourceColumnName;
+		targetTableName := _targeTableName;
+	};
+}
+
+helper _deleteRows(_owningSchemaName : String, _tableName : String, _descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::DeleteRows{
 	return object RDB::ops::DeleteRows {
 		owningSchemaName := _owningSchemaName;
 		tableName := _tableName;
@@ -207,8 +212,7 @@ helper _deleteRows(_owningSchemaName : String, _tableName : String,
 	};
 }
 
-helper _hasNoOwnInstances(_owningSchemaName : String, _tableName : String, 
-		_descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::HasNoOwnInstances{
+helper _hasNoOwnInstances(_owningSchemaName : String, _tableName : String, _descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::HasNoOwnInstances{
 	return object RDB::ops::HasNoOwnInstances {
 		owningSchemaName := _owningSchemaName;
 		tableName := _tableName;
@@ -224,8 +228,7 @@ helper _hasNoInstances(_owningSchemaName : String, _tableName : String) : RDB::o
 	};
 }
 
-helper _generateSequenceNumbers(_owningSchemaName : String, _tableName : String, 
-		_columnName : String, _sequenceName : String) : RDB::ops::GenerateSequenceNumbers{
+helper _generateSequenceNumbers(_owningSchemaName : String, _tableName : String, _columnName : String, _sequenceName : String) : RDB::ops::GenerateSequenceNumbers{
 	return object RDB::ops::GenerateSequenceNumbers {
 		owningSchemaName := _owningSchemaName;
 		tableName := _tableName;

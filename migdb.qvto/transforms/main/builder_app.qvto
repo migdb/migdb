@@ -21,8 +21,7 @@ helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
 	}
 }
 
-helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType
-		) : APP::ops::AddStandardClass {
+helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
 	return object APP::ops::AddStandardClass {
 		name := _name;
 		isAbstract := _isAbstract;
@@ -43,8 +42,7 @@ helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String
-		) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -52,8 +50,7 @@ helper _addProperty(_owningClassName : String, _name : String, _type : String
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, 
-		_lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
 	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type); 
 	addProperty.lowerBound := _lowerBound;
 	addProperty.upperBound := _upperBound;
@@ -204,10 +201,8 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : Pri
 	}
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
-		_upperBound : Integer) : PrimitiveProperty{
-	assert(_primitiveType <> null and _name <> "" and _name <> null and 
-		(_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
+	assert(_primitiveType <> null and _name <> "" and _name <> null and (_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
 	return object PrimitiveProperty{
 		name := _name;
 		type := _primitiveType;
@@ -216,10 +211,8 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 	}
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
-		_upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
-	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, 
-		_upperBound);
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound);
 	prop.defaultValue := _defaultValue;
 	return prop;
 }
@@ -305,58 +298,45 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
  	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
-	assert(_idProperty <> null);
-	var cls : StandardClass := object StandardClass {
- 		name := _name;
- 		properties := _properties->append(_idProperty);
- 		idProperty := _idProperty;	
- 	};
-	return cls;
-}
-
-helper _class(_name : String, _properties : OrderedSet(MultipliableProperty)) : StandardClass{
-	var cls : StandardClass := object StandardClass{
-		name := _name;
-		properties := _properties;
-		inheritanceType := InheritanceType::joined;
-	};
-	return cls;
-}
-
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass {
  	var cls : StandardClass := _class(_name, _parent, _properties);
  	cls.inheritanceType := _inheritanceType;
  	return cls;
 }
 
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass{
+	assert(_idProperty <> null);
+	var cls : StandardClass := object StandardClass {
+ 		name := _name;
+ 		idProperty := _idProperty;
+ 		properties := _properties;
+ 		isAbstract := _isAbstract;
+ 		inheritanceType := _parent.inheritanceType;
+ 	};
+	return cls;	
+}
 
-
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType ) : StandardClass{
-	var cls : StandardClass := 	_class(_name, _idProperty, _properties);
-	cls.inheritanceType := _inheritanceType;
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
+	var cls : StandardClass := _class(_name, _idProperty, _properties, false, InheritanceType::joined);
 	return cls;
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass {
-	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{});
-	cls.inheritanceType := type;
-	cls.isAbstract := _isAbstract;
-	return cls;	
-}
-
-// create not abstract class with joined inheritance type
 helper _class(_name : String, _idProperty : PrimitiveProperty ) : StandardClass {
-	var cls : StandardClass := _class(_name, _idProperty, false, InheritanceType::joined);
+	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{}, false, InheritanceType::joined);
+	return cls;
+}
+
+helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass {
+	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{}, _isAbstract, _inheritanceType);
 	return cls;	
 }
 
-helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, type : APP::InheritanceType) : StandardClass{
-	var cls : StandardClass := _class(_name, _idProperty, _properties);
-	cls.inheritanceType := type;
-	cls.isAbstract := _isAbstract;
-	return cls;	
+helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType ) : StandardClass{
+	var cls : StandardClass := 	_class(_name, _idProperty, _properties, false, _inheritanceType);
+	return cls;
 }
+
+
  
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	return object PrimitiveClass {
@@ -368,7 +348,6 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
 helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : EmbeddedClass {
  	return object EmbeddedClass {
  		name := _name;
- 		embeddedProperties := OrderedSet{_idProperty};
  		idProperty := _idProperty;
  	}
 }

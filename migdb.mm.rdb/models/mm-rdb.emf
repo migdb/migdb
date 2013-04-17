@@ -210,22 +210,29 @@ package rdb {
       attr String[1] name;
     }
 
-    class UpdateRows extends ModelOperation {
+    class UpdateRow extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] sourceTableName;
       attr String[1] sourceColumnName;
       attr String[1] targetTableName;
       attr String[1] targetColumnName;
       attr ToleranceType[1] tolerance;
-      attr String[1] idName;
+      attr String[1] WHERE_CONDITION;
     }
 
     class InsertRows extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] sourceTableName;
-      attr String[+] sourceColumnsNames;
+      attr String[*] sourceColumnsNames;
       attr String[1] targetTableName;
     }
+    
+    class InsertRow extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] sourceTableName;
+      attr String[1] sourceColumnName;
+      attr String[1] targetTableName;
+    }    
 
     class DeleteRows extends ModelOperation {
       attr String[1] owningSchemaName;

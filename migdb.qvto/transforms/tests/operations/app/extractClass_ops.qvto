@@ -1,0 +1,11 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation extractClass_ops(out inoutModel : APP);
+
+main(){
+	log("op: EXTRACTCLASS");
+
+	_appOperations(OrderedSet{_extractClass("First", "Second")});	
+}
