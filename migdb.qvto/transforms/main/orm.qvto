@@ -444,12 +444,13 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 				operations += _insertRow(getDefaultSchemaName(), targetClassName, cl.translateIdName(), cl.name);
 			};
 		}endif;
-		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, self.tolerance, WHERE_CONDITION);
-	} else {
+		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);
+	} else { 
 		
 	} endif;
 	return operations;
 }
+
 /**
  * EXTRACT CLASS
  * Create new class from source class.
@@ -502,8 +503,13 @@ query APP::Property::getDbTypeOfProperty(appStructure : APP::Structure) : RDB::P
 	return type;
 }
 
-
-query mergeTypeInAppToMergeTypeInRdb(type : APP::ToleranceType) : RDB::ToleranceType {
+/**
+ * MERGE TYPE FROM APP TO RDB
+ * Just retype APP::ToleranceType to RDB::ToleranceType
+ * @input : type - APP ToleranceType
+ * @return : RDB ToleranceType
+ */
+query mergeTypeFromAppToRdb(type : APP::ToleranceType) : RDB::ToleranceType {
 	switch {
 		case (type = APP::ToleranceType::strict) return RDB::ToleranceType::strict;
 		case (type = APP::ToleranceType::force) return RDB::ToleranceType::force;

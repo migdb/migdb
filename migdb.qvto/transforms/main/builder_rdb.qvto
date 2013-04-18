@@ -83,8 +83,7 @@ helper _addNotNull(_owningSchemaName : String, _owningTableName : String,
 	};
 }
 
-helper _renameTable(_owningSchemaName : String, _name : String, _newName : String
-		) : RDB::ops::RenameTable{
+helper _renameTable(_owningSchemaName : String, _name : String, _newName : String) : RDB::ops::RenameTable{
 	return object RDB::ops::RenameTable {
 		owningSchemaName := _owningSchemaName;
 		name := _name;
@@ -92,8 +91,7 @@ helper _renameTable(_owningSchemaName : String, _name : String, _newName : Strin
 	};
 }
 
-helper _renameColumn(_owningSchemaName : String, _owningTableName : String, _name : String, 
-		_newName : String) : RDB::ops::RenameColumn{
+helper _renameColumn(_owningSchemaName : String, _owningTableName : String, _name : String, _newName : String) : RDB::ops::RenameColumn{
 	return object RDB::ops::RenameColumn {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -102,9 +100,7 @@ helper _renameColumn(_owningSchemaName : String, _owningTableName : String, _nam
 	};
 }
 
-helper _setColumnType(_owningSchemaName : String, _owningTableName : String, 
-		_owningColumnName : String, _newType : PrimitiveType , _oldType : PrimitiveType
-		) : RDB::ops::SetColumnType{
+helper _setColumnType(_owningSchemaName : String, _owningTableName : String, _owningColumnName : String, _newType : PrimitiveType , _oldType : PrimitiveType) : RDB::ops::SetColumnType{
 	return object RDB::ops::SetColumnType {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -114,8 +110,7 @@ helper _setColumnType(_owningSchemaName : String, _owningTableName : String,
 	};
 }
 
-helper _setDefaultValue(_owningSchemaName : String, _owningTableName : String, 
-		_owningColumnName : String, _newDefaultValue : String) : RDB::ops::SetDefaultValue{
+helper _setDefaultValue(_owningSchemaName : String, _owningTableName : String, _owningColumnName : String, _newDefaultValue : String) : RDB::ops::SetDefaultValue{
 	return object RDB::ops::SetDefaultValue {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -165,8 +160,7 @@ helper _removeDefaultValue(_owningSchemaName : String, _owningTableName : String
 	};
 }
 
-helper _removeSequence(_owningSchemaName : String, _sequenceName : String
-		) : RDB::ops::RemoveSequence{
+helper _removeSequence(_owningSchemaName : String, _sequenceName : String) : RDB::ops::RemoveSequence{
 	return object RDB::ops::RemoveSequence {
 		owningSchemaName := _owningSchemaName;
 		name := _sequenceName;
