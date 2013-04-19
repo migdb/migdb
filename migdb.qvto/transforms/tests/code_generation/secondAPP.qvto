@@ -11,7 +11,7 @@ main() {
 
 	var root : APP::Operations = outModel.rootObjects()![APP::Operations];
 	 
-	 root.operations += _extractClass("Party", "Address");
+	 root.operations += _extractClass("Party", "address", "Address");
 	 //TODO move of property City, Street, Zip and Country
 	 root.operations += _renameProperty("Party", "address", "residentialAddress");
 	 root.operations += _addProperty("Party", "contactAddress", "Country");

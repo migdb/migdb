@@ -258,6 +258,7 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
 	var childClass : APP::StandardClass := structure.findClass(self.className);	
 	childClass.parent := structure.findClass(self.parentClassName);
+	childClass.properties := childClass.properties->reject(pr | pr = childClass.idProperty);
 	childClass.idProperty := null;
 	return;
 }
@@ -282,6 +283,7 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 	var idProperty : APP::PrimitiveProperty := _idProperty(getIdName(self.className), structure.findDefaultIdType());	
 	childClass.parent := null;
 	childClass.idProperty := idProperty;
+	childClass.properties += idProperty;
 	return;
 }
 

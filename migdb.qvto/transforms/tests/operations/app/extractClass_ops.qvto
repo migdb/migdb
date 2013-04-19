@@ -7,5 +7,5 @@ transformation extractClass_ops(out inoutModel : APP);
 main(){
 	log("op: EXTRACTCLASS");
 
-	_appOperations(OrderedSet{_extractClass("First", "Second")});	
+	_appOperations(OrderedSet{_extractClass("First", "second", "Second")});	
 }

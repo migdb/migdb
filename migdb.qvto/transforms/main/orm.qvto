@@ -444,9 +444,13 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 				operations += _insertRow(getDefaultSchemaName(), targetClassName, cl.translateIdName(), cl.name);
 			};
 		}endif;
+		// now update instances in the new column
 		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);
 	} else { 
-		
+		// add new column to target class
+		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
+		// now update instances in the new column
+		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);				
 	} endif;
 	return operations;
 }

@@ -160,10 +160,11 @@ helper _moveProperty(_sourceClassName : String, _name : String, _targetClassName
 	}
 }
 
-helper _extractClass(_sourceClassName : String, _extractClassName : String) : APP::ops::ExtractClass {
+helper _extractClass(_sourceClassName : String, _associationPropertyName : String, _extractClassName : String) : APP::ops::ExtractClass {
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractClassName := _extractClassName;
+		associationPropertyName := _associationPropertyName;
 	}
 }
 
@@ -308,8 +309,8 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
 	assert(_idProperty <> null);
 	var cls : StandardClass := object StandardClass {
  		name := _name;
+ 		properties := _properties->append(_idProperty);
  		idProperty := _idProperty;
- 		properties := _properties;
  		isAbstract := _isAbstract;
  		inheritanceType := _parent.inheritanceType;
  	};

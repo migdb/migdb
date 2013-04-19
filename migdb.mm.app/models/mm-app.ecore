@@ -35,7 +35,7 @@
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="inheritanceType" lowerBound="1"
           eType="#//app/InheritanceType"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
-          eType="#//app/MultipliableProperty" containment="true" eOpposite="#//app/MultipliableProperty/owningGeneralClass"/>
+          eType="#//app/MultipliableProperty" containment="true"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="idProperty" unique="false"
           eType="#//app/PrimitiveProperty" resolveProxies="false"/>
     </eClassifiers>
@@ -65,7 +65,7 @@
     <eClassifiers xsi:type="ecore:EClass" name="MultipliableProperty" abstract="true"
         eSuperTypes="#//app/Property">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningGeneralClass" lowerBound="1"
-          eType="#//app/StandardClass" changeable="false" derived="true" eOpposite="#//app/StandardClass/properties"/>
+          eType="#//app/StandardClass" changeable="false" derived="true"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="upperBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
           defaultValueLiteral="1"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="lowerBound" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"
