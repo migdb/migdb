@@ -232,6 +232,7 @@ package rdb {
       attr String[1] sourceTableName;
       attr String[1] sourceColumnName;
       attr String[1] targetTableName;
+      attr String[1] targetColumnName;
     }    
 
     class DeleteRows extends ModelOperation {

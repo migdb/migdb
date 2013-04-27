@@ -126,8 +126,7 @@ helper _removeTable(_owningSchemaName : String, _name : String) : RDB::ops::Remo
 	};
 }
 
-helper _removeColumn(_owningSchemaName : String, _owningTableName : String, _name : String
-		) : RDB::ops::RemoveColumn{
+helper _removeColumn(_owningSchemaName : String, _owningTableName : String, _name : String) : RDB::ops::RemoveColumn{
 	return object RDB::ops::RemoveColumn {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -188,12 +187,13 @@ helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourc
 	};
 }
 
-helper _insertRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targeTableName : String) : RDB::ops::InsertRow{
+helper _insertRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targeTableName : String, _targeColumnName : String) : RDB::ops::InsertRow{
 	return object RDB::ops::InsertRow {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
 		sourceColumnName := _sourceColumnName;
 		targetTableName := _targeTableName;
+		targetColumnName := _targeColumnName;
 	};
 }
 

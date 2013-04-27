@@ -420,6 +420,7 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 	var targetClass : StandardClass := appStructure.findStandardClass(self.targetClassName);
 	var sourceClassName : String =  self.sourceClassName.translate();
 	var targetClassName : String =  self.targetClassName.translate();
+	var idTargetClassName : String =  targetClass.translateIdName();
 	// type of property
 	var movedProperty : Property := appStructure.findProperty(self.sourceClassName, self.name);
 	var movedPropertyName : String := self.name.translate();
@@ -428,30 +429,14 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 	var asocProperty : MultipliableProperty := sourceClass.properties->selectOne(prop | prop.isOneToOneUnidirectional() and prop.isPropertyTypeOf(targetClass));
 	
 	// Define WHERE CONDITION for Update operation (sourceTable.)
-	var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + " = " + targetClassName + "." + targetClass.translateIdName();
+	var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + " = " + targetClassName + "." + idTargetClassName;
 	
-	// if target class cannot have any attributes
-	if(targetClass.properties->size() = 0) then {
-		// add new column to target class
-		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
-		// generate sequnce of ID to id column of target table
-		operations += _generateSequenceNumbers(getDefaultSchemaName(), targetClassName, targetClass.translateIdName() ,getDefaultSequenceName());
-		if(targetClass.parent <> null) then {
-			// In this case we have empty hierarchy and target class is somewhere in the middle. 
-			// If we generate instances in the middle of hierarchy we must copy id numbers to table's id columns from target class to root
-			var setOfParentsToRoot : OrderedSet(StandardClass) := targetClass.getPathToRoot();
-			targetClass.getPathToRoot()->forEach(cl){
-				operations += _insertRow(getDefaultSchemaName(), targetClassName, cl.translateIdName(), cl.name);
-			};
-		}endif;
-		// now update instances in the new column
-		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);
-	} else { 
-		// add new column to target class
-		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
-		// now update instances in the new column
-		operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);				
-	} endif;
+	// add new column to target class
+	operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
+	// update instances in the new column
+	operations += _updateRow(getDefaultSchemaName(), sourceClassName, movedPropertyName, targetClassName, movedPropertyName, mergeTypeFromAppToRdb(self.tolerance), WHERE_CONDITION);				
+	// remove old column in source table
+	operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
 	return operations;
 }
 
@@ -468,15 +453,19 @@ helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet
 	// addition of the extracted table to the schema
 	operations += _addTable(getDefaultSchemaName(), extractClassName);
 	var idType : app::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
-	var idExtractClassName : String := ("id" + self.extractClassName).translate();
+	var idExtractClassName : String := "id_"+extractClassName;
 	// addition of a column to extracted table
 	operations += _addColumn(getDefaultSchemaName(), extractClassName, idExtractClassName, toRdbType(idType));
 	// addition of a primary key to extracted table
 	operations += _addPrimaryKey(getDefaultSchemaName(), extractClassName, idExtractClassName, ("pk" + self.extractClassName).translate());
+	// generate sequnce of ID to id column of target table
+	operations += _generateSequenceNumbers(getDefaultSchemaName(), extractClassName, idExtractClassName ,getDefaultSequenceName());
 	// addition of a new column (pointer to extracted class) to source class
-	operations += _addColumn(getDefaultSchemaName(), sourceClassName, self.associationPropertyName, toRdbType(idType));
+	operations += _addColumn(getDefaultSchemaName(), sourceClassName, self.associationPropertyName.translate(), toRdbType(idType));
 	// add FK contraint on new pointer column
 	operations += _addForeignKey(getDefaultSchemaName(), sourceClassName, idExtractClassName, "fk_" + (self.associationPropertyName+self.extractClassName).translate(), extractClassName);
+	// add values from id column of extracted table to FK column in source table
+	operations += _insertRow(getDefaultSchemaName(), extractClassName, idExtractClassName, sourceClassName, self.associationPropertyName.translate());
 	return operations;
 }
 

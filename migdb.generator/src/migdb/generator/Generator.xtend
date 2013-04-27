@@ -432,7 +432,7 @@ class Generator extends BaseCodeGenerator {
 	 * @param InsertRowImpl op : op of type InsertRowImpl
 	 */
 	def dispatch genOperation(InsertRowImpl op)'''
-		INSERT INTO «op.owningSchemaName».«op.targetTableName» («op.sourceColumnName»)
+		INSERT INTO «op.owningSchemaName».«op.targetTableName» («op.targetColumnName»)
 			SELECT «op.sourceColumnName» FROM «op.sourceTableName»;
 	'''	
 	

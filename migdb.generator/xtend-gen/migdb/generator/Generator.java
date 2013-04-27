@@ -1016,14 +1016,14 @@ public class Generator extends BaseCodeGenerator {
     String _targetTableName = op.getTargetTableName();
     _builder.append(_targetTableName, "");
     _builder.append(" (");
-    String _sourceColumnName = op.getSourceColumnName();
-    _builder.append(_sourceColumnName, "");
+    String _targetColumnName = op.getTargetColumnName();
+    _builder.append(_targetColumnName, "");
     _builder.append(")");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     _builder.append("SELECT ");
-    String _sourceColumnName_1 = op.getSourceColumnName();
-    _builder.append(_sourceColumnName_1, "	");
+    String _sourceColumnName = op.getSourceColumnName();
+    _builder.append(_sourceColumnName, "	");
     _builder.append(" FROM ");
     String _sourceTableName = op.getSourceTableName();
     _builder.append(_sourceTableName, "	");

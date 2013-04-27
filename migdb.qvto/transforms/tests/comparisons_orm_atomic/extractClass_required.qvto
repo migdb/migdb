@@ -7,7 +7,9 @@ main() {
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{_addTable("public", "second"),
 																_addColumn("public", "second","id_second", PrimitiveType::int),
 																_addPrimaryKey("public", "second","id_second", "pk_second"),
-																_addColumn("public", "first", "id_second", PrimitiveType::int),
-																_addForeignKey("public", "first", "id_second", "fk_id_second_second", "second")};
+																_generateSequenceNumbers("public", "second", "id_second", "seq_global"),
+																_addColumn("public", "first", "second", PrimitiveType::int),
+																_addForeignKey("public", "first", "id_second", "fk_second_second", "second"),
+																_insertRow("public", "second", "id_second", "first", "second")};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
