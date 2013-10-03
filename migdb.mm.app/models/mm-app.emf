@@ -25,7 +25,7 @@ package app {
   class PrimitiveClass extends ModelEntity {
     attr PrimitiveType[1] primitiveType;
   }
-
+  
   class EmbeddedClass extends GeneralClass {
     val EmbeddedProperty[+]#owningEmbeddedClass embeddedProperties;
     ref EmbeddedProperty[1] idProperty;
