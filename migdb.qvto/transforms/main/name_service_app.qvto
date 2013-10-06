@@ -48,7 +48,7 @@ query StandardClass::getParentFkName() : String{
  */
 query StandardClass::getAttribute() : String{
 	var attName : String := self.name.substring(1,1).toLower();
-    attName := attName + self.name.substring(2,self.name.toString().size());
+    attName := attName + self.name.substring(2,self.name.size());
     return attName;
 }
 

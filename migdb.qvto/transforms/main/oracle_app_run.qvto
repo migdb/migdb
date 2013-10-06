@@ -1,0 +1,336 @@
+import evolution_app;
+import builder_app;
+import builder_errors;
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+
+/**
+    This transformation is used to automatically assert set of ModelOperations to two input models. 
+    Currently it is implemented in weak form to test basic idea. The basic usage is diffetence of two models - 
+    only classes and properties occurence, not their attributes (lowerBound, upperBound, isAbstract...)  
+**/
+transformation oraculum_run(in inModel : APP,in targetModel : APP,out outOperationsModel : APP, out errors : ERR);
+
+main() {
+	var errorLog : ErrorLog := _errorLog(OrderedSet{});
+	var operationIndex := 1;
+	var operations : Operations := _appOperations(OrderedSet{});
+	var inStructure : Structure := inModel.rootObjects()![Structure];
+	var targetStructure : Structure := targetModel.rootObjects()![Structure]; 
+	var diff : Integer := inStructure.countTotalDifference(targetStructure);
+	var NO_STEP := 0;
+	var bestStep : Integer := NO_STEP;
+	var bestOperationIndex : Integer := 0;
+	//operation indexes - can be only variables
+	var NONE_OPERATION_INDEX : Integer := 0; 
+	var ADD_STANDARD_CLASS_INDEX : Integer := 1;
+	var ADD_PRIMITIVE_CLASS_INDEX : Integer := 2;
+	var RENAME_ENTITY_INDEX : Integer := 3;
+	
+	log("source");
+	inStructure.print();
+	log("target");
+	targetStructure.print();
+	
+	
+	log("Diff equals " + diff.toString());
+		
+	while(diff > 0){
+		//reset best step
+	    bestStep := NO_STEP;
+	    bestOperationIndex := NONE_OPERATION_INDEX;
+	    
+		//ADD_PRIMITIVE_CLASS
+		if(inStructure.isAddPrimitiveClassOperationNoticed(targetStructure))then{	
+			var currentStep : Integer := inStructure.getAddPrimitiveClassOperationStep(targetStructure);
+			if(bestStep < currentStep )then{
+		      bestStep := currentStep;
+		      bestOperationIndex := ADD_PRIMITIVE_CLASS_INDEX;
+			}endif;  
+		}endif;
+		
+		//ADD_STANDARD_CLASS
+		if(inStructure.isAddStandardClassOperationNoticed(targetStructure))then{	
+			var currentStep : Integer := inStructure.getAddStandardClassOperationStep(targetStructure);
+			if(bestStep < currentStep )then{
+		      //log("std step " + currentStep.repr());
+		      bestStep := currentStep;
+		      bestOperationIndex := ADD_STANDARD_CLASS_INDEX;
+			}endif;  
+		}endif;
+		
+		//RENAME_ENTITY
+		if(inStructure.isRenameEntityOperationNoticed(targetStructure))then{	
+			var currentStep : Integer := inStructure.getRenameEntityOperationStep(targetStructure);
+			if(bestStep < currentStep )then{
+		      log("rename step " + currentStep.repr());
+		      bestStep := currentStep;
+		      bestOperationIndex := RENAME_ENTITY_INDEX;
+			}endif;  
+		}endif;
+		
+		
+		
+		//end if nothing recognised
+		if(bestOperationIndex = NO_STEP)then{
+			break;
+		}endif;
+		
+		var recognisedOperation : app::ops::AtomicOperation := inStructure.assertTargets(bestOperationIndex, targetStructure).oclAsType(app::ops::AtomicOperation);
+		operations.operations+= recognisedOperation;
+		log("recognised operation " + recognisedOperation.repr());
+		diff := diff - bestStep;
+		if(recognisedOperation.isValid(inStructure, errorLog, operationIndex))then{
+			operationIndex:= operationIndex + 1;
+			recognisedOperation.apply(inStructure);
+		}endif;
+	}
+					 
+}
+
+helper Structure::assertTargets(operationIndex : Integer, targetStructure : Structure) : APP::ops::ModelOperation{
+    	var NONE_OPERATION_INDEX : Integer := 0; 
+	    var ADD_STANDARD_CLASS_INDEX : Integer := 1;
+	    var ADD_PRIMITIVE_CLASS_INDEX : Integer := 2;
+	    var RENAME_ENTITY_INDEX : Integer := 3;
+
+		if(operationIndex = NONE_OPERATION_INDEX)then{
+			log("Something ambigous recognised");
+			return null;
+		}endif; 
+		if(operationIndex = ADD_STANDARD_CLASS_INDEX)then{
+			return self.assertTargetsAddStandardClass(targetStructure); 						
+		}endif;
+		if(operationIndex = ADD_PRIMITIVE_CLASS_INDEX)then{
+			return self.assertTargetsAddPrimitiveClass(targetStructure); 			
+		}endif;
+		
+		if(operationIndex = RENAME_ENTITY_INDEX)then{
+			return self.assertTargetsRenameEntity(targetStructure);
+		}endif;
+	
+		log("Something ambigous recognised");
+		return null;
+}
+
+helper Structure::isAddPrimitiveClassOperationNoticed(targetStructure : Structure) : Boolean{
+	return self.entities[PrimitiveClass]->exists(entity | targetStructure.entities->forAll(targetEntity | not entity.equals(targetEntity)));
+}
+
+helper Structure :: getAddPrimitiveClassOperationStep(targetStructure : Structure) : Integer{
+	return getClassNameDiffVal();
+}
+
+helper Structure::assertTargetsAddPrimitiveClass(targetStructure : Structure) : APP::ops::ModelOperation{
+	var newPrimClass : PrimitiveClass := targetStructure.entities[PrimitiveClass]->
+	     any(targetEntity | self.entities[PrimitiveClass]->forAll(entity | not entity.equalsType(targetEntity))); 
+	return  _addPrimitiveClass(newPrimClass.name, newPrimClass.primitiveType);
+}
+
+helper Structure::isAddStandardClassOperationNoticed(targetStructure : Structure) : Boolean{
+	return targetStructure.entities[StandardClass]->exists(targetEntity | self.entities[StandardClass]->
+	   forAll(entity | not entity.equalsType(targetEntity)));
+}
+
+helper Structure::getAddStandardClassOperationStep(targetStructure : Structure) : Integer{
+    // 1 for class + 2 for ID 
+	var step : Integer := getClassNameDiffVal() + getPropertyNameDiffVal() + getPropertyTypeDiffVal();
+	//DONT care about different ID name
+	//if()then{
+	//	
+	//}endif;
+	return step;
+}
+
+helper Structure::assertTargetsAddStandardClass(targetStructure : Structure) : APP::ops::ModelOperation{
+	var  className : String := targetStructure.entities[StandardClass]->
+	     any(targetEntity | self.entities->forAll(entity | not entity.equalsType(targetEntity))).name;
+	return _addStandardClass(className, false, InheritanceType::joined);
+}
+
+helper Structure::isAddPropertyClassOperationNoticed(targetStructure : Structure) : Boolean{
+	var addToStdCls : Boolean := targetStructure.entities[StandardClass]->properties->exists(prop | self.containsStandardClass(prop.owningGeneralClass.name)
+	  and not self.findStandardClass(prop.owningGeneralClass.name).containsProperty(prop.name) and self.containsEntity(prop.getType().name));
+	var addToEmbeddedCls : Boolean := targetStructure.entities[EmbeddedClass]->embeddedProperties->exists(embeddedProp | 
+	  self.containsEmbeddedClass(embeddedProp.name) and not self.findEmbeddedClass(embeddedProp.owningEmbeddedClass.name).containsProperty(embeddedProp.name) 
+	  and self.containsEntity(embeddedProp.getType().name));
+	  return addToStdCls or addToEmbeddedCls;
+}
+
+helper Structure::getAddPropertyClassOperationStep(targetStructure : Structure) : Integer{
+	return getPropertyNameDiffVal() + getPropertyTypeDiffVal();
+}
+
+helper Structure::isRenameEntityOperationNoticed(targetStructure : Structure) : Boolean{
+	//self.entities[StandardClass]->forEach(cls){
+	//     log("sim " + cls.getMaxSimilarity(targetStructure.entities[StandardClass]->select(simCls | simCls.name <> cls.name)).repr());
+	     //targetStructure.entities->forEach(targetCls){
+	     //	log("sim " + cls.get);
+	     //};
+	//};
+		
+	return self.entities[StandardClass]->exists(entity | 
+		entity.getMaxSimilarity(targetStructure.entities[StandardClass]->select(ent | ent.name <> entity.name)) > 0);
+}
+
+helper Structure::getRenameEntityOperationStep(targetStructure : Structure) : Integer{
+	var sourceStdClasses : OrderedSet(StandardClass) := self.entities[StandardClass];
+	var targetStdClasses : OrderedSet(StandardClass) := targetStructure.entities[StandardClass];
+	var maxSimilarity : Integer := -1;
+	sourceStdClasses->forEach(cls){
+		var actualSimilarity : Integer := cls.getMaxSimilarity(targetStdClasses->select(targetCls | cls.name <> targetCls));
+		if(actualSimilarity > maxSimilarity)then{
+			maxSimilarity := actualSimilarity;
+		}endif;
+	};
+	//log("RENAME CLS - maxSimilarity " + maxSimilarity.repr());
+	return 2 * (maxSimilarity * (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) + getClassNameDiffVal());
+}
+
+helper Structure::assertTargetsRenameEntity(targetStructure : Structure) : APP::ops::ModelOperation{
+	var sourceStdClasses : OrderedSet(StandardClass) := self.entities[StandardClass];
+	var targetStdClasses : OrderedSet(StandardClass) := targetStructure.entities[StandardClass];
+	var maxSimilarity : Integer := -1;
+	var sourceClass : StandardClass := null;
+	var mostSimilar : StandardClass := null;
+	sourceStdClasses->forEach(cls){
+		var similarityAdepts : OrderedSet(StandardClass) := targetStdClasses->select(targetCls | cls.name <> targetCls.name);	
+		var actualSimilarity : Integer := cls.getMaxSimilarity(similarityAdepts);
+		if(actualSimilarity > maxSimilarity)then{
+			maxSimilarity := actualSimilarity;
+			sourceClass := cls;
+			mostSimilar := cls.getMaximallySimilar(similarityAdepts);
+		}endif;
+	};
+	return _renameEntity(sourceClass.name, mostSimilar.name);
+}
+
+//get most similar class from collection of classes.
+helper StandardClass::getMaximallySimilar(classCollection : Collection(StandardClass)) : StandardClass{
+	var similarityAdepts : Collection(StandardClass) := classCollection;
+	return similarityAdepts->any(maxSimilar | similarityAdepts-> 
+	    forAll(stdCls | self.getSimilarity(maxSimilar) >= self.getSimilarity(stdCls)));
+}
+
+helper StandardClass::getMaxSimilarity(classCollection : Collection(StandardClass)) : Integer{
+	var maxSimilarity : Integer := -1;
+	classCollection->forEach(cls){
+		var currentSimilarity : Integer := self.getSimilarity(cls);
+		if(currentSimilarity > maxSimilarity)then{
+			 maxSimilarity := currentSimilarity;
+		}endif;
+	};
+	return maxSimilarity;
+}
+
+helper StandardClass::getSimilarity(stdCls : StandardClass) : Integer{
+    //log("similarity:");
+    //self.properties->forEach(prop){
+    // 	log(prop.repr() + " " + stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)).repr());
+    //};
+    //log(self.properties->select(prop | stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)))->size().repr());    
+	return self.properties->select(prop | stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)))->size();
+}
+
+
+helper EmbeddedClass::getSimilarity(embeddedCls : EmbeddedClass): Integer{
+	return self.embeddedProperties->select(embProp | embeddedCls->embeddedProperties->
+	    exists(targetEmbProp | targetEmbProp.equals(embProp)))->size();
+}
+
+
+
+/**
+	Returns difference of both added and removed elements
+**/
+helper Structure :: countTotalDifference(targetStructure : Structure) : Integer{
+	return self.countDifference(targetStructure) + targetStructure.countDifference(self);
+}
+
+/**
+	Returns difference of missing elements, not added plus HALVED value of changed Properties 
+**/
+helper Structure::countDifference(in targetStructure : APP::Structure ): Integer{
+	var entities : OrderedSet(ModelEntity) := self.entities;
+	var difference : Integer := 0;
+	//log("COUNT_DIFF");
+	entities[StandardClass]->forEach(stdCls){
+		//log(stdCls.repr() + " contains " + targetStructure.containsStandardClass(stdCls.name).repr());
+		if(targetStructure.containsStandardClass(stdCls.name))then{
+			var targetStdCls : StandardClass := targetStructure.findStandardClass(stdCls.name);
+		    //stdCls exists in target model but has different attributes, TODO change diff value
+		    if(not targetStdCls.equals(stdCls))then{
+				difference := difference + 0;
+			}endif;
+		    stdCls.properties->forEach(prop | targetStdCls.properties->forAll(targetProp | not prop.equals(targetProp))){
+				if(not targetStdCls.containsProperty(prop.name))then{
+					difference := difference + getPropertyNameDiffVal() + getPropertyTypeDiffVal();			
+				}else{
+					difference := difference + (getPropertyTypeDiffVal()/2).floor();
+				}endif;
+			};
+		}else{
+		    difference := difference + getClassNameDiffVal() + (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) * stdCls.properties->size();
+		}endif;
+	};
+	entities[PrimitiveClass]->forEach(primitiveCls){
+		if(targetStructure.containsPrimitiveClass(primitiveCls.name))then{
+			var targetPrimitiveCls : PrimitiveClass := targetStructure.findPrimitiveClass(primitiveCls.name);
+			if(not primitiveCls.equals(targetPrimitiveCls))then{
+				difference := difference + getClassNameDiffVal();
+			}endif;
+		}else{
+			//there is no operation to change primitiveType of Primitive class, so missing or wrong type are equal differencies
+			difference := difference + getClassNameDiffVal();
+		}endif;
+	};
+	entities[EmbeddedClass]->forEach(embCls){
+		if(targetStructure.containsEmbeddedClass(embCls.name))then{
+			var targetEmbCls : EmbeddedClass := targetStructure.findEmbeddedClass(embCls.name);
+			if(not embCls.equals(targetEmbCls))then{
+				difference := difference + getClassNameDiffVal();
+			}endif;
+			embCls.embeddedProperties->forEach(embPr | targetEmbCls->embeddedProperties->exists(targetEmbPr | not embPr.equals(targetEmbPr))){
+				if(not targetEmbCls.containsProperty(embPr.name))then{
+					difference := difference + getPropertyNameDiffVal() + getPropertyTypeDiffVal();			
+				}else{
+					difference := difference + (getPropertyTypeDiffVal()/2).floor();
+				}endif;
+			};
+		}else{
+			difference := difference + getClassNameDiffVal() + (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) * embCls->embeddedProperties->size();
+		}endif;
+	};
+	return difference;
+}
+
+
+/**
+    CONSTANTS to change importance of attributes - ALL should be derived from the DiffConstUnit 
+**/
+
+/**
+	Diff const unit - basic difference of smallest elements - currently 2 because of the nature of getTotalDiff method
+**/
+helper getDiffConstUnit() : Integer{
+	return 2;
+}
+
+helper getPropertyTypeDiffVal () : Integer{
+	return getDiffConstUnit();
+} 
+
+helper getAssociationPropertyTypeDiffVal () : Integer{
+	return getDiffConstUnit();
+} 
+
+
+helper getPropertyNameDiffVal() : Integer{
+	return getDiffConstUnit();
+}
+
+helper getClassNameDiffVal() : Integer{
+	return getDiffConstUnit();
+}

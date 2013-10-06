@@ -43,6 +43,9 @@ rm $D_MIGDB_QVTO/tests/operations/app/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/operations/rdb/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/operations/rdb/$BUILDER_RDB_LINK
 
+rm $D_MIGDB_QVTO/tests/oracle_tests/$BUILDER_APP_LINK
+rm $D_MIGDB_QVTO/tests/oracle_tests/$QUERIES_APP_LINK
+
 rm $D_MIGDB_QVTO/tests/structures/app/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/structures/app/$QUERIES_APP_LINK
 
@@ -52,9 +55,9 @@ rm $D_MIGDB_QVTO/tests/structures/rdb/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/tests_app_queries/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/tests_app_queries/$QUERIES_APP_LINK
 
-rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_RDB_LINK
-rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$QUERIES_RDB_LINK
-rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_ERRORS_LINK
+##rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_RDB_LINK
+##rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$QUERIES_RDB_LINK
+##rm $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_ERRORS_LINK
 
 rm $D_MIGDB_QVTO/tests/validator_app/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/validator_app/$BUILDER_ERRORS_LINK
@@ -84,6 +87,9 @@ ln -s ../../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/operations/app/$QUERIES_APP
 ln -s ../../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/operations/rdb/$BUILDER_RDB_LINK
 ln -s ../../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/operations/rdb/$QUERIES_RDB_LINK
 
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/oracle_tests/$BUILDER_APP_LINK
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/oracle_tests/$QUERIES_APP_LINK
+
 ln -s ../../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/structures/app/$BUILDER_APP_LINK
 ln -s ../../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/structures/app/$QUERIES_APP_LINK
 
@@ -93,9 +99,9 @@ ln -s ../../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/structures/rdb/$QUERIES_RDB
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/tests_app_queries/$BUILDER_APP_LINK
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/tests_app_queries/$QUERIES_APP_LINK
 
-ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_RDB_LINK
-ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$QUERIES_RDB_LINK
-ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_ERRORS_LINK
+#ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_RDB_LINK
+#ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$QUERIES_RDB_LINK
+#ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/tests_rdb_atomic/$BUILDER_ERRORS_LINK
 
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/validator_app/$BUILDER_APP_LINK
 ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/validator_app/$BUILDER_ERRORS_LINK

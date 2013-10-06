@@ -1,0 +1,12 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation rename_entity_target_02(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var newClass : StandardClass := _class("NewClass", _idProperty("idThreeRoot", int), 
+		OrderedSet{_primitiveProperty("prop1", int), _primitiveProperty("prop2", int)});
+	_appStructure(OrderedSet{int, newClass});
+}

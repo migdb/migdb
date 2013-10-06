@@ -162,6 +162,16 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "setAbstract tab"
 	}
+/**/	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/10b_setAbstract2"
+		qvtInput = "${IN_STR}/structure_tab_primitive.qvto"
+		qvtInput = "${IN_OPS}/setAbstract1.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/setAbstract2_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "setAbstract tab primitive"
+	}
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"

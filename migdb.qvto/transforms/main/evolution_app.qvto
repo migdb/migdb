@@ -505,7 +505,7 @@ helper checkPrimitiveClassExists(primitiveClassName : String, structure : APP::S
 }
 
 helper checkStandardClassExists(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	var exist : Boolean := structure.containsGeneralClass(standardClassName);
+	var exist : Boolean := structure.containsStandardClass(standardClassName);
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains standardClass called " + standardClassName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -536,10 +536,10 @@ helper ModelEntity::checkIsRemoveable(structure : APP::Structure,
 
 helper EmbeddedClass::checkIsRemoveable(structure : APP::Structure, 
 		inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	var notExisPropertyOfType : Boolean :=  not self.owningModel->entities[APP::StandardClass]->
+	var notExistsPropertyOfType : Boolean :=  not self.owningModel->entities[APP::StandardClass]->
 			exists(cls | cls.containsPropertyOfType(self));
 	var isEmbeddedEmpty : Boolean := self.embeddedProperties->isEmpty();		
-	if(not notExisPropertyOfType)then{
+	if(not notExistsPropertyOfType)then{
 		var message : String := "Model contains entity containing property of property of type " + 
 			self.repr();
 		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
@@ -549,7 +549,7 @@ helper EmbeddedClass::checkIsRemoveable(structure : APP::Structure,
 		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
 	}endif;
 	
-	return notExisPropertyOfType and isEmbeddedEmpty;
+	return notExistsPropertyOfType and isEmbeddedEmpty;
 }
 
 helper StandardClass::checkIsRemoveable(structure : APP::Structure, 
