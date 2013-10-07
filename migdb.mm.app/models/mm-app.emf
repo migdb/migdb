@@ -96,42 +96,36 @@ package app {
       readonly derived ref Operations[1]#operations owningOperations;
     }
 
-    abstract class DecomposableOperation extends ModelOperation {
-    }
-
-    abstract class AtomicOperation extends ModelOperation {
-    }
-
-    class AddPrimitiveClass extends AtomicOperation {
+    class AddPrimitiveClass extends ModelOperation {
       attr String[1] name;
       attr PrimitiveType[1] primitiveType;
     }
 
-    class AddEmbeddedClass extends AtomicOperation {
+    class AddEmbeddedClass extends ModelOperation {
       attr String[1] name;
     }
 
-    class AddStandardClass extends AtomicOperation {
+    class AddStandardClass extends ModelOperation {
       attr String[1] name;
       attr boolean isAbstract;
       attr InheritanceType[1] inheritanceType;
     }
 
-    class RenameEntity extends AtomicOperation {
+    class RenameEntity extends ModelOperation {
       attr String[1] name;
       attr String[1] newName;
     }
 
-    class SetAbstract extends AtomicOperation {
+    class SetAbstract extends ModelOperation {
       attr String[1] name;
       attr boolean[1] isAbstract;
     }
 
-    class RemoveEntity extends AtomicOperation {
+    class RemoveEntity extends ModelOperation {
       attr String[1] name;
     }
 
-    class AddProperty extends AtomicOperation {
+    class AddProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr String[1] type;
@@ -142,24 +136,24 @@ package app {
       attr boolean isUnique;
     }
 
-    class RenameProperty extends AtomicOperation {
+    class RenameProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr String[1] newName;
     }
 
-    class RemoveProperty extends AtomicOperation {
+    class RemoveProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
     }
 
-    class SetType extends AtomicOperation {
+    class SetType extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr String[1] type;
     }
 
-    class SetOpposite extends AtomicOperation {
+    class SetOpposite extends ModelOperation {
       attr String[1] firstClassName;
       attr String[1] firstPropertyName;
       attr String[1] secondClassName;
@@ -167,49 +161,49 @@ package app {
       attr boolean[1] isOpposite;
     }
 
-    class SetBounds extends AtomicOperation {
+    class SetBounds extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr int[1] lowerBound;
       attr int[1] upperBound;
     }
 
-    class SetOrdered extends AtomicOperation {
+    class SetOrdered extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr boolean[1] isOrdered;
     }
 
-    class SetUnique extends AtomicOperation {
+    class SetUnique extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
       attr boolean[1] isUnique;
     }
 
-    class AddParent extends AtomicOperation {
+    class AddParent extends ModelOperation {
       attr String[1] className;
       attr String[1] parentClassName;
     }
 
-    class RemoveParent extends AtomicOperation {
+    class RemoveParent extends ModelOperation {
       attr String[1] className;
     }    
     
     // Create new class witch is connect by pointer from source class
-    class ExtractClass extends AtomicOperation{
+    class ExtractClass extends ModelOperation{
       attr String[1] sourceClassName;
       attr String[1] extractClassName;
       attr String[1] associationPropertyName;
     }    
 
 	// Create new parent to class
-    class ExtractSuperClass extends AtomicOperation {
+    class ExtractSuperClass extends ModelOperation {
       attr String[+] sourceClassesName;
       attr String[1] extractParentName;
     }
 
 	// Move of attribute between two strange classes
-    class MoveProperty extends AtomicOperation {
+    class MoveProperty extends ModelOperation {
       attr String[1] sourceClassName;
       attr String[1] name;
       attr String[1] targetClassName;
@@ -217,19 +211,19 @@ package app {
     }
     
     // Move of attribte from child to parent in hierarchy
-    class PullUp extends AtomicOperation {
+    class PullUp extends ModelOperation {
       attr String[1] childClassName;
       attr String[1] propertyName;
     }
 
 	// Move of attribte from parent to its childs in hierarchy
-    class PushDown extends AtomicOperation {
+    class PushDown extends ModelOperation {
       attr String[1] parentClassName;
       attr String[1] propertyName;
     }                  
     
     // Merge two classes to one
-    class MergeClasses extends DecomposableOperation {
+    class MergeClasses extends ModelOperation {
       attr String[1] class1;
       attr String[1] class2;
       attr String[1] mergedClassName;

@@ -54,9 +54,12 @@ query app::AssociationProperty::equals(_property : app::Property) : Boolean{
 		return false;
 	}endif;
 	var multipliableProperty : AssociationProperty := _property.oclAsType(AssociationProperty);
-	if(self.name <> multipliableProperty.name or self.upperBound <> multipliableProperty.upperBound or 
-	        self.lowerBound <> multipliableProperty.lowerBound or self.isOrdered <> multipliableProperty.isOrdered 
-	        or self.isUnique <> multipliableProperty.isUnique and self.type.equalsType(multipliableProperty.type))then{
+	if(self.name <> multipliableProperty.name or 
+			self.upperBound <> multipliableProperty.upperBound or 
+	        self.lowerBound <> multipliableProperty.lowerBound or 
+	        self.isOrdered <> multipliableProperty.isOrdered or 
+	        self.isUnique <> multipliableProperty.isUnique and 
+	        self.type.equalsType(multipliableProperty.type))then{
 		return false;
 	}endif;
 	return true;
@@ -69,8 +72,10 @@ query app::PrimitiveProperty::equals(_property : app::Property) : Boolean{
 	var primitiveProperty : PrimitiveProperty := _property.oclAsType(PrimitiveProperty);
 
 	if(self.name <> primitiveProperty.name or self.upperBound <> primitiveProperty.upperBound or 
-	        self.lowerBound <> primitiveProperty.lowerBound or self.isOrdered <> primitiveProperty.isOrdered 
-	        or self.isUnique <> primitiveProperty.isUnique or not self.type.equalsType(primitiveProperty.type))then{
+	        self.lowerBound <> primitiveProperty.lowerBound or 
+	        self.isOrdered <> primitiveProperty.isOrdered or 
+	        self.isUnique <> primitiveProperty.isUnique or 
+	        not self.type.equalsType(primitiveProperty.type))then{
 		return false;
 	}endif;
 	return true;
@@ -122,27 +127,31 @@ query StandardClass::equals(modelEntity : ModelEntity):Boolean{
 	var stdClass : StandardClass := modelEntity.oclAsType(StandardClass);
 	//attribute name equality is hidden in equalsType method called above
 	if(not self.parent.equalsType(stdClass.parent) or stdClass.isAbstract <> self.isAbstract or
-	     self.inheritanceType <> stdClass.inheritanceType or (not self.idProperty.equals(stdClass.idProperty)) and self.idProperty <> null 
-	     and stdClass.idProperty <> null)then{
+	     self.inheritanceType <> stdClass.inheritanceType or 
+	     (not self.idProperty.equals(stdClass.idProperty)) and self.idProperty <> null and 
+	     	stdClass.idProperty <> null)then{
 		return false;
 	}endif;
 	
-	return self.properties->exists( pr | modelEntity.oclAsType(StandardClass)->properties->exists(modEnPr | pr.equals(modEnPr)));
+	return self.properties->exists( pr | modelEntity.oclAsType(StandardClass)->properties->
+			exists(modEnPr | pr.equals(modEnPr)));
 }
 
 query PrimitiveClass::equals(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(PrimitiveClass) or self.name <> modelEntity.name)then{
+	if(modelEntity = null or not modelEntity.oclIsKindOf(PrimitiveClass) or 
+			self.name <> modelEntity.name)then{
 		return false;
 	}endif;
 	return self.primitiveType = modelEntity.oclAsType(PrimitiveClass).primitiveType;
 }
 
 query EmbeddedClass::equals(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or self.name <> modelEntity.name)then{
+	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or 
+	self.name <> modelEntity.name)then{
 		return false;
 	}endif;
-	return self.embeddedProperties->exists( pr | modelEntity.oclAsType(EmbeddedClass)->embeddedProperties->
-	  exists(modEnPr | pr.equals(modEnPr)));
+	return self.embeddedProperties->exists(pr | modelEntity.oclAsType(EmbeddedClass)->
+		embeddedProperties->exists(modEnPr | pr.equals(modEnPr)));
 }
 
 query ModelEntity::equalsType(modelEntity : ModelEntity) : Boolean{
@@ -156,14 +165,16 @@ query PrimitiveClass::equalsType(modelEntity : ModelEntity) : Boolean{
 }
 
 query StandardClass::equalsType(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(StandardClass) or self.name <> modelEntity.name)then{
+	if(modelEntity = null or not modelEntity.oclIsKindOf(StandardClass) or 
+			self.name <> modelEntity.name)then{
 		return false;
 	}endif;	
 	return true;
 }
 
 query EmbeddedClass::equalsType(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or self.name <> modelEntity.name)then{
+	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or 
+			self.name <> modelEntity.name)then{
 		return false;
 	}endif;	
 	return true;
@@ -237,7 +248,8 @@ query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):O
 
 /* Returns true if Property represents unidirectional 1:1 association */
 query app::MultipliableProperty::isOneToOneUnidirectional() : Boolean{
-	return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and self.oclAsType(AssociationProperty).oppositeProperty = null;
+	return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and 
+			self.oclAsType(AssociationProperty).oppositeProperty = null;
 }
 
 query app::MultipliableProperty::isPropertyTypeOf(typeClass : StandardClass) : Boolean{
@@ -253,8 +265,8 @@ query app::MultipliableProperty::isPropertyTypeOf(typeClass : StandardClass) : B
 **/
 query app::MultipliableProperty::isOneToOneBidirectional():Boolean{
 	return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and 
-	self.oclAsType(AssociationProperty).oppositeProperty.oppositeProperty = self and
-	self.oclAsType(AssociationProperty).oppositeProperty.upperBound = 1;
+		self.oclAsType(AssociationProperty).oppositeProperty.oppositeProperty = self and
+		self.oclAsType(AssociationProperty).oppositeProperty.upperBound = 1;
 }
 
 /**
@@ -267,8 +279,8 @@ query app::MultipliableProperty::isOneToManyUnidirectional():Boolean{
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 	
 	return associationProperty.upperBound = 1 and associationProperty.oppositeProperty = null and 
-	not associationProperty.owningGeneralClass.isNonleafTPCClass() and
-	not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+		not associationProperty.owningGeneralClass.isNonleafTPCClass() and
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -296,8 +308,8 @@ query app::MultipliableProperty::isManyToManyUnidirectional():Boolean{
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 
 	return associationProperty.upperBound = -1 and associationProperty.oppositeProperty = null and 
-	not associationProperty.owningGeneralClass.isNonleafTPCClass() and not 
-	associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+		not associationProperty.owningGeneralClass.isNonleafTPCClass() and 
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -474,7 +486,8 @@ query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
 query APP::Structure::areClassesRelativesByAssociation(className : String , secondClassName : String ) : Boolean{
 	var firstClass := self.findStandardClass(className);
 	var secondClass := self.findStandardClass(secondClassName);
-	return firstClass.properties->exists(prop | prop.isOneToOneUnidirectional() and prop.isPropertyTypeOf(secondClass));
+	return firstClass.properties->exists(prop | prop.isOneToOneUnidirectional() and 
+		prop.isPropertyTypeOf(secondClass));
 }
 
 //checks if self class is descendantOf class precedessorName
@@ -488,7 +501,8 @@ query APP::StandardClass::isDescendantOf(precedessorName : String): Boolean {
 }
 
 query APP::Structure::areClassesRelatives(className : String , secondClassName : String ) : Boolean{
-	return  self.isDescendantOf(className, secondClassName) or self.isDescendantOf(secondClassName, className);
+	return  self.isDescendantOf(className, secondClassName) or 
+		self.isDescendantOf(secondClassName, className);
 }
 
 /**
@@ -567,12 +581,12 @@ query StandardClass::hasId():Boolean{
 query app::Structure::containsNonleafTPCAssociation():Boolean{
 	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and 
 		prop.owningGeneralClass.isNonleafTPCClass() and 
-			(prop.isOneToOneUnidirectional() or 
+		(prop.isOneToOneUnidirectional() or 
 				prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
 				prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or 
 				prop.isManyToManyBidirectional()
-			)
-		);
+		)
+	);
 }
 
 query app::StandardClass::areIDTypesCorrectlySet() : Boolean{

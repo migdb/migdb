@@ -16,28 +16,9 @@ main() {
 	var processedStructure : APP::Structure := outStructure.rootObjects()![APP::Structure];
 	
 	inOperations.rootObjects()![Operations].operations->forEach(op){
-		//process AtomicOperation
-		if(op.oclIsKindOf(app::ops::AtomicOperation))then{
-			if(op.oclAsType(app::ops::AtomicOperation).isValid(processedStructure, errorLog, 
-					operationIndex))then{
-				op.oclAsType(app::ops::AtomicOperation).apply(processedStructure);
+			if(op.isValid(processedStructure, errorLog, operationIndex))then{
+				op.apply(processedStructure);
 			}endif;
-		//process DecompossableOperation	
-		}else{
-			var atomicOpsSet : OrderedSet(app::ops::AtomicOperation) := op.oclAsType(
-				app::ops::DecomposableOperation).decompose(processedStructure);
-			var isValid : Boolean := true;
-			//process decomposed operations	
-			atomicOpsSet->forEach(atomicOp | isValid){
-				//stop processing decomposedSet on invalidOperation
-				if(atomicOp.isValid(processedStructure, errorLog, operationIndex))then{
-					atomicOp.apply(processedStructure);
-				}else{
-					isValid := false;
-				}endif;
-			}
-		}endif;
-		operationIndex:= operationIndex + 1;
 	}
 	 
 }

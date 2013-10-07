@@ -212,12 +212,17 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table,
 	log("To collection " + self.repr());
 	var collectionPropertyColumn : rdb::Column := _column(self.name.translate() , 
 		toRdbType(self.getPrimitiveType()));
-	var idColumn := _column(self.owningGeneralClass.translateIdName(), toRdbType(
-		self.owningGeneralClass.getId().getPrimitiveType()));
-	var fkOwningTableProjection : rdb::ForeignKey := _foreignKey(self.getFKCollectionName(), 
-		referencedTable, idColumn);
-	var collectionTable : rdb::Table := _table(self.getCollectionTableName(), 
-		OrderedSet{collectionPropertyColumn, idColumn}, OrderedSet{fkOwningTableProjection});
+	var idColumn := _column(
+						self.owningGeneralClass.translateIdName(), 
+						toRdbType(self.owningGeneralClass.getId().getPrimitiveType()));
+	var fkOwningTableProjection : rdb::ForeignKey := _foreignKey(
+														self.getFKCollectionName(), 
+														referencedTable, 
+														idColumn);
+	var collectionTable : rdb::Table := _table(
+											self.getCollectionTableName(), 
+											OrderedSet{collectionPropertyColumn, idColumn}, 
+											OrderedSet{fkOwningTableProjection});
 	log("Before:" + (referencedTable.owningSchema.tables->size()).toString());
 	var schema : Schema := referencedTable.owningSchema;
 	schema.tables+= collectionTable;
@@ -225,13 +230,15 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table,
 	if(self.isOrdered)then{
 		var orderingColumn : Column :=_column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
 		collectionTable.columns += orderingColumn;
-		collectionTable.constraints+= _unique(getDbOrderingConstraintName(collectionTable.name), 
-			OrderedSet{orderingColumn, idColumn});
+		collectionTable.constraints+= _unique(
+											getDbOrderingConstraintName(collectionTable.name), 
+											OrderedSet{orderingColumn, idColumn});
 	}endif;
 	//adding unique constraint
 	if(self.isUnique)then{
-		collectionTable.constraints+= _unique(self.getUniqueConstraintName(), 
-			OrderedSet{collectionPropertyColumn, idColumn});
+		collectionTable.constraints+= _unique(
+											self.getUniqueConstraintName(), 
+											OrderedSet{collectionPropertyColumn, idColumn});
 	}endif;
 	log("After:" + referencedTable.owningSchema.tables->size().toString());	
 	return;
@@ -253,50 +260,63 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema,
 	var mappedClassSet : OrderedSet(StandardClass) := self.owningGeneralClass.getMappedClassSet();
 	mappedClassSet->forEach(associationOwningClass){
 		//projection table of owningClass 
-		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.
-			translate());
+		var owningClassProjection : rdb::Table := schema.findTable(
+													associationOwningClass.name.translate());
 		var oppositeClassSet : OrderedSet(StandardClass) := self.type.getMappedClassSet();
 		var ownerIdProjection : Column := owningClassProjection.getPKColumn();
 		oppositeClassSet->forEach(oppositeClass){
-			var oppositeClassProjection:rdb::Table := schema.findTable(oppositeClass.name.
-				translate());
+			var oppositeClassProjection:rdb::Table := schema.findTable(
+														oppositeClass.name.translate());
 			var oppositeIdProjection : Column := oppositeClassProjection.getPKColumn();
 			//create association table
-			var associationTable : Table := _table(getAssociationTableName(self, 
-				associationOwningClass));
+			var associationTable : Table := _table(
+												getAssociationTableName(self, 
+												associationOwningClass));
 			//reference to owningClassProjection
-			var owningAssociationColumn : Column := _column(ownerIdProjection.name, 
-				ownerIdProjection.type);		
+			var owningAssociationColumn : Column := _column(
+														ownerIdProjection.name, 
+														ownerIdProjection.type);		
 			associationTable.columns += owningAssociationColumn;				
 			var fkReferencingOwnerName : String := getFKAssociationTableRefOriginName(
-				associationTable.name, associationOwningClass);
-			var fkReferencingOwner : rdb::ForeignKey := _foreignKey(fkReferencingOwnerName,
-				owningClassProjection, owningAssociationColumn);
+														associationTable.name, 
+														associationOwningClass);
+			var fkReferencingOwner : rdb::ForeignKey := _foreignKey(
+															fkReferencingOwnerName,
+															owningClassProjection, 
+															owningAssociationColumn);
 			associationTable.constraints += fkReferencingOwner;
 			//reference to oppositteClassProjection
-			var oppositeAssociationColumn : Column := _column(oppositeIdProjection.name,
-				oppositeIdProjection.type);
+			var oppositeAssociationColumn : Column := _column(
+															oppositeIdProjection.name,
+															oppositeIdProjection.type);
 			associationTable.columns += oppositeAssociationColumn;
 			var fkReferencingOppositeName : String := getFKAssociationTableRefOriginName(
-				associationTable.name, oppositeClass);
-			var fkReferencingOpposite : rdb::ForeignKey := _foreignKey(fkReferencingOppositeName, 
-				owningClassProjection, oppositeAssociationColumn);
+															associationTable.name, 
+															oppositeClass);
+			var fkReferencingOpposite : rdb::ForeignKey := _foreignKey(
+															fkReferencingOppositeName, 
+															owningClassProjection, 
+															oppositeAssociationColumn);
 			associationTable.constraints+= fkReferencingOpposite;
 			// adding ordering column
 			if(self.isOrdered or (self.oppositeProperty != null and self.
 					oppositeProperty.isOrdered)) then{
-				var orderingColumn : rdb::Column := _column(getDbOrderingColumnName(), 
-					RDB::PrimitiveType::int);
+				var orderingColumn : rdb::Column := _column(
+														getDbOrderingColumnName(), 
+														RDB::PrimitiveType::int);
 				associationTable.columns += orderingColumn;
-				var uniqueOrder : rdb::Unique := _unique(getDbOrderingConstraintName(
-					associationTable.name), OrderedSet{owningAssociationColumn, orderingColumn});
+				var uniqueOrder : rdb::Unique := _unique(
+											getDbOrderingConstraintName(associationTable.name), 
+											OrderedSet{owningAssociationColumn, orderingColumn});
 			}endif;
 			// adding uniqueness to collection		
 			if(self.isUnique or (self.oppositeProperty != null and 
 					self.oppositeProperty.isUnique))then{
 				var uniqueConstraintName : String := self.getUniqueConstraintName();
-				var uniqueConstraint :rdb::Unique := _unique(uniqueConstraintName, 
-					OrderedSet{owningAssociationColumn, oppositeAssociationColumn});
+				var uniqueConstraint :rdb::Unique := _unique(
+														uniqueConstraintName, 
+														OrderedSet{owningAssociationColumn, 
+														oppositeAssociationColumn});
 				associationTable.constraints += uniqueConstraint;
 			}endif;
 			schema.tables+=associationTable;		
@@ -321,17 +341,23 @@ helper app::AssociationProperty::toAssociationColumn(inout schema : RDB::Schema,
 	var mappedClassSet : OrderedSet(StandardClass) := self.owningGeneralClass.getMappedClassSet();
 	mappedClassSet->forEach(associationOwningClass){
 		//projection table of owningClass 
-		var owningClassProjection : rdb::Table := schema.findTable(associationOwningClass.name.
-			translate());
+		var owningClassProjection : rdb::Table := schema.findTable(
+														associationOwningClass.name.translate());
 		var oppositeClassSet : OrderedSet(StandardClass) := self.type.getMappedClassSet();
 		oppositeClassSet->forEach(oppositeClass){
 			var oppositeProjection : Table := schema.findTable(oppositeClass.name.translate()); 
 			var oppositeIdColumn : Column := oppositeProjection.getPKColumn();
-			var oppositeReferencingColumn : Column := _column(oppositeIdColumn.name, 
-				oppositeIdColumn.type);
+			var oppositeReferencingColumn : Column := _column(
+														oppositeIdColumn.name, 
+														oppositeIdColumn.type);
 			owningClassProjection.columns += oppositeReferencingColumn;
-			var fkReferencingOpposite : ForeignKey := _foreignKey(self.getFkRefencingOppositeName(
-				associationOwningClass, oppositeClass), oppositeProjection, oppositeIdColumn);
+			var fkReferencingOppositeName: String := self.getFkRefencingOppositeName(
+													associationOwningClass, 
+													oppositeClass);
+			var fkReferencingOpposite : ForeignKey := _foreignKey(
+														fkReferencingOppositeName, 
+														oppositeProjection, 
+														oppositeIdColumn);
 			owningClassProjection.constraints += fkReferencingOpposite;
 		};
 	};	

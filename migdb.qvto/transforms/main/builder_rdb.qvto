@@ -24,8 +24,7 @@ helper _addTable(_owningSchemaName : String, _name : String) : RDB::ops::AddTabl
 	};
 }
 
-helper _addIndex(_owningSchemaName : String, _owningTableName : String, _name : String, 
-		_columnsNames : Set(String)) : RDB::ops::AddIndex{
+helper _addIndex(_owningSchemaName : String, _owningTableName : String, _name : String, _columnsNames : Set(String)) : RDB::ops::AddIndex{
 	return object RDB::ops::AddIndex {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -43,8 +42,7 @@ helper _addColumn(_owningSchemaName : String, _owningTableName : String, _name :
 	};
 }
 
-helper _addUnique(_owningSchemaName : String, _owningTableName : String, 
-		_constrainedColumnNames : OrderedSet(String), _name : String) : RDB::ops::AddUnique{
+helper _addUnique(_owningSchemaName : String, _owningTableName : String, _constrainedColumnNames : OrderedSet(String), _name : String) : RDB::ops::AddUnique{
 	return object RDB::ops::AddUnique {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -73,8 +71,7 @@ helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, _co
 	};
 }
 
-helper _addNotNull(_owningSchemaName : String, _owningTableName : String, 
-		_constraineColumnName : String, _name : String) : RDB::ops::AddNotNull{
+helper _addNotNull(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String) : RDB::ops::AddNotNull{
 	return object RDB::ops::AddNotNull {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -134,8 +131,7 @@ helper _removeColumn(_owningSchemaName : String, _owningTableName : String, _nam
 	};
 }
 
-helper _removeConstraint(_owningSchemaName : String, _owningTableName : String, _name : String
-		) : RDB::ops::RemoveConstraint{
+helper _removeConstraint(_owningSchemaName : String, _owningTableName : String, _name : String) : RDB::ops::RemoveConstraint{
 	return object RDB::ops::RemoveConstraint {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -150,8 +146,7 @@ helper _removeIndex(_owningSchemaName : String, _name : String) : RDB::ops::Remo
 	};
 }
 
-helper _removeDefaultValue(_owningSchemaName : String, _owningTableName : String, 
-		_owningColumnName : String) : RDB::ops::RemoveDefaultValue{
+helper _removeDefaultValue(_owningSchemaName : String, _owningTableName : String, _owningColumnName : String) : RDB::ops::RemoveDefaultValue{
 	return object RDB::ops::RemoveDefaultValue {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
@@ -278,15 +273,13 @@ helper _schema(_name : String, _tables : OrderedSet(RDB::Table)) : RDB::Schema{
 	return schema;
 }
 
-helper _schema(_name : String, _tables : OrderedSet(RDB::Table), 
-		_sequence : RDB::Sequence) : RDB::Schema{
+helper _schema(_name : String, _tables : OrderedSet(RDB::Table), _sequence : RDB::Sequence) : RDB::Schema{
 	var schema : RDB::Schema := _schema(_name, _tables);
 	schema.sequence := _sequence;
 	return schema;
 }
 
-helper _schema(_name : String, _tables : OrderedSet(RDB::Table), _sequence : RDB::Sequence, 
-		_indexes : OrderedSet(RDB::Index)) : RDB::Schema{
+helper _schema(_name : String, _tables : OrderedSet(RDB::Table), _sequence : RDB::Sequence, _indexes : OrderedSet(RDB::Index)) : RDB::Schema{
 	var schema := _schema(_name, _tables, _sequence);
 	schema.indexes := _indexes;
 	return schema;
@@ -305,8 +298,7 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  }
  
  
- helper _table(_name : String, _columns : OrderedSet(Column), 
- 		_constraints : OrderedSet(Constraint) ) : Table {	
+ helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(Constraint) ) : Table {	
  	var table : Table := _table(_name, _columns);
  	table.constraints := _constraints;
  	return table;

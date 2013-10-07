@@ -27,7 +27,7 @@ main(){
 	appStr.print();
 	
 	if(canProcessTest(appStr, appOps, errorLog))then{
-		appOps.operations[APP::ops::AtomicOperation]->forOne(op){
+		appOps.operations->forEach(op){
 			log("mapping op \n" + op.repr() + " \nresults:");
 				op.toRdb(appStr)->forEach(rdbOp){
 				log(rdbOp.repr());
@@ -42,12 +42,10 @@ main(){
 }
 
 query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout errorLog : ErrorLog) : Boolean{
-	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
-		log("Unsupported input mapping count:" + inOps.rootObjects()![APP::Operations].operations->size().repr());
-		return false;
-	}endif;
-	if(not inOps.rootObjects()![APP::Operations].operations->first().oclIsKindOf(APP::ops::AtomicOperation))then{
-		log("orm_run.qvto cannot be executed for nonatomic operations");
+	if(inOps.rootObjects()![APP::Operations].operations->size() > 1 or 
+			inOps.rootObjects()![APP::Operations].operations->isEmpty())then{
+		log("Unsupported input parameters count:" + 
+			inOps.rootObjects()![APP::Operations].operations->size().repr());
 		return false;
 	}endif;
 

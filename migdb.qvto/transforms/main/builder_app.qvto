@@ -203,7 +203,8 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : Pri
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
-	assert(_primitiveType <> null and _name <> "" and _name <> null and (_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
+	assert(_primitiveType <> null and _name <> "" and _name <> null and 
+			(_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
 	return object PrimitiveProperty{
 		name := _name;
 		type := _primitiveType;
@@ -213,16 +214,22 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
-	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, _upperBound);
+	var prop : PrimitiveProperty := _primitiveProperty(
+											_name, 
+											_primitiveType, 
+											_lowerBound, 
+											_upperBound);
 	prop.defaultValue := _defaultValue;
 	return prop;
 }
 
-helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, 
-		_upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean
-		) : PrimitiveProperty{
-	var prop : PrimitiveProperty := _primitiveProperty(_name, _primitiveType, _lowerBound, 
-		_upperBound, _defaultValue);
+helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean) : PrimitiveProperty{
+	var prop : PrimitiveProperty := _primitiveProperty(
+											_name, 
+											_primitiveType, 
+											_lowerBound, 
+											_upperBound, 
+											_defaultValue);
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
 	return prop;
@@ -318,17 +325,32 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
-	var cls : StandardClass := _class(_name, _idProperty, _properties, false, InheritanceType::joined);
+	var cls : StandardClass := _class(
+									_name, 
+									_idProperty, 
+									_properties, 
+									false, 
+									InheritanceType::joined);
 	return cls;
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty ) : StandardClass {
-	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{}, false, InheritanceType::joined);
+	var cls : StandardClass := _class(
+									_name, 
+									_idProperty, 
+									OrderedSet{}, 
+									false, 
+									InheritanceType::joined);
 	return cls;
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass {
-	var cls : StandardClass := _class(_name, _idProperty, OrderedSet{}, _isAbstract, _inheritanceType);
+	var cls : StandardClass := _class(
+									_name, 
+									_idProperty, 
+									OrderedSet{}, 
+									_isAbstract, 
+									_inheritanceType);
 	return cls;	
 }
 

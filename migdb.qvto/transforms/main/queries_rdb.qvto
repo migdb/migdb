@@ -203,11 +203,11 @@ query containsAllowedChars(identifier : String):Boolean{
 
 query isLatinCharacter(char : String):Boolean{
 	if(char = "a" or char = "b" or char = "c" or char = "d" or char = "e" or 
-		char = "f" or char = "g" or char = "h" or char = "i" or char = "j" or
-		 char = "k" or char = "l" or char = "m" or char = "n" or char = "o" or
-		 char = "p" or char = "q" or char = "r" or char = "s" or char = "t" or
-		  char = "u" or char = "v" or char = "w" or char = "x" or char = "y" or
-		   char = "z")then{
+			char = "f" or char = "g" or char = "h" or char = "i" or char = "j" or
+			char = "k" or char = "l" or char = "m" or char = "n" or char = "o" or
+			char = "p" or char = "q" or char = "r" or char = "s" or char = "t" or
+			char = "u" or char = "v" or char = "w" or char = "x" or char = "y" or
+			char = "z")then{
 		return true;
 	}endif;
 	return false;
@@ -215,7 +215,7 @@ query isLatinCharacter(char : String):Boolean{
 
 query isDigit(char : String) : Boolean{
 	if(char = "0" or char = "1" or char = "2" or char = "3" or char = "4" or 
-		char = "5" or char = "6" or char = "7" or char = "8" or char = "9")then{
+			char = "5" or char = "6" or char = "7" or char = "8" or char = "9")then{
 		return true;
 	}endif;
 	return false;

@@ -44,7 +44,8 @@ main() {
 	    
 		//ADD_PRIMITIVE_CLASS
 		if(inStructure.isAddPrimitiveClassOperationNoticed(targetStructure))then{	
-			var currentStep : Integer := inStructure.getAddPrimitiveClassOperationStep(targetStructure);
+			var currentStep : Integer := inStructure.
+											getAddPrimitiveClassOperationStep(targetStructure);
 			if(bestStep < currentStep )then{
 		      bestStep := currentStep;
 		      bestOperationIndex := ADD_PRIMITIVE_CLASS_INDEX;
@@ -53,7 +54,8 @@ main() {
 		
 		//ADD_STANDARD_CLASS
 		if(inStructure.isAddStandardClassOperationNoticed(targetStructure))then{	
-			var currentStep : Integer := inStructure.getAddStandardClassOperationStep(targetStructure);
+			var currentStep : Integer := inStructure.
+											getAddStandardClassOperationStep(targetStructure);
 			if(bestStep < currentStep )then{
 		      //log("std step " + currentStep.repr());
 		      bestStep := currentStep;
@@ -78,7 +80,8 @@ main() {
 			break;
 		}endif;
 		
-		var recognisedOperation : app::ops::AtomicOperation := inStructure.assertTargets(bestOperationIndex, targetStructure).oclAsType(app::ops::AtomicOperation);
+		var recognisedOperation : app::ops::ModelOperation := inStructure.
+												assertTargets(bestOperationIndex, targetStructure);
 		operations.operations+= recognisedOperation;
 		log("recognised operation " + recognisedOperation.repr());
 		diff := diff - bestStep;
@@ -116,7 +119,8 @@ helper Structure::assertTargets(operationIndex : Integer, targetStructure : Stru
 }
 
 helper Structure::isAddPrimitiveClassOperationNoticed(targetStructure : Structure) : Boolean{
-	return self.entities[PrimitiveClass]->exists(entity | targetStructure.entities->forAll(targetEntity | not entity.equals(targetEntity)));
+	return self.entities[PrimitiveClass]->exists(entity | targetStructure.entities->
+			forAll(targetEntity | not entity.equals(targetEntity)));
 }
 
 helper Structure :: getAddPrimitiveClassOperationStep(targetStructure : Structure) : Integer{
@@ -125,18 +129,21 @@ helper Structure :: getAddPrimitiveClassOperationStep(targetStructure : Structur
 
 helper Structure::assertTargetsAddPrimitiveClass(targetStructure : Structure) : APP::ops::ModelOperation{
 	var newPrimClass : PrimitiveClass := targetStructure.entities[PrimitiveClass]->
-	     any(targetEntity | self.entities[PrimitiveClass]->forAll(entity | not entity.equalsType(targetEntity))); 
+	     any(targetEntity | self.entities[PrimitiveClass]->
+	     		forAll(entity | not entity.equalsType(targetEntity))); 
 	return  _addPrimitiveClass(newPrimClass.name, newPrimClass.primitiveType);
 }
 
 helper Structure::isAddStandardClassOperationNoticed(targetStructure : Structure) : Boolean{
-	return targetStructure.entities[StandardClass]->exists(targetEntity | self.entities[StandardClass]->
-	   forAll(entity | not entity.equalsType(targetEntity)));
+	return targetStructure.entities[StandardClass]->
+		exists(targetEntity | self.entities[StandardClass]->
+	   			forAll(entity | not entity.equalsType(targetEntity)));
 }
 
 helper Structure::getAddStandardClassOperationStep(targetStructure : Structure) : Integer{
     // 1 for class + 2 for ID 
-	var step : Integer := getClassNameDiffVal() + getPropertyNameDiffVal() + getPropertyTypeDiffVal();
+	var step : Integer := getClassNameDiffVal() + getPropertyNameDiffVal() + 
+							getPropertyTypeDiffVal();
 	//DONT care about different ID name
 	//if()then{
 	//	
@@ -146,15 +153,21 @@ helper Structure::getAddStandardClassOperationStep(targetStructure : Structure) 
 
 helper Structure::assertTargetsAddStandardClass(targetStructure : Structure) : APP::ops::ModelOperation{
 	var  className : String := targetStructure.entities[StandardClass]->
-	     any(targetEntity | self.entities->forAll(entity | not entity.equalsType(targetEntity))).name;
+	     	any(targetEntity | self.entities->
+	     		forAll(entity | not entity.equalsType(targetEntity))).name;
 	return _addStandardClass(className, false, InheritanceType::joined);
 }
 
 helper Structure::isAddPropertyClassOperationNoticed(targetStructure : Structure) : Boolean{
-	var addToStdCls : Boolean := targetStructure.entities[StandardClass]->properties->exists(prop | self.containsStandardClass(prop.owningGeneralClass.name)
-	  and not self.findStandardClass(prop.owningGeneralClass.name).containsProperty(prop.name) and self.containsEntity(prop.getType().name));
-	var addToEmbeddedCls : Boolean := targetStructure.entities[EmbeddedClass]->embeddedProperties->exists(embeddedProp | 
-	  self.containsEmbeddedClass(embeddedProp.name) and not self.findEmbeddedClass(embeddedProp.owningEmbeddedClass.name).containsProperty(embeddedProp.name) 
+	var addToStdCls : Boolean := targetStructure.entities[StandardClass]->
+			properties->exists(prop | self.containsStandardClass(prop.owningGeneralClass.name) and 
+			not self.findStandardClass(prop.owningGeneralClass.name).containsProperty(prop.name) and 
+			self.containsEntity(prop.getType().name));
+	var addToEmbeddedCls : Boolean := targetStructure.entities[EmbeddedClass]->
+			embeddedProperties->exists(embeddedProp | 
+					self.containsEmbeddedClass(embeddedProp.name) and 
+					not self.findEmbeddedClass(embeddedProp.owningEmbeddedClass.name).
+						containsProperty(embeddedProp.name) 
 	  and self.containsEntity(embeddedProp.getType().name));
 	  return addToStdCls or addToEmbeddedCls;
 }
@@ -172,7 +185,8 @@ helper Structure::isRenameEntityOperationNoticed(targetStructure : Structure) : 
 	//};
 		
 	return self.entities[StandardClass]->exists(entity | 
-		entity.getMaxSimilarity(targetStructure.entities[StandardClass]->select(ent | ent.name <> entity.name)) > 0);
+		entity.getMaxSimilarity(targetStructure.entities[StandardClass]->select(
+														ent | ent.name <> entity.name)) > 0);
 }
 
 helper Structure::getRenameEntityOperationStep(targetStructure : Structure) : Integer{
@@ -180,13 +194,15 @@ helper Structure::getRenameEntityOperationStep(targetStructure : Structure) : In
 	var targetStdClasses : OrderedSet(StandardClass) := targetStructure.entities[StandardClass];
 	var maxSimilarity : Integer := -1;
 	sourceStdClasses->forEach(cls){
-		var actualSimilarity : Integer := cls.getMaxSimilarity(targetStdClasses->select(targetCls | cls.name <> targetCls));
+		var actualSimilarity : Integer := cls.getMaxSimilarity(targetStdClasses->
+														select(targetCls | cls.name <> targetCls));
 		if(actualSimilarity > maxSimilarity)then{
 			maxSimilarity := actualSimilarity;
 		}endif;
 	};
 	//log("RENAME CLS - maxSimilarity " + maxSimilarity.repr());
-	return 2 * (maxSimilarity * (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) + getClassNameDiffVal());
+	return 2 * (maxSimilarity * (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) + 
+															getClassNameDiffVal());
 }
 
 helper Structure::assertTargetsRenameEntity(targetStructure : Structure) : APP::ops::ModelOperation{
@@ -196,7 +212,8 @@ helper Structure::assertTargetsRenameEntity(targetStructure : Structure) : APP::
 	var sourceClass : StandardClass := null;
 	var mostSimilar : StandardClass := null;
 	sourceStdClasses->forEach(cls){
-		var similarityAdepts : OrderedSet(StandardClass) := targetStdClasses->select(targetCls | cls.name <> targetCls.name);	
+		var similarityAdepts : OrderedSet(StandardClass) := targetStdClasses->
+													select(targetCls | cls.name <> targetCls.name);	
 		var actualSimilarity : Integer := cls.getMaxSimilarity(similarityAdepts);
 		if(actualSimilarity > maxSimilarity)then{
 			maxSimilarity := actualSimilarity;
@@ -231,7 +248,8 @@ helper StandardClass::getSimilarity(stdCls : StandardClass) : Integer{
     // 	log(prop.repr() + " " + stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)).repr());
     //};
     //log(self.properties->select(prop | stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)))->size().repr());    
-	return self.properties->select(prop | stdCls->properties->exists(stdClsProp | stdClsProp.equals(prop)))->size();
+	return self.properties->select(prop | stdCls->properties->
+										exists(stdClsProp | stdClsProp.equals(prop)))->size();
 }
 
 
@@ -264,7 +282,8 @@ helper Structure::countDifference(in targetStructure : APP::Structure ): Integer
 		    if(not targetStdCls.equals(stdCls))then{
 				difference := difference + 0;
 			}endif;
-		    stdCls.properties->forEach(prop | targetStdCls.properties->forAll(targetProp | not prop.equals(targetProp))){
+		    stdCls.properties->forEach(prop | targetStdCls.properties->forAll(targetProp | 
+		    													not prop.equals(targetProp))){
 				if(not targetStdCls.containsProperty(prop.name))then{
 					difference := difference + getPropertyNameDiffVal() + getPropertyTypeDiffVal();			
 				}else{
@@ -277,12 +296,14 @@ helper Structure::countDifference(in targetStructure : APP::Structure ): Integer
 	};
 	entities[PrimitiveClass]->forEach(primitiveCls){
 		if(targetStructure.containsPrimitiveClass(primitiveCls.name))then{
-			var targetPrimitiveCls : PrimitiveClass := targetStructure.findPrimitiveClass(primitiveCls.name);
+			var targetPrimitiveCls : PrimitiveClass := targetStructure.findPrimitiveClass(
+																			primitiveCls.name);
 			if(not primitiveCls.equals(targetPrimitiveCls))then{
 				difference := difference + getClassNameDiffVal();
 			}endif;
 		}else{
-			//there is no operation to change primitiveType of Primitive class, so missing or wrong type are equal differencies
+			//there is no operation to change primitiveType of Primitive class, so missing or
+			// wrong type are equal differencies
 			difference := difference + getClassNameDiffVal();
 		}endif;
 	};
@@ -292,7 +313,8 @@ helper Structure::countDifference(in targetStructure : APP::Structure ): Integer
 			if(not embCls.equals(targetEmbCls))then{
 				difference := difference + getClassNameDiffVal();
 			}endif;
-			embCls.embeddedProperties->forEach(embPr | targetEmbCls->embeddedProperties->exists(targetEmbPr | not embPr.equals(targetEmbPr))){
+			embCls.embeddedProperties->forEach(embPr | targetEmbCls->embeddedProperties->
+											exists(targetEmbPr | not embPr.equals(targetEmbPr))){
 				if(not targetEmbCls.containsProperty(embPr.name))then{
 					difference := difference + getPropertyNameDiffVal() + getPropertyTypeDiffVal();			
 				}else{
@@ -300,7 +322,9 @@ helper Structure::countDifference(in targetStructure : APP::Structure ): Integer
 				}endif;
 			};
 		}else{
-			difference := difference + getClassNameDiffVal() + (getPropertyTypeDiffVal() + getPropertyNameDiffVal()) * embCls->embeddedProperties->size();
+			difference := difference + getClassNameDiffVal() + 
+							(getPropertyTypeDiffVal() + 
+							getPropertyNameDiffVal()) * embCls->embeddedProperties->size();
 		}endif;
 	};
 	return difference;
@@ -312,7 +336,8 @@ helper Structure::countDifference(in targetStructure : APP::Structure ): Integer
 **/
 
 /**
-	Diff const unit - basic difference of smallest elements - currently 2 because of the nature of getTotalDiff method
+	Diff const unit - basic difference of smallest elements - currently 2 because of the nature 
+	of getTotalDiff method
 **/
 helper getDiffConstUnit() : Integer{
 	return 2;

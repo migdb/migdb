@@ -10,7 +10,8 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 */
 /** Maps **/
 query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
-	return associationOwningClass.getDbRepresentative().name.translate() + "_" + associationProperty.name.translate();	
+	return associationOwningClass.getDbRepresentative().name.translate() + "_" + 
+					associationProperty.name.translate();	
 }
 
 query getFKAssociationTableRefOriginName(associationTableName : String, originClass : StandardClass) : String {
@@ -18,7 +19,8 @@ query getFKAssociationTableRefOriginName(associationTableName : String, originCl
 }
 
 query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
-	return getDbFkPrefix() + sourceClass.name.translate() + "_" + self.name.translate() + "_" + targetClass.name.translate();
+	return getDbFkPrefix() + sourceClass.name.translate() + "_" + self.name.translate() + 
+						"_" + targetClass.name.translate();
 }
 
 query EmbeddedClass::getIdName() : String{
@@ -53,15 +55,18 @@ query StandardClass::getAttribute() : String{
 }
 
 query MultipliableProperty::getUniqueConstraintName() : String{
-	return getDbUniquePrefix() + self.owningGeneralClass.name.translate() + "_" + self.name.translate();
+	return getDbUniquePrefix() + self.owningGeneralClass.name.translate() + "_" + 
+				self.name.translate();
 }
 
 query PrimitiveProperty::getFKCollectionName():String{
-	return getDbFkPrefix() + getDbCollectionPrefix() + self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
+	return getDbFkPrefix() + getDbCollectionPrefix() + 
+		self.owningGeneralClass.getDbRepresentative().name.translate() + "_"+ self.name.translate();
 }
 
 query PrimitiveProperty::getCollectionTableName():String{
-	return getDbCollectionPrefix() + self.name.translate() + "_" + self.owningGeneralClass.getDbRepresentative().name.translate();
+	return getDbCollectionPrefix() + self.name.translate() + "_" + 
+			self.owningGeneralClass.getDbRepresentative().name.translate();
 }
 
 /** BOOLEAN QUERIES **/
