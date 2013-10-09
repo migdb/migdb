@@ -35,21 +35,18 @@ modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
 library MIGDB_ORM;
 
 // a mapping of a given operation
-abstract helper APP::ops::ModelOperation::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation);
+abstract helper APP::ops::ModelOperation::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation);
 
 	
 /* ++++++++++ OPERATIONS ++++++++++++++++++++ */
 
 // this operation is not mapped to RDB
-helper APP::ops::AddPrimitiveClass::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation) {
+helper APP::ops::AddPrimitiveClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	return OrderedSet{};	
 }
 
 // this operation is not mapped to RDB
-helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation) {
+helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
 	return OrderedSet{};
 }
 
@@ -489,7 +486,7 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure
  * Move property work between two class whose are connected by unidirectional 
  * association with cardinality 1:1 from source class to target class
  */
-helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
+helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
 	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
 	var targetClass : StandardClass := appStructure.findStandardClass(self.targetClassName);
@@ -497,22 +494,22 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 	var targetClassName : String =  self.targetClassName.translate();
 	var idTargetClassName : String =  targetClass.translateIdName();
 	// type of property
-	var movedProperty : Property := appStructure.findProperty(self.sourceClassName, self.name);
-	var movedPropertyName : String := self.name.translate();
-	var type : RDB::PrimitiveType := movedProperty.getDbTypeOfProperty(appStructure);
-	// Property which connect source and target table
-	var asocProperty : MultipliableProperty := sourceClass.properties->
+	self.propertiesNames->forEach(propertyName){
+		var movedProperty : Property := appStructure.findProperty(self.sourceClassName, propertyName);
+		var movedPropertyName : String := propertyName.translate();
+		var type : RDB::PrimitiveType := movedProperty.getDbTypeOfProperty(appStructure);
+		// Property which connect source and target table
+		var asocProperty : MultipliableProperty := sourceClass.properties->
 					selectOne(prop | prop.isOneToOneUnidirectional() and 
 					prop.isPropertyTypeOf(targetClass));
-	
-	// Define WHERE CONDITION for Update operation (sourceTable.)
-	var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + 
+		// Define WHERE CONDITION for Update operation (sourceTable.)
+		var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + 
 						" = " + targetClassName + "." + idTargetClassName;
 	
-	// add new column to target class
-	operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
-	// update instances in the new column
-	operations += _updateRow(
+		// add new column to target class
+		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
+		// update instances in the new column
+		operations += _updateRow(
 						getDefaultSchemaName(), 
 						sourceClassName, 
 						movedPropertyName, 
@@ -520,8 +517,9 @@ helper APP::ops::MoveProperty::toRdb(appStructure : APP::Structure) : OrderedSet
 						movedPropertyName, 
 						mergeTypeFromAppToRdb(self.tolerance), 
 						WHERE_CONDITION);				
-	// remove old column in source table
-	operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
+		// remove old column in source table
+		operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
+	};
 	return operations;
 }
 

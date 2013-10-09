@@ -7,5 +7,5 @@ transformation extractClass_ops(out inoutModel : APP);
 main(){
 	log("op: MOVEPROPERTY");
 
-	_appOperations(OrderedSet{_moveProperty("First", "address", "Second", ToleranceType::tolerant)});	
+	_appOperations(OrderedSet{_moveProperties("First", "address", OrderedSet{"Second"})});//, ToleranceType::tolerant)});	
 }

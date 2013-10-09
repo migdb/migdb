@@ -15,6 +15,7 @@ helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType
 	}
 }
 
+
 helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
 	return object APP::ops::AddEmbeddedClass {
 		name := _name;
@@ -83,18 +84,6 @@ helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::Re
 	}
 }
 
-helper _setOpposite(_firstClassName : String, _firstPropertyName : String, 
-		_secondClassName : String, _secondPropertyName : String, _isOpposite : Boolean
-		) : APP::ops::SetOpposite {
-	return object APP::ops::SetOpposite {
-		firstClassName := _firstClassName;
-		firstPropertyName := _firstPropertyName;
-		secondClassName := _secondClassName;
-		secondPropertyName := _secondPropertyName;
-		isOpposite := _isOpposite;
-	}
-}
-
 helper _addParent(_className : String , _parentName : String) : APP::ops::AddParent{
 	return object APP::ops::AddParent{
 		className := _className;
@@ -151,20 +140,73 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
 	}
 }
 
-helper _moveProperty(_sourceClassName : String, _name : String, _targetClassName : String, _tolerance : APP::ToleranceType) : APP::ops::MoveProperty {
-	return object APP::ops::MoveProperty {
-		sourceClassName := _sourceClassName;
-		name := _name;
-		targetClassName := _targetClassName;
-		tolerance := _tolerance;
-	}
-}
-
 helper _extractClass(_sourceClassName : String, _associationPropertyName : String, _extractClassName : String) : APP::ops::ExtractClass {
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractClassName := _extractClassName;
 		associationPropertyName := _associationPropertyName;
+	}
+}
+
+//DAVID LUKSCH's part
+helper _changeBidirectionalAssociationToUnidirectional(_className : String, _associationPropertyName : String) : APP::ops::ChangeBidirectionalAssociationToUnidirectional{
+	return object APP::ops::ChangeBidirectionalAssociationToUnidirectional{
+		owningAssociationPropertyName := _associationPropertyName;
+		className := _className;
+	}
+}
+
+helper _changeUnidirectionalAssociationToBidirectional(_className : String, _associationPropertyName : String,  _oppositePropertyName : String) : APP::ops::ChangeUnidirectionalAssociationToBidirectional{
+	return object APP::ops::ChangeUnidirectionalAssociationToBidirectional{
+		className := _className;
+		associationPropertyName := _associationPropertyName;
+		oppositePropertyName := _oppositePropertyName;
+	};
+}
+
+helper _collapseHierarchy(_superClassName : String, _subClassName : String, _isIntoSub : Boolean) : APP::ops::CollapseHierarchy{
+	return object APP::ops::CollapseHierarchy{
+		superClassName := _superClassName;
+		subClassName := _subClassName;
+		isIntoSub := _isIntoSub;
+	};
+}
+
+helper _extractSubClass (_sourceClassName : String, _extractedClassName : String, _extractedPropertiesNames : OrderedSet(String)) : APP::ops::ExtractSubClass{
+	return object APP::ops::ExtractSubClass{
+		sourceClassName := _sourceClassName;
+		extractedClassName := _extractedClassName;
+		extractedPropertiesNames := _extractedPropertiesNames;
+	};
+}
+
+helper _inlineClass (_targetClassName : String, _associationProperty : String, _tolerance : APP::ToleranceType) : APP::ops::InlineClass{
+	return object APP::ops::InlineClass{
+		targetClassName := _targetClassName;
+		associationProperty := _associationProperty;
+		tolerance := _tolerance;
+	};
+}
+
+helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(String)):APP::ops::PullUpProperties{
+	return object APP::ops::PullUpProperties{
+		childClassName := _childClassName;
+		pulledPropertiesNames := _pulledPropertiesNames;
+	};
+} 
+
+helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
+	return object APP::ops::PushDownProperties{
+		parentClassName := _parentClassName;
+		pushedPropertiesNames := _pushedPropertiesNames;
+	};
+} 
+
+helper _moveProperties( _sourceClassName : String, _targetClassName : String, _propertiesNames : Set(String)) : APP::ops::MoveProperties{
+	return object APP::ops::MoveProperties{
+		sourceClassName := _sourceClassName;
+		targetClassName := _targetClassName;
+		propertiesNames := _propertiesNames;
 	}
 }
 
@@ -375,9 +417,9 @@ helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : Embedded
  	}
 }
 
-helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), 
-		_idProperty : EmbeddedProperty) : EmbeddedClass {
+helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), _idProperty : EmbeddedProperty) : EmbeddedClass {
  	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
  	embClass.embeddedProperties += _properties;
  	return embClass;
 }
+
