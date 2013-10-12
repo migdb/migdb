@@ -45,7 +45,7 @@ TestWorkflow {
 /**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/15_moveProperty"
+		outputParentUri = "${OUTPUT_BASE_DIR}/015_moveProperty"
 		qvtInput = "${IN_STR}/moveProperty_str.qvto"
 		qvtInput = "${IN_OPS}/moveProperty_ops.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/moveProperty_required.qvto"
@@ -55,7 +55,7 @@ TestWorkflow {
 /**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/14_extractClass"
+		outputParentUri = "${OUTPUT_BASE_DIR}/014_extractClass"
 		qvtInput = "${IN_STR}/extractClass_str.qvto"
 		qvtInput = "${IN_OPS}/extractClass_ops.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
@@ -65,37 +65,68 @@ TestWorkflow {
 /**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/1_addClass"
+		outputParentUri = "${OUTPUT_BASE_DIR}/001_addClass"
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtInput = "${IN_OPS}/addClass1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addClass1_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addClass"
 	}
+/* */	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/001b_addClass"
+		qvtInput = "${IN_STR}/structure_tab_plain.qvto"
+		qvtInput = "${IN_OPS}/addClass1.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addClass1b_required"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addClass1b.qvto"
+		testDescription = "addClass - added class already exists"
+	}
 /**/	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/2_addProperty"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002_addProperty"
 		qvtInput = "${IN_STR}/structure_tab_joined_hierarchy.qvto"
 		qvtInput = "${IN_OPS}/addProperty1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addProperty1_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addProperty"
-	}	
+	}
 /**/	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/3_addPrimitiveClass"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002b_addProperty"
+		qvtInput = "${IN_STR}/addProperty1b.qvto"
+		qvtInput = "${IN_OPS}/addProperty1.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addProperty1b_required"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addProperty1b.qvto"
+		testDescription = "addProperty - prop already exists"
+	}		
+/**/	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/003_addPrimitiveClass"
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtInput = "${IN_OPS}/addPrimitiveClass1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addPrimitiveClass1_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addPrimitiveClass"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/003b_addPrimitiveClass"
+		qvtInput = "${IN_STR}/structure_int_char.qvto"
+		qvtInput = "${IN_OPS}/addPrimitiveClass1.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addPrimitiveClass1b_required"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addPrimitiveClass1b.qvto"
+		testDescription = "addPrimitiveClass - primitiveClass already exists"
+	}
+	
 /**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/4_renameEntity"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004_renameEntity"
 		qvtInput = "${IN_STR}/structure_tab.qvto"
 		qvtInput = "${IN_OPS}/renameEntity1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameEntity1_required"
@@ -103,9 +134,19 @@ TestWorkflow {
 		testDescription = "renameEntity standardClass"
 	}
 /**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004b_renameEntity"
+		qvtInput = "${IN_STR}/structure_int.qvto"
+		qvtInput = "${IN_OPS}/renameEntity1.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameEntity1b_required"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_renameEntity4b.qvto"
+		testDescription = "renameEntity target not Existing"
+	}
+/**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/5_removeEntity1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005_removeEntity1"
 		qvtInput = "${IN_STR}/structure_tab_plain.qvto"
 		qvtInput = "${IN_OPS}/removeEntity1.qvto"
 		qvtComparison = "${IN_STR}/structure_int.qvto"
@@ -115,7 +156,7 @@ TestWorkflow {
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/5b_removeEntity2"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005b_removeEntity2"
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtInput = "${IN_OPS}/removeEntity2.qvto"
 		qvtComparison = "${IN_STR}/empty_structure.qvto"
@@ -125,7 +166,17 @@ TestWorkflow {
 /**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/6_renameProperty1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005c_removeEntity1"
+		qvtInput = "${IN_STR}/structure_int.qvto"
+		qvtInput = "${IN_OPS}/removeEntity1.qvto"
+		qvtComparison = "${IN_STR}/structure_int.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_removeEntity1c.qvto"
+		testDescription = "removeEntity target not exists"
+	}
+/**/	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006_renameProperty1"
 		qvtInput = "${IN_STR}/structure_tab.qvto"
 		qvtInput = "${IN_OPS}/renameProperty1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameProperty1_required.qvto"
@@ -135,27 +186,17 @@ TestWorkflow {
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/8_removeProperty1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008_removeProperty1"
 		qvtInput = "${IN_STR}/structure_tab.qvto"
 		qvtInput = "${IN_OPS}/removeProperty1.qvto"
 		qvtComparison = "${IN_STR}/structure_tab_plain.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeProperty pr"
 	}
-/**/
-	component = TestComponent {
-		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/9_setOpposite1"
-		qvtInput = "${IN_STR}/structure_tab_op1.qvto"
-		qvtInput = "${IN_OPS}/setOpposite1.qvto"
-		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/setOpposite1_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "setOpposite pr"
-	}
 /**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/10_setAbstract1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010_setAbstract1"
 		qvtInput = "${IN_STR}/structure_tab_plain.qvto"
 		qvtInput = "${IN_OPS}/setAbstract1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/setAbstract1_required.qvto"
@@ -165,17 +206,17 @@ TestWorkflow {
 /**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/10b_setAbstract2"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010b_setAbstract2"
 		qvtInput = "${IN_STR}/structure_tab_primitive.qvto"
 		qvtInput = "${IN_OPS}/setAbstract1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/setAbstract2_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_setAbstract_tab_primitive.qvto"
 		testDescription = "setAbstract tab primitive"
 	}
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/11_addParent1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011_addParent1"
 		qvtInput = "${IN_STR}/structure_tab_parent.qvto"
 		qvtInput = "${IN_OPS}/addParent1.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addParent1_required.qvto"
@@ -185,7 +226,7 @@ TestWorkflow {
 /**/	
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/12_RemoveParent1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/012_RemoveParent1"
 		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/addParent1_required.qvto"
 		qvtInput = "${IN_OPS}/removeParent1.qvto"
 		qvtComparison = "${IN_STR}/structure_tab_parent.qvto"
@@ -195,7 +236,7 @@ TestWorkflow {
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/13_zipperHierarchy1"
+		outputParentUri = "${OUTPUT_BASE_DIR}/013_zipperHierarchy1"
 		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/addParent1_required.qvto"
 		qvtInput = "${IN_OPS}/removeParent1.qvto"
 		qvtComparison = "${IN_STR}/structure_tab_parent.qvto"

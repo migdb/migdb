@@ -7,8 +7,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
  *				OPERATION HELPERS			*
  ********************************************/
 
-helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType
-		) : APP::ops::AddPrimitiveClass {
+helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
 	return object APP::ops::AddPrimitiveClass {
 		name := _name;
 		primitiveType := _primitiveType;
@@ -58,9 +57,7 @@ helper _addProperty(_owningClassName : String, _name : String, _type : String, _
 	return addProperty;
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, 
-		_lowerBound : Integer, _upperBound : Integer, _defaultValue : String
-		) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
 	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, 
 		_lowerBound, _upperBound); 
 	addProperty.defaultValue := _defaultValue;
@@ -68,8 +65,7 @@ helper _addProperty(_owningClassName : String, _name : String, _type : String,
 }
 
 
-helper _renameProperty(_owningClassName : String, _name : String, _newName : String
-		) : APP::ops::RenameProperty {
+helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
 	return object APP::ops::RenameProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -112,8 +108,7 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 	}
 }
 
-helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, 
-		_upperBound : Integer) : APP::ops::SetBounds {
+helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBounds {
 	return object APP::ops::SetBounds {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -122,8 +117,7 @@ helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integ
 	}
 }
 
-helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean
-		) : APP::ops::SetOrdered {
+helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
 	return object APP::ops::SetOrdered {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -131,8 +125,7 @@ helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boole
 	}
 }
 
-helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
-		) : APP::ops::SetUnique {
+helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
 	return object APP::ops::SetUnique {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -316,8 +309,7 @@ helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedPrope
 	return emb;
 }
 
-helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean
-		) : EmbeddedProperty{
+helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean) : EmbeddedProperty{
 	var emb : EmbeddedProperty := _embeddedProperty(_name, _type);
 	emb.isMandatory := _isMandatory;
 	return emb;

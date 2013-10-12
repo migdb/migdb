@@ -1,0 +1,11 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addPrimitiveClass1b(out inoutModel : APP);
+
+main(){
+var char : PrimitiveClass := _primitiveClass("char", PrimitiveType::char);
+var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	_appStructure(OrderedSet{char, int});
+}

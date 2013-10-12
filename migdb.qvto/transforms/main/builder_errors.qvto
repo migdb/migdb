@@ -9,8 +9,7 @@ helper _errorLog(_errors : OrderedSet(Error)) : ErrorLog{
 	};
 }
 
-helper _evolutionError(_operationIndex : Integer, _message : String, 
-		_transformationIdentifier : String) : EvolutionError{
+helper _evolutionError(_operationIndex : Integer, _message : String, _transformationIdentifier : String) : EvolutionError{
 	assert(_operationIndex > 0);
 	assert(_message <> null and _message.size() > 0);
 	assert(_transformationIdentifier <> null and _transformationIdentifier.size() > 0);

@@ -86,34 +86,6 @@ query APP::NestedProperty::isID() : Boolean{
 	return false;	
 }
 
-/**
-	Must has owningClass as a parameter - member method cannot change member fields.
-**/
-helper removeProperty(inout owningClass : GeneralClass, removedPropertyName : String){
-	if(owningClass.oclIsTypeOf(StandardClass))then {
-		removeProperty(owningClass.oclAsType(StandardClass), removedPropertyName);
-	}else {
-		if(owningClass.oclIsTypeOf(EmbeddedClass))then {
-			removeProperty(owningClass.oclAsType(EmbeddedClass), removedPropertyName);
-		}else {
-			log("Removing from not StandardClass neither EmbeddedClass not allowed");
-			assert(false);
-		}endif;
-	} endif;
-}
-
-helper removeProperty(inout owningClass : EmbeddedClass ,removedPropertyName : String){
-	owningClass.embeddedProperties := owningClass.embeddedProperties->
-		reject(pr | pr.name = removedPropertyName);
-	return;
-}
-
-helper removeProperty(inout owningClass : StandardClass, removedPropertyName : String){
-	owningClass.properties := owningClass.properties->reject(pr | pr.name = removedPropertyName);
-	return;
-}
-
-
 query ModelEntity::equals(modelEntity : ModelEntity):Boolean{
     log("code equals method of Entity " + self.repr() + " wasn't yet implemented");
 	assert(false);
@@ -414,8 +386,7 @@ query APP::Structure::findEmbeddedClass(className : String) : APP::EmbeddedClass
 
 
 
-query APP::Structure::isPropertyInGeneralClass(className : String, propertyName : String
-		) : Boolean {
+query APP::Structure::isPropertyInGeneralClass(className : String, propertyName : String) : Boolean {
 	return self.findGeneralClass(className).containsProperty(propertyName);
 }
 
@@ -447,12 +418,11 @@ query StandardClass::containsPropertyOfType(_type : EmbeddedClass) : Boolean{
 	return self.properties[NestedProperty]->exists(prop | prop.type = _type );
 }
 
-query StandardClass::containsPropertyOfType(_standardClasstype : StandardClass) : Boolean{
-	return self->properties[AssociationProperty]->exists(prop | prop.type);	
+query StandardClass::containsPropertyOfType(_type : StandardClass) : Boolean{
+	return self->properties[AssociationProperty]->exists(prop | prop.type = _type);	
 }
 
-query APP::Structure::arePropertiesInClass(className : String, propertyNames : OrderedSet(String)
-		) : Boolean {
+query APP::Structure::arePropertiesInClass(className : String, propertyNames : OrderedSet(String)) : Boolean {
 	var generalClass : GeneralClass := self.findGeneralClass(className);
 	return propertyNames->forAll(name | generalClass.containsProperty(name));
 }
@@ -645,6 +615,25 @@ query StandardClass::getDbRepresentative(): StandardClass{
 
 query app::StandardClass::isRoot():Boolean{
 	return self.parent = null;
+}
+
+
+helper setOpposite(inout associationProperty : AssociationProperty, inout oppositeProperty : AssociationProperty){
+	if(associationProperty.oppositeProperty <> null)then{
+		log("Cannot set oppositeProperty to " + associationProperty.repr() + 
+			" it's oppositeProperty atribute is already set");
+		assert(false);
+		return;
+	}endif;
+	if(oppositeProperty.oppositeProperty <> null)then{
+		log("Cannot set oppositeProperty to " + oppositeProperty.repr() + 
+			" it's oppositeProperty atribute is already set");
+		assert(false);
+		return;
+	}endif;
+	associationProperty.oppositeProperty := oppositeProperty;
+	oppositeProperty.oppositeProperty := associationProperty;
+	return;
 }
 
 /**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/

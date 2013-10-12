@@ -1,0 +1,8 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation error_setAbstract_tab_primitive(out inoutModel : ERR);
+
+main(){
+	_errorLog(OrderedSet{_evolutionError(1, "Structure doesn't contains standardClass called Tab", "evolution_app.qvto")});
+}
