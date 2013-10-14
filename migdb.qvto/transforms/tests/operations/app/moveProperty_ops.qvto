@@ -5,7 +5,5 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation extractClass_ops(out inoutModel : APP);
 
 main(){
-	log("op: MOVEPROPERTY");
-
 	_appOperations(OrderedSet{_moveProperties("First", "address", OrderedSet{"Second"})});//, ToleranceType::tolerant)});	
 }

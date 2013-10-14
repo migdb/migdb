@@ -71,7 +71,7 @@ query PrimitiveProperty::getCollectionTableName():String{
 
 /** BOOLEAN QUERIES **/
 
-query isRightClassName(name : String) : Boolean {
+query isLegalClassName(name : String) : Boolean {
 	if(name = "") then { return false; } endif;
 	if(name.substring(1,1).toUpper() != name.substring(1,1)) then { 
 		if(name = "char" or name = "int" or name = "boolean") then {
@@ -84,7 +84,7 @@ query isRightClassName(name : String) : Boolean {
 	return true;
 }
 
-query isRightPropertyName(name : String) : Boolean {
+query isLegalPropertyName(name : String) : Boolean {
 	if(name = "") then { return false; } endif;
 	if(name.substring(1,1).toLower() != name.substring(1,1)) then { return false; } endif;
 	if(isFirstCharNumber(name.substring(1,1))) then {return false;} endif;

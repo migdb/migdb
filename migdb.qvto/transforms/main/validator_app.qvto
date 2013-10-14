@@ -26,6 +26,7 @@
 import queries_app;
 import builder_errors;
 import queries_errors;
+import name_service_app;
 	
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype ERR uses 'http://www.collectionspro.eu/jam/mm/errors';
@@ -61,6 +62,8 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 	var notTpcExpansion : Boolean := true;
 	var rootsId : Boolean := true;
 	var areHierarchyTypesHomogenous : Boolean := true;
+	var areEntityNamesLegal : Boolean := true;
+	var arePropertyNamesLegal : Boolean := true;
 	
 	var entities : OrderedSet(ModelEntity) := self.oclAsType(Structure).entities;
 	var stdClasses : OrderedSet(StandardClass) := entities[StandardClass];
@@ -72,12 +75,24 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		classUniqueName := false;
 	};
+	entities->forEach( ent | not isLegalClassName(ent.name) ){
+		var errorMessage : String := "Structure contains entity with invalid name " + ent.name;
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		areEntityNamesLegal := false;
+	};
 	stdClassProps->forEach(prop | not prop.hasUniqueNameInHierarchy()) {
 		var errorMessage : String := "Structure contains ambigous property name \"" + prop.name +
 		 "\" in class \"" + prop.owningGeneralClass.name + "\"";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		propUniqueName := false;		
 	};
+	stdClassProps->forEach(prop | isLegalPropertyName(prop.name)) {
+		var errorMessage : String := "Structure contains property with illegal name\"" + 
+			prop.name + "\" in class \"" + prop.owningGeneralClass.name + "\"";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		arePropertyNamesLegal := false;		
+	};
+	
 	// logs only one cycle + path leading to cycle to prevent from expansion Error amount
 	// logs firstly FIRST class in alphabetical ordering - eg "a" < "ab", "c" > "ab"
 	stdClasses->forEach(cls | cls.isContainedInCycle(OrderedSet{}, cls) and 
@@ -107,22 +122,6 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		oppositeProperty := false;
 	};
 		
-/*	entities->forEach(ent){
-		if(ent.oclIsTypeOf(StandardClass))then{
-			ent.oclAsType(StandardClass).properties->forEach(prop){
-				if(prop.oclIsKindOf(AssociationProperty) and not prop.oclAsType(AssociationProperty).isOppositeCorrectlySet())then{	
-					var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
-					var errorMessage : String := "Structure contains property \""+ assocProp.name + 
-					"\" property in class \""
-		 			+ assocProp.owningGeneralClass.name + "\" opposite not correctly set";
-					addValidationError(errorLog, errorMessage, getValidatorAppId());		
-					oppositeProperty := false;
-				}endif;
-			};				
-			
-		}endif;
-	};
-	*/
     stdClasses->forEach(cls | cls.parent <> null and cls.hasId()){
     	var errorMessage : String := "Structure contains Non-root class \"" + cls.name + 
     		"\" containing id property \"" + cls.idProperty.name + "\".";
@@ -156,9 +155,10 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notTpcExpansion := false;
 	};
-	var valid : Boolean := classUniqueName and propUniqueName and notCycledHierarchies and 
-		oppositeProperty and notHasNonRootId and idBounds and idTypes and notTpcExpansion and 
-		rootsId;	
+	var valid : Boolean := 	classUniqueName and areEntityNamesLegal and propUniqueName and 
+							arePropertyNamesLegal and notCycledHierarchies and 
+							oppositeProperty and notHasNonRootId and idBounds and idTypes and 
+							notTpcExpansion and rootsId;	
 	return  valid;
 	//entities->logFirstPropName();
 	return false;

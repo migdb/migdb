@@ -48,8 +48,7 @@ helper addOrmError(inout errorLog : ErrorLog, message : String, transformationId
 	}endif;
 }
 
-helper addEvolutionError(inout errorLog : ErrorLog, message : String, transformationId : String, 
-		operationIndex : Integer){
+helper addEvolutionError(inout errorLog : ErrorLog, message : String, transformationId : String, operationIndex : Integer){
 	if(errorLog.errors <> null and errorLog.errors[EvolutionError]->
 			forAll(err | err.message <> message or err.transformationId <> transformationId or
 			err.operationIndex <> operationIndex))then{

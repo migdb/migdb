@@ -1,24 +1,32 @@
 import evolution_app;
 import builder_app;
 import builder_errors;
+import app_root_cleaner;
 
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation evolution_app_run(in inStructure : APP,in inOperations : APP,out outStructure : APP, 
+//cleanStructure outModel is desired output for structure one, outStructure can be omitted. 
+//It is equal to cleanStructure or contains pseudoRoot elements
+transformation evolution_app_run(in inStructure : APP,in inOperations : APP,out outStructure : APP, out cleanStructure : APP, 
 	out errors : ERR);
 
 
 main() {
 	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	var operationIndex := 1;
+	//There is no need for extra transformation creating appStructure in first outModel - 
+	// as it is first output model root created by this trainsformation is put in it
 	inStructure.rootObjects().deepclone();
+	
 	var processedStructure : APP::Structure := outStructure.rootObjects()![APP::Structure];
 	
 	inOperations.rootObjects()![Operations].operations->forEach(op){
 			if(op.isValid(processedStructure, errorLog, operationIndex))then{
 				op.apply(processedStructure);
 			}endif;
-	}
-	 
+	};
+	//this step is mandatory to clean rootElements and be able to use ModelComparator component
+	new app_root_cleaner(outStructure, cleanStructure).transform();
+	
 }

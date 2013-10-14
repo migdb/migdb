@@ -22,7 +22,7 @@ transformation migdb_executer(in appOperations:APP , in inAStructure:APP, out ou
 main() {
 	inAStructure.rootObjects().deepclone();
 	// hack - creating root model of rOperations by creator_rdb_operations.qvto
-	//new creator_rdb_operations(outROperations);
+	new creator_rdb_operations(outROperations).transform();
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	processedAStructure.isModelValid(errorLog);

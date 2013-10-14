@@ -29,6 +29,7 @@ import builder_app;
 import builder_errors;
 import text_service;
 import name_service_app;
+import queries_errors;
 
 modeltype APP uses app('http://www.collectionspro.eu/jam/mm/app');
 modeltype ERR uses errors('http://www.collectionspro.eu/jam/mm/errors');
@@ -466,7 +467,7 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 		existPropertiesInSourceClass := existPropertiesInSourceClass and propertyExistsInSourceClass;
 		notExistPropertiesInTargetClass := notExistPropertiesInTargetClass and notExistPropInTargetClass;									
 	};
-	var areClassesRelativesByAssociation : Boolean := checkAreClassesRelativesByAssociation(
+	var areClassesLinked : Boolean := checkAreClassesLinked(
 															self.sourceClassName, 
 															self.targetClassName, 
 															structure, 
@@ -481,7 +482,7 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 															operationIndex, 
 															getEvolutionAppTransformationId());
 	return existSourceClass and existTargetClass and existPropertiesInSourceClass and 
-			notExistPropertiesInTargetClass and areClassesRelativesByAssociation;
+			notExistPropertiesInTargetClass and areClassesLinked;
 }
 
 helper APP::ops::MoveProperties::apply(inout structure : APP::Structure){
@@ -685,7 +686,12 @@ query APP::ops::ChangeUnidirectionalAssociationToBidirectional::isValid(structur
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
-	 
+	var isOppositePropNameLegal : Boolean := checkPropertyName(
+												self.oppositePropertyName,
+												structure,
+												errorLog,
+												operationIndex,
+												getEvolutionAppTransformationId()); 
 	 
 	return existsStandardClass and existAssocPropertyInStdCls and hasNotAssocPropOpposite and 
 			notExistAssocPropertyInOppositeCls;
@@ -756,7 +762,7 @@ helper APP::ops::ExtractSubClass::isValid(structure : APP::Structure, inout erro
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
-	var existsChildClass : Boolean := checkStandardClassExists(
+	var existsChildClass : Boolean := checkEntityNotExists(
 												self.extractedClassName, 
 												structure, 
 												errorLog, 
@@ -781,7 +787,7 @@ helper APP::ops::ExtractSubClass::apply(inout structure : APP::Structure){
 				structure,
 				self.sourceClassName,
 				self.extractedClassName,
-				self.extractedPropertiesNames);
+				self.extractedPropertiesNames);			
 	return;
 }
 
@@ -801,8 +807,8 @@ helper APP::ops::ExtractSubClass::apply(inout structure : APP::Structure){
 helper checkEntityNotExists(entityName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean{
 	var exist : Boolean := structure.containsEntity(entityName);
 	if(exist)then{
-		var errorMessage : String := "Structure contains entity called " + entityName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		var errorMessage : String := "Structure contains entity called " + entityName;		
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return not exist;
 }
@@ -813,7 +819,7 @@ helper checkEntityExists(entityName : String, structure : APP::Structure, inout 
 	var exist : Boolean := structure.containsEntity(entityName);
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains entity called " + entityName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return exist;
 }
@@ -823,7 +829,7 @@ helper checkGeneralClassExists(generalClassName : String, structure : APP::Struc
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains generalClass called " + 
 			generalClassName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 		return null;
 	}endif;
 	return exist;
@@ -834,8 +840,7 @@ helper checkPrimitiveClassExists(primitiveClassName : String, structure : APP::S
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains primitiveClass called " + 
 			primitiveClassName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
-	}endif;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);	}endif;
 	return exist;
 }
 
@@ -844,16 +849,16 @@ helper checkStandardClassExists(standardClassName : String, structure : APP::Str
 	if(not exist)then{
 		var errorMessage : String := "Structure doesn't contains standardClass called " +
 			 standardClassName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return exist;
 }
 
 helper checkEntityName(entityName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean{
-	var exist : Boolean := isRightClassName(entityName);
+	var exist : Boolean := isLegalClassName(entityName);
 	if(not exist)then{
 		var errorMessage : String := "Entity called " + entityName + " has not valid name";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return exist;
 }
@@ -873,13 +878,13 @@ helper EmbeddedClass::checkIsRemoveable(structure : APP::Structure, inout errorL
 	        entities[APP::StandardClass]->exists(cls | cls.containsPropertyOfType(self));
 	var isEmbeddedEmpty : Boolean := self.embeddedProperties->isEmpty();		
 	if(not notExistsPropertyOfType)then{
-		var message : String := "Model contains entity containing property of property of type " + 
+		var errorMessage : String := "Model contains entity containing property of property of type " + 
 			self.repr();
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	if(not isEmbeddedEmpty)then{
-		var message : String := "entity is not empty";
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+		var errorMessage : String := "entity is not empty - cannot be removed";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	
 	return notExistsPropertyOfType and isEmbeddedEmpty;
@@ -893,17 +898,16 @@ helper StandardClass::checkIsRemoveable(structure : APP::Structure, inout errorL
 	var notIsParent := not self.owningModel->entities[APP::StandardClass]
 		->exists(parent = self);	
 	if(not notExisPropertyOfType)then{
-		var message : String := "Model contains entity containing property of type " + self.repr();
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+		var errorMessage : String := "Model contains entity containing property of type " + self.repr();
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	if(not isEmpty)then{
-		var message : String := "entity is not empty";
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+		var errorMessage : String := "entity "+ self.name + "is not empty - cannot be removed";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	if(not notIsParent)then{
-		var message : String := "entity to remove has subclasses";
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
-	}endif;
+		var errorMessage : String := "entity to remove has subclasses";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);	}endif;
 	return notIsParent and isEmpty and notExisPropertyOfType;
 }
 
@@ -911,8 +915,8 @@ helper PrimitiveClass::checkIsRemoveable(structure : APP::Structure, inout error
 	var notIsReferenceExisting : Boolean := not self.owningModel->
 		entities[APP::GeneralClass]->exists(cls | cls.containsProperty(self));
 	if(not notIsReferenceExisting)then{
-		var message : String := "Model contains properties with type " + self.repr();
-		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+		var errorMessage : String := "Model contains properties with type " + self.repr();
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return notIsReferenceExisting;
 }
@@ -926,7 +930,7 @@ helper checkPropertyExistInGeneralClass(generalClassName : String, propertyName 
 	if(not propertyExist) then{
 		var errorMessage : String := "Property called " + propertyName + 
 		    " doesn't exist in class " + generalClassName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return propertyExist;
 }
@@ -940,7 +944,7 @@ helper checkArePropertiesInGeneralClass(generalClassName : String, propertyNames
 		if(not propertyExist) then{
 			var errorMessage : String := "Property called " + p + " doesn't exist in class " + 
 				generalClassName;
-			errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+			addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 			return false;
 		}endif;		
 	};
@@ -956,7 +960,7 @@ helper checkPropertyNotExistInGeneralClass(generalClassName : String, propertyNa
 	if(not notPropertyExist) then{
 		var errorMessage : String := "Property called " + propertyName + 
 			" already exist in class " + generalClassName;
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return notPropertyExist;
 }
@@ -970,7 +974,7 @@ helper checkNotIsPropertyId(generalClassName : String, propertyName : String, st
 	var notIsId : Boolean := not prop.isID();
 	if(not notIsId)then{
 		var errorMessage : String := "Property " + propertyName + " is id and can't be removed"; 
-		errorLog.errors+= _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return notIsId;
 }
@@ -985,7 +989,7 @@ helper checkIsPropertyTypeValid(owningClassName : String, propertyTypeName : Str
 	if(not isPropertyTypeValid)then{
 		var errorMessage : String := "Property of type " + propertyTypeName + 
 			" can't be added to class " + owningClassName;
-		errorLog.errors+=_evolutionError(operationIndex, errorMessage, transformationId);	
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);	
 	}endif;
 	return isPropertyTypeValid;
 }
@@ -1007,7 +1011,7 @@ helper checkAreBoundsValid(lowerBound : Integer, upperBound : Integer, inout err
 	if(not areBoundsValid)then{
 		var errorMessage : String := "Invalid bounds - lower:" + lowerBound.repr() + ", upper:" 
 			+ upperBound.repr();
-		errorLog.errors+=_evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return areBoundsValid;
 }
@@ -1020,7 +1024,7 @@ helper checkExistsAssociationPropertyInStandardClass(owningClassName : String, p
 	var isAssoc : Boolean := structure.findProperty(owningClassName, propertyName).oclIsKindOf(AssociationProperty);
 	if(not isAssoc)then{
 		var errorMessage : String := "Property " + propertyName + " is not an association";
-		errorLog.errors+=_evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return isAssoc;
 }
@@ -1031,16 +1035,16 @@ helper checkBounds(lowerBound : Integer, upperBound : Integer, inout errorLog : 
 	if(not areBoundsValid)then{
 		var errorMessage : String := "Invalid bounds:" + lowerBound.repr() + "/" + 
 										upperBound.repr();
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);								
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								
 	}endif;	   	
 	return areBoundsValid;	   	
 }
 		   	
 helper checkPropertyName(propertyName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	var exist : Boolean := isRightPropertyName(propertyName);
+	var exist : Boolean := isLegalPropertyName(propertyName);
 	if(not exist)then{
-		var errorMessage : String := "Property called " + propertyName + " has not valid name";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		var errorMessage : String := "Property called " + propertyName + " has invalid name";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return exist;
 }
@@ -1052,7 +1056,7 @@ helper checkIsRootClass(className : String, structure : Structure, inout errorLo
 	var isRoot : Boolean := structure.findStandardClass(className).isRoot();
 	if(not isRoot)then {
 		var errorMessage : String := "Class " + className + " is not a root";
-		errorLog.errors +=_evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return isRoot;
 }
@@ -1065,7 +1069,7 @@ helper checkNotIsDescendant(className : String, ancestorName : String, structure
 	var notDescendant : Boolean := not structure.findClass(className).isDescendantOf(ancestorName);
 	if(not notDescendant)then{
 		var errorMessage : String := "Class " + className + " is descendant of " + ancestorName;
-		errorLog.errors +=_evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return notDescendant;
 }
@@ -1084,7 +1088,7 @@ helper checkIsCollection(owningStandardClassName : String, propertyName : String
 	if(not isPropCollection)then{
 		var errorMessage : String := "Property " + prop.name + " in class " 
 			+ owningStandardClassName + " is not an collection";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return isPropCollection;
 }
@@ -1094,16 +1098,16 @@ helper checkIsCollection(owningStandardClassName : String, propertyName : String
  * Find unidirectional one to one association in first Class to second Class. 
  * @return : TRUE - If first have pointer to second Class; FALSE - if have not
  */
-helper checkAreClassesRelativesByAssociation(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	var areClassesRelatives : Boolean := structure.areClassesRelativesByAssociation(
+helper checkAreClassesLinked(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	var areClassesLinked : Boolean := structure.areClassesRelativesByAssociation(
 														firstClassName, 
 														secondClassName);
-	if(not areClassesRelatives)then{
+	if(not areClassesLinked)then{
 		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
 			" are not relatives by unidirectional one to one association";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
-	return areClassesRelatives;
+	return areClassesLinked;
 }
 
 helper checkAreClassesRelatives(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
@@ -1113,7 +1117,7 @@ helper checkAreClassesRelatives(firstClassName : String, secondClassName : Strin
 	if(not areClassesRelatives)then{
 		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
 			" are not relatives";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return areClassesRelatives;
 }
@@ -1125,7 +1129,7 @@ helper checkNotAreClassesRelatives(firstClassName : String, secondClassName : St
 	if(areClassesRelatives)then{
 		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
 											" are not relatives";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return not areClassesRelatives;
 }
@@ -1142,7 +1146,7 @@ helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : S
 	if(not haveSameInheritanceType)then{
 		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
 			" have distinct inheritance types";
-		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);		
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);		
 	}endif;
 	return haveSameInheritanceType;
 }
@@ -1161,6 +1165,7 @@ helper checkHasAssociationPropertyOpposite(standardClassName : String, associati
 	if(not hasAssocPropOpposite)then{
 		var errorMessage : String := "AssociationProperty " + prop.repr() + " in class " + 
 										standardClassName + "has no opposite associationProperty";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return hasAssocPropOpposite;
 }
@@ -1179,6 +1184,7 @@ helper checkIsOwningAssociationProperty(standardClassName : String, associationP
 	if(not isOwning)then{
 		var errorMessage : String := "AssociationProperty " + prop.repr() + " in class " + 
 										standardClassName + "has no opposite associationProperty";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								
 	}endif;
 	return isOwning;
 }
@@ -1199,6 +1205,7 @@ helper checkNotHasAssociationPropertyOpposite(standardClassName : String, associ
 										" in class " + standardClassName + 
 										"has opposite associationProperty" + 
 										associationProperty.repr();
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								
 	}endif;
 	return hasNoOpposite;
 }
@@ -1314,6 +1321,7 @@ helper applyAddParent(inout structure : Structure, className : String, parentCla
 	var childClass : APP::StandardClass := structure.findClass(className);	
 	childClass.parent := structure.findClass(parentClassName);
 	childClass.properties := childClass.properties->reject(pr | pr = childClass.idProperty);
+	//childClass.properties := childClass.properties->reject(pr | pr.name = childClass.idProperty.name);
 	childClass.idProperty := null;
 	return;	
 }

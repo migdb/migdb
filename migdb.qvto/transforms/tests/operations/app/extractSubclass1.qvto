@@ -1,0 +1,13 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addClass1(out inoutModel : APP);
+
+main(){
+	var extractSubCls : APP::ops::ExtractSubClass := _extractSubClass(
+														"Parent",
+														"SubClass",
+														OrderedSet{"extractedPr"});
+	_appOperations(OrderedSet{extractSubCls});	
+}
