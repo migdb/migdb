@@ -2,24 +2,22 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation moveProperty_str(out inoutModel : APP);
+transformation changeBiAsToUnidir_str(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass:= _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
 	var address : StandardClass := _class("Address", _idProperty("idAddress", int), OrderedSet{});
-	var propAddress : MultipliableProperty := _primitiveProperty("streetNumber", string);
-	var assocProp : AssociationProperty := _associationProperty("residentalAddress",address,1,1);
-	var properties : OrderedSet(MultipliableProperty) := OrderedSet{
-															propAddress, 
-															assocProp}; 
+	var assocProp : AssociationProperty := _associationProperty("residentalAddress",address,1,1); 
 	var person : StandardClass := _class(
 									"Person", 
 									_idProperty("idPerson", int), 
-									properties);
+									OrderedSet{assocProp});
 	var oppositeAssocProp : AssociationProperty := _associationProperty(
 														"occupyingResident",
-														person);
+														person,
+														1,
+														-1);
 	address.properties += oppositeAssocProp;
 	setOpposite(assocProp, oppositeAssocProp);
 	_appStructure(OrderedSet{int, string, person, address});

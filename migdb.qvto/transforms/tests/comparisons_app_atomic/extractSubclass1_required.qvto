@@ -17,4 +17,5 @@ main(){
 									parent,
 									OrderedSet{_primitiveProperty("extractedPr", int)});
 	_appStructure(OrderedSet{int, parent, subClass});
+										
 }

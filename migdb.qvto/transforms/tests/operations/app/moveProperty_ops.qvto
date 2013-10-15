@@ -2,8 +2,14 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation extractClass_ops(out inoutModel : APP);
+transformation moveProperties_ops(out inoutModel : APP);
 
 main(){
-	_appOperations(OrderedSet{_moveProperties("First", "address", OrderedSet{"Second"})});//, ToleranceType::tolerant)});	
+	var moveProperties : APP::ops::MoveProperties := _moveProperties(
+														"Person", 
+														"residentalAddress",
+														"Address", 
+														OrderedSet{"streetNumber"});
+	_appOperations(OrderedSet{moveProperties});
+	//, ToleranceType::tolerant)});	
 }

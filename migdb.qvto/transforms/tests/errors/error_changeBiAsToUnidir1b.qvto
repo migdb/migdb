@@ -1,0 +1,14 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation error_changeBiAsToUnidir1b(out inoutModel : ERR);
+
+main(){
+	var evolutionErrorMessage : String := "AssociationProperty residentalAddress in" +
+											" class Person has no opposite associationProperty";
+	var evolutionError : EvolutionError := _evolutionError(
+													1, 
+													evolutionErrorMessage, 
+													"evolution_app.qvto");
+	_errorLog(OrderedSet{evolutionError});
+}

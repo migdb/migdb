@@ -351,8 +351,8 @@ query APP::ops::RemoveParent::isValid(structure : APP::Structure, inout errorLog
 									errorLog, 
 									operationIndex, 
 									getEvolutionAppTransformationId());
-	var existParent : Boolean := checkStandardClassExists(
-										structure.findStandardClass(self.className).parent.name, 
+	var existParent : Boolean := checkHasParent(
+										self.className, 
 										structure, 
 										errorLog, 
 										operationIndex, 
@@ -441,7 +441,7 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 											errorLog, 
 											operationIndex, 
 											getEvolutionAppTransformationId());
-	var existTargetClass : Boolean := checkGeneralClassExists(
+	var existTargetClass : Boolean := checkStandardClassExists(
 											self.targetClassName, 
 											structure, 
 											errorLog, 
@@ -467,13 +467,21 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 		existPropertiesInSourceClass := existPropertiesInSourceClass and propertyExistsInSourceClass;
 		notExistPropertiesInTargetClass := notExistPropertiesInTargetClass and notExistPropInTargetClass;									
 	};
+	var existsLinkProperty : Boolean := checkExistsAssociationPropertyInStandardClass(
+												self.sourceClassName, 
+												self.linkName, 
+												structure, 
+												errorLog, 
+												operationIndex,  
+												getEvolutionAppTransformationId());
 	var areClassesLinked : Boolean := checkAreClassesLinked(
-															self.sourceClassName, 
-															self.targetClassName, 
-															structure, 
-															errorLog, 
-															operationIndex,  
-															getEvolutionAppTransformationId());
+											self.sourceClassName,
+											self.linkName, 
+											self.targetClassName, 
+											structure, 
+											errorLog, 
+											operationIndex,  
+											getEvolutionAppTransformationId());
 	var notAreClassesRelativesInHierarchy : Boolean := checkNotAreClassesRelatives(
 															self.sourceClassName, 
 															self.targetClassName, 
@@ -667,7 +675,7 @@ query APP::ops::ChangeUnidirectionalAssociationToBidirectional::isValid(structur
 												operationIndex, 
 												getEvolutionAppTransformationId());
 	
-	var hasNotAssocPropOpposite : Boolean := checkHasAssociationPropertyOpposite(
+	var hasNotAssocPropOpposite : Boolean := checkNotHasAssociationPropertyOpposite(
 												self.className,
 												self.associationPropertyName,
 												structure, 
@@ -716,7 +724,7 @@ helper APP::ops::CollapseHierarchy::isValid(structure : APP::Structure, inout er
 												operationIndex, 
 												getEvolutionAppTransformationId());
 	var existsChildClass : Boolean := checkStandardClassExists(
-												self.superClassName, 
+												self.subClassName, 
 												structure, 
 												errorLog, 
 												operationIndex, 
@@ -726,7 +734,7 @@ helper APP::ops::CollapseHierarchy::isValid(structure : APP::Structure, inout er
 
 helper APP::ops::CollapseHierarchy::apply(inout structure : Structure){
 	var parentClass : StandardClass := structure.findStandardClass(self.superClassName);
-	var childClass : StandardClass := structure.findStandardClass(self.superClassName);
+	var childClass : StandardClass := structure.findStandardClass(self.subClassName);
 	//class that is merged
 	var removedClass : StandardClass;
 	//class which is merge product
@@ -746,12 +754,15 @@ helper APP::ops::CollapseHierarchy::apply(inout structure : Structure){
 	}endif;
 	var movedPropertyNames : Collection(String) := removedClass.properties->
 																		collect(prop | prop.name);
+	movedPropertyNames->forEach(prName){
+		log(prName);
+	};
 	applyMoveProperties(
 					structure, 
 					removedClass.name,
 					productClass.name,
 					movedPropertyNames);		
-	applyRemoveEntity(structure, self.subClassName);
+	applyRemoveEntity(structure, removedClass.name);
 }
 
 
@@ -869,6 +880,20 @@ helper checkIsRemoveable(entityName : String, structure : APP::Structure, inout 
 	}endif;		
 	return structure.findEntity(entityName).checkIsRemoveable(structure, errorLog, operationIndex, 
 		transformationId);
+}
+
+helper checkHasParent(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(standardClassName))then{
+		return false;
+	}endif;
+	var standardClass : StandardClass := structure.findStandardClass(standardClassName);
+	var hasParent : Boolean :=  standardClass.parent <> null;
+	if(not hasParent)then{
+		var errorMessage : String := "Standard class called " + standardClassName + 
+										" has no ancestor class";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								 
+	}endif;
+	return hasParent;
 }
 
 helper ModelEntity::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean;
@@ -1094,20 +1119,37 @@ helper checkIsCollection(owningStandardClassName : String, propertyName : String
 }
 
 /**
- * CHECK ARE CLASSES RELATIVES BY ASSOCIATION
+ * CHECK ARE CLASSES linked BY ASSOCIATION
  * Find unidirectional one to one association in first Class to second Class. 
  * @return : TRUE - If first have pointer to second Class; FALSE - if have not
  */
-helper checkAreClassesLinked(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	var areClassesLinked : Boolean := structure.areClassesRelativesByAssociation(
-														firstClassName, 
-														secondClassName);
-	if(not areClassesLinked)then{
+helper checkAreClassesLinked(firstClassName : String, linkName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(firstClassName) or 
+		(not structure.containsStandardClass(secondClassName)) or 
+		(not structure.isAssociationPropertyInStandardClass(firstClassName, linkName)))then{
+			return false;
+	}endif;
+		
+	var linkProperty : AssociationProperty := structure.findAssociationProperty(
+															firstClassName,
+															linkName);														
+	var hasRequiredArriryForMoving : Boolean := linkProperty.isOneToOneBidirectional() or
+												 linkProperty.isOneToOneUnidirectional();
+					
+	if(not hasRequiredArriryForMoving)then{
 		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
-			" are not relatives by unidirectional one to one association";
+			" are not linked by  one to one association";
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
-	return areClassesLinked;
+	//checks if type of link from firstClass with name linkName is corresponding to 
+	//type seconClass
+	var isTypeCorresponding : Boolean := linkProperty.type.name = secondClassName;
+	if(not isTypeCorresponding)then{
+		var errorMessage : String := "Classes " + firstClassName + " and " + secondClassName + 
+			" are by association " + linkName;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
+	}endif;
+	return hasRequiredArriryForMoving and isTypeCorresponding;
 }
 
 helper checkAreClassesRelatives(firstClassName : String, secondClassName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
@@ -1153,18 +1195,16 @@ helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : S
 
 helper checkHasAssociationPropertyOpposite(standardClassName : String, associationPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean{
 	if(not structure.containsStandardClass(standardClassName) or 
-		not structure.isPropertyInGeneralClass(standardClassName, associationPropertyName))then{
+		not structure.isAssociationPropertyInStandardClass(standardClassName, associationPropertyName))then{
 		return false;
 	}endif;
-	var prop : Property := structure.findProperty(standardClassName, associationPropertyName);
-	if(not prop.oclIsTypeOf(AssociationProperty))then{
-		return false;
-	}endif;	
-	var associationProperty : AssociationProperty := prop.oclAsType(AssociationProperty);
+	var associationProperty : AssociationProperty := structure.findAssociationProperty(
+																					standardClassName, 
+																					associationPropertyName);
 	var hasAssocPropOpposite : Boolean := associationProperty.oppositeProperty <> null;
 	if(not hasAssocPropOpposite)then{
-		var errorMessage : String := "AssociationProperty " + prop.repr() + " in class " + 
-										standardClassName + "has no opposite associationProperty";
+		var errorMessage : String := "AssociationProperty " + associationPropertyName + " in class " + 
+										standardClassName + " has no opposite associationProperty";
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return hasAssocPropOpposite;
@@ -1191,19 +1231,19 @@ helper checkIsOwningAssociationProperty(standardClassName : String, associationP
 
 helper checkNotHasAssociationPropertyOpposite(standardClassName : String, associationPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean{
 	if(not structure.containsStandardClass(standardClassName) or 
-		not structure.isPropertyInGeneralClass(standardClassName, associationPropertyName))then{
+		not structure.isAssociationPropertyInStandardClass(
+														standardClassName, 
+														associationPropertyName))then{
 		return false;
 	}endif;
-	var prop : Property := structure.findProperty(standardClassName, associationPropertyName);
-	if(not prop.oclIsTypeOf(AssociationProperty))then{
-		return false;
-	}endif;	
-	var associationProperty : AssociationProperty := prop.oclAsType(AssociationProperty);
+	var associationProperty : AssociationProperty := structure.findAssociationProperty(
+																				standardClassName, 
+																				associationPropertyName);
 	var hasNoOpposite : Boolean := associationProperty.oppositeProperty = null;
 	if(not hasNoOpposite)then{
-		var errorMessage : String := "AssociationProperty " + associationProperty.repr() + 
+		var errorMessage : String := "AssociationProperty " + associationPropertyName + 
 										" in class " + standardClassName + 
-										"has opposite associationProperty" + 
+										" has opposite associationProperty" + 
 										associationProperty.repr();
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								
 	}endif;
@@ -1405,9 +1445,15 @@ helper applySetType(inout structure : Structure, className : String, propertyNam
 }
 
 helper applyChangeUnidirectionalAssociationToBidirectional(inout structure : Structure, className : String , associationPropertyName : String, oppositePropertyName : String ){
-	var prop : Property := structure.findProperty(className, associationPropertyName);
-	var associationProperty : AssociationProperty := prop.oclAsType(AssociationProperty);
-	var oppositeProperty : AssociationProperty := _associationProperty(oppositePropertyName, associationProperty.type, 0, -1);
+	var associationProperty : AssociationProperty := structure.findAssociationProperty(
+																		className, 
+																		associationPropertyName);
+	var oppositeProperty : AssociationProperty := _associationProperty(
+															oppositePropertyName, 
+															associationProperty.owningGeneralClass, 
+															associationProperty.lowerBound, 
+															-1);
+	associationProperty.type.properties+=oppositeProperty;
 	setOpposite(associationProperty, oppositeProperty);
 	return;
 }

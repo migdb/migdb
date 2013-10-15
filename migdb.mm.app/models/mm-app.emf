@@ -242,7 +242,8 @@ package app {
     
     class MoveProperties extends ModelOperation {
       attr String[1] sourceClassName;
-      attr String[1] targetClassName;
+      attr String[1] linkName;
+      //attr String[1] targetClassName;
       attr String[+] propertiesNames;
       attr ToleranceType[1] tolerance;
     }

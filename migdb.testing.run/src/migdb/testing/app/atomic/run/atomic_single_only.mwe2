@@ -1,0 +1,54 @@
+module migb.testing.app.atomic.run.atomic_single_only
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/app_atomic"
+var IN_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_atomic"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_app_run.qvto"
+
+TestWorkflow {
+/***** DEFINE META-MODELS *****/
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/017_collapseHierarchy"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"//"${COMPARISONS_STRUCTURES_DIR}/collapseHierarchy_required.qvto"
+		qvtInput = "${IN_OPS}/collapseHierarchy1_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_STR}/extractSubclass1_structure.qvto"//"${OUTPUT_BASE_DIR}/017_collapseHierarchy.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "collapseHierarchy"
+	}	
+}

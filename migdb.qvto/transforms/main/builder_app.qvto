@@ -195,11 +195,12 @@ helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : S
 	};
 } 
 
-helper _moveProperties( _sourceClassName : String, _targetClassName : String, _propertiesNames : Set(String)) : APP::ops::MoveProperties{
+helper _moveProperties( _sourceClassName : String, _linkName : String, _targetClassName : String, _propertiesNames : Set(String)) : APP::ops::MoveProperties{
 	return object APP::ops::MoveProperties{
 		sourceClassName := _sourceClassName;
 		targetClassName := _targetClassName;
 		propertiesNames := _propertiesNames;
+		linkName := _linkName;
 	}
 }
 

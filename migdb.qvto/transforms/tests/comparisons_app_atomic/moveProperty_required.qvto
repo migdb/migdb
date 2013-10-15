@@ -2,15 +2,27 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation extractClass_str(out inoutModel : APP);
+transformation moveProperty_required(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var int: PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
-	var second : StandardClass := _class("Second",_idProperty("idSecond", int) ,OrderedSet{});
-	var first : StandardClass := _class("First", _idProperty("idFirst", int), OrderedSet{_associationProperty("asoc",second,1,1)});
+	var streetNumber : PrimitiveProperty := _primitiveProperty("streetNumber", string);
+	var addressProps : OrderedSet(MultipliableProperty) := OrderedSet{};
+	var address : StandardClass := _class("Address", _idProperty("idAddress", int), OrderedSet{});
+	var assocProp : AssociationProperty := _associationProperty("residentalAddress",address,1,1);
+	var properties : OrderedSet(MultipliableProperty) := OrderedSet{assocProp}; 
+	var person : StandardClass := _class(
+									"Person", 
+									_idProperty("idPerson", int), 
+									properties);
+	var oppositeAssocProp : AssociationProperty := _associationProperty(
+														"occupyingResident",
+														person);
+	//this damned style used because of ModelComparator - ordering... :/
+	address.properties += oppositeAssocProp;
+	address.properties+= streetNumber;
+	setOpposite(assocProp, oppositeAssocProp);
 	
-	var secProp : PrimitiveProperty := _primitiveProperty("address", string);
-	second.properties += secProp;
-	_appStructure(OrderedSet{int, string, first, second});
+	_appStructure(OrderedSet{int, string, person, address});
 }

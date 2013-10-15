@@ -281,7 +281,7 @@
       <eClassifiers xsi:type="ecore:EClass" name="MoveProperties" eSuperTypes="#//app/ops/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClassName" lowerBound="1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="linkName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertiesNames" lowerBound="1"
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
