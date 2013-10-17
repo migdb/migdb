@@ -348,10 +348,15 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass{
+	
 	assert(_idProperty <> null);
+	var clsProperties : OrderedSet(MultipliableProperty) := OrderedSet{_idProperty};
+	_properties->forEach(prop){
+		clsProperties := clsProperties->append(prop);
+	};
 	var cls : StandardClass := object StandardClass {
  		name := _name;
- 		properties := _properties->append(_idProperty);
+ 		properties := clsProperties;
  		idProperty := _idProperty;
  		isAbstract := _isAbstract;
  		inheritanceType := _parent.inheritanceType;
