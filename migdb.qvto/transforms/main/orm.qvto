@@ -132,7 +132,7 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure
 
 helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
-	var type : ModelEntity := appStructure.findEntity(self.type);
+	var type : ModelEntity := appStructure.findEntity(self.typeName);
 	if(ent = null)then{
 		log("added property cannot be null");
 		assert(false);
@@ -274,7 +274,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 		stcls : StandardClass, type : PrimitiveClass ) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
-	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.type).
+	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.typeName).
 			primitiveType);
 	
 	if(self.upperBound = 1)then{
@@ -306,7 +306,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 }
 
 helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
-	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.type).
+	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.typeName).
 																	primitiveType);
 	var addCollumn : RDB::ops::AddColumn := _addColumn(
 											getDefaultSchemaName(), 
@@ -489,9 +489,11 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure
 helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
 	var sourceClass : StandardClass := appStructure.findStandardClass(self.sourceClassName);
-	var targetClass : StandardClass := appStructure.findStandardClass(self.targetClassName);
-	var sourceClassName : String =  self.sourceClassName.translate();
-	var targetClassName : String =  self.targetClassName.translate();
+	var linkAssocProperty : AssociationProperty := sourceClass.getProperty(self.linkName).
+																oclAsType(AssociationProperty);
+	var targetClass : StandardClass := linkAssocProperty.type;
+	var sourceClassName : String :=  self.sourceClassName.translate();
+	var targetClassName : String :=  targetClass.name.translate();
 	var idTargetClassName : String =  targetClass.translateIdName();
 	// type of property
 	self.propertiesNames->forEach(propertyName){
@@ -515,7 +517,7 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
 						movedPropertyName, 
 						targetClassName, 
 						movedPropertyName, 
-						mergeTypeFromAppToRdb(self.tolerance), 
+						mergeTypeFromAppToRdb(self.toleranceType), 
 						WHERE_CONDITION);				
 		// remove old column in source table
 		operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
