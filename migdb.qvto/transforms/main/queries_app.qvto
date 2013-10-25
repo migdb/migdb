@@ -504,8 +504,7 @@ query APP::StandardClass::getAllDescendants() : OrderedSet(StandardClass){
 		InheritanceType::tablePerClass, InheritanceType::singleTable});
 }
 
-query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType
-		) : OrderedSet(StandardClass){
+query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType) : OrderedSet(StandardClass){
 	return self.getDescendants(OrderedSet{}, OrderedSet{_inheritanceType});
 }
 
@@ -514,8 +513,7 @@ query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceTyp
 	APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType)
 	returns descendants of chosen inheritanceTypes
 **/
-query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardClass), 
-		_inheritanceTypes: OrderedSet(InheritanceType)) : OrderedSet(StandardClass){
+query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardClass), _inheritanceTypes: OrderedSet(InheritanceType)) : OrderedSet(StandardClass){
 	var set : OrderedSet(StandardClass) := _descendantsList;
 	if(_inheritanceTypes->includes(self.inheritanceType))then{
 		set +=self;
@@ -645,6 +643,13 @@ helper setOpposite(inout associationProperty : AssociationProperty, inout opposi
 	associationProperty.oppositeProperty := oppositeProperty;
 	oppositeProperty.oppositeProperty := associationProperty;
 	return;
+}
+
+helper StandardClass::hasParentName(standardClassName : String) : Boolean{
+	if(self.parent.name = standardClassName)then{
+		return true;
+	}endif;
+	return false;
 }
 
 /**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/

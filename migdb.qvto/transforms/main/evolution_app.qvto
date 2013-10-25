@@ -41,10 +41,16 @@ query getEvolutionAppTransformationId() : String {
 }
 
 // a verification of an operation
-abstract query APP::ops::ModelOperation::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
-
+abstract query APP::ops::ModelOperation::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean{
+	log("method isValid for operation " + self.repr() + " not implemented yet");
+	assert(false);
+	return false;
+}
 // a mapping of an operation
-abstract helper APP::ops::ModelOperation::apply(inout structure : APP::Structure);
+abstract helper APP::ops::ModelOperation::apply(inout structure : APP::Structure){
+	log("method apply for operation " + self.repr() + " not implemented yet");
+	assert(false);
+}
 
 /* ++++++++++ BASIC OPERATIONS ++++++++++++++++++++ */
 
@@ -179,7 +185,7 @@ query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog 
 														getEvolutionAppTransformationId());
 	var isPropertyTypeValid : Boolean := checkIsPropertyTypeValid(
 												self.owningClassName, 
-												self.type, 
+												self.typeName, 
 												structure, 
 												errorLog, 
 												operationIndex, 
@@ -206,7 +212,7 @@ helper APP::ops::AddProperty::apply(inout structure : APP::Structure) {
 					structure, 
 					self.owningClassName,
 					self.name, 
-					self.type,
+					self.typeName,
 					self.lowerBound,
 					self.upperBound,
 					self.defaultValue,
@@ -441,12 +447,16 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 											errorLog, 
 											operationIndex, 
 											getEvolutionAppTransformationId());
-	var existTargetClass : Boolean := checkStandardClassExists(
-											self.targetClassName, 
-											structure, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionAppTransformationId());
+	var existsLinkProperty : Boolean := checkExistsAssociationPropertyInStandardClass(
+												self.sourceClassName, 
+												self.linkName, 
+												structure, 
+												errorLog, 
+												operationIndex,  
+												getEvolutionAppTransformationId());	
+	var linkProperty : AssociationProperty := structure.findAssociationProperty(
+															self.sourceClassName, 
+															self.linkName);
 	var existPropertiesInSourceClass : Boolean := true;
 	var notExistPropertiesInTargetClass : Boolean := true;
 	self.propertiesNames->forEach(propertyName){
@@ -458,43 +468,45 @@ query APP::ops::MoveProperties::isValid(structure : APP::Structure, inout errorL
 											operationIndex, 
 											getEvolutionAppTransformationId());		
 		var notExistPropInTargetClass : Boolean := checkPropertyNotExistInGeneralClass(
-														self.targetClassName, 
+														linkProperty.type.name, 
 														propertyName, 
 														structure, 
 														errorLog, 
 														operationIndex, 
 														getEvolutionAppTransformationId());
-		existPropertiesInSourceClass := existPropertiesInSourceClass and propertyExistsInSourceClass;
-		notExistPropertiesInTargetClass := notExistPropertiesInTargetClass and notExistPropInTargetClass;									
+		existPropertiesInSourceClass := existPropertiesInSourceClass and 
+											propertyExistsInSourceClass;
+		notExistPropertiesInTargetClass := notExistPropertiesInTargetClass and 
+												notExistPropInTargetClass;									
 	};
-	var existsLinkProperty : Boolean := checkExistsAssociationPropertyInStandardClass(
-												self.sourceClassName, 
-												self.linkName, 
-												structure, 
-												errorLog, 
-												operationIndex,  
-												getEvolutionAppTransformationId());
 	var areClassesLinked : Boolean := checkAreClassesLinked(
 											self.sourceClassName,
 											self.linkName, 
-											self.targetClassName, 
+											linkProperty.type.name, 
 											structure, 
 											errorLog, 
 											operationIndex,  
 											getEvolutionAppTransformationId());
 	var notAreClassesRelativesInHierarchy : Boolean := checkNotAreClassesRelatives(
 															self.sourceClassName, 
-															self.targetClassName, 
+															linkProperty.type.name, 
 															structure, 
 															errorLog, 
 															operationIndex, 
 															getEvolutionAppTransformationId());
-	return existSourceClass and existTargetClass and existPropertiesInSourceClass and 
-			notExistPropertiesInTargetClass and areClassesLinked;
+	return existSourceClass  and existPropertiesInSourceClass and notExistPropertiesInTargetClass 
+				and areClassesLinked;
 }
 
 helper APP::ops::MoveProperties::apply(inout structure : APP::Structure){
-	applyMoveProperties(structure, self.sourceClassName, self.targetClassName, self.propertiesNames);
+	var linkProperty : AssociationProperty := structure.findAssociationProperty(
+															self.sourceClassName, 
+															self.linkName);
+	applyMoveProperties(
+					structure, 
+					self.sourceClassName, 
+					linkProperty.type.name, 
+					self.propertiesNames);
 	return;
 }
 
@@ -514,7 +526,7 @@ query APP::ops::SetType::isValid(structure : APP::Structure, inout errorLog : Er
 												operationIndex, 
 												getEvolutionAppTransformationId());
 	var existsTypeGeneralClass : Boolean := checkGeneralClassExists(
-												self.type,
+												self.typeName,
 												structure,
 												errorLog, 
 												operationIndex, 
@@ -523,7 +535,7 @@ query APP::ops::SetType::isValid(structure : APP::Structure, inout errorLog : Er
 }
 
 helper APP::ops::SetType::apply(inout structure : APP::Structure) {
-	applySetType(structure, self.owningClassName, self.name, self.type);
+	applySetType(structure, self.owningClassName, self.name, self.typeName);
 	return;
 }
 
@@ -754,9 +766,6 @@ helper APP::ops::CollapseHierarchy::apply(inout structure : Structure){
 	}endif;
 	var movedPropertyNames : Collection(String) := removedClass.properties->
 																		collect(prop | prop.name);
-	movedPropertyNames->forEach(prName){
-		log(prName);
-	};
 	applyMoveProperties(
 					structure, 
 					removedClass.name,
@@ -802,13 +811,124 @@ helper APP::ops::ExtractSubClass::apply(inout structure : APP::Structure){
 	return;
 }
 
+helper APP::ops::InlineClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer):Boolean{
+	var transformationId : String := getEvolutionAppTransformationId();
+	var existsTargetClass : Boolean := checkStandardClassExists(
+													self.targetClassName, 
+													structure, 
+													errorLog, 
+													operationIndex, 
+													transformationId);
+	var existsLinkProperty : Boolean := checkExistsAssociationPropertyInStandardClass(
+																	self.targetClassName,
+																	self.associationPropertyName,
+																	structure, 
+																	errorLog, 
+																	operationIndex, 
+																	transformationId);
+	return existsTargetClass and existsLinkProperty;
+}
+
+helper APP::ops::InlineClass::apply(inout structure : APP::Structure){
+	applyInlineClass(structure, self.targetClassName, self.associationPropertyName);										
+	return;
+}
+
+//there is no check for conflicting attributes in parent and it's precedesors because
+//it is ensured by validation model   
+helper APP::ops::PullUpProperties::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean{
+	var transformationId : String := getEvolutionAppTransformationId();
+	//conflicting atributes in child's siblings hierarchy subtrees
+	var childCls : StandardClass := structure.findStandardClass(self.childClassName);
+	var parentCls : StandardClass := childCls.parent;
+	var childDescendants : OrderedSet(StandardClass) := childCls.getAllDescendants();
+	var checkedCollection : Collection(StandardClass) := parentCls.getAllDescendants()->
+												reject(cls | childDescendants->includes(cls));
+	var notExistsPropertiesInSiblings : Boolean := true;
+	//classes in checked collection can't contain pulled properties
+	checkedCollection->forEach(checkedCls){
+		self.pulledPropertiesNames->forEach(propName){
+			var notExistsPropertyInSibling : Boolean := checkPropertyNotExistInGeneralClass(
+																	checkedCls.name,
+																	propName,
+																	structure, 
+																	errorLog, 
+																	operationIndex, 
+																	transformationId);
+			notExistsPropertiesInSiblings := notExistsPropertyInSibling and 
+												notExistsPropertiesInSiblings;
+		};
+	};
+
+	var existsChild : Boolean := checkStandardClassExists(					
+													self.childClassName,
+													structure, 
+													errorLog, 
+													operationIndex, 
+													transformationId);
+	var existsMovedProperties : Boolean := true;
+	self.pulledPropertiesNames->forEach(propName){
+		var existProperty : Boolean := checkPropertyExistInGeneralClass(
+																self.childClassName,
+																propName,
+																structure, 
+																errorLog, 
+																operationIndex, 
+																transformationId);									
+		existsMovedProperties:= existsMovedProperties and existProperty;
+	};
+	var hasParent : Boolean := checkHasParent(
+											self.childClassName,
+											structure, 
+											errorLog, 
+											operationIndex, 
+											transformationId);								
+	return existsChild and existsMovedProperties and hasParent and notExistsPropertiesInSiblings;
+}
+
+helper APP::ops::PullUpProperties::apply(inout structure : Structure){
+	applyPullUpProperties(structure, self.childClassName, self.pulledPropertiesNames);
+}
+
+helper APP::ops::PushDownProperties::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean{
+	var transformationId : String := getEvolutionAppTransformationId();
+	var existsChild : Boolean := checkStandardClassExists(					
+													self.parentClassName,
+													structure, 
+													errorLog, 
+													operationIndex, 
+													transformationId);
+	var existsMovedProperties : Boolean := true;
+	self.pushedPropertiesNames->forEach(propName){
+		var existMovedProperty : Boolean := checkPropertyExistInGeneralClass(
+																self.parentClassName,
+																propName,
+																structure, 
+																errorLog, 
+																operationIndex, 
+																transformationId);									
+		existsMovedProperties:= existsMovedProperties and existMovedProperty;
+	};
+	var hasAncestor : Boolean := checkHasOneChild(
+												self.parentClassName,
+												structure, 
+												errorLog, 
+												operationIndex, 
+												transformationId);								
+	return existsChild and existsMovedProperties and hasAncestor;
+}
+
+helper APP::ops::PushDownProperties::apply(inout structure : Structure){
+	applyPushDownProperties(structure, self.parentClassName, self.pushedPropertiesNames);
+}
+
 
 
 
 /** ++++++++++ HELPERS FOR LOGGING AND CHECKING ++++++++++++++++++++ */
 // This helpers are logging "invalid state message" when condition suggested by check method name 
 // is violated and returns value signalizing result of check
-// Eg use checkEntityNotExist when you need to be sure that Entity with that name is not present 
+// Eg use checkEntityNotExist when you nePushed to be sure that Entity with that name is not present 
 // in model. DO NOT use checkEntityExist and return opposite return value because in that case 
 // error will be added into errorLog. 
 
@@ -890,10 +1010,27 @@ helper checkHasParent(standardClassName : String, structure : APP::Structure, in
 	var hasParent : Boolean :=  standardClass.parent <> null;
 	if(not hasParent)then{
 		var errorMessage : String := "Standard class called " + standardClassName + 
-										" has no ancestor class";
+										" has no parent class";
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								 
 	}endif;
 	return hasParent;
+}
+
+helper checkHasOneChild(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(standardClassName))then{
+		return false;
+	}endif;
+	var standardClass : StandardClass := structure.findStandardClass(standardClassName);
+	
+	var ancestorCandidates :=  structure.entities[StandardClass]->
+											select(stdCls | stdCls.hasParentName(standardClassName));
+	var hasAncestor : Boolean := ancestorCandidates->size() = 1;
+	if(not hasAncestor)then{
+		var errorMessage : String := "Standard class called " + standardClassName + 
+										" has less or more than one ancestor class";
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								 
+	}endif;
+	return hasAncestor;
 }
 
 helper ModelEntity::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean;
@@ -1388,7 +1525,7 @@ helper applyExtractClass(inout structure : Structure, sourceClassName : String, 
 	structure.entities += extractedClass;
 	// create new pointer to Source class with name self.associationPropertyName 
 	// (small first character), type = extractedClass, lowerBound = 1, upperBound = 1 
-	sourceClass.properties += _associationProperty(associationPropertyName, extractedClass);
+	sourceClass.properties += _associationProperty(associationPropertyName, extractedClass, 1, 1);
 	applyMoveProperties(structure, sourceClassName, extractedClassName, extractedPropertyNames);
 	return;
 }
@@ -1424,9 +1561,7 @@ helper applyChangeBidirectionalAssociationToUnidirectional(inout structure : Str
 helper applySetBounds(inout structure : Structure, className : String, propertyName : String, lowerBound : Integer, upperBound : Integer){
 	var prop : Property := structure.findProperty(className, propertyName);
 	var multipliableProperty : MultipliableProperty := prop.oclAsType(MultipliableProperty);
-	// nastavi dolni hranici atributu
 	multipliableProperty.lowerBound := lowerBound;
-	// nastavi horni hranici atributu
 	multipliableProperty.upperBound := upperBound;
 	return;
 }
@@ -1456,6 +1591,50 @@ helper applyChangeUnidirectionalAssociationToBidirectional(inout structure : Str
 	associationProperty.type.properties+=oppositeProperty;
 	setOpposite(associationProperty, oppositeProperty);
 	return;
+}
+
+helper applyInlineClass( inout structure : Structure, targetClassName : String, associationPropertyName : String){
+	var linkProp : AssociationProperty := structure.findAssociationProperty(
+																targetClassName,
+																associationPropertyName);
+	var owningCls : StandardClass := linkProp.owningGeneralClass;
+	var inlinedCls : StandardClass := linkProp.type;
+						
+	applyRemoveProperty(
+						structure,
+						inlinedCls.name,
+						linkProp.oppositeProperty.name);														
+	applyRemoveProperty(
+						structure, 
+						owningCls.name,
+						linkProp.name);
+	applyMoveProperties(
+						structure,
+						inlinedCls.name,
+						owningCls.name,
+						inlinedCls->properties->collect(pr | pr.name));
+	applyRemoveEntity(
+					structure,
+					inlinedCls.name);
+}
+
+helper applyPullUpProperties(inout structure : Structure, childClassName : String, pulledPropertyNames : Collection(String)){
+	var parentClassName : String := structure.findStandardClass(childClassName).parent.name;
+	applyMoveProperties(
+						structure,
+						childClassName,
+						parentClassName,
+						pulledPropertyNames);	
+}
+
+helper applyPushDownProperties(inout structure : Structure, parentClassName : String, pulledPropertyNames : Collection(String)){
+	var childClass : StandardClass := structure.entities[StandardClass]->
+										selectOne(stdCls | stdCls.hasParentName(parentClassName));
+	applyMoveProperties(
+						structure,
+						parentClassName,
+						childClass.name,
+						pulledPropertyNames);	
 }
 
 helper applyRemoveProperty(inout structure : Structure, className : String, removedPropertyName : String){

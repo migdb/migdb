@@ -7,9 +7,13 @@ transformation extractClass_str(out inoutModel : APP);
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
-	var first : StandardClass := _class("First", _idProperty("idFirst", int), OrderedSet{_primitiveProperty("Att", int)}, app::InheritanceType::joined);
+	var first : StandardClass := _class(
+									"First", 
+									_idProperty("idFirst", int), 
+									OrderedSet{_primitiveProperty("Att", int)}, 
+									app::InheritanceType::joined);
 	var second : StandardClass := _class("Second", _idProperty("idSecond", int), OrderedSet{}, app::InheritanceType::joined);
-	var pointer : AssociationProperty := _associationProperty("second", second);
+	var pointer : AssociationProperty := _associationProperty("second", second, 1, 1);
 	first.properties += pointer;
 	
 	_appStructure(OrderedSet{int, string, first, second});

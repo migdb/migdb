@@ -5,7 +5,14 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation renameEntity1_required(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	_appStructure(OrderedSet{int, _class("Cls", _idProperty("idCls", int),OrderedSet{
-			_primitiveProperty("pr", int)}, false, InheritanceType::singleTable)});
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var cls : StandardClass := _class(
+									"Cls", 
+									_idProperty("idCls", int),
+									OrderedSet{_primitiveProperty("pr", int)}, 
+									false, 
+									InheritanceType::singleTable);
+	_appStructure(OrderedSet{int, cls});
 }

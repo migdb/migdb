@@ -42,11 +42,11 @@ helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String) : APP::ops::AddProperty {
+helper _addProperty(_owningClassName : String, _name : String, _typeName : String) : APP::ops::AddProperty {
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
 		name := _name;
-		type := _type;
+		typeName := _typeName;
 	}
 }
 
@@ -104,7 +104,7 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 	return object APP::ops::SetType {
 		owningClassName := _owningClassName;
 		name := _name;
-		type := _type;
+		typeName := _type;
 	}
 }
 
@@ -173,15 +173,16 @@ helper _extractSubClass (_sourceClassName : String, _extractedClassName : String
 	};
 }
 
-helper _inlineClass (_targetClassName : String, _associationProperty : String, _tolerance : APP::ToleranceType) : APP::ops::InlineClass{
+helper _inlineClass (_targetClassName : String, _associationPropertyName : String, _toleranceType : APP::ToleranceType) : APP::ops::InlineClass{
 	return object APP::ops::InlineClass{
 		targetClassName := _targetClassName;
-		associationProperty := _associationProperty;
-		tolerance := _tolerance;
+		associationPropertyName := _associationPropertyName;
+		toleranceType := _toleranceType;
 	};
 }
 
 helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(String)):APP::ops::PullUpProperties{
+	assert(_pulledPropertiesNames->size() > 0);
 	return object APP::ops::PullUpProperties{
 		childClassName := _childClassName;
 		pulledPropertiesNames := _pulledPropertiesNames;
@@ -189,6 +190,7 @@ helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(
 } 
 
 helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
+	assert(_pushedPropertiesNames->size() > 0);
 	return object APP::ops::PushDownProperties{
 		parentClassName := _parentClassName;
 		pushedPropertiesNames := _pushedPropertiesNames;
@@ -198,7 +200,6 @@ helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : S
 helper _moveProperties( _sourceClassName : String, _linkName : String, _targetClassName : String, _propertiesNames : Set(String)) : APP::ops::MoveProperties{
 	return object APP::ops::MoveProperties{
 		sourceClassName := _sourceClassName;
-		targetClassName := _targetClassName;
 		propertiesNames := _propertiesNames;
 		linkName := _linkName;
 	}
@@ -420,4 +421,3 @@ helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty)
  	embClass.embeddedProperties += _properties;
  	return embClass;
 }
-

@@ -128,7 +128,7 @@ package app {
     class AddProperty extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
-      attr String[1] type;
+      attr String[1] typeName;
       attr String defaultValue;
       attr int lowerBound;
       attr int upperBound = 1;
@@ -150,7 +150,7 @@ package app {
     class SetType extends ModelOperation {
       attr String[1] owningClassName;
       attr String[1] name;
-      attr String[1] type;
+      attr String[1] typeName;
     }
 
     class SetBounds extends ModelOperation {
@@ -186,6 +186,7 @@ package app {
       attr String[1] sourceClassName;
       attr String[1] extractClassName;
       attr String[1] associationPropertyName;
+      attr String[1] oppositePropertyName;
       attr String[+] propertyNames;
     }    
 
@@ -226,18 +227,18 @@ package app {
     // associationProperty is the association property pointing from the target class to the inlined class
     class InlineClass extends ModelOperation {
        attr String[1] targetClassName;
-       attr String[1] associationProperty;
-       attr ToleranceType[1] tolerance;
+       attr String[1] associationPropertyName;
+       attr ToleranceType[1] toleranceType;
     }
     
     class PullUpProperties extends ModelOperation {
        attr String[1] childClassName;
-       attr String[*] pulledPropertiesNames;
+       attr String[+] pulledPropertiesNames;
     }
     
     class PushDownProperties extends ModelOperation {
        attr String[1] parentClassName;
-       attr String[*] pushedPropertiesNames;
+       attr String[+] pushedPropertiesNames;
     }
     
     class MoveProperties extends ModelOperation {
@@ -245,7 +246,7 @@ package app {
       attr String[1] linkName;
       //attr String[1] targetClassName;
       attr String[+] propertiesNames;
-      attr ToleranceType[1] tolerance;
+      attr ToleranceType[1] toleranceType;
     }
     
   }

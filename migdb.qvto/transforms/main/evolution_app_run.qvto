@@ -23,6 +23,7 @@ main() {
 	
 	inOperations.rootObjects()![Operations].operations->forEach(op){
 			if(op.isValid(processedStructure, errorLog, operationIndex))then{
+				//log("operation is valid");
 				op.apply(processedStructure);
 			}endif;
 	};

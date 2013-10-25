@@ -338,7 +338,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/errors_moveProperty1b.qvto"
-		testDescription = "moveProperty - source + target not exist"
+		testDescription = "moveProperty - source not exist"
 	}
 /**/	
 	component = TestComponent{
@@ -373,6 +373,48 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "changeUnidirAsToBidir"
 	}
+/**/	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/017_collapseHierarchy"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"//"${COMPARISONS_STRUCTURES_DIR}/collapseHierarchy_required.qvto"
+		qvtInput = "${IN_OPS}/collapseHierarchy1_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_STR}/extractSubclass1_structure.qvto"//"${OUTPUT_BASE_DIR}/017_collapseHierarchy.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "collapseHierarchy"
+	}	
 /**/
-				
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/018_inlineClass"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
+		qvtInput = "${IN_OPS}/inlineClass1_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_STR}/extractClass_str.qvto"//"${OUTPUT_BASE_DIR}/017_collapseHierarchy.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "inlineClass"
+	}	
+/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/019_pullUpProperties"
+		qvtInput = "${IN_STR}/pullUpProperties1_str.qvto"
+		qvtInput = "${IN_OPS}/pullUp1_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/pullUpProperties1_required"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "pullUpProperties"
+	}
+/**/	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/020_pushDownProperties"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/pullUpProperties1_required"
+		qvtInput = "${IN_OPS}/pushDown1_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_STR}/pullUpProperties1_str.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "pushDownProperties"
+	}			
 }
