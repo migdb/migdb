@@ -5,7 +5,9 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation extractSubclass1_required(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
 	var propertySet : OrderedSet(MultipliableProperty) := OrderedSet{
 										_primitiveProperty("stayingPr", int)};
 	var parent : StandardClass := _class(

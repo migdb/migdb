@@ -6,7 +6,7 @@ transformation renameEntity1_required(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(
-											getAppDefaultIdTypeName(), 
+											getAppDefaultIdTypeName(),
 											app::PrimitiveType::int);
 	var cls : StandardClass := _class(
 									"Cls", 

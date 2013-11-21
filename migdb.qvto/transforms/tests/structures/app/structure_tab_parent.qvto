@@ -5,8 +5,11 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation structure_tab_parent(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	_appStructure(OrderedSet{int, 
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(),
+											 app::PrimitiveType::int);
+	_appStructure(OrderedSet{
+		int, 
 		_class("Tab", _idProperty("idTab", int), false, InheritanceType::singleTable),
 		_class("Parent", _idProperty("idParent", int), false, InheritanceType::singleTable)		
 	});

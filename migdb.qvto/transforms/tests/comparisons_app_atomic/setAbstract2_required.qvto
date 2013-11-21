@@ -5,7 +5,9 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation structure_tab_primitive(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
 	var tab : PrimitiveClass := _primitiveClass("Tab", app::PrimitiveType::boolean);
 	_appStructure(OrderedSet{int, tab});
 }

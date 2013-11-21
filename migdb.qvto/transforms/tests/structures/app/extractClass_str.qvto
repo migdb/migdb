@@ -6,8 +6,12 @@ transformation extractClass_str(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
-	var first : StandardClass := _class("First", _idProperty("idFirst", int), OrderedSet{_primitiveProperty("Att", int)}, app::InheritanceType::joined);
+	var string : PrimitiveClass := _primitiveClass("String", app::PrimitiveType::char);
+	var first : StandardClass := _class(
+									"First", 
+									_idProperty("idFirst", int), 
+									OrderedSet{_primitiveProperty("att", int), _primitiveProperty("extractedPr", int)}, 
+									app::InheritanceType::joined);
 	
 	_appStructure(OrderedSet{int, string, first});
 }

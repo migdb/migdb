@@ -1,0 +1,30 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation moveProperty_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var addColumn : rdb::ops::ModelOperation := _addColumn(
+													publicSchemaName, 
+													"address", 
+													"streetNumber", 
+													rdb::PrimitiveType::char);
+	var whereCondition : String := " = ";
+	var updateRow : rdb::ops::UpdateRow := _updateRow(
+												publicSchemaName,
+												"person",
+												"streetNumber",
+												"adress",
+												"streetNumber",
+												ToleranceType::strict,
+												//TODO Add next line + fix WHERE COND 
+												//whereCondition
+												);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+													addColumn,
+													};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

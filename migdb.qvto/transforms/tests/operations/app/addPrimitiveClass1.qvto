@@ -5,5 +5,5 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation addPrimitiveClass1(out inoutModel : APP);
 
 main(){
-	_appOperations(OrderedSet{_addPrimitiveClass("char", PrimitiveType::char)});	
+	_appOperations(OrderedSet{_addPrimitiveClass("Char", PrimitiveType::char)});	
 }

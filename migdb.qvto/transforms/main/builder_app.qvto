@@ -1,4 +1,5 @@
 import queries_app;
+import text_service;
 
 library builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
@@ -7,7 +8,14 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
  *				OPERATION HELPERS			*
  ********************************************/
 
+
 helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP::ops::AddPrimitiveClass {
+	var condition : Boolean := isLegalClassName(_name) and _primitiveType <> null;
+	if(not condition)then{
+		log("Error when calling constructor _addPrimitiveClass(" + _name + ", " + 
+			_primitiveType.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::AddPrimitiveClass {
 		name := _name;
 		primitiveType := _primitiveType;
@@ -16,12 +24,23 @@ helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP:
 
 
 helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
+	var condition : Boolean := isLegalClassName(_name);
+	if(not condition)then{
+		log("Error when calling constructor _addEmbeddedClass(" + _name + ")");
+	}endif;
+	assert(condition);	
 	return object APP::ops::AddEmbeddedClass {
 		name := _name;
 	}
 }
 
 helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
+	var condition : Boolean := isLegalClassName(_name) and _isAbstract <> null and _inheritanceType <> null;
+	if(not condition)then{
+		log("Error when calling constructor _addStandardClass(" + _name + ", " + 
+			_isAbstract.repr() + "," + _inheritanceType.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::AddStandardClass {
 		name := _name;
 		isAbstract := _isAbstract;
@@ -30,6 +49,11 @@ helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType
 }
 
 helper _renameEntity(_name : String, _newName : String) : APP::ops::RenameEntity {
+	var condition : Boolean := isLegalClassName(_name) and isLegalClassName(_newName);
+	if(not condition)then{
+		log("Error when calling constructor _renameEntity(" + _name + ", "  + _newName + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::RenameEntity {
 		name := _name;
 		newName := _newName;
@@ -37,12 +61,24 @@ helper _renameEntity(_name : String, _newName : String) : APP::ops::RenameEntity
 }
 
 helper _removeEntity(_name : String) : APP::ops::RemoveEntity {
+	var condition : Boolean := isLegalClassName(_name) ;
+	if(not condition)then{
+		log("Error when calling constructor _removeEntity(" + _name + ", "  + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::RemoveEntity {
 		name := _name;
 	}
 }
 
 helper _addProperty(_owningClassName : String, _name : String, _typeName : String) : APP::ops::AddProperty {
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+		isLegalPropertyName(_name) and isLegalClassName(_typeName);
+	if(not condition)then{
+		log("Error when calling constructor _addProperty(" + _owningClassName + ", " +  _name + ", " + 
+			_typeName + ")");
+	}endif;	
+	assert(condition);
 	return object APP::ops::AddProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -50,22 +86,46 @@ helper _addProperty(_owningClassName : String, _name : String, _typeName : Strin
 	}
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
-	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type); 
+helper _addProperty(_owningClassName : String, _name : String, _typeName : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _typeName); 
+	var condition : Boolean := (_lowerBound = 0 or _lowerBound = 1) and _upperBound >=1 ;
+	if(not condition)then{
+		log("Error when calling constructor _addProperty(" + _owningClassName + ", " +  _name + ", " + 
+			_typeName + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
+	}endif;
+	assert(condition);
 	addProperty.lowerBound := _lowerBound;
 	addProperty.upperBound := _upperBound;
 	return addProperty;
 }
 
-helper _addProperty(_owningClassName : String, _name : String, _type : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
-	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _type, 
-		_lowerBound, _upperBound); 
+helper _addProperty(_owningClassName : String, _name : String, _typeName : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(
+													_owningClassName, 
+													_name, 
+													_typeName, 
+													_lowerBound, 
+													_upperBound); 
+	var condition : Boolean := isLegalString(_defaultValue);
+	if(not condition)then{
+		log("Error when calling constructor _addProperty(" + _owningClassName + ", " +  _name + ", " + 
+			_typeName + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + "," + _defaultValue + 
+			")");
+	}endif;
+	assert(condition);
 	addProperty.defaultValue := _defaultValue;
 	return addProperty;
 }
 
 
 helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+			isLegalPropertyName(_name) and isLegalPropertyName(_newName);
+	if(not condition)then{
+		log("Error when calling constructor _renameProperty(" + _owningClassName + ", " +  _name +
+			 ", " + _newName + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::RenameProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -74,6 +134,12 @@ helper _renameProperty(_owningClassName : String, _name : String, _newName : Str
 }
 
 helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::RemoveProperty {
+	var condition : Boolean := isLegalClassName(_owningClassName) and isLegalPropertyName(_name);
+	if(not condition)then{
+		log("Error when calling constructor _removeProperty(" + _owningClassName + ", " +  _name + 
+				")");
+	}endif;
+	assert(condition);
 	return object APP::ops::RemoveProperty {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -81,6 +147,11 @@ helper _removeProperty(_owningClassName : String, _name : String) : APP::ops::Re
 }
 
 helper _addParent(_className : String , _parentName : String) : APP::ops::AddParent{
+	var condition : Boolean := isLegalClassName(_className) and isLegalClassName(_parentName);
+	if(not condition)then{
+		log("Error when calling constructor _addParent(" + _className+"," + _parentName + ")");
+	}endif; 
+	assert(condition);
 	return object APP::ops::AddParent{
 		className := _className;
 		parentClassName := _parentName;
@@ -88,12 +159,22 @@ helper _addParent(_className : String , _parentName : String) : APP::ops::AddPar
 }
 
 helper _removeParent(_className : String) : APP::ops::RemoveParent{
+	var condition : Boolean := isLegalClassName(_className);
+	if(not condition)then{
+		log("Error when calling constructor _removeParent(" + _className + ")");
+	}endif; 
+	assert(condition);
 	return object APP::ops::RemoveParent{
 		className := _className;
 	};
 }
 
-helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
+helper _setAbstract(_className : String, _isAbstract : Boolean) : APP::ops::SetAbstract {
+	var condition : Boolean := isLegalClassName(_className);
+	if(not condition)then{
+		log("Error when calling constructor _setAbstract(" + _className + ")");
+	}endif; 
+	assert(condition);
 	return object APP::ops::SetAbstract {
 		name := _name;
 		isAbstract := _isAbstract;
@@ -101,6 +182,13 @@ helper _setAbstract(_name : String, _isAbstract : Boolean) : APP::ops::SetAbstra
 }
 
 helper _setType(_owningClassName : String, _name : String, _type : String) : APP::ops::SetType {
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+			isLegalPropertyName(_name) and isLegalPropertyName(_type);
+	if(not condition)then{
+		log("Error when calling constructor _setType(" + _owningClassName + ", " + _name +
+			_type + ")");
+	}endif; 
+	assert(condition);
 	return object APP::ops::SetType {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -109,6 +197,13 @@ helper _setType(_owningClassName : String, _name : String, _type : String) : APP
 }
 
 helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::SetBounds {
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+		isLegalPropertyName(_name);
+	if(not condition)then{
+		log("Error when calling constructor _setBounds(" + _owningClassName + ", " + _name +
+			 "," + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
+	}endif; 
+	assert(condition);
 	return object APP::ops::SetBounds {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -118,6 +213,12 @@ helper _setBounds(_owningClassName : String, _name : String, _lowerBound : Integ
 }
 
 helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boolean) : APP::ops::SetOrdered {
+	var condition : Boolean := isLegalClassName(_owningClassName) and isLegalPropertyName(_name);
+	if(not condition)then{
+		log("Error when calling constructor _setOrdered(" + _owningClassName + ", " + _name + 
+			", " + _isOrdered.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::SetOrdered {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -126,6 +227,12 @@ helper _setOrdered(_owningClassName : String, _name : String, _isOrdered : Boole
 }
 
 helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean) : APP::ops::SetUnique {
+	var condition : Boolean := isLegalClassName(_owningClassName) and isLegalPropertyName(_name);
+	if(not condition)then{
+		log("Error when calling constructor _setUnique(" + _owningClassName + ", " + _name + 
+			", " + _isUnique.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::SetUnique {
 		owningClassName := _owningClassName;
 		name := _name;
@@ -133,23 +240,51 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
 	}
 }
 
-helper _extractClass(_sourceClassName : String, _associationPropertyName : String, _extractClassName : String) : APP::ops::ExtractClass {
+helper _extractClass(_sourceClassName : String, _associationPropertyName : String, _oppositePropertyName : String, _extractClassName : String, _extractedPropertyNames : OrderedSet(String)) : APP::ops::ExtractClass {
+	var condition : Boolean := isLegalClassName(_sourceClassName) and 
+			isLegalPropertyName(_associationPropertyName) and isLegalClassName(_extractClassName);
+	if(not condition)then{
+		log("Error when calling constructor _extractClass(" + _sourceClassName + ", " + 
+			_associationPropertyName + ", " + _oppositePropertyName + ", " +
+			_extractedPropertyNames->toString() + ")");
+	}endif;
+	assert(condition);
+	
+	assert(_extractedPropertyNames->size() > 0);
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractClassName := _extractClassName;
 		associationPropertyName := _associationPropertyName;
+		propertyNames := _extractedPropertyNames;
+		//TODO add
+		//oppositePropertyName := _oppositePropertyName; 
 	}
 }
 
-//DAVID LUKSCH's part
-helper _changeBidirectionalAssociationToUnidirectional(_className : String, _associationPropertyName : String) : APP::ops::ChangeBidirectionalAssociationToUnidirectional{
+helper _changeBidirectionalAssociationToUnidirectional(_owningClassName : String, _associationPropertyName : String) : APP::ops::ChangeBidirectionalAssociationToUnidirectional{
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+			isLegalPropertyName(_associationPropertyName);
+	if(not condition)then{
+		log("Error when calling constructor _changeBidirectionalAssociationToUnidirectional(" + 
+			_owningClassName + ", " + _associationPropertyName + ")");
+	}endif;	
+	assert(condition);
 	return object APP::ops::ChangeBidirectionalAssociationToUnidirectional{
 		owningAssociationPropertyName := _associationPropertyName;
 		className := _className;
 	}
 }
 
-helper _changeUnidirectionalAssociationToBidirectional(_className : String, _associationPropertyName : String,  _oppositePropertyName : String) : APP::ops::ChangeUnidirectionalAssociationToBidirectional{
+helper _changeUnidirectionalAssociationToBidirectional(_owningClassName : String, _associationPropertyName : String,  _oppositePropertyName : String) : APP::ops::ChangeUnidirectionalAssociationToBidirectional{
+	var condition : Boolean := isLegalClassName(_owningClassName) and 
+			isLegalPropertyName(_associationPropertyName) and 
+			isLegalPropertyName(_oppositePropertyName);
+	if(not condition)then{
+		log("Error when calling constructor _changeUnidirectionalAssociationToBidirectional(" + 
+			_owningClassName + ", " + _associationPropertyName + "," + 
+			_oppositePropertyName + ")");
+	}endif;	
+	assert(condition);
 	return object APP::ops::ChangeUnidirectionalAssociationToBidirectional{
 		className := _className;
 		associationPropertyName := _associationPropertyName;
@@ -158,6 +293,13 @@ helper _changeUnidirectionalAssociationToBidirectional(_className : String, _ass
 }
 
 helper _collapseHierarchy(_superClassName : String, _subClassName : String, _isIntoSub : Boolean) : APP::ops::CollapseHierarchy{
+	var condition : Boolean := isLegalClassName(_superClassName) and 
+			isLegalPropertyName(_subClassName);
+	if(not condition)then{
+		log("Error when calling constructor _collapseHierarchy(" + _superClassName + ", " + 
+			_subClassName + _isIntoSub.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::CollapseHierarchy{
 		superClassName := _superClassName;
 		subClassName := _subClassName;
@@ -166,6 +308,15 @@ helper _collapseHierarchy(_superClassName : String, _subClassName : String, _isI
 }
 
 helper _extractSubClass (_sourceClassName : String, _extractedClassName : String, _extractedPropertiesNames : OrderedSet(String)) : APP::ops::ExtractSubClass{
+	var condition : Boolean := isLegalClassName(_sourceClassName) and 
+			isLegalClassName(_extractedClassName) and _extractedPropertiesNames->size() > 0 and
+			_extractedPropertiesNames->forAll(propName | isLegalPropertyName(propName));
+	if(not condition)then{
+		log("Error when calling constructor _extractSubClass(" + 
+			_sourceClassName + ", " + _extractedClassName + "," + 
+			_extractedPropertiesNames->toString() + ")");
+	}endif;	
+	assert(condition);
 	return object APP::ops::ExtractSubClass{
 		sourceClassName := _sourceClassName;
 		extractedClassName := _extractedClassName;
@@ -174,6 +325,14 @@ helper _extractSubClass (_sourceClassName : String, _extractedClassName : String
 }
 
 helper _inlineClass (_targetClassName : String, _associationPropertyName : String, _toleranceType : APP::ToleranceType) : APP::ops::InlineClass{
+	var condition : Boolean := isLegalClassName(_targetClassName) and 
+			isLegalPropertyName(_associationPropertyName) and _toleranceType <> null;
+	if(not condition)then{
+		log("Error when calling constructor _inlineClass(" + 
+			_targetClassName + ", " + _associationPropertyName + "," + 
+			_toleranceType.repr() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::InlineClass{
 		targetClassName := _targetClassName;
 		associationPropertyName := _associationPropertyName;
@@ -182,7 +341,14 @@ helper _inlineClass (_targetClassName : String, _associationPropertyName : Strin
 }
 
 helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(String)):APP::ops::PullUpProperties{
-	assert(_pulledPropertiesNames->size() > 0);
+	var condition : Boolean := isLegalClassName(_childClassName) and 
+			_pulledPropertiesNames->size() > 0 and 
+			_pulledPropertiesNames->forAll(propName | isLegalPropertyName(propName));
+		if(not condition)then{
+		log("Error when calling constructor _pullUpProperties(" + 
+			_childClassName + ", " + _pulledPropertiesNames->toString() + ")");
+	}endif;
+	assert(condition);
 	return object APP::ops::PullUpProperties{
 		childClassName := _childClassName;
 		pulledPropertiesNames := _pulledPropertiesNames;
@@ -190,6 +356,14 @@ helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(
 } 
 
 helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
+	var condition : Boolean := isLegalClassName(_parentClassName) and 
+			_pushedPropertiesNames->size() > 0 and 
+			_pushedPropertiesNames->forAll(propName | isLegalPropertyName(propName));
+		if(not condition)then{
+		log("Error when calling constructor _pullUpProperties(" + 
+			_parentClassName + ", " + _pushedPropertiesNames->toString() + ")");
+	}endif;
+	assert(condition);
 	assert(_pushedPropertiesNames->size() > 0);
 	return object APP::ops::PushDownProperties{
 		parentClassName := _parentClassName;
@@ -349,8 +523,8 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass{
-	
-	assert(_idProperty <> null);
+	//var condition : Boolean := _idProperty <> null and 
+	//assert();
 	var clsProperties : OrderedSet(MultipliableProperty) := OrderedSet{_idProperty};
 	_properties->forEach(prop){
 		clsProperties := clsProperties->append(prop);
@@ -403,6 +577,13 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
 
  
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
+ 	var condition : Boolean := _name <> null and _name <> "" and _primitiveType <> null;
+ 	assert(condition);
+ 	if(not condition)then{
+ 		log("Error when calling constructor _primitiveClass(" + _name + ", " 
+ 			+ _primitiveType.repr());
+ 	}endif;
+ 	
  	return object PrimitiveClass {
  		name := _name;
  		primitiveType := _primitiveType;
@@ -410,6 +591,11 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
 }
 
 helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : EmbeddedClass {
+ 	var condition : Boolean := _name <> null and _name <> "" and _idProperty <> null;
+ 	assert(condition);
+ 	if(not condition)then{
+ 		log("Error when calling constructor _embeddedClass(" + _name + ", " + _idProperty.repr());
+ 	}endif;
  	return object EmbeddedClass {
  		name := _name;
  		idProperty := _idProperty;

@@ -6,7 +6,7 @@ transformation structureComplexApp(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
+	var string : PrimitiveClass := _primitiveClass("String", app::PrimitiveType::char);
 	var joinedRoot : StandardClass := _class("JoinedRoot", _idProperty("idJoinedRoot", int), 
 		OrderedSet{_primitiveProperty("joinedRootPr", int)}, app::InheritanceType::joined);
 	var joinedChild : StandardClass := _class("JoinedChild", joinedRoot, OrderedSet{

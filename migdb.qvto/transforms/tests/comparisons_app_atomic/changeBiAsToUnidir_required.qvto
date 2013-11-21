@@ -6,7 +6,7 @@ transformation changeBiAsToUnidir_required(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass:= _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	var string : PrimitiveClass := _primitiveClass("string", app::PrimitiveType::char);
+	var string : PrimitiveClass := _primitiveClass("String", app::PrimitiveType::char);
 	var address : StandardClass := _class("Address", _idProperty("idAddress", int), OrderedSet{});
 	var assocProp : AssociationProperty := _associationProperty("residentalAddress",address,1,1); 
 	var person : StandardClass := _class(

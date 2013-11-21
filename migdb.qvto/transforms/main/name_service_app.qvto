@@ -68,25 +68,3 @@ query PrimitiveProperty::getCollectionTableName():String{
 	return getDbCollectionPrefix() + self.name.translate() + "_" + 
 			self.owningGeneralClass.getDbRepresentative().name.translate();
 }
-
-/** BOOLEAN QUERIES **/
-
-query isLegalClassName(name : String) : Boolean {
-	if(name = "") then { return false; } endif;
-	if(name.substring(1,1).toUpper() != name.substring(1,1)) then { 
-		if(name = "char" or name = "int" or name = "boolean") then {
-			return true;
-		} else {
-			return false;
-		} endif;
-	} endif;
-	if(isFirstCharNumber(name.substring(1,1))) then { return false; } endif;
-	return true;
-}
-
-query isLegalPropertyName(name : String) : Boolean {
-	if(name = "") then { return false; } endif;
-	if(name.substring(1,1).toLower() != name.substring(1,1)) then { return false; } endif;
-	if(isFirstCharNumber(name.substring(1,1))) then {return false;} endif;
-	return true;
-}

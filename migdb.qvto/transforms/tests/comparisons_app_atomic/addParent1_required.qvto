@@ -5,8 +5,13 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation addParent1_required(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	var parent : StandardClass := _class("Parent", _idProperty("idParent", int), 
-		false, InheritanceType::singleTable);
+	var int : PrimitiveClass := _primitiveClass(
+										getAppDefaultIdTypeName(), 
+										app::PrimitiveType::int);
+	var parent : StandardClass := _class(
+										"Parent", 
+										_idProperty("idParent", int), 
+										false, 
+										InheritanceType::singleTable);
 	_appStructure(OrderedSet{int, _class("Tab", parent, OrderedSet{}), parent});
 }

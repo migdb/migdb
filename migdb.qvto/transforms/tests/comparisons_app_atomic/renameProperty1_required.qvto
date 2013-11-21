@@ -5,7 +5,9 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation renameProperty1_required(out inoutModel : APP);
 
 main(){
-	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
 	_appStructure(OrderedSet{int, _class("Tab", _idProperty("idTab", int), 
 		OrderedSet{_primitiveProperty("newPropertyName", int)}, InheritanceType::singleTable)});
 }

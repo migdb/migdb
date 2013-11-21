@@ -5,7 +5,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 transformation structure_int_char(out inoutModel : APP);
 
 main(){
-var char : PrimitiveClass := _primitiveClass("char", PrimitiveType::char);
+var char : PrimitiveClass := _primitiveClass("Char", PrimitiveType::char);
 var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
 	_appStructure(OrderedSet{char, int});
 }
