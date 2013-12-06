@@ -195,6 +195,7 @@ query app::MultipliableProperty::isPrimitive():Boolean{
 
 /**
 	Returns path to root class or to strong component (including classes in Strong component).
+	This method also returns object it was invoked from
 **/
 query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 	var emptyOrderedSet : OrderedSet(app::StandardClass) := OrderedSet{};
@@ -664,3 +665,16 @@ query app::Operations::print(){
 		log(op.repr());
 	}
 }
+
+
+/** ++++++++++++++++++++++++ TO String for collection+++++++++++++++++++++++++++++++*/
+query Collection(Property)::toString() : String{
+	var colString : String := "Collection(";
+	
+	self->forEach(prop){
+		colString:= colString + prop.repr() + "\n";
+	};
+	colString:= colString + ")";
+	return colString;
+}
+

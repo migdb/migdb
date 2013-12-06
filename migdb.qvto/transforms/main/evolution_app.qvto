@@ -176,13 +176,23 @@ query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog 
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
-	var notIsPropertyInGeneralClass : Boolean := checkPropertyNotExistInGeneralClass(
-														self.owningClassName, 
-														self.name, 
-														structure,
-														errorLog,
-														operationIndex,
-														getEvolutionAppTransformationId());
+	var notIsPropertyInGeneralClassHierarchy : Boolean := true;
+	if(generalClassExists) then{											
+		var pathSet : OrderedSet(StandardClass) := structure.
+													findStandardClass(self.owningClassName).
+													getPathToRoot();
+		pathSet->forEach(cls){
+			var notExistsPropInCls := checkPropertyNotExistInGeneralClass(
+										cls.name, 
+										self.name, 
+										structure,
+										errorLog,
+										operationIndex,
+										getEvolutionAppTransformationId());
+			notIsPropertyInGeneralClassHierarchy := notExistsPropInCls and 
+														notIsPropertyInGeneralClassHierarchy;							
+		};
+	}endif;
 	var isPropertyTypeValid : Boolean := checkIsPropertyTypeValid(
 												self.owningClassName, 
 												self.typeName, 
@@ -202,7 +212,7 @@ query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog 
 									errorLog, 
 									operationIndex, 
 									getEvolutionAppTransformationId());
-	return generalClassExists and notIsPropertyInGeneralClass and isPropertyTypeValid and 
+	return generalClassExists and notIsPropertyInGeneralClassHierarchy and isPropertyTypeValid and 
 			areBoundsValid and formOfName;
 }
 
@@ -265,7 +275,8 @@ query APP::ops::RemoveProperty::isValid(structure : APP::Structure, inout errorL
 													getEvolutionAppTransformationId());
 	var isPropertyInGeneralClass : Boolean := checkPropertyExistInGeneralClass(
 													self.owningClassName, 
-													self.name, structure, 
+													self.name, 
+													structure, 
 													errorLog, 
 													operationIndex, 
 													getEvolutionAppTransformationId());
@@ -299,6 +310,8 @@ helper APP::ops::SetAbstract::apply(inout structure : APP::Structure) {
 	return; 
 }
 
+//functionality of this operation is little restricted - data can be moved from first 
+// ancestor not from any other than this child class  
 query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
 	var existChild : Boolean := checkStandardClassExists(
 									self.className, 
@@ -318,22 +331,41 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 											errorLog, 
 											operationIndex, 
 											getEvolutionAppTransformationId());
-	var notIsParentDescendantOfChild := checkNotIsDescendant(
+	var notIsParentDescendantOfChild : Boolean := checkNotIsDescendant(
+													self.parentClassName, 
+													self.className, 
+													structure, 
+													errorLog, 
+													operationIndex, 
+													getEvolutionAppTransformationId());
+	var haveSameInheritanceType : Boolean := checkHaveSameInheritanceType(
 												self.parentClassName, 
 												self.className, 
 												structure, 
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
-	var haveSameInheritanceType := checkHaveSameInheritanceType(
-												self.parentClassName, 
+	var hasMovedProperties : Boolean := true;
+	//this can looks weird but have in mind that when you are adding parent to a class you are doing that
+	//in cases when those two classes have similar/same properties that are moved to parent class
+	if(existChild and existParent)then{
+		var parentClass : StandardClass := structure.findStandardClass(self.parentClassName);
+		parentClass->properties->reject(prop | prop = parentClass.idProperty)->
+				forEach(prop | prop.lowerBound >= 1){
+			var hasMovedProp : Boolean := checkPropertyExistInGeneralClass(
 												self.className, 
+												prop.name, 
 												structure, 
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
+			hasMovedProperties := hasMovedProperties and hasMovedProp;									 
+		};
+		
+	}endif;
+												
 	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild and 
-		haveSameInheritanceType;
+		haveSameInheritanceType and hasMovedProperties;
 }
 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
@@ -389,7 +421,7 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
  											errorLog, 
  											operationIndex, 
  											getEvolutionAppTransformationId());
-	var existExtractClass : Boolean := checkEntityNotExists(
+	var notExistExtractClass : Boolean := checkEntityNotExists(
 											self.extractClassName, 
 											structure, 
 											errorLog, 
@@ -420,12 +452,18 @@ helper APP::ops::RemoveParent::apply(inout structure : APP::Structure) {
 		existPropertiesInSourceClass := existPropertiesInSourceClass and propertyExistsInSourceClass;
 	};
 													
-	return existSourceClass and existExtractClass and formOfExtractClassName and 
+	return existSourceClass and notExistExtractClass and formOfExtractClassName and 
 		associationPropertyNotExistInClass and existPropertiesInSourceClass;
  }
 
 helper APP::ops::ExtractClass::apply(inout structure : APP::Structure){
-	applyExtractClass(structure, self.sourceClassName, self.extractClassName, self.associationPropertyName, self.propertyNames);	
+	applyExtractClass(
+				structure, 
+				self.sourceClassName, 
+				self.extractClassName, 
+				self.associationPropertyName,
+				self.oppositePropertyName,
+				self.propertyNames);	
 }
 
 /**
@@ -1171,8 +1209,8 @@ query APP::GeneralClass::isTypeValid(type : String) : Boolean {
 helper checkAreBoundsValid(lowerBound : Integer, upperBound : Integer, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
 	var areBoundsValid : Boolean := areBoundsValid(lowerBound,upperBound);
 	if(not areBoundsValid)then{
-		var errorMessage : String := "Invalid bounds - lower:" + lowerBound.repr() + ", upper:" 
-			+ upperBound.repr();
+		var errorMessage : String := "Invalid bounds - lower:" + lowerBound.repr() + ", upper:" + 
+			upperBound.repr();
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
 	}endif;
 	return areBoundsValid;
@@ -1183,7 +1221,8 @@ helper checkExistsAssociationPropertyInStandardClass(owningClassName : String, p
 			not structure.isPropertyInGeneralClass(owningClassName, propertyName))then{
 		return false;
 	}endif;
-	var isAssoc : Boolean := structure.findProperty(owningClassName, propertyName).oclIsKindOf(AssociationProperty);
+	var isAssoc : Boolean := structure.findProperty(owningClassName, propertyName).
+								oclIsKindOf(AssociationProperty);
 	if(not isAssoc)then{
 		var errorMessage : String := "Property " + propertyName + " is not an association";
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
@@ -1496,10 +1535,13 @@ helper applySetAbstract(inout structure : Structure, className : String, isAbstr
 
 helper applyAddParent(inout structure : Structure, className : String, parentClassName : String){
 	var childClass : APP::StandardClass := structure.findClass(className);	
-	childClass.parent := structure.findClass(parentClassName);
+	var parentClass : APP::StandardClass := structure.findClass(parentClassName);
+	childClass.parent := parentClass;
 	childClass.properties := childClass.properties->reject(pr | pr = childClass.idProperty);
 	//childClass.properties := childClass.properties->reject(pr | pr.name = childClass.idProperty.name);
 	childClass.idProperty := null;
+	childClass.properties := childClass.properties->reject(prop | 
+									parentClass.properties->exists(parentProp | parentProp.name = prop.name));
 	return;	
 }
 
@@ -1514,18 +1556,32 @@ helper applyRemoveParent(inout structure : Structure, className : String){
 	return;
 }
 
-helper applyExtractClass(inout structure : Structure, sourceClassName : String, extractedClassName : String, associationPropertyName : String, extractedPropertyNames : OrderedSet(String)){
+helper applyExtractClass(inout structure : Structure, sourceClassName : String, extractedClassName : String, linkPropertyName : String, oppositteLinkPropertyName : String, extractedPropertyNames : OrderedSet(String)){
 	// find Source class
 	var sourceClass : StandardClass := structure.findStandardClass(sourceClassName);
 	// create new "Extracted" class with name self.extractClassName, isAbstract = false, inheritance = joined
+	var oppositeLinkProperty : AssociationProperty := _associationProperty(
+															oppositteLinkPropertyName,
+															sourceClass, 
+															1, 
+															1);
+	var idExtractedClass : PrimitiveProperty := _idProperty(
+														getIdName(extractedClassName),
+														structure.findDefaultIdType());
 	var extractedClass : StandardClass := _class(
 												extractedClassName, 
-												_idProperty(getIdName(extractedClassName), 
-												structure.findDefaultIdType()));
+												idExtractedClass,
+												OrderedSet{oppositeLinkProperty});
 	structure.entities += extractedClass;
 	// create new pointer to Source class with name self.associationPropertyName 
 	// (small first character), type = extractedClass, lowerBound = 1, upperBound = 1 
-	sourceClass.properties += _associationProperty(associationPropertyName, extractedClass, 1, 1);
+	var linkProperty : AssociationProperty := _associationProperty(
+															linkPropertyName, 
+															extractedClass, 
+															1, 
+															1);
+	sourceClass.properties += linkProperty;
+	setOpposite(linkProperty, oppositeLinkProperty);
 	applyMoveProperties(structure, sourceClassName, extractedClassName, extractedPropertyNames);
 	return;
 }
@@ -1608,6 +1664,10 @@ helper applyInlineClass( inout structure : Structure, targetClassName : String, 
 						structure, 
 						owningCls.name,
 						linkProp.name);
+	applyRemoveProperty(
+						structure, 
+						inlinedCls.name,
+						inlinedCls.idProperty.name);					
 	applyMoveProperties(
 						structure,
 						inlinedCls.name,

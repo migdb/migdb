@@ -1,0 +1,23 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addParent_c(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var person : StandardClass := _class(
+									"Person", 
+									_idProperty("idPerson", int),
+									OrderedSet{_primitiveProperty("age", int, 1, 1)});
+	var favNumProp : MultipliableProperty := _primitiveProperty("favouriteNumber", int);								
+	var manProps : OrderedSet(MultipliableProperty) := OrderedSet{
+															_primitiveProperty("age", int, 1, 1), 
+															favNumProp};
+	var man : StandardClass := _class("Man", 
+									_idProperty("idMan", int),
+									manProps); 								
+	_appStructure(OrderedSet{int, person, man});
+}

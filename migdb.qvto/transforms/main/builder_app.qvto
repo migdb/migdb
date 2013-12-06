@@ -176,7 +176,7 @@ helper _setAbstract(_className : String, _isAbstract : Boolean) : APP::ops::SetA
 	}endif; 
 	assert(condition);
 	return object APP::ops::SetAbstract {
-		name := _name;
+		name := _className;
 		isAbstract := _isAbstract;
 	}
 }
@@ -242,22 +242,22 @@ helper _setUnique(_owningClassName : String, _name : String, _isUnique : Boolean
 
 helper _extractClass(_sourceClassName : String, _associationPropertyName : String, _oppositePropertyName : String, _extractClassName : String, _extractedPropertyNames : OrderedSet(String)) : APP::ops::ExtractClass {
 	var condition : Boolean := isLegalClassName(_sourceClassName) and 
-			isLegalPropertyName(_associationPropertyName) and isLegalClassName(_extractClassName);
+			isLegalPropertyName(_associationPropertyName) and 
+			isLegalPropertyName(_oppositePropertyName) and isLegalClassName(_extractClassName) and
+			_extractedPropertyNames <> null and _extractedPropertyNames->size() > 0 and 
+			_extractedPropertyNames->forAll(propName | isLegalPropertyName(propName));
 	if(not condition)then{
 		log("Error when calling constructor _extractClass(" + _sourceClassName + ", " + 
-			_associationPropertyName + ", " + _oppositePropertyName + ", " +
-			_extractedPropertyNames->toString() + ")");
+			_associationPropertyName + ", " + _oppositePropertyName + ", " + _extractClassName +
+			", " + _extractedPropertyNames->toString() + ")");
 	}endif;
 	assert(condition);
-	
-	assert(_extractedPropertyNames->size() > 0);
 	return object APP::ops::ExtractClass {
 		sourceClassName := _sourceClassName;
 		extractClassName := _extractClassName;
 		associationPropertyName := _associationPropertyName;
 		propertyNames := _extractedPropertyNames;
-		//TODO add
-		//oppositePropertyName := _oppositePropertyName; 
+		oppositePropertyName := _oppositePropertyName; 
 	}
 }
 
@@ -271,7 +271,7 @@ helper _changeBidirectionalAssociationToUnidirectional(_owningClassName : String
 	assert(condition);
 	return object APP::ops::ChangeBidirectionalAssociationToUnidirectional{
 		owningAssociationPropertyName := _associationPropertyName;
-		className := _className;
+		className := _owningClassName;
 	}
 }
 
@@ -286,7 +286,7 @@ helper _changeUnidirectionalAssociationToBidirectional(_owningClassName : String
 	}endif;	
 	assert(condition);
 	return object APP::ops::ChangeUnidirectionalAssociationToBidirectional{
-		className := _className;
+		className := _owningClassName;
 		associationPropertyName := _associationPropertyName;
 		oppositePropertyName := _oppositePropertyName;
 	};
@@ -309,7 +309,7 @@ helper _collapseHierarchy(_superClassName : String, _subClassName : String, _isI
 
 helper _extractSubClass (_sourceClassName : String, _extractedClassName : String, _extractedPropertiesNames : OrderedSet(String)) : APP::ops::ExtractSubClass{
 	var condition : Boolean := isLegalClassName(_sourceClassName) and 
-			isLegalClassName(_extractedClassName) and _extractedPropertiesNames->size() > 0 and
+			isLegalClassName(_extractedClassName) and _extractedPropertiesNames <> null and
 			_extractedPropertiesNames->forAll(propName | isLegalPropertyName(propName));
 	if(not condition)then{
 		log("Error when calling constructor _extractSubClass(" + 
@@ -342,7 +342,7 @@ helper _inlineClass (_targetClassName : String, _associationPropertyName : Strin
 
 helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(String)):APP::ops::PullUpProperties{
 	var condition : Boolean := isLegalClassName(_childClassName) and 
-			_pulledPropertiesNames->size() > 0 and 
+			_pulledPropertiesNames <> null and _pulledPropertiesNames->size() > 0 and 
 			_pulledPropertiesNames->forAll(propName | isLegalPropertyName(propName));
 		if(not condition)then{
 		log("Error when calling constructor _pullUpProperties(" + 
@@ -357,14 +357,13 @@ helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(
 
 helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
 	var condition : Boolean := isLegalClassName(_parentClassName) and 
-			_pushedPropertiesNames->size() > 0 and 
+			_pushedPropertiesNames <> null and _pushedPropertiesNames->size() > 0 and 
 			_pushedPropertiesNames->forAll(propName | isLegalPropertyName(propName));
 		if(not condition)then{
 		log("Error when calling constructor _pullUpProperties(" + 
 			_parentClassName + ", " + _pushedPropertiesNames->toString() + ")");
 	}endif;
 	assert(condition);
-	assert(_pushedPropertiesNames->size() > 0);
 	return object APP::ops::PushDownProperties{
 		parentClassName := _parentClassName;
 		pushedPropertiesNames := _pushedPropertiesNames;
@@ -372,6 +371,15 @@ helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : S
 } 
 
 helper _moveProperties( _sourceClassName : String, _linkName : String, _targetClassName : String, _propertiesNames : Set(String)) : APP::ops::MoveProperties{
+	var condition : Boolean :=  isLegalClassName(_sourceClassName) and 
+			isLegalPropertyName(_linkName) and isLegalClassName(_targetClassName) and
+			_propertiesNames <> null and _propertiesNames->size() > 0 and 
+			_propertiesNames->forAll(propName | isLegalPropertyName(propName));
+ 	if(not condition)then{
+ 		log("Error when calling constructor _moveProperties(" + _sourceClassName + ", " + 
+ 		  _linkName + ", " + _targetClassName + ", " + _propertiesNames->toString());
+ 	}endif;
+	assert(condition);
 	return object APP::ops::MoveProperties{
 		sourceClassName := _sourceClassName;
 		propertiesNames := _propertiesNames;
@@ -405,6 +413,12 @@ helper _idProperty(name : String, _integerReference : PrimitiveClass) : Primitiv
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : PrimitiveProperty{
+	var condition : Boolean :=  isLegalPropertyName(_name) and _primitiveType <> null;
+ 	if(not condition)then{
+ 		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
+ 			_primitiveType.repr() + ")");
+ 	}endif;
+	assert(condition);
 	return object PrimitiveProperty{
 		name := _name;
 		type := _primitiveType;
@@ -414,8 +428,13 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass) : Pri
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer) : PrimitiveProperty{
-	assert(_primitiveType <> null and _name <> "" and _name <> null and 
-			(_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0)));
+	var condition : Boolean :=  _primitiveType <> null and isLegalPropertyName(_name) and 
+			(_upperBound >= _lowerBound or (_upperBound = -1 and _lowerBound >= 0));
+ 	if(not condition)then{
+ 		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
+ 			_primitiveType.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr()+")");
+ 	}endif;
+	assert(condition);
 	return object PrimitiveProperty{
 		name := _name;
 		type := _primitiveType;
@@ -425,6 +444,13 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
+	var condition : Boolean :=  isLegalString(_defaultValue);
+ 	if(not condition)then{
+ 		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
+ 			_primitiveType.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr()+ "," + 
+ 			_defaultValue + ")");
+ 	}endif;
+	assert(condition);
 	var prop : PrimitiveProperty := _primitiveProperty(
 											_name, 
 											_primitiveType, 
@@ -435,6 +461,13 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean) : PrimitiveProperty{
+	var condition : Boolean :=  _isOrdered <> null and _isUnique <> null;
+ 	if(not condition)then{
+		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
+ 			_primitiveType.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr()+ "," + 
+ 			_defaultValue + ", " + _isOrdered.repr() + ", " + _isUnique.repr() + ")");
+ 	}endif;
+	assert(condition);
 	var prop : PrimitiveProperty := _primitiveProperty(
 											_name, 
 											_primitiveType, 
@@ -448,36 +481,65 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 
 
 helper _associationProperty(_name : String, _type : StandardClass) : AssociationProperty {
- 	assert(_type <> null and _name <> "" and _name <> null);
+ 	var condition : Boolean :=  isLegalPropertyName(_name) and _type <> null;
+ 	if(not condition)then{
+		log("Error when calling constructor _associationProperty(" + _name + ", " + _type.repr() + 
+			")");
+ 	}endif;
+	assert(condition);
  	return object AssociationProperty{
  		name := _name;
  		type := _type;
  	};
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
-	assert(_lowerBound <= _upperbound or ((_lowerBound = 0 or _lowerBound = 1) 
-		 and _upperbound = -1 ));	
-	var prop : AssociationProperty := _associationProperty(_name, _type);
+helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperBound : Integer) : AssociationProperty {
+ 	var condition : Boolean := _lowerBound <= _upperBound or 
+ 			((_lowerBound = 0 or _lowerBound = 1) and _upperBound = -1 ) ;
+	if(not condition)then{
+		log("Error when calling constructor _associationProperty(" + _name + ", " + _type.repr() + 
+			", " + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
+ 	}endif;
+	assert(condition);
+ 	var prop : AssociationProperty := _associationProperty(_name, _type);
  	prop.lowerBound := _lowerBound;
- 	prop.upperBound := _upperbound;
+ 	prop.upperBound := _upperBound;
  	return prop;
 }
 
-helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperbound : Integer) : AssociationProperty {
-	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperbound);
+helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperBound : Integer) : AssociationProperty {
+ 	var condition : Boolean := _oppositeProperty <> null ;
+	if(not condition)then{
+	log("Error when calling constructor _associationProperty(" + _name + ", " + _type.repr() + 
+		_oppositeProperty.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
+ 	}endif;	
+	assert(condition);
+ 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
 	prop.oppositeProperty := _oppositeProperty;
 	return prop;
 }
 
 helper _associationProperty(_name : String, _type : StandardClass, _lowerBound : Integer, _upperBound : Integer,  _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty{
-	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
+	var condition : Boolean := _isOrdered <> null and _isUnique <> null ;
+	if(not condition)then{
+		log("Error when calling constructor _associationProperty(" + _name + ", " + _type.repr() + 
+		  ", " + _lowerBound.repr() + ", " + _upperBound.repr() +  _isOrdered.repr() + 
+		  _isUnique.repr() + ")");
+ 	}endif;	
+	assert(condition);
+ 	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
 	return prop;
 }
 
 helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
+	var condition : Boolean := isLegalPropertyName(_name) and _type <> null ;
+	if(not condition)then{
+		log("Error when calling constructor _embeddedProperty(" + _name + ", " + _type.repr() + 
+		  ")");
+ 	}endif;	
+	assert(condition);
 	var emb : EmbeddedProperty := object EmbeddedProperty{
 		name := _name;
 		type := _type;
@@ -486,6 +548,12 @@ helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedPrope
 }
 
 helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean) : EmbeddedProperty{
+	var condition : Boolean := _isMandatory <> null;
+	if(not condition)then{
+		log("Error when calling constructor _embeddedProperty(" + _name + ", " + _type.repr() + 
+		  ", " + _isMandatory.repr() + ")");
+ 	}endif;	
+	assert(condition);
 	var emb : EmbeddedProperty := _embeddedProperty(_name, _type);
 	emb.isMandatory := _isMandatory;
 	return emb;
@@ -497,6 +565,12 @@ helper _embeddedIdProperty(_name : String, _type : PrimitiveClass) : EmbeddedPro
 }
 
 helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
+	var condition : Boolean := isLegalPropertyName(_name) and _type <> null ;
+	if(not condition)then{
+		log("Error when calling constructor _nestedProperty(" + _name + ", " + _type.repr() + 
+		  ")");
+ 	}endif;	
+	assert(condition);
 	return object NestedProperty{
 		name := _name;
 		type := _type;
@@ -506,8 +580,14 @@ helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
 }
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
- 	assert(_parent <> null);
- 	var cls : StandardClass := object StandardClass {
+ 	var condition : Boolean := isLegalClassName(_name) and _parent <> null and 
+ 		_properties <> null;
+	if(not condition)then{
+		log("Error when calling constructor _class(" + _name + ", " + _parent.repr() + 
+		   _properties->toString() + ")");
+ 	}endif;	
+	assert(condition);
+	var cls : StandardClass := object StandardClass {
  		name := _name;
  		properties := _properties;
  		parent := _parent;
@@ -517,14 +597,26 @@ helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(
 }
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty), _inheritanceType : InheritanceType) : StandardClass {
+ 	var condition : Boolean := _inheritanceType <> null;
+	if(not condition)then{
+		log("Error when calling constructor _class(" + _name + ", " + _parent.repr() + 
+		   _properties->toString() +  ", " + _inheritanceType.repr() + ")");
+ 	}endif;	
+	assert(condition);	
  	var cls : StandardClass := _class(_name, _parent, _properties);
  	cls.inheritanceType := _inheritanceType;
  	return cls;
 }
 
 helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : OrderedSet(MultipliableProperty), _isAbstract : Boolean, _inheritanceType : APP::InheritanceType) : StandardClass{
-	//var condition : Boolean := _idProperty <> null and 
-	//assert();
+ 	var condition : Boolean := isLegalClassName(_name) and _idProperty <> null and 
+ 			_properties <> null and _isAbstract <> null and _inheritanceType <> null;
+	if(not condition)then{
+		log("Error when calling constructor _class(" + _name + ", " + _idProperty.repr() + 
+		   _properties->toString() +  ", " + _isAbstract.repr() + ", " + _inheritanceType.repr() 
+		   + ")");
+ 	}endif;	
+	assert(condition);	
 	var clsProperties : OrderedSet(MultipliableProperty) := OrderedSet{_idProperty};
 	_properties->forEach(prop){
 		clsProperties := clsProperties->append(prop);
@@ -578,12 +670,11 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
  
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	var condition : Boolean := _name <> null and _name <> "" and _primitiveType <> null;
- 	assert(condition);
  	if(not condition)then{
  		log("Error when calling constructor _primitiveClass(" + _name + ", " 
- 			+ _primitiveType.repr());
+ 			+ _primitiveType.repr() + ")");
  	}endif;
- 	
+ 	assert(condition);
  	return object PrimitiveClass {
  		name := _name;
  		primitiveType := _primitiveType;
@@ -592,10 +683,11 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
 
 helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : EmbeddedClass {
  	var condition : Boolean := _name <> null and _name <> "" and _idProperty <> null;
- 	assert(condition);
  	if(not condition)then{
- 		log("Error when calling constructor _embeddedClass(" + _name + ", " + _idProperty.repr());
+ 		log("Error when calling constructor _embeddedClass(" + _name + ", " + 
+ 			_idProperty.repr() + ")");
  	}endif;
+ 	assert(condition);
  	return object EmbeddedClass {
  		name := _name;
  		idProperty := _idProperty;
@@ -603,6 +695,12 @@ helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : Embedded
 }
 
 helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), _idProperty : EmbeddedProperty) : EmbeddedClass {
+ 	var condition : Boolean := _properties <> null;
+ 	if(not condition)then{
+ 		log("Error when calling constructor _embeddedClass(" + _name + ", " + 
+ 			_properties->toString() + ", " + _idProperty.repr() + ")");
+ 	}endif;
+ 	assert(condition);
  	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
  	embClass.embeddedProperties += _properties;
  	return embClass;

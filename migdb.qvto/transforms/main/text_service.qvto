@@ -113,15 +113,15 @@ query isCharacter(char : String) : Boolean {
 
 /** BOOLEAN QUERIES **/
 query isLegalClassName(name : String) : Boolean {
-	if(name = "") then { return false; } endif;
-	return isCharacter(name.substring(1,1));
+	//return isCharacter(name.substring(1,1));
+	return isLegalString(name);
 }
 
 query isLegalPropertyName(name : String) : Boolean {
-	if(name = "") then { return false; } endif;
-	return isCharacter(name.substring(1,1));
+	//return isCharacter(name.substring(1,1));
+	return isLegalString(name);
 }
 
 query isLegalString(testedString : String) : Boolean{
-	return testedString <> "" and testedString = null;
+	return testedString <> "" and testedString <> null;
 }

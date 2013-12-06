@@ -241,6 +241,17 @@ TestWorkflow {
 		qvtComparison = "${COMPARE_ERRORS_DIR}/errors_addParent1b.qvto"
 		testDescription = "addParent NO Parent NO Child Exists"
 	}
+/**/	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009c_addParent"
+		qvtInput = "${IN_STR}/addParent_c.qvto"
+		qvtInput = "${IN_OPS}/addParent_c_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addParent_c_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addParent Man, Person => Man -> Person"
+	}	
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -377,10 +388,10 @@ TestWorkflow {
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/017_collapseHierarchy"
-		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"//"${COMPARISONS_STRUCTURES_DIR}/collapseHierarchy_required.qvto"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"
 		qvtInput = "${IN_OPS}/collapseHierarchy1_ops.qvto"
 		qvtComparison = ""
-		qvtComparison = "${IN_STR}/extractSubclass1_structure.qvto"//"${OUTPUT_BASE_DIR}/017_collapseHierarchy.qvto"
+		qvtComparison = "${IN_STR}/extractSubclass1_structure.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "collapseHierarchy"
 	}	
@@ -391,7 +402,7 @@ TestWorkflow {
 		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
 		qvtInput = "${IN_OPS}/inlineClass1_ops.qvto"
 		qvtComparison = ""
-		qvtComparison = "${IN_STR}/extractClass_str.qvto"//"${OUTPUT_BASE_DIR}/017_collapseHierarchy.qvto"
+		qvtComparison = "${IN_STR}/extractClass_str.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "inlineClass"
 	}	

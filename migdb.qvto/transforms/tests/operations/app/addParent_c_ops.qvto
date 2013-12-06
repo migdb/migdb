@@ -1,0 +1,10 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addParent1(out inoutModel : APP);
+
+main(){
+	var addParent : APP::ops::AddParent :=_addParent("Man", "Person"); 
+	_appOperations(OrderedSet{addParent});	
+}

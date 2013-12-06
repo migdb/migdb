@@ -39,8 +39,8 @@ main() {
 	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(APP::Structure)))then{
 		 var errorLog : ErrorLog := outErrorModel.rootObjects()![ErrorLog];
 		 inModel.rootObjects()![Structure].isModelValid(errorLog);
-		 errorLog.print();
-		 log("");
+		 //errorLog.print();
+		 //log("");
 	}else{
 		log("Root element doesn't conform to APP::Structure type");
 	}endif;
@@ -86,8 +86,8 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		propUniqueName := false;		
 	};
-	stdClassProps->forEach(prop | isLegalPropertyName(prop.name)) {
-		var errorMessage : String := "Structure contains property with illegal name\"" + 
+	stdClassProps->forEach(prop | not isLegalPropertyName(prop.name)) {
+		var errorMessage : String := "Structure contains property with illegal name \"" + 
 			prop.name + "\" in class \"" + prop.owningGeneralClass.name + "\"";
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		arePropertyNamesLegal := false;		

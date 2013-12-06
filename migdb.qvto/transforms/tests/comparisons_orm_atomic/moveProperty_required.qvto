@@ -21,10 +21,11 @@ main() {
 												"streetNumber",
 												ToleranceType::strict,
 												//TODO Add next line + fix WHERE COND 
-												//whereCondition
+												whereCondition
 												);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 													addColumn,
+													updateRow
 													};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
