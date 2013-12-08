@@ -313,12 +313,13 @@ helper APP::ops::SetAbstract::apply(inout structure : APP::Structure) {
 //functionality of this operation is little restricted - data can be moved from first 
 // ancestor not from any other than this child class  
 query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : ErrorLog , operationIndex : Integer) : Boolean {
+	var currentTransformationId : String :=getEvolutionAppTransformationId(); 
 	var existChild : Boolean := checkStandardClassExists(
 									self.className, 
 									structure, 
 									errorLog, 
 									operationIndex, 
-									getEvolutionAppTransformationId());
+									currentTransformationId);
 	var existParent : Boolean := checkStandardClassExists(
 										self.parentClassName, 
 										structure, 
@@ -330,22 +331,23 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 											structure, 
 											errorLog, 
 											operationIndex, 
-											getEvolutionAppTransformationId());
+											currentTransformationId);
 	var notIsParentDescendantOfChild : Boolean := checkNotIsDescendant(
 													self.parentClassName, 
 													self.className, 
 													structure, 
 													errorLog, 
 													operationIndex, 
-													getEvolutionAppTransformationId());
+													currentTransformationId);
 	var haveSameInheritanceType : Boolean := checkHaveSameInheritanceType(
 												self.parentClassName, 
 												self.className, 
 												structure, 
 												errorLog, 
 												operationIndex, 
-												getEvolutionAppTransformationId());
+												currentTransformationId);
 	var hasMovedProperties : Boolean := true;
+	var areAdequateTypes : Boolean := true;
 	//this can looks weird but have in mind that when you are adding parent to a class you are doing that
 	//in cases when those two classes have similar/same properties that are moved to parent class
 	if(existChild and existParent)then{
@@ -358,14 +360,29 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 												structure, 
 												errorLog, 
 												operationIndex, 
-												getEvolutionAppTransformationId());
+												currentTransformationId);
 			hasMovedProperties := hasMovedProperties and hasMovedProp;									 
 		};
 		
+		var childClass : StandardClass := structure.findStandardClass(self.className);
+		parentClass->properties->
+		  select(prop | childClass->properties->exists(childProp | childProp.name = prop.name))->
+		  		forEach(prop){
+			var isAdequareType : Boolean := checkHavePropertiesAdequateType(
+														parentClass.name, 
+														prop.name, 
+														childClass.name,
+														prop.name, 
+														structure, 
+														errorLog, 
+														operationIndex,
+														currentTransformationId);
+			areAdequateTypes := areAdequateTypes and isAdequareType;											
+		};
 	}endif;
 												
 	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild and 
-		haveSameInheritanceType and hasMovedProperties;
+		haveSameInheritanceType and hasMovedProperties and areAdequateTypes;
 }
 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
@@ -1367,6 +1384,42 @@ helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : S
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);		
 	}endif;
 	return haveSameInheritanceType;
+}
+
+
+/** Checks if properties have adequate type. Current implementation returns true 
+  * only if two comparable properties have same type. */
+helper checkHavePropertiesAdequateType(firstClassName : String, firstPropertyName : String, secondClassName : String, secondPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsGeneralClass(firstClassName) or 
+		not structure.containsGeneralClass(secondClassName) or 
+		not structure.isPropertyInGeneralClass(firstClassName, firstPropertyName) or
+		not structure.isPropertyInGeneralClass(secondClassName, secondPropertyName) )then{
+		return false;
+	}endif;
+	var firstProperty : Property := structure.findProperty(firstClassName, firstPropertyName);
+	var secondProperty : Property := structure.findProperty(secondClassName, secondPropertyName);
+	var haveSameType : Boolean := false;														
+	if(firstProperty.oclIsTypeOf(AssociationProperty) and 
+			secondProperty.oclIsTypeOf(AssociationProperty))then{
+		haveSameType := firstProperty.oclAsType(AssociationProperty).type = 
+								secondProperty.oclAsType(AssociationProperty).type;
+	}endif;
+	if(firstProperty.oclIsTypeOf(PrimitiveProperty) and 
+			secondProperty.oclIsTypeOf(PrimitiveProperty))then{
+		haveSameType := firstProperty.oclAsType(PrimitiveProperty).type = 
+								secondProperty.oclAsType(PrimitiveProperty).type;
+	}endif;
+	if(firstProperty.oclIsTypeOf(NestedProperty) and 
+			secondProperty.oclIsTypeOf(NestedProperty))then{
+		haveSameType := firstProperty.oclAsType(NestedProperty).type = 
+								secondProperty.oclAsType(NestedProperty).type;
+	}endif;
+	if(not haveSameType) then {
+		var errorMessage : String := "Properties " + firstProperty.repr() + " and " + 
+				secondProperty.repr() + " types differ" ;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);		
+	}endif;
+	return haveSameType; 
 }
 
 helper checkHasAssociationPropertyOpposite(standardClassName : String, associationPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String ) : Boolean{
