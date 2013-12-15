@@ -15,6 +15,7 @@ migdb.run/bin/*
 
 #"helper "workflows - used for testing some operations
 migdb.testing.run/src/migdb/testing/app/atomic/run/test_app_atomic_so.mwe2
+migdb.testing.run/src/migdb/testing/orm/run/tests_orm_so.mwe2
 
 #generated SQLs
 migdb.run/output*/*
