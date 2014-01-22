@@ -83,6 +83,7 @@ helper _addProperty(_owningClassName : String, _name : String, _typeName : Strin
 		owningClassName := _owningClassName;
 		name := _name;
 		typeName := _typeName;
+		defaultValue := null;
 	}
 }
 
@@ -444,7 +445,7 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
-	var condition : Boolean :=  isLegalString(_defaultValue);
+ 	var condition : Boolean := _defaultValue <> "";
  	if(not condition)then{
  		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
  			_primitiveType.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr()+ "," + 
