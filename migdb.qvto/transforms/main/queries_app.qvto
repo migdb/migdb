@@ -468,7 +468,8 @@ query APP::Structure::findClass(className : String) : APP::StandardClass {
 }
 
 query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
-	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
+	return (lowerBound > -1 and 
+				(upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
 
@@ -620,7 +621,7 @@ query StandardClass::getDbRepresentative(): StandardClass{
 	while(representant.parent <> null and representant.hasSingleTableInheritanceType()){
 		representant := representant.parent;
 	};
-	return self;
+	return representant;
 }
 
 query app::StandardClass::isRoot():Boolean{

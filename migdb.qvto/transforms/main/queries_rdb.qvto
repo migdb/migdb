@@ -239,6 +239,10 @@ query rdb::Constraint::hasUniqueName() : Boolean{
 		const.name <> self.name or const = self);
 }
 
+query getOrderingCollumnType() : RDB::PrimitiveType{
+	return RDB::PrimitiveType::int;
+}
+
 query isKeyWord(name: String ):Boolean{
 	var keyList:List(String) = List {"ABORT",
 "ABSOLUTE",

@@ -1,7 +1,7 @@
 /**
  * The MIT License
  * 
- * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2014 MigDB team [https://github.com/migdb/migdb/wiki]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,13 @@ modeltype RDB uses rdb('http://www.collectionspro.eu/jam/mm/rdb');
 
 
 library MIGDB_ORM;
+
+/******************************************************************************
+ *				DEVELOPER NOTES			 	                                  *
+ *  This library isn't responsible for checking preconditions needed to be    *
+ *  valuated before applying APP_OPS-> DB_OPS transformation, this library    *
+ *  expects those preconditions valid                                         *
+ *****************************************************************************/
 
 // a mapping of a given operation
 abstract helper APP::ops::ModelOperation::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation);
@@ -73,38 +80,232 @@ helper toRdbType(type : APP::PrimitiveType) : RDB::PrimitiveType{
 	This operation is mapped independently(if isValid() is true) on any state of database
 **/
 helper APP::ops::AddStandardClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
+	var tableName : String := self.name.translate();
+	var idType : app::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
+	var idName : String := getDbIdColumnName(tableName);
 	// addition of a table to the schema
 	var operations : OrderedSet(RDB::ops::ModelOperation) = OrderedSet{};
-	operations += _addTable(getDefaultSchemaName(), self.name.translate());
-	var idType : app::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
-	
+	operations += _addTable(getDefaultSchemaName(), tableName);
 	// addition of a column to the table
 	operations += _addColumn(
 						getDefaultSchemaName(), 
-						self.name.translate(), 
-						("id_" + self.name).translate(), 
+						tableName, 
+						idName, 
 						toRdbType(idType));
 	
 	// addition of a primary key to the table
 	operations += _addPrimaryKey(
 						getDefaultSchemaName(), 
-						self.name.translate(), 
-						("id_" + self.name).translate(), 
-						("pk_" + self.name).translate());
+						tableName, 
+						idName, 
+						getDbPrimaryKeyName(tableName));
+	return operations;
+}
+
+helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
+	var type : ModelEntity := appStructure.findEntity(self.typeName);
+	
+	if(not ent.oclIsTypeOf(StandardClass))then{
+		assert(false);
+		log("Unsupported type of mapping");
+		return OrderedSet{};
+	}endif;
+	if(type.oclIsTypeOf(StandardClass))then{
+		return self.standardToStandardClass(
+										appStructure, 
+										ent.oclAsType(StandardClass), 
+										type.oclAsType(StandardClass));
+	}endif;
+	if(type.oclIsTypeOf(PrimitiveClass))then{
+		return self.primitiveToStandardClass(
+						appStructure, ent.oclAsType(StandardClass), 
+						type.oclAsType(PrimitiveClass));
+	}endif;
+	log("Unexpected mapping of addProperty " + self.repr());
+	assert(false);
+	return null;
+}
+
+helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : StandardClass) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var idDbType : RDB::PrimitiveType := toRdbType(appStructure.findDefaultIdType().primitiveType);
+	if(self.upperBound = 1)then{
+		var newColumnName : String := self.name.translate();
+		var owningTableName : String := stcls.name.translate();
+		operations += _addColumn(
+							getDefaultSchemaName(), 
+							owningTableName, 
+							newColumnName, 
+							idDbType);
+		var targetTableName : String := type.name.translate();
+		var fkName : String := getFkRefencingOppositeName(
+											newColumnName,
+											stcls.name,
+											type.name
+											);
+		operations += _addForeignKey(
+								getDefaultSchemaName(), 
+								owningTableName, 
+								newColumnName, 
+								fkName, 
+								targetTableName);
+	}else {
+		if(self.upperBound = -1 or self.upperBound > 1)then{
+			var newTableName := getAssociationTableName(self.name, self.owningClassName);
+			var idOriginColName : String := stcls.translateIdName();
+			var idTypeColName : String := type.translateIdName();
+			var associationOwnerName : String := stcls.name.translate();
+			var associationTypeName : String := type.name.translate();
+			
+			operations += _addTable(getDefaultSchemaName(), newTableName);
+			operations += _addColumn(
+									getDefaultSchemaName(), 
+									newTableName, 
+									idOriginColName, 
+									idDbType);
+			operations += _addColumn(
+									getDefaultSchemaName(), 
+									newTableName, 
+									idTypeColName, 
+									idDbType);
+			operations += _addForeignKey(
+								getDefaultSchemaName(), 
+								newTableName, 
+								idOriginColName, 
+								getFKAssociationTableRefName(newTableName, associationOwnerName), 
+								associationOwnerName);
+			operations += _addForeignKey(
+								getDefaultSchemaName(), 
+								newTableName, 
+								idTypeColName, 
+								getFKAssociationTableRefName(newTableName, associationTypeName), 
+								associationTypeName);
+			if(self.isOrdered)then{
+					operations := addOrdering(
+									operations, 
+									newTableName, 
+									idOriginColName,
+									idTypeColName);					
+			}endif;
+			if(self.isUnique)then{
+				var columnNames : OrderedSet(String) := OrderedSet{
+															idOriginColName, 
+															idTypeColName};
+					operations += _addUnique(
+											getDefaultSchemaName(),
+											newTableName,
+											columnNames,
+											getUXName(stcls.name, self.name));	
+			}endif;
+		} else {
+			log("Upper bound " + self.upperBound.repr() + " not allowed");			
+			assert(false);
+		}endif;
+	}endif;
 	return operations;
 }
 
 
-helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation){
+helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : PrimitiveClass ) : OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var collumnType : RDB::PrimitiveType := toRdbType(type.primitiveType);
+	var defaultPriCls : PrimitiveClass := appStructure.findPrimitiveClass(
+														getAppDefaultIdTypeName());
+	var defaultIdType : RDB::PrimitiveType := toRdbType(defaultPriCls.primitiveType);		
+	
+	if(self.upperBound = 1)then{
+			operations+=_addColumn(
+						getDefaultSchemaName(), 
+						stcls.name.translate(),
+						self.name.translate(), 
+						collumnType);
+		return operations;	
+	}else{
+		if(self.upperBound > 1 or self.upperBound = -1)then{
+			var collectionTableName : String := getCollectionTableName(
+																self.name, 
+																self.owningClassName);
+			var idOwningTableName : String := stcls.translateIdName();
+			var collectionCollumnName : String := self.name.translate();
+			//creation of collection table
+			operations+= _addTable(
+								getDefaultSchemaName(), 
+								collectionTableName);
+			//creation of ref column
+			operations+= _addColumn(
+								getDefaultSchemaName(), 
+								collectionTableName, 
+								idOwningTableName, 
+								defaultIdType);
+			//creation of DATA column - eg one member in collection
+			operations+= _addColumn(
+								getDefaultSchemaName(), 
+								collectionTableName, 
+								collectionCollumnName, 
+								collumnType);
+			operations+= _addForeignKey(
+								getDefaultSchemaName(), 
+								collectionTableName, 
+								idOwningTableName, 
+								getFkCollectionName(stcls.name, self.name), 
+								stcls.name.translate());
+			if(self.isOrdered)then{
+					operations := addOrdering(
+										operations, 
+										collectionTableName, 
+										idOwningTableName,
+										collectionCollumnName);	
+			}endif;
+			if(self.isUnique)then{
+				var columnNames : OrderedSet(String) := OrderedSet{
+															idOwningTableName, 
+															collectionCollumnName};
+					operations += _addUnique(
+											getDefaultSchemaName(),
+											collectionTableName,
+											columnNames,
+											getUXName(stcls.name, self.name));	
+			}endif;
+			return operations;
+		}else{
+			log("Upper bound " + self.upperBound.repr() + " not allowed");			
+			assert(false);
+		}endif;
+	}endif;
+	return null;
+}
+
+helper addOrdering(inout operations : OrderedSet(RDB::ops::ModelOperation), tableName : String, firstOrderedCollumn : String, secondOrderedCollumn : String) : OrderedSet(RDB::ops::ModelOperation){
+	var columnNames : OrderedSet(String) := OrderedSet{
+														firstOrderedCollumn, 
+														secondOrderedCollumn,
+														getDbOrderingColumnName()};
+	var orderingColType : RDB::PrimitiveType := getOrderingCollumnType();
+	var addOrderingCollumn : RDB::ops::ModelOperation := _addColumn(
+															getDefaultSchemaName(), 
+															tableName, 
+															getDbOrderingColumnName(), 
+															orderingColType);
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations->append(addOrderingCollumn);
+	var addOrderingUniqueConstraint : RDB::ops::ModelOperation := _addUnique(
+																	getDefaultSchemaName(),
+																	tableName,
+																	columnNames,
+																	getUXOrderingName(tableName));
+	ops+=addOrderingUniqueConstraint;																				
+	return ops;
+}
+
+helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var entity : ModelEntity := appStructure.findEntity(self.name);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 	if(entity.oclIsTypeOf(PrimitiveClass))then{
-		return null;
+		return OrderedSet{};
 	}endif;
 	if(entity.oclIsTypeOf(EmbeddedClass))then{
 		//TODO who knows???
-		return null;
+		return OrderedSet{};
 	}endif; 
 	if(entity.oclIsTypeOf(StandardClass))then{
 		var stcls := entity.oclAsType(StandardClass);
@@ -115,7 +316,10 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure
 		}endif;
 		if(stcls.hasJoinedInheritanceType())then{
 			operations+=_renameTable(getDefaultSchemaName(), self.name, self.newName);
+			
 			//rename all FKs outside hierarchy
+			var renamedCls : StandardClass := appStructure.findStandardClass(self.name);
+			
 			//rename FKs for all strict descendats stcls - eg des.parent.name = self.name
 			return operations;
 		}endif;
@@ -129,214 +333,7 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure
 	return null;
 }
 
-
-helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
-	var ent : ModelEntity := appStructure.findEntity(self.owningClassName);
-	var type : ModelEntity := appStructure.findEntity(self.typeName);
-	if(ent = null)then{
-		log("added property cannot be null");
-		assert(false);
-	}endif;
-	if(ent.oclIsTypeOf(PrimitiveClass))then{
-		assert(false);
-	}endif;
-	
-	if(type.oclIsTypeOf(StandardClass))then{
-		if(type.oclIsTypeOf(StandardClass))then{
-			return self.standardToStandardClass(appStructure, ent.oclAsType(StandardClass), type.oclAsType(StandardClass));
-		}else{
-			log("Trying to make association between std cls " + type.repr() + " and " + ent.repr());
-			assert(false);
-		}endif;
-	}endif;
-	if(type.oclIsTypeOf(PrimitiveClass))then{
-		if(ent.oclIsTypeOf(StandardClass))then{
-			return self.primitiveToStandardClass(
-						appStructure, ent.oclAsType(StandardClass), 
-						type.oclAsType(PrimitiveClass));
-		} else {
-			if(ent.oclIsTypeOf(EmbeddedClass))then{
-				return self.primitiveToEmbeddedClass(
-								appStructure, 
-								ent.oclAsType(EmbeddedClass), 
-								type.oclAsType(PrimitiveClass));
-			}endif;
-		}endif;
-	}endif;
-	
-	if(type.oclIsTypeOf(EmbeddedClass))then{
-		if(ent.oclIsTypeOf(StandardClass))then {
-			return self.embeddedToStandardClass(
-							appStructure, 
-							ent.oclAsType(StandardClass), 
-							type.oclAsType(EmbeddedClass));
-		} endif;	
-	} else{
-		log("wrong type:" + type.repr());
-		assert(false);	
-	}endif;
-	
-	log("Unexpected mapping of addProperty " + self.repr());
-	assert(false);
-	return null;
-}
-
-helper app::ops::AddProperty::embeddedToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : EmbeddedClass) : OrderedSet(RDB::ops::ModelOperation){
-	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
-	mappedSet->forEach(cls){
-		type->embeddedProperties->forEach(prop){
-			operations+=_addColumn(
-							getDefaultSchemaName(), 
-							cls.name.translate(), 
-							self.name.translate() + "_" + prop.name.translate(), 
-							toRdbType(appStructure.findPrimitiveClass(prop.type.name).
-								primitiveType));
-		}	
-	};
-	return operations;
-}
-
-
-helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : StandardClass) : OrderedSet(RDB::ops::ModelOperation){
-	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
-	var idDbType : RDB::PrimitiveType := toRdbType(appStructure.findDefaultIdType().primitiveType);
-	
-	if(self.upperBound = 1)then{
-		mappedSet->forEach(cls){
-			var newColumnName : String := cls.name.translate();
-			operations += _addColumn(
-								getDefaultSchemaName(), 
-								newColumnName, 
-								self.name.translate(), 
-								idDbType);
-			operations += _addForeignKey(
-								getDefaultSchemaName(), 
-								newColumnName, 
-								self.name.translate(), 
-								"fk_" + (cls.name+self.name).translate(), 
-								stcls.name.translate());
-		};
-		return operations;
-	}else {
-		if(self.upperBound = -1 or self.upperBound > 1)then{
-			mappedSet->forEach(cls){
-				var newTableName := (cls.name+"_" +self.name).translate();
-				var idOriginColName : String := self.name.translate();
-				var idTypeTableName : String := type.translateIdName();
-				operations += _addTable(getDefaultSchemaName(), newTableName);
-				operations += _addColumn(
-									getDefaultSchemaName(), 
-									newTableName, 
-									idOriginColName, 
-									idDbType);
-				operations += _addColumn(
-									getDefaultSchemaName(), 
-									newTableName, 
-									idTypeTableName, 
-									idDbType);
-				operations += _addForeignKey(
-									getDefaultSchemaName(), 
-									newTableName, 
-									idOriginColName, 
-									"fk_" + (cls.name+"_" +self.name).translate(), 
-									cls.name.translate());
-				operations += _addForeignKey(
-									getDefaultSchemaName(), 
-									newTableName, 
-									idOriginColName, 
-									"fk_" + (cls.name+"_" +self.name).translate(), 
-									type.name.translate());
-				if(self.isOrdered)then{
-					operations += _addColumn(
-										getDefaultSchemaName(), 
-										newTableName, 
-										getDbOrderingColumnName(), 
-										idDbType);
-				//	TODO addUnique nad sloupci s id entity v kolekci, vlastnika a orderingColumn	
-				}endif;
-				if(self.isUnique)then{
-				//	TODO addUnique nad sloupci s id entity v kolekci a vlastnika 	
-				}endif;
-			}
-		} else {
-			log("Upper bound " + self.upperBound.repr() + " not allowed");			
-			assert(false);
-		}endif;
-	}endif;
-	
-	
-	return null;
-}
-
-helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Structure, 
-		stcls : StandardClass, type : PrimitiveClass ) : OrderedSet(RDB::ops::ModelOperation){
-	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
-	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.typeName).
-			primitiveType);
-	
-	if(self.upperBound = 1)then{
-		mappedSet->forEach(cls){
-				operations+=_addColumn(getDefaultSchemaName(), cls.name.translate(),self.name.
-						translate(), rdbType);
-			};
-		return operations;	
-	}else{
-		if(self.upperBound > 1 or self.upperBound = -1)then{
-			mappedSet->forEach(cls){
-				operations+= _addTable(getDefaultSchemaName(), (cls.name + self.name).translate());
-				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).translate(), 
-					self.name.translate(), rdbType);
-				operations+= _addColumn(getDefaultSchemaName(), (cls.name + self.name).translate(), 
-					(cls.name + "_").translate(), rdbType);
-				//TODO check creating FK name
-				operations+= _addForeignKey(getDefaultSchemaName(), 
-					(cls.name + self.name).translate(), cls.translateIdName(), 
-					"FK_" + (cls.name + self.name).translate(), cls.name.translate());
-			};
-			return operations;
-		}else{
-			log("Upper bound " + self.upperBound.repr() + " not allowed");			
-			assert(false);
-		}endif;
-	}endif;
-	return null;
-}
-
-helper app::ops::AddProperty::primitiveToEmbeddedClass(appStructure : APP::Structure, embeddedClass : EmbeddedClass, type : PrimitiveClass) : OrderedSet(RDB::ops::ModelOperation){
-	var rdbType : RDB::PrimitiveType := toRdbType(appStructure.findPrimitiveClass(self.typeName).
-																	primitiveType);
-	var addCollumn : RDB::ops::AddColumn := _addColumn(
-											getDefaultSchemaName(), 
-											embeddedClass.name.translate(), 
-											self.name.translate(), 
-											rdbType);
-	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	appStructure.entities[StandardClass]->forEach(cls | cls.properties[NestedProperty]->
-																		size() >= 1){
-		var mappedSet : OrderedSet(StandardClass) := cls.getMappedClassSet();
-		mappedSet->forEach(clss){
-			operations+=_addColumn(
-							getDefaultSchemaName(), 
-							clss.name.translate(), 
-							self.name.translate(), 
-							rdbType);
-			//ADD FK?
-			operations+=_addForeignKey(
-								getDefaultSchemaName(), 
-								clss.name.translate(), 
-								(embeddedClass.name).translate(), 
-								"fk_" + (cls.name + embeddedClass.name).translate(), 
-								self.name.translate());
-		}	
-	};
-	return operations;
-}
-
-helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure
-		) : OrderedSet(RDB::ops::ModelOperation){
+helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var ent : GeneralClass := appStructure.findGeneralClass(self.owningClassName);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 
@@ -347,66 +344,40 @@ helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure
 			return self.primitiveInStandardClass(appStructure, ent.oclAsType(StandardClass), 
 				renamedProperty.oclAsType(PrimitiveProperty)); 
 		} else{
-			if(renamedProperty.oclIsTypeOf(NestedProperty))then{
-				return self.embeddedInStandardClass(appStructure, ent.oclAsType(StandardClass), 
-					renamedProperty.oclAsType(NestedProperty));
-			}endif;
+			//rename standard assocProp in stdCls
 		}endif;
 	}endif;
-	
-	//missing EmbeddedProperty in EmbeddedClass
 	
 	return null;
 }
 
-helper app::ops::RenameProperty::embeddedInStandardClass(appStructure : Structure, 
-		stcls : StandardClass, renamedProperty : NestedProperty
-		) : OrderedSet(RDB::ops::ModelOperation){
-	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
-	
-	mappedSet->forEach(cls){
-		cls->properties->forEach(prop){
-			operations+= _renameColumn(getDefaultSchemaName(), cls.name.translate(),
-			self.name.translate() + "_" + prop.name.translate(), self.newName.translate() + 
-				"_" + prop.name.translate());
-		}	
-	};
-	return operations;
-	return null;	
-} 
-
-helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, 
-		stcls : StandardClass, renamedProperty : PrimitiveProperty
-		) : OrderedSet(RDB::ops::ModelOperation){
-	var mappedSet : OrderedSet(StandardClass) := stcls.getMappedClassSet();
+helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structure, stcls : StandardClass, renamedProperty : PrimitiveProperty) : OrderedSet(RDB::ops::ModelOperation){
 	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
 	
-	if(renamedProperty.upperBound = 1)then{
-		mappedSet->forEach(cls){	
-			operations+=_renameColumn(getDefaultSchemaName(), cls.name.translate(), 
-				self.name.translate(), self.newName.translate());		
-		};
+	if(renamedProperty.upperBound = 1)then{	
+		operations+=_renameColumn(
+						getDefaultSchemaName(), 
+						stcls.name.translate(), 
+						self.name.translate(), 
+						self.newName.translate());		
 		return operations;
 	}else{
 		if(renamedProperty.upperBound = -1 or renamedProperty.upperBound > 1)then{
-			mappedSet->forEach(cls){
-				operations+=_removeConstraint(
-									getDefaultSchemaName(), 
-									(cls.name + self.name).translate(), 
-									"FK_" + (cls.name + self.name).translate());
+			operations+=_removeConstraint(
+								getDefaultSchemaName(), 
+								(stcls.name + self.name).translate(), 
+								"FK_" + (stcls.name + self.name).translate());
 				operations+=_renameTable(
 									getDefaultSchemaName(), 
-									(cls.name + self.name).translate(),
-				 					(cls.name + self.newName).translate());
+									(stcls.name + self.name).translate(),
+				 					(stcls.name + self.newName).translate());
 				//check creating FK name
 				operations+=_addForeignKey(
 									getDefaultSchemaName(), 
-									(cls.name + self.newName).translate(), 
-									cls.translateIdName(), 
-									"FK_" + (cls.name + self.newName).translate(), 
-									cls.name.translate());
-			};
+									(stcls.name + self.newName).translate(), 
+									stcls.translateIdName(), 
+									"FK_" + (stcls.name + self.newName).translate(), 
+									stcls.name.translate());
 			return operations;
 		}else{
 			assert(false);
@@ -416,30 +387,28 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 }
 
 /** Currently implemented only adding parent **/
-helper APP::ops::AddParent::toRdb(appStructure : APP::Structure
-		): OrderedSet(RDB::ops::ModelOperation){
+helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var parentClass : StandardClass := appStructure.findStandardClass(self.parentClassName);
 	var childClass : StandardClass := appStructure.findStandardClass(self.className);
 	var parentRepresentative : StandardClass := parentClass.getDbRepresentative();
-	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	var parentRepresentativeDbName : String := parentRepresentative.name.translate();
 		
-	mappedSet ->forEach(cls | cls <> childClass){
-		operations += _removeConstraint(getDefaultSchemaName(), cls.name.translate(), 
-			cls.getParentFkName());
-	};
-	mappedSet ->forEach(cls){
+	operations += _removeConstraint(
+								getDefaultSchemaName(), 
+								childClass.name.translate(), 
+								childClass.getParentFkName());	
+//	mappedSet->forEach(cls){	
 //		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, 
 //			childClass.translateIdName());
-	};
-	mappedSet->forEach(cls){
+	
+//	mappedSet->forEach(cls){
 //		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
 	
-	};
-	mappedSet->forEach(cls){
+//	};
+//	mappedSet->forEach(cls){
 //		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
-	};
+//	};
 	return operations;
 }
 
@@ -448,35 +417,34 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure
  * Delete connection between child and parent class. 
  * After performing this operation is CHILD class a ROOT.
  */
-helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure
-		): OrderedSet(RDB::ops::ModelOperation){
+helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var childClass : StandardClass := appStructure.findStandardClass(self.className);
 	var parentClass : StandardClass := childClass.parent;
-	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
+//	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	// CREATE just for JOIND inheritance type
 		
 	// Remove PK from all classes in new hierarchy
-	mappedSet ->forEach(cls){
+	//mappedSet ->forEach(cls){
 		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), 
 			getDbPrimaryKeyName(parentClass.name));
-	};
+	//};
 	
 	// Remove instances from parent class - only instances which not belong to parent class
 	operations += null;
 	
 	// Rename ID column in all classes in new hierarchy
-	mappedSet ->forEach(cls){
+	//mappedSet ->forEach(cls){
 //		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, 
 //			childClass.translateIdName());
-	};
-	mappedSet->forEach(cls){
+	//};
+	//mappedSet->forEach(cls){
 //		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
 	
-	};
-	mappedSet->forEach(cls){
+	//};
+	//mappedSet->forEach(cls){
 //		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
-	};
+	//};
 	return operations;
 }
 
@@ -497,17 +465,19 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
 	var idTargetClassName : String =  targetClass.translateIdName();
 	// type of property
 	self.propertiesNames->forEach(propertyName){
-		var movedProperty : Property := appStructure.findProperty(self.sourceClassName, propertyName);
+		var movedProperty : Property := appStructure.findProperty(
+																self.sourceClassName, 
+																propertyName);
 		var movedPropertyName : String := propertyName.translate();
 		var type : RDB::PrimitiveType := movedProperty.getDbTypeOfProperty(appStructure);
 		// Property which connect source and target table
 		var asocProperty : MultipliableProperty := sourceClass.properties->
-					selectOne(prop | prop.isOneToOneUnidirectional() and 
+					selectOne(prop | 
+					(prop.isOneToOneBidirectional() or prop.isOneToOneUnidirectional()) and 
 					prop.isPropertyTypeOf(targetClass));
 		// Define WHERE CONDITION for Update operation (sourceTable.)
 		var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + 
 						" = " + targetClassName + "." + idTargetClassName;
-	
 		// add new column to target class
 		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
 		// update instances in the new column
@@ -532,6 +502,7 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
  * connected by pointer.
  */
 helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet(rdb::ops::ModelOperation) {
+	log("isLegalExtractCls" + isLegalClassName(null).repr());
 	var operations : OrderedSet(rdb::ops::ModelOperation) := OrderedSet{};
 	var sourceClassName : String =  self.sourceClassName.translate();
 	var extractClassName : String =  self.extractClassName.translate();
@@ -620,18 +591,5 @@ query mergeTypeFromAppToRdb(type : APP::ToleranceType) : RDB::ToleranceType {
 		case (type = APP::ToleranceType::tolerant) return RDB::ToleranceType::tolerant;
 	};
 	return null;
-}
-
-//get set of classes that will be transformed by operation
-query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
-	var mappedSet : OrderedSet(StandardClass); 
-	if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType()) then{
-		mappedSet := OrderedSet{self};
-	}endif;
-	if(self.hasSingleTableInheritanceType())then {
-		mappedSet := OrderedSet{self.getRootClass()};
-	}endif;
-	mappedSet += self.getDescendantsOfType(InheritanceType::tablePerClass);	
-	return mappedSet;
 }
 

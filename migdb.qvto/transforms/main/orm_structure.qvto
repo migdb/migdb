@@ -277,9 +277,9 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema,
 														ownerIdProjection.name, 
 														ownerIdProjection.type);		
 			associationTable.columns += owningAssociationColumn;				
-			var fkReferencingOwnerName : String := getFKAssociationTableRefOriginName(
+			var fkReferencingOwnerName : String := getFKAssociationTableRefName(
 														associationTable.name, 
-														associationOwningClass);
+														owningClassProjection.name);
 			var fkReferencingOwner : rdb::ForeignKey := _foreignKey(
 															fkReferencingOwnerName,
 															owningClassProjection, 
@@ -290,9 +290,9 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema,
 															oppositeIdProjection.name,
 															oppositeIdProjection.type);
 			associationTable.columns += oppositeAssociationColumn;
-			var fkReferencingOppositeName : String := getFKAssociationTableRefOriginName(
+			var fkReferencingOppositeName : String := getFKAssociationTableRefName(
 															associationTable.name, 
-															oppositeClass);
+															oppositeClassProjection.name);
 			var fkReferencingOpposite : rdb::ForeignKey := _foreignKey(
 															fkReferencingOppositeName, 
 															owningClassProjection, 
@@ -382,4 +382,16 @@ helper app::StandardClass::addReferenceToParent(inout schema : Schema, inout err
 		childId);
 	childProjection.constraints+= fkReferencingParent;
 	return;
+}
+
+query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
+       var mappedSet : OrderedSet(StandardClass); 
+       if(self.hasImplicitInheritanceType() or self.hasJoinedInheritanceType())then{
+               mappedSet := OrderedSet{self};
+       }endif;
+       if(self.hasSingleTableInheritanceType())then {
+               mappedSet := OrderedSet{self.getRootClass()};
+       }endif;
+       mappedSet += self.getDescendantsOfType(InheritanceType::tablePerClass); 
+       return mappedSet;
 }

@@ -89,7 +89,7 @@ helper _addProperty(_owningClassName : String, _name : String, _typeName : Strin
 
 helper _addProperty(_owningClassName : String, _name : String, _typeName : String, _lowerBound : Integer, _upperBound : Integer) : APP::ops::AddProperty {
 	var addProperty : app::ops::AddProperty :=_addProperty(_owningClassName, _name, _typeName); 
-	var condition : Boolean := (_lowerBound = 0 or _lowerBound = 1) and _upperBound >=1 ;
+	var condition : Boolean := areBoundsValid(_lowerBound, _upperBound);
 	if(not condition)then{
 		log("Error when calling constructor _addProperty(" + _owningClassName + ", " +  _name + ", " + 
 			_typeName + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
@@ -107,17 +107,22 @@ helper _addProperty(_owningClassName : String, _name : String, _typeName : Strin
 													_typeName, 
 													_lowerBound, 
 													_upperBound); 
-	var condition : Boolean := isLegalString(_defaultValue);
-	if(not condition)then{
-		log("Error when calling constructor _addProperty(" + _owningClassName + ", " +  _name + ", " + 
-			_typeName + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + "," + _defaultValue + 
-			")");
-	}endif;
-	assert(condition);
 	addProperty.defaultValue := _defaultValue;
 	return addProperty;
 }
 
+helper _addProperty(_owningClassName : String, _name : String, _typeName : String, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String, _isOrdered : Boolean, _isUnique : Boolean) : APP::ops::AddProperty {
+	var addProperty : app::ops::AddProperty :=_addProperty(
+													_owningClassName, 
+													_name, 
+													_typeName, 
+													_lowerBound, 
+													_upperBound,
+													_defaultValue);
+	addProperty.isOrdered := _isOrdered;
+	addProperty.isUnique := _isUnique;
+	return addProperty;												
+};
 
 helper _renameProperty(_owningClassName : String, _name : String, _newName : String) : APP::ops::RenameProperty {
 	var condition : Boolean := isLegalClassName(_owningClassName) and 
@@ -445,14 +450,7 @@ helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowe
 }
 
 helper _primitiveProperty(_name : String, _primitiveType : PrimitiveClass, _lowerBound : Integer, _upperBound : Integer, _defaultValue : String) : PrimitiveProperty{
- 	var condition : Boolean := _defaultValue <> "";
- 	if(not condition)then{
- 		log("Error when calling constructor _primitiveProperty(" + _name + ", " + 
- 			_primitiveType.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr()+ "," + 
- 			_defaultValue + ")");
- 	}endif;
-	assert(condition);
-	var prop : PrimitiveProperty := _primitiveProperty(
+ 	var prop : PrimitiveProperty := _primitiveProperty(
 											_name, 
 											_primitiveType, 
 											_lowerBound, 

@@ -22,6 +22,7 @@ var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 var COMPARISONS_OPS_DIR = "${QVTO_DIR}/tests/comparisons_orm_atomic"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_run.qvto"
+var EMPTY_RDB_OPS = "${QVTO_DIR}/tests/operations/rdb/empty_rdb_ops.qvto"
 
 TestWorkflow{	
 /***** DEFINE META-MODELS *****/
@@ -49,25 +50,84 @@ TestWorkflow{
 
 /***** MAIN TESTING *****/
 
-/***** EXTRACT CLASS *****/
-/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/1_extractClass"
-		qvtInput = "${IN_APP_OPS}/extractClass_ops.qvto"
-		qvtInput = "${IN_APP_STR}/extractClass_str.qvto"
-		qvtComparison = "${COMPARISONS_OPS_DIR}/extractClass_required.qvto"
+		outputParentUri = "${OUTPUT_BASE_DIR}/001_addClass"
+		qvtInput = "${IN_APP_OPS}/addClass1.qvto"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addClass1_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "extractClass"
+		testDescription = "addClass"
 	}
-/**/
+
+	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/2_moveProperty"
-		qvtInput = "${IN_APP_OPS}/moveProperty_ops.qvto"
-		qvtInput = "${IN_APP_STR}/moveProperty_str.qvto"
-		qvtComparison = ""//"${COMPARISONS_OPS_DIR}/moveProperty_required.qvto"
+		outputParentUri = "${OUTPUT_BASE_DIR}/003_addPrimitiveClass"
+		qvtInput = "${IN_APP_OPS}/addPrimitiveClass1.qvto"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtComparison = "${EMPTY_RDB_OPS}"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "moveProperty"
+		testDescription = "addPrimitiveClass"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002_addProperty"
+		qvtInput = "${IN_APP_OPS}/addProperty1.qvto"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty1_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addProperty - primitive"
+	}
+
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite */	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002b_addProperty"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops.qvto"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty2_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "add association property to standard class"
+	}
+	
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite 	*/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002c_addProperty"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops2.qvto"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty3_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "add association property UB = -1 to standard class"
+	}
+	
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite 	*/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002d_addProperty"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops3.qvto"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty4_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "add association UX, ORD property to standard class"
+	}
+	
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite */	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002e_addProperty"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops4.qvto"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty5_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "add primitive UX, ORD property to standard class"
 	}	
+	
+	
 }

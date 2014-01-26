@@ -2,7 +2,8 @@ library text_service;
 
 /*
 	This file provides String constants and methods to manipulate with Strings. It is independent 
-	to any metamodel. Methods connected with database metamodel contains Db word.
+	to any metamodel. Methods connected with database metamodel contains Db word. Method translate
+	is connection of the STRINGS from those two worlds
 */
 
 /**
@@ -45,20 +46,26 @@ query getDbOrderingColumnName() : String {
 	return "ordering";
 }
 
+/**
+	Returns ID PROPERTY NAME - eg text string in APP model
+**/
 query getIdName(className : String) : String{
 	return getIdPrefix() + className;
 }
 
+
+/**
+	Returns ID PROPERTY NAME PREFIX - eg text string used in APP model
+**/
 query getIdPrefix() : String{
 	return "id";
 }
 
+/**
+	Returns ID COLUMN NAME PREFIX - eg text string used in DB model
+**/
 query getDbIdPrefix() : String{
 	return "id_";
-}
-
-query getDbIdColumnName(tableName : String) : String{
-	return getDbIdPrefix() + tableName;
 }
 
 /** Helper query for String manipulation **/
@@ -67,7 +74,7 @@ query String::at(index : Integer) : String{
 }
 
 query getDbFkParentPrefix() : String{
-	return getDbFkPrefix() + "parent_";
+	return "par_";
 }
 
 query getDbUniquePrefix() : String{
@@ -88,6 +95,10 @@ query getDbFkPrefix() : String{
 
 query getDbCollectionPrefix() : String{
 	return "col_";
+}
+
+query getNotNullPrefix() : String{
+	return "nnull_";
 }
 
 /**

@@ -1,0 +1,62 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addProperty5_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var collectionTableName : String := "col_pr_tab";
+	var addTable : RDB::ops::AddTable := _addTable(
+												publicSchemaName,
+												collectionTableName);
+	var addCol : RDB::ops::AddColumn := _addColumn(
+											publicSchemaName,
+											collectionTableName,
+											"id_root",
+											PrimitiveType::int);										
+	var addDataCol : RDB::ops::AddColumn := _addColumn(
+											publicSchemaName,
+											collectionTableName,
+											"pr",
+											PrimitiveType::int);
+	var addFK : RDB::ops::ModelOperation := _addForeignKey(
+												publicSchemaName,
+												collectionTableName,
+												"id_root",
+												"fk_col_tab_pr",
+												"tab");
+	var addOrderingCol : RDB::ops::AddColumn := _addColumn(
+													publicSchemaName,
+													collectionTableName,
+													"ordering",
+													RDB::PrimitiveType::int);
+	var orderingUXColNames : OrderedSet(String) := OrderedSet{
+														"id_root", 
+														"pr", 
+														"ordering"};
+	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
+													publicSchemaName,
+													collectionTableName,
+													orderingUXColNames,
+													"ux_col_pr_tab_ord");
+	var uxNames : OrderedSet(String) := OrderedSet{
+											"id_root", 
+											"pr"};
+	var addUX : RDB::ops::AddUnique := _addUnique(
+											publicSchemaName,
+											collectionTableName,
+											uxNames,
+											"ux_tab_pr");																																							
+																						
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															addTable, 
+															addCol, 
+															addDataCol,  
+															addFK, 
+															addOrderingCol, 
+															addOrderingUX, 
+															addUX};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

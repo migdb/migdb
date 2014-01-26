@@ -1,7 +1,7 @@
 /**
  * The MIT License
  * 
- * Copyright (c) 2010-2013 MigDB team [https://rabbit.felk.cvut.cz/trac/migdb]
+ * Copyright (c) 2010-2014 MigDB team [https://github.com/migdb/migdb/wiki]
  * 
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -1550,7 +1550,7 @@ helper applyRemoveEntity(inout structure : Structure, entityName : String){
 helper applyAddProperty(inout structure : Structure, owningClassName : String, propertyName : String, propertyTypeName : String, lowerBound : Integer, upperBound : Integer, defaultValue : String, isOrdered : Boolean, isUnique : Boolean){
 	var owningClass : APP::StandardClass := structure.findStandardClass(owningClassName);
 	var typeEnity : APP::ModelEntity := structure.findEntity(propertyTypeName);
-	if(typeEnity.oclIsKindOf(PrimitiveClass))then{
+	if(typeEnity.oclIsKindOf(PrimitiveClass))then{ 
 		owningClass.properties += _primitiveProperty(
 										propertyName, 
 										typeEnity.oclAsType(PrimitiveClass),
