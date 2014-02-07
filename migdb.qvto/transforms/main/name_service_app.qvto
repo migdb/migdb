@@ -58,7 +58,11 @@ query StandardClass::translateIdName() : String{
 query StandardClass::getParentFkName() : String{
 	//currently implemented as a FK_ tableName + parent name is unique because of 1-N parent-child 
 	//relationship  
-	return getDbFkParentPrefix() + self.name.translate();
+	return getParentFkName(self.name);
+}
+
+query getParentFkName(className : String) : String{
+	return getDbFkParentPrefix() + className.translate();
 }
 
 /**
@@ -98,8 +102,7 @@ query PrimitiveProperty::getCollectionTableName():String{
 	necessary to add owningClassName to differenciate collections of more classes
 **/
 query getCollectionTableName(propertyName : String, owningClassName : String) : String{
-	return getDbCollectionPrefix() + propertyName.translate() + "_" + 
-			owningClassName.translate();
+	return getDbCollectionPrefix() + owningClassName.translate() + "_" + propertyName.translate();
 }
 
 /**

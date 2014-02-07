@@ -1,0 +1,35 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameEntity4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var removeFKAsTable : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		"teacher",
+																		"par_teacher");
+	var addNewFkAsTable : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																"teacher",
+																"id_teacher",
+																"par_university_teacher",
+																"person");
+	var renameIdCol : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																"teacher",
+																"id_teacher",
+																"id_university_teacher");
+	var renameOwnerTable : RDB::ops::ModelOperation := _renameTable(
+																publicSchemaName,
+																"teacher",
+																"university_teacher");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeFKAsTable,
+															addNewFkAsTable,
+															renameIdCol,
+															renameOwnerTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);																												
+}

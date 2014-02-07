@@ -1105,9 +1105,8 @@ helper checkNotExistTable(owningSchemaName : String, tableName : String, structu
 }
 
 helper checkHasNoColumns(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(
-			owningSchemaName, 
-			tableName))then {
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
 	var hasNoColumns : Boolean := structure.findTable(owningSchemaName, tableName).

@@ -7,7 +7,7 @@ transformation addProperty5_required(out inoutModel : RDB);
 
 main() {
 	var publicSchemaName : String := getDefaultSchemaName();
-	var collectionTableName : String := "col_pr_tab";
+	var collectionTableName : String := "col_tab_pr";
 	var addTable : RDB::ops::AddTable := _addTable(
 												publicSchemaName,
 												collectionTableName);
@@ -40,7 +40,7 @@ main() {
 													publicSchemaName,
 													collectionTableName,
 													orderingUXColNames,
-													"ux_col_pr_tab_ord");
+													"ux_col_tab_pr_ord");
 	var uxNames : OrderedSet(String) := OrderedSet{
 											"id_root", 
 											"pr"};

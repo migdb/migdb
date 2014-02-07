@@ -1,0 +1,10 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation renameEntity1(out inoutModel : APP);
+
+main(){
+	var renameEntity : APP::ops::RenameEntity :=_renameEntity("Person", "Man"); 
+	_appOperations(OrderedSet{renameEntity});	
+}

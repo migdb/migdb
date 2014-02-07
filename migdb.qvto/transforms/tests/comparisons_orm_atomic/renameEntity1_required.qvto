@@ -1,0 +1,16 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameEntity1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															"tab",
+															"cls");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

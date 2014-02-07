@@ -20,6 +20,7 @@ var OUTPUT_BASE_DIR = "output-tests/orm_atomic"
 var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
 var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var EMPTY_ERRORS = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 var COMPARISONS_OPS_DIR = "${QVTO_DIR}/tests/comparisons_orm_atomic"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_run.qvto"
 var EMPTY_RDB_OPS = "${QVTO_DIR}/tests/operations/rdb/empty_rdb_ops.qvto"
@@ -56,28 +57,17 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addClass1.qvto"
 		qvtInput = "${IN_APP_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addClass1_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "addClass"
 	}
-
 	
-	component = TestComponent{
-		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/003_addPrimitiveClass"
-		qvtInput = "${IN_APP_OPS}/addPrimitiveClass1.qvto"
-		qvtInput = "${IN_APP_STR}/structure_int.qvto"
-		qvtComparison = "${EMPTY_RDB_OPS}"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "addPrimitiveClass"
-	}
-
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/002_addProperty"
 		qvtInput = "${IN_APP_OPS}/addProperty1.qvto"
 		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty1_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "addProperty - primitive"
 	}
 
@@ -89,7 +79,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops.qvto"
 		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty2_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "add association property to standard class"
 	}
 	
@@ -101,7 +91,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops2.qvto"
 		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty3_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "add association property UB = -1 to standard class"
 	}
 	
@@ -113,7 +103,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops3.qvto"
 		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty4_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "add association UX, ORD property to standard class"
 	}
 	
@@ -125,9 +115,69 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops4.qvto"
 		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty5_required.qvto"
-		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "add primitive UX, ORD property to standard class"
 	}	
 	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/003_addPrimitiveClass"
+		qvtInput = "${IN_APP_OPS}/addPrimitiveClass1.qvto"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtComparison = "${EMPTY_RDB_OPS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addPrimitiveClass"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004_renameEntity"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm2_ops.qvto"
+		qvtInput = "${IN_APP_STR}/structure_teacher_person.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity - DB association table"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004b_renameEntity"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtInput = "${IN_APP_STR}/structure_person_collection_addresses.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity - DB association collumn"
+	}
 	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004c_renameEntity"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtInput = "${IN_APP_STR}/structure_person_M_N_addresses.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity - DB association table"
+	}	
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005_removeEntity"
+		qvtInput = "${IN_APP_OPS}/removeEntity1.qvto"
+		qvtInput = "${IN_APP_STR}/structure_tab_plain.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeEntity_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeEntity standardClass"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005b_removeEntity"
+		qvtInput = "${IN_APP_OPS}/removeEntity2.qvto"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtComparison = "${EMPTY_RDB_OPS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeEntity standardClass"
+	}
+
+			
 }

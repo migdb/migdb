@@ -331,7 +331,7 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema,
 helper app::AssociationProperty::toAssociationColumn(inout schema : RDB::Schema, 
 		inout errorLog : ErrorLog){
 	if((not self.isOneToOneBidirectional() and not self.isOneToOneUnidirectional() and 
-			not self.isOneToManyUnidirectional() and not self.isManyToManyBidirectional()) or 
+			not self.isOneToManyUnidirectional() and not self.isOneToManyBidirectional()) or 
 			not self.isOwning)then{
 		var errorMessage : String := ("Mapping associationProperty" + self.repr() + 
 			" to association column");

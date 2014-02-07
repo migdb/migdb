@@ -1,0 +1,54 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameEntity2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var removeFKCollection : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		"col_person_hobby",
+																		"fk_col_person_hobby");
+	var addNewFkCollection : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																"col_person_hobby",
+																"id_person",
+																"fk_col_man_hobby",
+																"person");										
+	var removeAssocFK : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	"person",
+																	"fk_person_residental_address"
+																	);
+	var addNewAssocFk : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																"person",
+																"residental_address",
+																"fk_man_residental_address",
+																"street");
+	var renameId : RDB::ops::ModelOperation := _renameColumn(
+															publicSchemaName,
+															"person",
+															"id_person",
+															"id_man");
+	var renameCollectionRefCol : RDB::ops::ModelOperation := _renameColumn(
+																		publicSchemaName,
+																		"col_person_hobby",
+																		"id_person",
+																		"id_man");
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															"person",
+															"man");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeFKCollection,
+															addNewFkCollection,
+															removeAssocFK,
+															addNewAssocFk,
+															renameId,
+															renameCollectionRefCol,
+															renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

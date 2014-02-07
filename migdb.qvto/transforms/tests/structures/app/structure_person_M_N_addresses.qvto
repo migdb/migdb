@@ -1,0 +1,31 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation structure_person_M_N_addresses(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var char : PrimitiveClass := _primitiveClass(
+											"String", 
+											app::PrimitiveType::char);
+	var address : StandardClass := _class(
+										"Street", 
+										_idProperty("idStreet", int),
+										OrderedSet{_primitiveProperty("name", char, 0, 1)});
+	var resAdrPr : MultipliableProperty := _associationProperty(
+															"residentalAddress", 
+															address, 
+															0, 
+															-1);									
+	var personProps : OrderedSet(MultipliableProperty) := OrderedSet{
+														_primitiveProperty("name", char, 0, 1), 
+														resAdrPr};
+	var person : StandardClass := _class(
+										"Person", 
+										_idProperty("idPerson", int),
+										personProps);
+	_appStructure(OrderedSet{int, person, char, address});
+}

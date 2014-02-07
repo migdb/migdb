@@ -182,7 +182,7 @@ helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Struct
 								getFKAssociationTableRefName(newTableName, associationTypeName), 
 								associationTypeName);
 			if(self.isOrdered)then{
-					operations := addOrdering(
+					operations := processAddOrdering(
 									operations, 
 									newTableName, 
 									idOriginColName,
@@ -251,7 +251,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 								getFkCollectionName(stcls.name, self.name), 
 								stcls.name.translate());
 			if(self.isOrdered)then{
-					operations := addOrdering(
+					operations := processAddOrdering(
 										operations, 
 										collectionTableName, 
 										idOwningTableName,
@@ -276,7 +276,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 	return null;
 }
 
-helper addOrdering(inout operations : OrderedSet(RDB::ops::ModelOperation), tableName : String, firstOrderedCollumn : String, secondOrderedCollumn : String) : OrderedSet(RDB::ops::ModelOperation){
+helper processAddOrdering(inout operations : OrderedSet(RDB::ops::ModelOperation), tableName : String, firstOrderedCollumn : String, secondOrderedCollumn : String) : OrderedSet(RDB::ops::ModelOperation){
 	var columnNames : OrderedSet(String) := OrderedSet{
 														firstOrderedCollumn, 
 														secondOrderedCollumn,
@@ -299,38 +299,238 @@ helper addOrdering(inout operations : OrderedSet(RDB::ops::ModelOperation), tabl
 
 helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var entity : ModelEntity := appStructure.findEntity(self.name);
-	var operations : OrderedSet(RDB::ops::ModelOperation) := null;
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
 	if(entity.oclIsTypeOf(PrimitiveClass))then{
 		return OrderedSet{};
 	}endif;
-	if(entity.oclIsTypeOf(EmbeddedClass))then{
-		//TODO who knows???
-		return OrderedSet{};
-	}endif; 
+	//rename StandardClass with inheritanceType joined 
 	if(entity.oclIsTypeOf(StandardClass))then{
-		var stcls := entity.oclAsType(StandardClass);
-		if(stcls.hasSingleTableInheritanceType())then{
-			//change values in table with name = rootClass.name in column = DiscriminatorColumn =>
-			// self.name to self.newName
-			return operations; 
-		}endif;
-		if(stcls.hasJoinedInheritanceType())then{
-			operations+=_renameTable(getDefaultSchemaName(), self.name, self.newName);
-			
-			//rename all FKs outside hierarchy
-			var renamedCls : StandardClass := appStructure.findStandardClass(self.name);
-			
-			//rename FKs for all strict descendats stcls - eg des.parent.name = self.name
-			return operations;
-		}endif;
-		if(stcls.hasTablePerClassInheritanceType())then{
-			operations+=_renameTable(getDefaultSchemaName(), self.name, self.newName);
-			//rename all FKs outside hierarchy
-			return operations;
-		}endif;
+		var stcls : StandardClass := entity.oclAsType(StandardClass);
+		//rename all FKs outside hierarchy
+		var renamedCls : StandardClass := appStructure.findStandardClass(self.name);
+		var oldIdName : String := stcls.translateIdName();
+		var newIdName : String := getDbIdColumnName(self.name.translate()); 
+		//renameFksTo renamed cls = remove + create new Fks
+		operations := ormRenameFksReferencingCls(
+												appStructure,
+												renamedCls,
+												self.newName,
+												operations
+												);
+		if(renamedCls.parent != null)then{
+			var renamedTableName : String := renamedCls.name.translate();
+			operations += _removeConstraint(
+										getDefaultSchemaName(),
+										renamedTableName,
+										renamedCls.getParentFkName());
+			operations += _addForeignKey(
+										getDefaultSchemaName(),
+										renamedTableName,
+										getDbIdColumnName(renamedTableName),
+										getParentFkName(self.newName),
+										renamedCls.parent.name.translate()); 							
+		}endif;										
+		//renameIdColumn
+		operations += _renameColumn(
+									getDefaultSchemaName(),
+									renamedCls.name.translate(),
+									getDbIdColumnName(renamedCls.name.translate()),									
+									getDbIdColumnName(self.newName.translate()));														
+		//rename refCols to a class
+		operations := ormRenameRefColsToCls(
+											appStructure,
+											renamedCls,
+											self.newName,
+											operations);
+		//rename refTables - associations, collections REFERENCING only renamedCls
+		operations := ormRenameRefTablesToCls(
+											appStructure,
+											renamedCls,
+											self.newName,
+											operations);									
+		//rename Table - is last operation because of implementation getClassDescendants which includes cls
+		operations += _renameTable(
+								getDefaultSchemaName(), 
+								self.name.translate(), 
+								self.newName.translate());										
 	}endif;
-	
-	return null;
+	return operations;
+}
+
+//
+helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClass, newName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var defaultSchemaName : String := getDefaultSchemaName();
+	//rename Collection FKs
+	clz->properties->forEach(prop | prop.isPrimitive() and (prop.upperBound = -1 or prop.upperBound > 1)){
+		var collectionTableName : String := getCollectionTableName(
+																prop.name, 
+																clz.name);
+		var idOwningTableName : String := clz.translateIdName();
+		var owningTableName : String := clz.name.translate();														
+		ops+=_removeConstraint(
+							defaultSchemaName,
+							collectionTableName,
+							getFkCollectionName(clz.name, prop.name));
+		ops+= _addForeignKey(
+							getDefaultSchemaName(), 
+							collectionTableName, 
+							idOwningTableName, 
+							getFkCollectionName(newName, prop.name), 
+							owningTableName);
+	};
+	//rename association FKs 1-N
+	clz->properties->forEach(prop | (prop.isOneToManyUnidirectional() or prop.isOneToManyBidirectional()) 
+									and prop.oclIsKindOf(AssociationProperty)){
+		var owningTableName : String := clz.name.translate();
+		var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
+		var oldFkName : String := getFkRefencingOppositeName(
+											assocProp.name,
+											clz.name,
+											assocProp.type.name);
+		ops += _removeConstraint(
+								defaultSchemaName,
+								owningTableName,
+								oldFkName);									
+		var targetTableName : String := assocProp.type.name.translate();
+		var newFkName : String := getFkRefencingOppositeName(
+											assocProp.name,
+											newName,
+											assocProp.type.name);
+		ops += _addForeignKey(
+							getDefaultSchemaName(), 
+							owningTableName, 
+							assocProp.name.translate(), 
+							newFkName, 
+							targetTableName);
+	};
+
+	//rename FKs M x N	
+	clz->properties[AssociationProperty]->forEach(assProp | 
+			assProp.isManyToManyUnidirectional() or assProp.isManyToManyBidirectional()){
+			var associationTableName : String ;
+			//exists because in progress of name changing the tableName is old but in contrast 
+			//FK should be renamed
+			var newAssociationTableName : String;
+			associationTableName := getAssociationTableName(
+															assProp.name, 
+															assProp.owningGeneralClass.name);
+			newAssociationTableName := getAssociationTableName(
+															assProp.name,
+															newName);											
+			var oldFKName : String := getFKAssociationTableRefName(
+												associationTableName,
+												clz.name.translate());
+			var newFkName : String := getFKAssociationTableRefName(
+												newAssociationTableName,
+												newName.translate());								
+			ops+= _removeConstraint(
+								defaultSchemaName,
+								associationTableName,
+								oldFKName);
+			ops+= _addForeignKey(
+								defaultSchemaName,
+								associationTableName,
+								getDbIdColumnName(clz.name.translate()),
+								newFkName,
+								clz.name.translate());					
+	};	
+		
+	return ops;
+}
+
+helper ormRenameRefColsToCls(structure : APP::Structure, clz : StandardClass, newName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var oldIdName : String := clz.translateIdName();
+	var newIdName : String := getDbIdColumnName(newName.translate());
+	//rename Collection refCol
+	clz->properties->forEach(prop | prop.isPrimitive() and (prop.upperBound = -1 or prop.upperBound > 1)){
+		var collectionTableName : String := getCollectionTableName(
+																prop.name, 
+																clz.name);
+		ops+= _renameColumn(
+						defaultSchemaName,
+						collectionTableName,
+						oldIdName,
+						newIdName);	
+	};
+	//rename association refCol in associationTable (refCol in sourceTable has different naming 
+	//convention - eg isn't renamed)
+//	hierarchy->forEach(hierarchyCls){
+//		structure->entities[StandardClass]->properties->forEach(prop | 
+//						prop.isPropertyTypeOf(hierarchyCls) and prop.isManyToManyBidirectional()){
+	clz.properties->forEach(prop | prop.isManyToManyBidirectional()){			
+			var associationTableName : String;	
+			//the tricky thing with naming M X N association
+			if(prop.oclAsType(AssociationProperty).isOwning)then{
+			 	associationTableName := getAssociationTableName(
+															prop.name, 
+															prop.owningGeneralClass.name);
+			}else{
+				var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
+				var oppositeProp : AssociationProperty := assocProp.oppositeProperty;
+				associationTableName := getAssociationTableName(
+															oppositeProp.name, 
+															oppositeProp.owningGeneralClass.name);
+			}endif;
+			ops+= _renameColumn(
+							defaultSchemaName,
+							associationTableName,
+							oldIdName,
+							newIdName);
+		};
+	//};
+	//in unidirectional M x N there are all properties isOwning = true because this flag has 
+	//default value true
+	clz->properties[AssociationProperty]->forEach(assProp | 
+			assProp.isManyToManyUnidirectional()){
+			var associationTableName := getAssociationTableName(
+														assProp.name, 
+														assProp.owningGeneralClass.name);
+			ops+= _renameColumn(
+							defaultSchemaName,
+							associationTableName,
+							oldIdName,
+							newIdName);
+	};	
+	return ops;
+}
+
+
+
+helper ormRenameRefTablesToCls(structure : APP::Structure, clz : StandardClass, newClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var defaultSchemaName : String := getDefaultSchemaName();
+	clz->properties[AssociationProperty]->forEach(assProp | 
+			(assProp.isManyToManyUnidirectional() or assProp.isManyToManyBidirectional()) 
+			and assProp.isOwning){
+		var associationTableName : String := getAssociationTableName(
+																assProp.name, 
+																assProp.owningGeneralClass.name);
+		var	newAssociationTableName := getAssociationTableName(
+														assProp.name,
+														newClassName);											
+		ops+= _renameTable(
+						defaultSchemaName,
+						associationTableName,
+						newAssociationTableName);
+		};	
+	return ops;
+}
+
+helper ormRemoveParentFksInHierarchy(structure : APP::Structure, clz : StandardClass, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var hierarchy : OrderedSet(StandardClass) := clz.getAllDescendants();
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var defaultSchemaName : String := getDefaultSchemaName();
+	hierarchy->forEach(subCls){
+		var removeParentFk : rdb::ops::ModelOperation := _removeConstraint(
+																defaultSchemaName,
+																subCls.name.translate(),
+																subCls.getParentFkName());
+		ops+=removeParentFk;
+	};
+	return ops;
 }
 
 helper app::ops::RenameProperty::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
@@ -384,6 +584,32 @@ helper app::ops::RenameProperty::primitiveInStandardClass(appStructure : Structu
 		}endif;
 	}endif;
 	return null;	
+}
+
+helper APP::ops::RemoveEntity::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
+	var entity : ModelEntity := appStructure.findEntity(self.name);
+	if(entity.oclIsTypeOf(PrimitiveClass))then{
+		return OrderedSet{};
+	}endif;
+	if(not entity.oclIsTypeOf(StandardClass))then{
+		assert(false);
+		log("Unsupported type of mapping");
+		return OrderedSet{};
+	}endif;
+	var defSchemaName : String := getDefaultSchemaName();
+	var tableName : String := self.name.translate();
+	var removePk : RDB::ops::ModelOperation := _removeConstraint(
+													defSchemaName,
+													tableName,
+													getDbPrimaryKeyName(tableName));
+	var removeCol : RDB::ops::ModelOperation := _removeColumn(
+													defSchemaName,
+													tableName,
+													getDbIdColumnName(tableName));												
+	var removeTable : RDB::ops::ModelOperation := _removeTable(
+															defSchemaName, 
+															tableName);
+	return OrderedSet{removePk, removeCol, removeTable};
 }
 
 /** Currently implemented only adding parent **/
