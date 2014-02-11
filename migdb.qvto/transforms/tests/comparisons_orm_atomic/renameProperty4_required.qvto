@@ -1,0 +1,65 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameProperty4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var oldAssociationTableName : String := "tab_pr";
+	var removeUxConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldAssociationTableName,
+																		"ux_tab_pr");
+	var addUxConstraint : RDB::ops::ModelOperation := _addUnique(
+																publicSchemaName,
+																oldAssociationTableName,
+																OrderedSet{"id_tab", "id_address"},
+																"ux_tab_new_property_name");
+	var removeOrdConst : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"ux_tab_pr_ord");
+	var orderingColumnNames : OrderedSet(String) := OrderedSet{"id_tab", "id_address", "ordering"};
+	var addOrdConst : RDB::ops::ModelOperation := _addUnique(
+															publicSchemaName,
+															oldAssociationTableName,
+															orderingColumnNames,
+															"ux_tab_new_property_name_ord");
+	var removeFkOwner : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_tab_pr_tab");
+	var addFkOwner : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldAssociationTableName,
+															"id_tab",
+															"fk_tab_new_property_name_tab",
+															"tab");
+	var removeFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_tab_pr_address");
+	var addFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldAssociationTableName,
+															"id_address",
+															"fk_tab_new_property_name_address",
+															"address");
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															"tab_pr",
+															"tab_new_property_name");																														
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeUxConstraint,
+															addUxConstraint,
+															removeOrdConst,
+															addOrdConst,
+															removeFkOwner,
+															addFkOwner,
+															removeFkType,
+															addFkType,
+															renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,19 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation ormRenameProp(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var prop : PrimitiveProperty := _primitiveProperty("pr", int, 0, -1, null, true, true); 
+	var clsTab : StandardClass := _class(
+										"Tab", 
+										_idProperty("idTab", int), 
+										OrderedSet{prop}, 
+										false, 
+										InheritanceType::joined);
+	_appStructure(OrderedSet{int, clsTab});
+}

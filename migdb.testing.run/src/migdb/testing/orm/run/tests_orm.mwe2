@@ -176,8 +176,46 @@ TestWorkflow{
 		qvtInput = "${IN_APP_STR}/structure_int.qvto"
 		qvtComparison = "${EMPTY_RDB_OPS}"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeEntity standardClass"
+		testDescription = "removeEntity PrimitiveCls"
 	}
-
 			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006_renameProperty"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/structure_tab.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty PrimitiveProp"
+	}
+			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006b_renameProperty"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/ormRenameProp.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty PrimitiveProp - unique ordered collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006c_renameProperty"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty AssociationProp UB = 1 in StdCls"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006d_renameProperty"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty AssociationProp UB = -1 in StdCls"
+	}
 }
