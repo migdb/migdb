@@ -2,14 +2,23 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation structure_tab_plain(out inoutModel : APP);
+transformation structure_tab_joined(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var prop : MultipliableProperty := _primitiveProperty(
+														"pr", 
+														int, 
+														0, 
+														-1,
+														null,
+														true, 
+														true);
 	var classTab : StandardClass := _class(
 										"Tab", 
 										_idProperty("idTab", int), 
+										OrderedSet{prop},
 										false, 
-										InheritanceType::singleTable);
+										InheritanceType::joined);
 	_appStructure(OrderedSet{int, classTab});
 }

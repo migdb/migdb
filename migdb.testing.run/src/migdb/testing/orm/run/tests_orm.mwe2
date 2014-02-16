@@ -218,4 +218,25 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "renameProperty AssociationProp UB = -1 in StdCls"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007_removeProperty"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/structure_tab_joined.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty plain Primitive"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007b_removeProperty"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_collection.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty collection Primitive"
+	}
+	
 }

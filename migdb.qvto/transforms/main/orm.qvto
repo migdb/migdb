@@ -124,7 +124,7 @@ helper app::ops::AddProperty::toRdb(appStructure : APP::Structure) : OrderedSet(
 	}endif;
 	log("Unexpected mapping of addProperty " + self.repr());
 	assert(false);
-	return null;
+	return OrderedSet{};
 }
 
 helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Structure, stcls : StandardClass, type : StandardClass) : OrderedSet(RDB::ops::ModelOperation){
@@ -782,6 +782,92 @@ helper APP::ops::RenameProperty::associationInStandardClass(associationProp : As
 	return operations;
 }
 
+helper APP::ops::RemoveProperty::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
+	var owningEntity : ModelEntity := appStructure.findEntity(self.owningClassName);  	
+	if(owningEntity.oclIsTypeOf(StandardClass))then{
+		var prop : Property := owningEntity.oclAsType(StandardClass).getProperty(self.name);
+		if(prop.oclIsKindOf(PrimitiveProperty))then{
+			return self.primitiveInStandardCls(prop.oclAsType(PrimitiveProperty));
+		}endif;
+		return return self.associationInStandardCls(prop.oclAsType(AssociationProperty));
+	} else{
+		assert(false);
+		log("Unsupported Mapping of RemoveProperty : " + self.repr() + " Entity:" + owningEntity.repr());
+		return OrderedSet{};
+	}endif;
+	return OrderedSet{};	
+}
+
+helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : PrimitiveProperty):OrderedSet(RDB::ops::ModelOperation){
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var defaultSchemaName : String := getDefaultSchemaName();
+	if(primitiveProperty.upperBound = 1)then{
+		operations += _removeColumn(
+								defaultSchemaName,
+								self.owningClassName.translate(),
+								self.name.translate());
+	}else{
+		//self.upperBound > 1 or self.upperBound = -1
+		var collectionTableName : String := getCollectionTableName(
+																self.name, 
+																self.owningClassName);
+		var idOwningTableName : String := primitiveProperty.owningGeneralClass.translateIdName();
+		var collectionCollumnName : String := self.name.translate();
+		if(primitiveProperty.isOrdered)then{
+			var columnNames : OrderedSet(String) := OrderedSet{
+														idOwningTableName, 
+														collectionCollumnName,
+														getDbOrderingColumnName()};
+			var uxOrderName : String := getUXOrderingName(collectionTableName);
+			//remove UX constraint
+			operations+= _removeConstraint(
+										getDefaultSchemaName(),
+										collectionTableName,
+										uxOrderName);
+		}endif;
+		if(primitiveProperty.isUnique)then{
+			var columnNames : OrderedSet(String) := OrderedSet{
+														idOwningTableName, 
+														collectionCollumnName};
+			var uxName : String := getUXName(
+											primitiveProperty.owningGeneralClass.name, 
+											primitiveProperty.name);
+			operations += _removeConstraint(
+										getDefaultSchemaName(),
+										collectionTableName,
+										uxName);
+		}endif;
+		var fkOwnerName : String := getFkCollectionName(
+													primitiveProperty.owningGeneralClass.name, 
+													primitiveProperty.name);
+		//remove FK TO owning Table
+		operations+= _removeConstraint(
+									getDefaultSchemaName(),
+									collectionTableName,
+									fkOwnerName);
+		//remove collection data field						
+		operations+= _removeColumn(
+								defaultSchemaName,
+								collectionTableName,
+								collectionCollumnName);
+		//remove ref column field						
+		operations+= _removeColumn(
+								defaultSchemaName,
+								collectionTableName,
+								idOwningTableName);
+									
+		//remove collection table
+		operations+= _removeTable(
+							defaultSchemaName, 
+							collectionTableName);
+	}endif;
+		
+	return operations;
+}
+
+helper APP::ops::RemoveProperty::associationInStandardCls(associationProperty : AssociationProperty):OrderedSet(RDB::ops::ModelOperation){
+	
+}
 
 /** Currently implemented only adding parent **/
 helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){

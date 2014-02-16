@@ -6,6 +6,11 @@ transformation structure_tab(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
-	_appStructure(OrderedSet{int, _class("Tab", _idProperty("idTab", int), 
-		OrderedSet{_primitiveProperty("pr", int)}, false, InheritanceType::singleTable)});
+	var classTab : StandardClass := _class(
+										"Tab", 
+										_idProperty("idTab", int), 
+										OrderedSet{_primitiveProperty("pr", int)}, 
+										false, 
+										InheritanceType::singleTable);
+	_appStructure(OrderedSet{int, classTab});
 }
