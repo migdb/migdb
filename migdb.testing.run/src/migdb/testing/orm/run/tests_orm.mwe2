@@ -239,4 +239,23 @@ TestWorkflow{
 		testDescription = "removeProperty collection Primitive"
 	}
 	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007c_removeProperty"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty - association property"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007d_removeProperty"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty - association property M x N, ordered, UX"
+	}
 }

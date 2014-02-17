@@ -300,6 +300,7 @@ helper processAddOrdering(inout operations : OrderedSet(RDB::ops::ModelOperation
 helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation){
 	var entity : ModelEntity := appStructure.findEntity(self.name);
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var defaultSchemaName : String := getDefaultSchemaName();
 	if(entity.oclIsTypeOf(PrimitiveClass))then{
 		return OrderedSet{};
 	}endif;
@@ -320,11 +321,11 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet
 		if(renamedCls.parent != null)then{
 			var renamedTableName : String := renamedCls.name.translate();
 			operations += _removeConstraint(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										renamedTableName,
 										renamedCls.getParentFkName());
 			operations += _addForeignKey(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										renamedTableName,
 										getDbIdColumnName(renamedTableName),
 										getParentFkName(self.newName),
@@ -332,7 +333,7 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet
 		}endif;										
 		//renameIdColumn
 		operations += _renameColumn(
-									getDefaultSchemaName(),
+									defaultSchemaName,
 									renamedCls.name.translate(),
 									getDbIdColumnName(renamedCls.name.translate()),									
 									getDbIdColumnName(self.newName.translate()));														
@@ -373,7 +374,7 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 							collectionTableName,
 							getFkCollectionName(clz.name, prop.name));
 		ops+= _addForeignKey(
-							getDefaultSchemaName(), 
+							defaultSchemaName, 
 							collectionTableName, 
 							idOwningTableName, 
 							getFkCollectionName(newName, prop.name), 
@@ -398,7 +399,7 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 											newName,
 											assocProp.type.name);
 		ops += _addForeignKey(
-							getDefaultSchemaName(), 
+							defaultSchemaName, 
 							owningTableName, 
 							assocProp.name.translate(), 
 							newFkName, 
@@ -605,12 +606,12 @@ helper APP::ops::RenameProperty::primitiveInStandardClass(primitiveProp : Primit
 			var newUxName : String := getUXOrderingName(newCollectionTableName);
 			//remove old UX constraint
 			operations+= _removeConstraint(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										oldCollectionTableName,
 										oldUxName);
 			//add new ordering UX constraint
 			operations += _addUnique(
-									getDefaultSchemaName(),
+									defaultSchemaName,
 									oldCollectionTableName,
 									columnNames,
 									newUxName);	
@@ -626,11 +627,11 @@ helper APP::ops::RenameProperty::primitiveInStandardClass(primitiveProp : Primit
 											primitiveProp.owningGeneralClass.name, 
 											self.newName);
 			operations += _removeConstraint(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										oldCollectionTableName,
 										oldUxName);
 			operations += _addUnique(
-									getDefaultSchemaName(),
+									defaultSchemaName,
 									oldCollectionTableName,
 									columnNames,
 									newUxName);	
@@ -643,11 +644,11 @@ helper APP::ops::RenameProperty::primitiveInStandardClass(primitiveProp : Primit
 													self.newName);
 		//rename FK TO owning Table
 		operations+= _removeConstraint(
-									getDefaultSchemaName(),
+									defaultSchemaName,
 									oldCollectionTableName,
 									oldFKOwnerName);
 		operations+= _addForeignKey(
-								getDefaultSchemaName(), 
+								defaultSchemaName, 
 								oldCollectionTableName, 
 								idOwningTableName, 
 								newFKOwnerName, 
@@ -689,7 +690,7 @@ helper APP::ops::RenameProperty::associationInStandardClass(associationProp : As
 								owningTableName,
 								oldFkName);					
 		operations += _addForeignKey(
-								getDefaultSchemaName(), 
+								defaultSchemaName, 
 								owningTableName, 
 								oldColumnName, 
 								newFkName, 
@@ -821,7 +822,7 @@ helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : Prim
 			var uxOrderName : String := getUXOrderingName(collectionTableName);
 			//remove UX constraint
 			operations+= _removeConstraint(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										collectionTableName,
 										uxOrderName);
 		}endif;
@@ -833,7 +834,7 @@ helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : Prim
 											primitiveProperty.owningGeneralClass.name, 
 											primitiveProperty.name);
 			operations += _removeConstraint(
-										getDefaultSchemaName(),
+										defaultSchemaName,
 										collectionTableName,
 										uxName);
 		}endif;
@@ -842,7 +843,7 @@ helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : Prim
 													primitiveProperty.name);
 		//remove FK TO owning Table
 		operations+= _removeConstraint(
-									getDefaultSchemaName(),
+									defaultSchemaName,
 									collectionTableName,
 									fkOwnerName);
 		//remove collection data field						
@@ -865,8 +866,76 @@ helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : Prim
 	return operations;
 }
 
-helper APP::ops::RemoveProperty::associationInStandardCls(associationProperty : AssociationProperty):OrderedSet(RDB::ops::ModelOperation){
+helper APP::ops::RemoveProperty::associationInStandardCls(associationProperty : AssociationProperty):OrderedSet(RDB::ops::ModelOperation){	
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var removedColumnName : String := self.name.translate();
+	var owningTableName : String := associationProperty.owningGeneralClass.name.translate();
 	
+	var type : StandardClass := associationProperty.type;
+	var owningCls : StandardClass := associationProperty.owningGeneralClass;
+	if(associationProperty.upperBound = 1)then{
+		var fkName : String := getFkRefencingOppositeName(
+														removedColumnName,
+														owningCls.name,
+														type.name
+														);
+		operations += _removeConstraint(
+										defaultSchemaName,
+										owningTableName,
+										fkName);
+		operations += _removeColumn(
+									defaultSchemaName,
+									owningTableName,
+									removedColumnName);
+	}else{
+		//UB = 1 || UB = -1, eg collection
+		var associationTableName := getAssociationTableName(
+														self.name, 
+														owningCls.name);
+		var idOriginColName : String := owningCls.translateIdName();
+		var idTypeColName : String := type.translateIdName();
+		var associationOwnerTableName : String := owningCls.name.translate();
+		var associationTypeName : String := type.name.translate();
+		if(associationProperty.isUnique)then{
+			operations += _removeConstraint(
+											defaultSchemaName,
+											associationTableName,
+											getUXName(owningCls.name, self.name));	
+			}endif;
+		if(associationProperty.isOrdered)then{
+			operations += _removeConstraint(
+											defaultSchemaName,
+											associationTableName,
+											getUXOrderingName(associationTableName));
+		}endif;
+		var fkAssocOwnerName : String := getFKAssociationTableRefName(
+																associationTableName, 
+																associationOwnerTableName);
+		operations += _removeConstraint(
+								defaultSchemaName, 
+								associationTableName, 
+								fkAssocOwnerName);
+		var fkAssocTypeName : String := getFKAssociationTableRefName(
+																associationTableName, 
+																associationTypeName);						
+		operations += _removeConstraint(
+								defaultSchemaName, 
+								associationTableName, 
+								fkAssocTypeName);
+		operations += _removeColumn(
+								defaultSchemaName,
+								associationTableName,
+								idOriginColName);
+		operations += _removeColumn(
+								defaultSchemaName,
+								associationTableName,
+								idTypeColName);
+		operations += _removeTable(
+								defaultSchemaName,
+								associationTableName);																														
+	}endif;
+	return operations;
 }
 
 /** Currently implemented only adding parent **/
