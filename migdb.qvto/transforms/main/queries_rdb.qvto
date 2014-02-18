@@ -110,8 +110,7 @@ query RDB::Structure::findTable(schemaName : String, tableName : String) : RDB::
 
 /*********************************** COLUMN ************************************/
 
-query RDB::Structure::containsColumnInTable(schemaName : String, tableName : String, 
-	constraintName : String) : Boolean {
+query RDB::Structure::containsColumnInTable(schemaName : String, tableName : String, constraintName : String) : Boolean {
     return self.findTable(schemaName, tableName).columns->exists(name = constraintName);
 }
 
@@ -129,8 +128,7 @@ query RDB::Structure::findColumns(schemaName : String, tableName : String, cName
 
 
 /********************************** CONSTRAINT **********************************/
-query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, 
-		constraintableName : String) : Boolean{
+query RDB::Structure::containsConstraint(owningSchema : String, owningTable : String, constraintableName : String) : Boolean{
 	return self.findTable(owningSchema, owningTable).constraints->exists(constraint |
 	 	constraint.name = constraintableName);	
 }
@@ -140,8 +138,7 @@ query RDB::Structure::hasConstraintUniqueName(constraintableName : String) : Boo
 		const.name = constraintableName)->size() = 1;
 }
 
-query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String
-		) : RDB::Constraint {
+query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::Constraint {
 	return self.findTable(schemaName, tableName).constraints->any(name = rName);
 }
 
@@ -149,8 +146,7 @@ query RDB::Structure::findConstraint(schemaName : String, tableName : String, rN
 
 /********************************* COLUMN TYPE *********************************/
 
-query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String, 
-		columnNameA : String, tableNameB : String, columnNameB : String) : Boolean {
+query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String, columnNameA : String, tableNameB : String, columnNameB : String) : Boolean {
 	return self.findColumn(schemaName, tableNameA, columnNameA).type = self.
 		findColumn(schemaName, tableNameB, columnNameB).type;
 }
