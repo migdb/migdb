@@ -48,17 +48,18 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 
 		TransformationExecutor executor = new TransformationExecutor(
 				transformationURI);
-
+		
 		ModelExtent inStructure = emptyStructure(); // empty structure model
 		ModelExtent inOperations = makeModelExtent(root);
 		ModelExtent outStructure = new BasicModelExtent();
+		ModelExtent cleanStructure = new BasicModelExtent();
 		ModelExtent errors = new BasicModelExtent();
 
 		ExecutionContextImpl context = new ExecutionContextImpl();
 		context.setConfigProperty("keepModeling", true);
 
 		ExecutionDiagnostic result = executor.execute(context, inStructure,
-				inOperations, outStructure, errors);
+				inOperations, outStructure, cleanStructure, errors);
 
 		if (result.getSeverity() == Diagnostic.OK) {
 			for (Error e : getErrorList(errors)) {
