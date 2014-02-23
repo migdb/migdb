@@ -78,9 +78,9 @@ Workflow {
 	}
 
 /***** DATABASE STRUCTURE *****/
-	//Creats empty RDB Structure
+	//Creates empty RDB Structure
 	component = QVTOExecutor2 { //uses derived version of QVTOExector
-		transformationFile= "${QVTO_DIR}/tests/structures/rdb/empty_rdb_structure.qvto"
+		transformationFile= "${QVTO_DIR}/tests/structures/rdb/empty_structure.qvto"
 		outputSlot= "strRdb"
 	}
 
