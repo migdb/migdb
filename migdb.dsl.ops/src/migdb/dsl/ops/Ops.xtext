@@ -21,11 +21,8 @@ ModelOperation returns ops::ModelOperation:
 	| AddClass
 	| RemoveEntity
 	| AddProperty
-//	| CopyProperty
 	| RenameProperty
 	| RemoveProperty
-	| SetPropertyType
-	| SetPropertyBounds
 	| MoveProperty
 	| PullUpProperty
 	| PushDownProperty
@@ -70,29 +67,12 @@ AddProperty returns ops::AddProperty:
 		//('=' defaultValue=DefaultValue)?
 ;
 
-//CopyProperty returns ops::CopyProperty:
-//	'copy' owningClassName=ID '.' name=ID '->' targetClassName=ID
-//;
-
 RenameProperty returns ops::RenameProperty:
 	'rename' owningClassName=ID '.' name=ID '->' newName=ID
 ;
 
 RemoveProperty returns ops::RemoveProperty:
 	'remove' owningClassName=ID '.' name=ID
-;
-
-SetPropertyType returns ops::SetType:
-	'set' owningClassName=ID '.' name=ID ':' typeName=ID
-;
-
-SetPropertyBounds returns ops::SetBounds:
-	'set' owningClassName=ID '.' name=ID '['
-		(
-			upperBound=INT
-			| (lowerBound=INT '..' upperBound=INT)
-		)
-	']'
 ;
 
 MoveProperty returns ops::MoveProperties:
