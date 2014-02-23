@@ -1,0 +1,121 @@
+grammar migdb.dsl.app.App with org.eclipse.xtext.common.Terminals 
+
+import "http://www.collectionspro.eu/jam/mm/app" as app //application meta-model
+import "http://www.eclipse.org/emf/2002/Ecore" as ecore
+
+ModelRoot returns app::ModelRoot:
+	Structure
+;
+
+Structure returns app::Structure:
+	(entities+=ModelEntity)*
+;
+
+ModelEntity returns app::ModelEntity:
+	GeneralClass
+	| PrimitiveClass
+;
+
+GeneralClass returns app::GeneralClass:
+	EmbeddedClass
+	| StandardClass
+;
+
+PrimitiveClass returns app::PrimitiveClass:
+	'primitive'	name=ID ':' primitiveType=PrimitiveType
+;
+
+/**
+ * descendants of GeneralClass
+ */
+EmbeddedClass returns app::EmbeddedClass:
+	'embedded'
+	name=ID
+	'{'
+		'id' idProperty=[app::EmbeddedProperty|ID]
+		embeddedProperties+=EmbeddedProperty (embeddedProperties+=EmbeddedProperty)*
+    '}'
+;
+
+StandardClass returns app::StandardClass:
+	((isAbstract?='abstract' | '!abstract')? & inheritanceType=InheritanceType?)
+	'class'
+	name=ID ('<:' parent=[app::StandardClass|ID])?
+	'{'
+		('id' idProperty=[app::PrimitiveProperty|ID])?
+		(properties+=MultipliableProperty (properties+=MultipliableProperty)*)?
+    '}'
+;
+
+EmbeddedProperty returns app::EmbeddedProperty:
+	('!required' | isMandatory?='required')?
+	name=ID ':' type=[app::PrimitiveClass|ID]
+;
+
+MultipliableProperty returns app::MultipliableProperty:
+	AssociationProperty
+	| PrimitiveProperty
+	| NestedProperty
+;
+
+/**
+ * MultipliableProperties
+ */
+PrimitiveProperty returns app::PrimitiveProperty:
+	(
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
+	)
+	name=ID
+	 ':' => type=[app::PrimitiveClass|ID] //only Primitive type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+	('=' defaultValue=DefaultValue)? //default value can be set
+;
+
+AssociationProperty returns app::AssociationProperty:
+	(
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
+	)
+	name=ID
+	':'  => type=[app::StandardClass|ID] //only Standard type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+	('<->' oppositeProperty=[app::AssociationProperty|ID])? //opposite
+;
+
+NestedProperty returns app::NestedProperty:
+	(
+		('!ordered' | isOrdered?='ordered')?
+		& ('!unique' | isUnique?='unique')?
+	)
+	name=ID
+	':'  => type=[app::EmbeddedClass|ID] //only Embedded type
+	('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+;
+
+/**
+ */
+enum PrimitiveType returns app::PrimitiveType:
+	boolean = 'boolean'
+	| char = 'char'
+	| int = 'int'
+;
+
+enum InheritanceType returns app::InheritanceType:
+	joined = 'joined'
+	| tablePerClass = 'tablePerClass'
+	| singleTable = 'singleTable'
+;
+
+Boolean returns ecore::EBoolean:
+	'true'
+	| 'false'
+;
+
+DefaultValue returns ecore::EString:
+	ID | INT | Boolean
+;
+
+terminal ID:
+	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+;

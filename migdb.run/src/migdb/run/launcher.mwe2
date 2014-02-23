@@ -1,0 +1,146 @@
+module migdb.run.launcher
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+import migdb.mm.rdb.*
+import migdb.mm.app.*
+import migdb.mm.errors.*
+import migdb.run.utils.*
+
+//DONT CHANGE !!! these parameters are passed from the console/Run configuration.
+//i.e: java MigDbLauncher launcher.mwe2 -p operations_path=src/in.ops
+var OPS_PATH //the path where the Operations file is located
+
+//constants
+var OUTPUT_XMI_DIR = "outputs_xmi"
+var OUTPUT_SQL_DIR = "outputs_sql"
+var QVTO_DIR = "platform:/resource/migdb.qvto/transforms" //it must contain prefix 'platform:/resource'
+
+Workflow {
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		scanClassPath  = true
+		registerGeneratedEPackage = "mm.app.AppPackage"
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+		
+		uriMap = {
+			from = "platform:/plugin/migdb.mm.app/models/mm-app.ecore"
+			to = "http://www.collectionspro.eu/jam/mm/app"
+		}
+		
+		uriMap = {
+			from = "platform:/plugin/migdb.mm.app/models/mm-app.ecore"
+			to = "http://www.collectionspro.eu/jam/mm/app-ops"
+		}
+		
+		uriMap = {
+			from = "platform:/plugin/migdb.mm.errors/models/mm-errors.ecore"
+			to = "http://www.collectionspro.eu/jam/mm/errors"
+		}
+		
+		uriMap = {
+			from = "platform:/plugin/migdb.qvto/transforms"
+			to = "${QVTO_DIR}"
+		}
+	}
+	
+	//Clears the output path (XMI, SQL files)
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_XMI_DIR}"
+	}
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_SQL_DIR}"
+	}
+	
+/***** APPLICATION STRUCTURE, OPERATIONS *****/
+	//Reads the Operations file
+	component = OpsReader {
+		uri = "${OPS_PATH}"
+		outputSlot = "opsApp"
+	}
+
+	//Creates empty APP Structure
+	component = QVTOExecutor2 { //uses derived version of QVTOExector
+		transformationFile = "${QVTO_DIR}/tests/structures/app/empty_structure.qvto"
+		outputSlot = "strApp"
+	}
+
+/***** DATABASE STRUCTURE *****/
+	//Creats empty RDB Structure
+	component = QVTOExecutor2 { //uses derived version of QVTOExector
+		transformationFile= "${QVTO_DIR}/tests/structures/rdb/empty_rdb_structure.qvto"
+		outputSlot= "strRdb"
+	}
+
+	component = QVTOExecutor2 { //uses derived version of QVTOExector
+		transformationFile= "${QVTO_DIR}/main/creator_rdb_operations.qvto"
+		outputSlot= "opsRdb"
+	}
+
+/***** EXECUTER *****/	
+	//Executes QVTO transformation
+	component = QVTOExecutor2 { //uses derived version of QVTOExector
+		inputSlot = "opsApp"
+		inputSlot = "strApp"
+		outputSlot = "outStrApp"
+		outputSlot = "outStrRdb"
+		inOutSlot = "opsRdb"
+		outputSlot = "errorLog"
+		transformationFile = "${QVTO_DIR}/main/migdb_executer.qvto"
+	}
+
+/***** WRITE XMI FILES *****/
+	//Saves the transformation result
+	component = Writer {
+		modelSlot = "outStrApp"
+		uri = "${OUTPUT_XMI_DIR}/structure_app.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "outStrRdb"
+		uri = "${OUTPUT_XMI_DIR}/structure_rdb.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+	
+	component = Writer {
+		modelSlot = "opsRdb"
+		uri = "${OUTPUT_XMI_DIR}/operations_rdb.xmi"
+		cloneSlotContents = false
+		useSingleGlobalResourceSet = true
+	}
+
+/***** PRINT ERROR LOG *****/
+	//Print error log to console if the result contains errors
+	component = ErrorLogger {
+		inputSlot = "errorLog"
+	}
+
+/***** SQL GENERATOR *****/		
+//	component = CodeGenComponent {
+//		withoutModel = false
+//		slot = "opsRdb"
+//		generator = Generator {}
+//		outputPath = "${OUTPUT_SQL_DIR}"
+//	}
+
+/***** DATABASE CONNECTION *****/		
+//	component = CommandLineExec{
+//		// ruby <location of script> <location of SQL files> <DB name> <USER name> <USER password>
+//		command = "ruby ../migdb.ruby.sql/script.rb output_sql_build migdb postgres 123456"
+//	}
+}
