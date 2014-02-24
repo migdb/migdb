@@ -114,7 +114,7 @@ ExtractClass returns ops::ExtractClass:
 		'.' propertyNames+=ID
 		| '{' propertyNames+=ID (',' propertyNames+=ID)* '}'
 	)
-	'/' associationPropertyName=ID '->' extractClassName=ID
+	'/' associationPropertyName=ID '->' extractClassName=ID '.' oppositePropertyName=ID
 ;
 
 ExtractSubClass returns ops::ExtractSubClass:
