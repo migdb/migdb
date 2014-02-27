@@ -233,14 +233,18 @@ query RDB::ops::AddUnique::isValid(structure : RDB::Structure, inout errorLog : 
 											errorLog, 
 											operationIndex, 
 											getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(
+	var existConstrainedColumns : Boolean := true;
+	self.constrainedColumnNames->forEach(constrainedColName){
+		var existColumn : Boolean := checkExistColumn(
 												self.owningSchemaName, 
 												self.owningTableName, 
-												self.name, 
+												constrainedColName, 
 												structure, 
 												errorLog, 
 												operationIndex, 
 												getEvolutionRdbTransformationId());
+		existConstrainedColumns := existConstrainedColumns and existColumn;										
+	};
 	var notExistConstraint : Boolean := checkNotExistConstraint(
 															self.owningSchemaName, 
 															self.name, 
@@ -249,7 +253,7 @@ query RDB::ops::AddUnique::isValid(structure : RDB::Structure, inout errorLog : 
 															operationIndex, 
 															getEvolutionRdbTransformationId());
 	
-	return existSchema and existTable and existColumn and notExistConstraint;
+	return existSchema and existTable and existConstrainedColumns and notExistConstraint;
 }
 
 helper RDB::ops::AddUnique::apply(inout structure : RDB::Structure) {
@@ -1274,7 +1278,7 @@ helper checkNotIsColumnConstrained(owningSchemaName : String, tableName : String
 // currently checking references from the same schema
 helper checkIsNotReferenced(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
 	if(not structure.containsSchema(owningSchemaName) or 
-			structure.containsTableInSchema(owningSchemaName, tableName))then {
+			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
 	var isNotReferenced : Boolean := structure.findSchema(owningSchemaName).tables->
@@ -1320,7 +1324,7 @@ helper checkNotExistIndex(owningSchemaName : String, indexName : String, structu
 		return false;
 	}endif;
 	var notExistIndex :Boolean := not structure.containsIndexInSchema(owningSchemaName, indexName);
-	if(notExistIndex)then{
+	if(not notExistIndex)then{
 		var errorMessage : String := "Index " + indexName + " already exists in schema " + 
 			owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);

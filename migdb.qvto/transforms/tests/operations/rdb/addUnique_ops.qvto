@@ -1,12 +1,14 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addcolumnOps(out inoutModel : RDB);
+transformation addUnique_ops(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDCOLUMN");	
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-		_addUnique("public", "first", OrderedSet{"uniq"}, "UQ_uniq")};
+	var addUnique : RDB::ops::ModelOperation := _addUnique(
+														"public", 
+														"first", 
+														OrderedSet{"uniq"}, 
+														"uq_uniq");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addUnique};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

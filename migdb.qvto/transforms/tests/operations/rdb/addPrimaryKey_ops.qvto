@@ -1,11 +1,10 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addcolumnOps(out inoutModel : RDB);
+transformation addPrimaryKey_ops(out inoutModel : RDB);
 
 
 main() {
-	log("op: ADDCOLUMN");	
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-		_addPrimaryKey("public", "first", "col", "PK_first")};
+	var addPk : RDB::ops::ModelOperation := _addPrimaryKey("public", "first", "col", "pk_first");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addPk};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

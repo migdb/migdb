@@ -20,7 +20,7 @@ var TEST_TRANSFORMATION = "${QVTO_DIR}/main/evolution_rdb_run.qvto"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 
 
-Workflow{
+TestWorkflow{
 /***** DEFINE META-MODELS *****/	
 /**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
@@ -43,7 +43,7 @@ Workflow{
 	/**/
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/1_addSchema"
+		outputParentUri = "${OUTPUT_BASE_DIR}/01_addSchema"
 		qvtInput = "${IN_STR}/addSchema_str.qvto"
 		qvtInput = "${IN_OPS}/addSchema_ops.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addSchema_required.qvto"
@@ -53,11 +53,121 @@ Workflow{
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
-		outputParentUri = "${OUTPUT_BASE_DIR}/2_removeConstraint"
+		outputParentUri = "${OUTPUT_BASE_DIR}/02_removeConstraint"
 		qvtInput = "${IN_STR}/removeConstraint_str.qvto"
 		qvtInput = "${IN_OPS}/removeConstraint_ops.qvto"
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeConstraint_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeConstraint"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/03_addColumn"
+		qvtInput = "${IN_STR}/addColumn_str.qvto"
+		qvtInput = "${IN_OPS}/addColumn_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addColumn_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addColumn"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/04_addForeignKey"
+		qvtInput = "${IN_STR}/addForeignKey_str.qvto"
+		qvtInput = "${IN_OPS}/addForeignKey_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addForeignKey_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addForeignKey"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/05_addIndex"
+		qvtInput = "${IN_STR}/addIndex_str.qvto"
+		qvtInput = "${IN_OPS}/addIndex_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addIndex_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addIndex"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/06_addNotNull"
+		qvtInput = "${IN_STR}/addNotNull_str.qvto"
+		qvtInput = "${IN_OPS}/addNotNull_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addNotNull_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addNotNull"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/07_addPrimaryKey"
+		qvtInput = "${IN_STR}/addPrimaryKey_str.qvto"
+		qvtInput = "${IN_OPS}/addPrimaryKey_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addPrimaryKey_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addPrimaryKey"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/08_addSequence"
+		qvtInput = "${IN_STR}/addSequence_str.qvto"
+		qvtInput = "${IN_OPS}/addSequence_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addSequence_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addSequence"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/09_addTable"
+		qvtInput = "${IN_STR}/addTable_str.qvto"
+		qvtInput = "${IN_OPS}/addTable_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addTable_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addTable"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/10_addUnique"
+		qvtInput = "${IN_STR}/addUnique_str.qvto"
+		qvtInput = "${IN_OPS}/addUnique_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addUnique_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "addUnique"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/11_renameColumn"
+		qvtInput = "${IN_STR}/renameColumn_str.qvto"
+		qvtInput = "${IN_OPS}/renameColumn_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameColumn_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "renameColumn"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/12_renameTable"
+		qvtInput = "${IN_STR}/renameTable_str.qvto"
+		qvtInput = "${IN_OPS}/renameTable_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameTable_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "renameTable"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/13_removeTable"
+		qvtInput = "${IN_STR}/removeTable_str.qvto"
+		qvtInput = "${IN_OPS}/removeTable_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeTable_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "removeTable"
 	}										
 }

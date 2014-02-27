@@ -1,32 +1,33 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addnotnull(out inoutModel : RDB);
+transformation addNotNull_str(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDNOTNULL");	
-	
 	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
 	var columnFK : RDB::Column := _column("cizi", RDB::PrimitiveType::int);
 	var columnUQ : RDB::Column := _column("uniq", RDB::PrimitiveType::char);
-	var index : RDB::Index := _index("IX_col_first", OrderedSet{column});
+	var index : RDB::Index := _index("ix_col_first", OrderedSet{column});
 	var table : RDB::Table := _table("first", OrderedSet{column, columnFK, columnUQ});
-	var pk : RDB::PrimaryKey := _primaryKey("PK_first", column);
+	var pk : RDB::PrimaryKey := _primaryKey("pk_first", column);
 	table.constraints += pk;
 	
 	
 	var column2 : RDB::Column := _column("id_second", RDB::PrimitiveType::int);	
 	var table2 : RDB::Table := _table("second", OrderedSet{column2});
-	var pk2 : RDB::PrimaryKey := _primaryKey("PK_second", column2);
+	var pk2 : RDB::PrimaryKey := _primaryKey("pk_second", column2);
 	table2.constraints += pk2;
 	
-	var fk : RDB::ForeignKey := _foreignKey("FK_first_second", table2, columnFK);
+	var fk : RDB::ForeignKey := _foreignKey("fk_first_second", table2, columnFK);
 	table.constraints += fk;
 
-	var uq : RDB::Unique := _unique("UQ_uniq", OrderedSet{columnUQ});
+	var uq : RDB::Unique := _unique("uq_uniq", OrderedSet{columnUQ});
 	table.constraints += uq;
 	
-	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{_schema("public", 
-			OrderedSet{table, table2}, _sequence("seq_global", 1), OrderedSet{index})});
+	var publicSchema : Schema := _schema(
+										"public", 
+										OrderedSet{table, table2}, 
+										_sequence("seq_global", 1), 
+										OrderedSet{index});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});
 }

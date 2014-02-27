@@ -1,15 +1,19 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addprimarykey(out inoutModel : RDB);
+transformation removeConstraint_str(out inoutModel : RDB);
 
 
 main() {
 	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
-	var index : RDB::Index := _index("IX_col_first", OrderedSet{column});
+	var index : RDB::Index := _index("ix_col_first", OrderedSet{column});
 	var table : RDB::Table := _table("first", OrderedSet{column});
-	var pk : RDB::PrimaryKey := _primaryKey("PK_first", column);
+	var pk : RDB::PrimaryKey := _primaryKey("pk_first", column);
 	table.constraints += pk;
-	
-	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{_schema("public", OrderedSet{table}, 
-			_sequence("seq_global", 1), OrderedSet{index})});
+
+	var publicSchema : Schema := _schema(
+										"public", 
+										OrderedSet{table}, 
+										_sequence("seq_global", 1), 
+										OrderedSet{index});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});
 }

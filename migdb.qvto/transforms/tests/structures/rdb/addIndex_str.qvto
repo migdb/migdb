@@ -1,13 +1,13 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addindex(out inoutModel : RDB);
+transformation addIndex_str(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDINDEX");	
-	
-	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{_schema("public", 
-			OrderedSet{_table("first", OrderedSet{_column("col", RDB::PrimitiveType::char)})}, 
-						_sequence("seq_global", 1))});	 
+	var table : Table := _table("first", OrderedSet{_column("col", RDB::PrimitiveType::char)});
+	var publicSchema : Schema := _schema(
+										"public", 
+										OrderedSet{table}, 
+										_sequence("seq_global", 1));
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});	 
 }

@@ -1,12 +1,10 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addcolumnOps(out inoutModel : RDB);
+transformation addNotNull_ops(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDCOLUMN");	
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-		_addNotNull("public", "first", "uniq", "NN_uniq")};
+	var addNotNull : RDB::ops::ModelOperation := _addNotNull("public", "first", "uniq", "nn_uniq");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addNotNull};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

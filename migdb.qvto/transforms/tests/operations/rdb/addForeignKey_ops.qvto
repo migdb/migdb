@@ -1,12 +1,15 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation addcolumnOps(out inoutModel : RDB);
+transformation addForeignKey_ops(out inoutModel : RDB);
 
 
 main() {
-	log("TEST_RDB");
-	log("op: ADDCOLUMN");	
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{ 
-		_addForeignKey("public", "first", "cizi", "FK_first_second", "second")};
+	var addFk : RDB::ops::ModelOperation := _addForeignKey(
+														"public", 
+														"first", 
+														"cizi", 
+														"fk_first_second", 
+														"second");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addFk};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
