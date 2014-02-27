@@ -169,5 +169,16 @@ TestWorkflow{
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeTable_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeTable"
-	}										
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/14_removeColumn"
+		qvtInput = "${IN_STR}/removeColumn_str.qvto"
+		qvtInput = "${IN_OPS}/removeColumn_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeColumn_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "removeColumn"
+	}
+											
 }
