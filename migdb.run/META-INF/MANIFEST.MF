@@ -19,7 +19,8 @@ Require-Bundle: eu.collectionspro.mwe;bundle-version="1.0.0";visibility:=reexpor
  org.eclipse.emf.codegen.ecore;bundle-version="2.7.0";visibility:=reexport,
  org.eclipse.emf.mwe2.launch;bundle-version="2.2.0";visibility:=reexport,
  org.apache.log4j;bundle-version="1.2.15",
- org.apache.commons.logging;bundle-version="1.1.1"
+ org.apache.commons.logging;bundle-version="1.1.1",
+ org.eclipse.xtend2.lib;bundle-version="2.2.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: migdb.run,
