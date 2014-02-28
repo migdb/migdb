@@ -102,7 +102,9 @@ Workflow {
 	component = CodeGenComponent2 { //uses derived version of CodeGenComponent
 		withoutModel = false
 		slot = "opsRdb"
-		generator = Generator {}
+		generator = Generator {
+			filename = "000.sql"
+		}
 		outputPath = "${OUTPUT_SQL_DIR}"
 	}
 

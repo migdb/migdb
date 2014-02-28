@@ -30,16 +30,19 @@ import mm.rdb.ops.impl.UpdateRowImpl
 import mm.rdb.ops.impl.InsertRowsImpl
 import mm.rdb.ops.impl.InsertRowImpl
 import mm.rdb.ops.impl.DeleteRowsImpl
+import java.io.PrintWriter
 
 
 
 class Generator extends BaseCodeGenerator {
 	
 	/*****************************************************************
-	 * 							ATRIBUDES    						 *
+	 * 							ATRIBUTES    						 *
  	 *****************************************************************/
  	 
-	int counter // Counter for name of files
+	private PrintWriter writer //file writer
+	private boolean queryCheckerWritten = false //query checker generated
+	private String filename //output file name
 	
 	/*****************************************************************
 	 * 				    	STRUCTURE METHODS				     	 *
@@ -53,7 +56,6 @@ class Generator extends BaseCodeGenerator {
  	  */
 	override doGenerate(EObject model) {
 		var ops = new ArrayList<ModelOperationImpl>();
-		this.counter = 100; // set counter to default value
 		
 		for (Object arg : model.eContents) {			
 			if(arg instanceof ModelOperationImpl){
@@ -68,8 +70,12 @@ class Generator extends BaseCodeGenerator {
 	 * @param ArrayList<ModelOperationImpl> ops : list of ops in model
 	 */
 	def toplevelGenerator(ArrayList<ModelOperationImpl> ops) {
+		this.createWriter
+		
 		for (op : ops)
 			op.generateOperationFile
+			
+		this.closeWriter
 	}
 	
 	/**
@@ -79,16 +85,42 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def generateOperationFile(ModelOperationImpl op) {
 		var text = op.genOperation;
-		generateFile(op.getFileName(".sql"), text);
+		this.write(text)
 	}
-		
+	
 	/**
-	 * Method define name of file
-	 * @param ModelOperationImpl op : method do not need specific type of op
+	 * Creates writer and begins transaction.
+	 */	
+	def createWriter() {
+		val file = generateFile(filename, "")
+		writer = new PrintWriter(file)
+		write('''BEGIN;
+		''') //transaction BEGIN
+	}
+	
+	/**
+	 * Closes opened writer and ends transaction.
 	 */
-	def String getFileName(ModelOperationImpl op, String type) {
-		this.counter = counter + 1;
-		return "" + this.counter + type;
+	def closeWriter() {
+		write('''COMMIT;
+		''') //transaction END
+		writer.close()
+	}
+	
+	/**
+	 * Writes string to opened writer
+	 * @param CharSequence text : string to be written
+	 */
+	def write(CharSequence text) {
+		this.writer.print(text);
+	}
+	
+	/**
+	 * Setter for output filename
+	 * @param String path : filename
+	 */
+	def setFilename(String path) {
+		this.filename = path;
 	}
 
 	/*****************************************************************
@@ -320,10 +352,10 @@ class Generator extends BaseCodeGenerator {
 	 
 	def dispatch genOperation(SetColumnTypeImpl op){
 		// create SQL functions for converting columns data type
-		generateFile(op.getFileName(".sql"), this.convertBoolToInt);
-		generateFile(op.getFileName(".sql"), this.convertCharToBool);
-		generateFile(op.getFileName(".sql"), this.convertCharToInt);
-		generateFile(op.getFileName(".sql"), this.convertIntToBool);
+		write(this.convertBoolToInt);
+		write(this.convertCharToBool);
+		write(this.convertCharToInt);
+		write(this.convertIntToBool);
 		return '''ALTER TABLE «op.owningSchemaName».«op.owningTableName» 
 				  	  ALTER COLUMN «op.owningColumnName» TYPE «op.newType»
 						«IF op.newType.equals("int") && op.oldType.equals("boolean")»
@@ -392,7 +424,7 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(UpdateRowImpl op){
 		if(op.tolerance.toString().equals("strict")){
-			generateFile(op.getFileName(".q"), this.isSameTableSize(op.owningSchemaName, op.sourceTableName, op.targetTableName));
+			write(this.isSameTableSize(op.owningSchemaName, op.sourceTableName, op.targetTableName));
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}
@@ -401,7 +433,7 @@ class Generator extends BaseCodeGenerator {
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}
 		if(op.tolerance.toString().equals("tolerant")){
-			generateFile(op.getFileName(".q"), this.targetTableHasMoreRows(op.owningSchemaName, op.sourceTableName, op.targetTableName));
+			write(this.targetTableHasMoreRows(op.owningSchemaName, op.sourceTableName, op.targetTableName));
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
 		}		
@@ -459,9 +491,16 @@ class Generator extends BaseCodeGenerator {
 	 * @param String table2 : secont table to compare
 	 * @return boolean : t - the same size; f - different size
 	 */
-	def isSameTableSize(String schema, String table1, String table2)'''
-		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
-	'''
+	def isSameTableSize(String schema, String table1, String table2) {
+		this.raiseException
+		'''
+			SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») = (SELECT COUNT(*) FROM «schema».«table2») THEN
+					TRUE
+				ELSE
+					raise_ex('Tables ''«schema».«table1»'', ''«schema».«table2»'' have different row count!')
+				END;
+		'''
+	}
 	
 	/**
 	 * TARGET TABLE HAS MORE ROWS
@@ -471,9 +510,16 @@ class Generator extends BaseCodeGenerator {
 	 * @param String table2 : secont table to compare
 	 * @return boolean : t - t1 has less rows; f - t1 has more or the same nomber of rows
 	 */
-	def targetTableHasMoreRows(String schema, String table1, String table2)'''
-		SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») <= (SELECT COUNT(*) FROM «schema».«table2») THEN TRUE ELSE FALSE END;
-	'''	
+	def targetTableHasMoreRows(String schema, String table1, String table2) {
+		this.raiseException
+		'''
+			SELECT CASE WHEN (SELECT COUNT(*) FROM «schema».«table1») <= (SELECT COUNT(*) FROM «schema».«table2») THEN
+					TRUE
+				ELSE
+					raise_ex('Table ''«schema».«table1»'' has greater row count than table ''«schema».«table2»''!')
+				END;
+		'''
+	}
 
 	/**
 	 * HAS NO INSTANCES
@@ -482,9 +528,34 @@ class Generator extends BaseCodeGenerator {
 	 * @param String table : table to check
 	 * @return boolean : t - is empty; f - has instances
 	 */	
-	def hasNoInstances(String schema, String table)'''
-		SELECT COUNT(1) > 0 FROM «schema».«table»;
-	'''
+	def hasNoInstances(String schema, String table) {
+		this.raiseException
+		'''
+			SELECT CASE WHEN (SELECT COUNT(1) > 0 FROM «schema».«table») THEN
+					raise_ex('Table ''«schema».«table»'' has instances!')
+				ELSE
+					TRUE
+				END;
+		'''
+	}
+	
+	/**
+  	 * Function for raising exception during the transaction.
+  	 */
+  	def raiseException() {
+  		if(!queryCheckerWritten) {
+			write('''
+				CREATE OR REPLACE FUNCTION raise_ex(text) RETURNS boolean AS
+					$BODY$
+						BEGIN
+							RAISE EXCEPTION 'Query check failed: %', $1;
+						END;
+					$BODY$
+					LANGUAGE plpgsql;
+				''')
+			queryCheckerWritten = true;
+		}
+  	}
 	
 	
 	/** 		CONVERTING 			**/

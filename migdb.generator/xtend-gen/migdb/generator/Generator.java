@@ -2,6 +2,7 @@ package migdb.generator;
 
 import eu.collectionspro.mwe.BaseCodeGenerator;
 import java.io.File;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mm.rdb.PrimitiveType;
@@ -37,15 +38,18 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
-import org.eclipse.xtext.xbase.lib.IntegerExtensions;
-import org.eclipse.xtext.xbase.lib.StringExtensions;
+import org.eclipse.xtext.xbase.lib.Exceptions;
 
 @SuppressWarnings("all")
 public class Generator extends BaseCodeGenerator {
   /**
-   * ATRIBUDES
+   * ATRIBUTES
    */
-  private int counter;
+  private PrintWriter writer;
+  
+  private boolean queryCheckerWritten = false;
+  
+  private String filename;
   
   /**
    * Main method for generating SQL from model
@@ -56,7 +60,6 @@ public class Generator extends BaseCodeGenerator {
   public void doGenerate(final EObject model) {
       ArrayList<ModelOperationImpl> _arrayList = new ArrayList<ModelOperationImpl>();
       ArrayList<ModelOperationImpl> ops = _arrayList;
-      this.counter = 100;
       EList<EObject> _eContents = model.eContents();
       for (final Object arg : _eContents) {
         if ((arg instanceof ModelOperationImpl)) {
@@ -71,9 +74,11 @@ public class Generator extends BaseCodeGenerator {
    * @param ArrayList<ModelOperationImpl> ops : list of ops in model
    */
   public void toplevelGenerator(final ArrayList<ModelOperationImpl> ops) {
-    for (final ModelOperationImpl op : ops) {
-      this.generateOperationFile(op);
-    }
+      this.createWriter();
+      for (final ModelOperationImpl op : ops) {
+        this.generateOperationFile(op);
+      }
+      this.closeWriter();
   }
   
   /**
@@ -81,28 +86,58 @@ public class Generator extends BaseCodeGenerator {
    * Superclass method need filename and SQL text
    * @param ModelOperationImpl op : method do not need specific type of op
    */
-  public File generateOperationFile(final ModelOperationImpl op) {
-    File _xblockexpression = null;
-    {
+  public void generateOperationFile(final ModelOperationImpl op) {
       CharSequence _genOperation = this.genOperation(op);
       CharSequence text = _genOperation;
-      String _fileName = this.getFileName(op, ".sql");
-      File _generateFile = this.generateFile(_fileName, text);
-      _xblockexpression = (_generateFile);
-    }
-    return _xblockexpression;
+      this.write(text);
   }
   
   /**
-   * Method define name of file
-   * @param ModelOperationImpl op : method do not need specific type of op
+   * Creates writer and begins transaction.
    */
-  public String getFileName(final ModelOperationImpl op, final String type) {
-      int _operator_plus = IntegerExtensions.operator_plus(this.counter, 1);
-      this.counter = _operator_plus;
-      String _operator_plus_1 = StringExtensions.operator_plus("", Integer.valueOf(this.counter));
-      String _operator_plus_2 = StringExtensions.operator_plus(_operator_plus_1, type);
-      return _operator_plus_2;
+  public void createWriter() {
+    try {
+      {
+        File _generateFile = this.generateFile(this.filename, "");
+        final File file = _generateFile;
+        PrintWriter _printWriter = new PrintWriter(file);
+        this.writer = _printWriter;
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("BEGIN;");
+        _builder.newLine();
+        this.write(_builder);
+      }
+    } catch (Exception _e) {
+      throw Exceptions.sneakyThrow(_e);
+    }
+  }
+  
+  /**
+   * Closes opened writer and ends transaction.
+   */
+  public void closeWriter() {
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("COMMIT;");
+      _builder.newLine();
+      this.write(_builder);
+      this.writer.close();
+  }
+  
+  /**
+   * Writes string to opened writer
+   * @param CharSequence text : string to be written
+   */
+  public void write(final CharSequence text) {
+    this.writer.print(text);
+  }
+  
+  /**
+   * Setter for output filename
+   * @param String path : filename
+   */
+  public String setFilename(final String path) {
+    String _filename = this.filename = path;
+    return _filename;
   }
   
   /**
@@ -603,18 +638,14 @@ public class Generator extends BaseCodeGenerator {
    * @param SetColumnTypeImpl op : op of type SetColumnTypeImpl
    */
   protected CharSequence _genOperation(final SetColumnTypeImpl op) {
-      String _fileName = this.getFileName(op, ".sql");
       CharSequence _convertBoolToInt = this.convertBoolToInt();
-      this.generateFile(_fileName, _convertBoolToInt);
-      String _fileName_1 = this.getFileName(op, ".sql");
+      this.write(_convertBoolToInt);
       CharSequence _convertCharToBool = this.convertCharToBool();
-      this.generateFile(_fileName_1, _convertCharToBool);
-      String _fileName_2 = this.getFileName(op, ".sql");
+      this.write(_convertCharToBool);
       CharSequence _convertCharToInt = this.convertCharToInt();
-      this.generateFile(_fileName_2, _convertCharToInt);
-      String _fileName_3 = this.getFileName(op, ".sql");
+      this.write(_convertCharToInt);
       CharSequence _convertIntToBool = this.convertIntToBool();
-      this.generateFile(_fileName_3, _convertIntToBool);
+      this.write(_convertIntToBool);
       StringConcatenation _builder = new StringConcatenation();
       _builder.append("ALTER TABLE ");
       String _owningSchemaName = op.getOwningSchemaName();
@@ -836,12 +867,11 @@ public class Generator extends BaseCodeGenerator {
       boolean _equals = _string.equals("strict");
       if (_equals) {
         {
-          String _fileName = this.getFileName(op, ".q");
           String _owningSchemaName = op.getOwningSchemaName();
           String _sourceTableName = op.getSourceTableName();
           String _targetTableName = op.getTargetTableName();
           CharSequence _isSameTableSize = this.isSameTableSize(_owningSchemaName, _sourceTableName, _targetTableName);
-          this.generateFile(_fileName, _isSameTableSize);
+          this.write(_isSameTableSize);
           StringConcatenation _builder = new StringConcatenation();
           _builder.append("UPDATE ");
           String _owningSchemaName_1 = op.getOwningSchemaName();
@@ -908,12 +938,11 @@ public class Generator extends BaseCodeGenerator {
       boolean _equals_2 = _string_2.equals("tolerant");
       if (_equals_2) {
         {
-          String _fileName_1 = this.getFileName(op, ".q");
           String _owningSchemaName_5 = op.getOwningSchemaName();
           String _sourceTableName_3 = op.getSourceTableName();
           String _targetTableName_3 = op.getTargetTableName();
           CharSequence _targetTableHasMoreRows = this.targetTableHasMoreRows(_owningSchemaName_5, _sourceTableName_3, _targetTableName_3);
-          this.generateFile(_fileName_1, _targetTableHasMoreRows);
+          this.write(_targetTableHasMoreRows);
           StringConcatenation _builder_2 = new StringConcatenation();
           _builder_2.append("UPDATE ");
           String _owningSchemaName_6 = op.getOwningSchemaName();
@@ -1114,18 +1143,43 @@ public class Generator extends BaseCodeGenerator {
    * @return boolean : t - the same size; f - different size
    */
   public CharSequence isSameTableSize(final String schema, final String table1, final String table2) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
-    _builder.append(schema, "");
-    _builder.append(".");
-    _builder.append(table1, "");
-    _builder.append(") = (SELECT COUNT(*) FROM ");
-    _builder.append(schema, "");
-    _builder.append(".");
-    _builder.append(table2, "");
-    _builder.append(") THEN TRUE ELSE FALSE END;");
-    _builder.newLineIfNotEmpty();
-    return _builder;
+    CharSequence _xblockexpression = null;
+    {
+      this.raiseException();
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
+      _builder.append(schema, "");
+      _builder.append(".");
+      _builder.append(table1, "");
+      _builder.append(") = (SELECT COUNT(*) FROM ");
+      _builder.append(schema, "");
+      _builder.append(".");
+      _builder.append(table2, "");
+      _builder.append(") THEN");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t\t");
+      _builder.append("TRUE");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("ELSE");
+      _builder.newLine();
+      _builder.append("\t\t");
+      _builder.append("raise_ex(\'Tables \'\'");
+      _builder.append(schema, "		");
+      _builder.append(".");
+      _builder.append(table1, "		");
+      _builder.append("\'\', \'\'");
+      _builder.append(schema, "		");
+      _builder.append(".");
+      _builder.append(table2, "		");
+      _builder.append("\'\' have different row count!\')");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("END;");
+      _builder.newLine();
+      _xblockexpression = (_builder);
+    }
+    return _xblockexpression;
   }
   
   /**
@@ -1137,18 +1191,43 @@ public class Generator extends BaseCodeGenerator {
    * @return boolean : t - t1 has less rows; f - t1 has more or the same nomber of rows
    */
   public CharSequence targetTableHasMoreRows(final String schema, final String table1, final String table2) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
-    _builder.append(schema, "");
-    _builder.append(".");
-    _builder.append(table1, "");
-    _builder.append(") <= (SELECT COUNT(*) FROM ");
-    _builder.append(schema, "");
-    _builder.append(".");
-    _builder.append(table2, "");
-    _builder.append(") THEN TRUE ELSE FALSE END;");
-    _builder.newLineIfNotEmpty();
-    return _builder;
+    CharSequence _xblockexpression = null;
+    {
+      this.raiseException();
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("SELECT CASE WHEN (SELECT COUNT(*) FROM ");
+      _builder.append(schema, "");
+      _builder.append(".");
+      _builder.append(table1, "");
+      _builder.append(") <= (SELECT COUNT(*) FROM ");
+      _builder.append(schema, "");
+      _builder.append(".");
+      _builder.append(table2, "");
+      _builder.append(") THEN");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t\t");
+      _builder.append("TRUE");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("ELSE");
+      _builder.newLine();
+      _builder.append("\t\t");
+      _builder.append("raise_ex(\'Table \'\'");
+      _builder.append(schema, "		");
+      _builder.append(".");
+      _builder.append(table1, "		");
+      _builder.append("\'\' has greater row count than table \'\'");
+      _builder.append(schema, "		");
+      _builder.append(".");
+      _builder.append(table2, "		");
+      _builder.append("\'\'!\')");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("END;");
+      _builder.newLine();
+      _xblockexpression = (_builder);
+    }
+    return _xblockexpression;
   }
   
   /**
@@ -1159,14 +1238,74 @@ public class Generator extends BaseCodeGenerator {
    * @return boolean : t - is empty; f - has instances
    */
   public CharSequence hasNoInstances(final String schema, final String table) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("SELECT COUNT(1) > 0 FROM ");
-    _builder.append(schema, "");
-    _builder.append(".");
-    _builder.append(table, "");
-    _builder.append(";");
-    _builder.newLineIfNotEmpty();
-    return _builder;
+    CharSequence _xblockexpression = null;
+    {
+      this.raiseException();
+      StringConcatenation _builder = new StringConcatenation();
+      _builder.append("SELECT CASE WHEN (SELECT COUNT(1) > 0 FROM ");
+      _builder.append(schema, "");
+      _builder.append(".");
+      _builder.append(table, "");
+      _builder.append(") THEN");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t\t");
+      _builder.append("raise_ex(\'Table \'\'");
+      _builder.append(schema, "		");
+      _builder.append(".");
+      _builder.append(table, "		");
+      _builder.append("\'\' has instances!\')");
+      _builder.newLineIfNotEmpty();
+      _builder.append("\t");
+      _builder.append("ELSE");
+      _builder.newLine();
+      _builder.append("\t\t");
+      _builder.append("TRUE");
+      _builder.newLine();
+      _builder.append("\t");
+      _builder.append("END;");
+      _builder.newLine();
+      _xblockexpression = (_builder);
+    }
+    return _xblockexpression;
+  }
+  
+  /**
+   * Function for raising exception during the transaction.
+   */
+  public Boolean raiseException() {
+    Boolean _xifexpression = null;
+    boolean _operator_not = BooleanExtensions.operator_not(this.queryCheckerWritten);
+    if (_operator_not) {
+      boolean _xblockexpression = false;
+      {
+        StringConcatenation _builder = new StringConcatenation();
+        _builder.append("CREATE OR REPLACE FUNCTION raise_ex(text) RETURNS boolean AS");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("$BODY$");
+        _builder.newLine();
+        _builder.append("\t\t");
+        _builder.append("BEGIN");
+        _builder.newLine();
+        _builder.append("\t\t\t");
+        _builder.append("RAISE EXCEPTION \'Query check failed: %\', $1;");
+        _builder.newLine();
+        _builder.append("\t\t");
+        _builder.append("END;");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("$BODY$");
+        _builder.newLine();
+        _builder.append("\t");
+        _builder.append("LANGUAGE plpgsql;");
+        _builder.newLine();
+        this.write(_builder);
+        boolean _queryCheckerWritten = this.queryCheckerWritten = true;
+        _xblockexpression = (_queryCheckerWritten);
+      }
+      _xifexpression = _xblockexpression;
+    }
+    return _xifexpression;
   }
   
   /**
