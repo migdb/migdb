@@ -2,7 +2,6 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="migdb.dsl.ide"
          point="org.eclipse.ui.newWizards">
       <category
             id="migdb.dsl.ide"
@@ -14,6 +13,7 @@
             icon="icons/model.gif"
             id="migdb.dsl.ide.wizard.OpsNewWizard"
             name="Operations">
+            <description>Creates a new Operations file</description>
       </wizard>
    </extension>
    
