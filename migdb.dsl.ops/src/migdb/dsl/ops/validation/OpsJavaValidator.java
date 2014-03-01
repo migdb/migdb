@@ -3,12 +3,15 @@ package migdb.dsl.ops.validation;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mm.app.ModelRoot;
 import mm.app.impl.AppFactoryImpl;
 import mm.errors.Error;
 import mm.errors.ErrorLog;
+import mm.errors.EvolutionError;
 
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.URI;
@@ -29,6 +32,11 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 	 * Path to migdb's QVTO transformation to transform input models.
 	 */
 	private static final String QVTO = "platform:/plugin/migdb.qvto/transforms/main/evolution_app_run.qvto";
+	
+	/**
+	 * Map used to save indices of found evolution errors.
+	 */
+	private Map<Integer, String> errorIndex;
 
 	/**
 	 * Applies QVTO transformation on given instance of the ModelRoot and checks
@@ -62,12 +70,18 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 				inOperations, outStructure, cleanStructure, errors);
 
 		if (result.getSeverity() == Diagnostic.OK) {
+			errorIndex = new HashMap<Integer, String>();
 			for (Error e : getErrorList(errors)) {
-				error(e.getMessage(), null);
+				if (e instanceof EvolutionError)
+					indexEvolutionError((EvolutionError) e);
+				else
+					error(e.getMessage(), null);
 			}
 			// saveOutputStructure(outStructure, path);
 		} else
 			error(result.getMessage(), null);
+		
+		reportIndexedErrors(root);
 	}
 
 	/**
@@ -126,6 +140,28 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 			outResource.save(Collections.emptyMap());
 		} catch (IOException e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Indexes given evolution error.
+	 * @param error EvolutionError to be indexed.
+	 */
+	private void indexEvolutionError(EvolutionError error) {
+		errorIndex.put(error.getOperationIndex(), error.getMessage());
+	}
+	
+	/**
+	 * Walks through ModelRoot's operations and marks operations, whose
+	 * index is saved in the index map, as ERROR.
+	 * @param root An instance of the ModelRoot.
+	 */
+	private void reportIndexedErrors(ModelRoot root) {
+		int counter = 1;
+		for(EObject obj : root.eContents()) {
+			String msg = errorIndex.get(counter++);
+			if(msg != null)
+				error(msg, obj, null, 0);
 		}
 	}
 }

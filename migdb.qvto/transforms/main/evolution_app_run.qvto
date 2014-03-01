@@ -26,6 +26,7 @@ main() {
 				//log("operation is valid");
 				op.apply(processedStructure);
 			}endif;
+			operationIndex := operationIndex + 1;
 	};
 	//this step is mandatory to clean rootElements and be able to use ModelComparator component
 	new app_root_cleaner(outStructure, cleanStructure).transform();
