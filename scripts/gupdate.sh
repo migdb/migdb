@@ -26,5 +26,4 @@ checkVer migdb.mm.app_1.0.0.jar
 checkVer migdb.mm.errors_1.0.0.jar
 checkVer migdb.mm.rdb_1.0.0.jar
 checkVer migdb.qvto_1.0.0.jar
-checkVer migdb.run_1.0.0.jar
 

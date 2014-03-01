@@ -2,7 +2,7 @@ package migdb.dsl.ide.launch;
 
 import java.util.List;
 
-import migdb.run.MigDbLauncher;
+import migdb.dsl.ide.runtime.MigDbLauncher;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;

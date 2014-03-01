@@ -16,7 +16,7 @@ import migdb.generator.*
 import migdb.mm.rdb.*
 import migdb.mm.app.*
 import migdb.mm.errors.*
-import migdb.run.utils.*
+import migdb.dsl.ide.runtime.utils.*
 
 //DONT CHANGE THIS !!! these parameters are passed from the console/Run configuration.
 //i.e: java MigDbLauncher launcher.mwe2 -p operations_path=src/in.ops

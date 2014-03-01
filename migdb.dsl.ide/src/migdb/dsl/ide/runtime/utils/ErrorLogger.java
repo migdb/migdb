@@ -1,4 +1,4 @@
-package migdb.run.utils;
+package migdb.dsl.ide.runtime.utils;
 
 import java.util.Collection;
 import mm.errors.Error;
