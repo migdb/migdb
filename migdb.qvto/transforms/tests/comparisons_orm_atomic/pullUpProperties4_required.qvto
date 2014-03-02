@@ -1,0 +1,104 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pulled_first_pr";
+	//reflection of secondProperty name
+	var secondColumnName : String := "pulled_second_pr";
+	//reflection of parent class
+	var targetTableName : String := "parent";
+	//reflection of child class in hierarchy
+	var sourceTableName : String := "child"; 
+	var typeTableName : String := "type";
+	var oldFirstAssocTableName : String := "child_pulled_first_pr";
+	var newFirstAssocTableName : String := "parent_pulled_first_pr";
+	var oldSecondAssocTableName : String := "child_pulled_second_pr";
+	var newSecondAssocTableName : String := "parent_pulled_second_pr";
+	var sourceIdName : String := "id_child";
+	var targetIdName : String := "id_parent";
+	var typeIdName : String := "id_type";
+	
+	var whereCondition : String := "child.id_child = parent.id_parent";
+	
+
+	var removeFirstFKSource : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldFirstAssocTableName,
+																"fk_child_pulled_first_pr_child");
+	var addFirstFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldFirstAssocTableName,
+																sourceIdName,
+																"fk_parent_pulled_first_pr_parent",
+																targetTableName);
+	var removeFirstFKType : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldFirstAssocTableName,
+																"fk_child_pulled_first_pr_type");
+	var addFirstFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldFirstAssocTableName,
+															typeIdName,
+															"fk_parent_pulled_first_pr_type",
+															typeTableName);
+	var renameFirstColumn : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldFirstAssocTableName,
+																	sourceIdName,
+																	targetIdName);
+	var renameFirstAssocTable : RDB::ops::ModelOperation := _renameTable(
+																		publicSchemaName,
+																		oldFirstAssocTableName,
+																		newFirstAssocTableName);
+	var removeSecondFKSource : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldSecondAssocTableName,
+																"fk_child_pulled_second_pr_child");
+	var addSecondFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldSecondAssocTableName,
+															sourceIdName,
+															"fk_parent_pulled_second_pr_parent",
+															targetTableName);
+	var removeSecondFKType : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldSecondAssocTableName,
+																"fk_child_pulled_second_pr_type");
+	var addSecondFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldSecondAssocTableName,
+															typeIdName,
+															"fk_parent_pulled_second_pr_type",
+															typeTableName);
+	var renameSecondColumn : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldSecondAssocTableName,
+																	sourceIdName,
+																	targetIdName);
+	var renameSecondAssocTable : RDB::ops::ModelOperation := _renameTable(
+																		publicSchemaName,
+																		oldSecondAssocTableName,
+																		newSecondAssocTableName);																																																	
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//update first association table
+															removeFirstFKSource,
+															addFirstFkTarget,
+															removeFirstFKType,
+															addFirstFkType,
+															renameFirstColumn,
+															renameFirstAssocTable,
+															//update second assocTable
+															removeSecondFKSource,
+															addSecondFkTarget,
+															removeSecondFKType,
+															addSecondFkType,
+															renameSecondColumn,
+															renameSecondAssocTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

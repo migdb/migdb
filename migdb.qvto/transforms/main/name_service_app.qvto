@@ -21,10 +21,6 @@ query getAssociationTableName(associationPropertyName : String, associationOwnin
 					associationPropertyName.translate();	
 }
 
-query getFkName(sourceTableName : String, targetTableName : String) : String{
-	return getDbFkPrefix() + sourceTableName + "_" + targetTableName;
-}
-
 /**
 	Get the name of ordering in targetTable
 **/
@@ -32,7 +28,10 @@ query getUXOrderingName(tableName : String) : String{
 	return getDbUniquePrefix() + tableName + "_" + "ord";
 }
 
-/** returns FK name referencing table from association table */
+/** Returns FK name referencing table from association table. Returned fk is/should be unique 
+	because associationTable's name is unique(pair sourceClass + property is unique) and 
+	both referenced table names differs. The parameters MUST be tableNames - there is no SINGLE 
+	entity in app model that reflects into associationTable */
 query getFKAssociationTableRefName(associationTableName : String, referencedTableName : String) : String {
 	return getDbFkPrefix() + associationTableName + "_" + referencedTableName;
 }
@@ -48,10 +47,11 @@ query getFkRefencingOppositeName(associationPropertyName : String, associationOw
 
 /** Translates idProperty name into db "language" **/
 query StandardClass::translateIdName() : String{
-	if(self.parent = null)then{
+	//currently each cls has it's own idName
+	//if(self.parent = null)then{
 		return getDbIdColumnName(self.name.translate());
-	}endif;
-	return self.parent.translateIdName();
+	//}endif;
+	//return self.parent.translateIdName();
 }
 
 /** Helper query for retrieving Fk name to parent class **/
@@ -79,15 +79,15 @@ query getUXName(className : String, propertyName : String) : String{
 	return getDbUniquePrefix() + className.translate() + "_" + propertyName.translate();
 }
 
-//not using getFkCollection function because this method is used in ORM_STRUCTURE 
-//which supports ALL inheritance types
+/**	not using getFkCollection function because this method is used in ORM_STRUCTURE 
+	which supports ALL inheritance types */
 query PrimitiveProperty::getFKCollectionName():String{
 	return getDbFkPrefix() + getDbCollectionPrefix() + 
 		self.owningGeneralClass.getDbRepresentative().name.translate() + "_" + 
 		self.name.translate();
 }
 
-//used only in ORM, supports only joined InheritanceType
+/** used only in ORM, supports only joined InheritanceType **/
 query getFkCollectionName(owningClassName : String, propertyName : String) : String{
 	return getDbFkPrefix() + getDbCollectionPrefix() +  owningClassName.translate() + 
 				"_"+ propertyName.translate()

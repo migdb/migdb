@@ -258,4 +258,44 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "removeProperty - association property M x N, ordered, UX"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties1_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - primitive"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008b_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties2_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008c_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties3_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - association 1 - M"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008d_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties4_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - association N - M"
+	}
 }

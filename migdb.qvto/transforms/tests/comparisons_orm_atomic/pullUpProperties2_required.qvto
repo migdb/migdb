@@ -1,0 +1,74 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pulled_first_pr";
+	//reflection of secondProperty name
+	var secondColumnName : String := "pulled_second_pr";
+	//reflection of parent class
+	var targetTableName : String := "parent";
+	//reflection of child class in hierarchy
+	var sourceTableName : String := "child"; 
+	var oldFirstCollectionTableName : String := "col_child_pulled_first_pr";
+	var oldSecondCollectionTableName : String := "col_child_pulled_second_pr";
+	var sourceIdColumnName : String := "id_child";
+	var targetIdColumnName : String := "id_parent";
+	
+	var removeFkFirstColect : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldFirstCollectionTableName,
+																"fk_col_child_pulled_first_pr");
+	var addFKFirstColect : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldFirstCollectionTableName,
+																sourceIdColumnName,
+																"fk_col_parent_pulled_first_pr",
+																targetTableName);															
+	var renameFirstColectPr : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldFirstCollectionTableName,
+																	sourceIdColumnName,
+																	targetIdColumnName);
+	var renameFirstColectTable : RDB::ops::ModelOperation := _renameTable(
+																	publicSchemaName,
+																	oldFirstCollectionTableName,
+																	"col_parent_pulled_first_pr");
+	var removeFkSecondColect : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldSecondCollectionTableName,
+																"fk_col_child_pulled_second_pr");
+	var addFKSecondColect : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldSecondCollectionTableName,
+																sourceIdColumnName,
+																"fk_col_parent_pulled_second_pr",
+																targetTableName);															
+	var renameSecondColectPr : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldSecondCollectionTableName,
+																	sourceIdColumnName,
+																	targetIdColumnName);
+	var renameSecondColectTable : RDB::ops::ModelOperation := _renameTable(
+																	publicSchemaName,
+																	oldSecondCollectionTableName,
+																	"col_parent_pulled_second_pr");
+																																		
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//change first collection
+															removeFkFirstColect,
+															addFKFirstColect,
+															renameFirstColectPr,
+															renameFirstColectTable,
+															//change second collection
+															removeFkSecondColect,
+															addFKSecondColect,
+															renameSecondColectPr,
+															renameSecondColectTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

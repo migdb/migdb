@@ -837,13 +837,13 @@ helper APP::ops::ExtractSubClass::isValid(structure : APP::Structure, inout erro
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());
-	var existsChildClass : Boolean := checkEntityNotExists(
+	var notExistsChildClass : Boolean := checkEntityNotExists(
 												self.extractedClassName, 
 												structure, 
 												errorLog, 
 												operationIndex, 
 												getEvolutionAppTransformationId());  											
-	return existsParentClass and existsChildClass;
+	return existsParentClass and notExistsChildClass;
 	
 }
 
