@@ -1201,7 +1201,7 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 		if(self.isOrdered)then{
 			var columnNames : OrderedSet(String) := OrderedSet{
 														idOwningTableName, 
-														self.name,
+														dataColumnName,
 														getDbOrderingColumnName()};
 			var oldUxName : String := getUXOrderingName(oldCollectionTableName);
 			var newUxName : String := getUXOrderingName(newCollectionTableName);
@@ -1217,7 +1217,7 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 		if(self.isUnique)then{
 			var columnNames : OrderedSet(String) := OrderedSet{
 														idOwningTableName, 
-														self.name};
+														dataColumnName};
 			var oldUxName : String := getUXName(
 											owningCls.name, 
 											self.name);

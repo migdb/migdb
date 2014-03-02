@@ -298,4 +298,25 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "pullUpProperties - association N - M"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008e_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties5_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - collection, UX, ORD"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008f_pullUpProperties"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pullUpProperties6_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties6_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - collection, UX, ORD"
+	}
+	
 }
