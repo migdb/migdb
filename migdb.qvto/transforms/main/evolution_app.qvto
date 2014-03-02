@@ -960,9 +960,10 @@ helper APP::ops::PushDownProperties::isValid(structure : APP::Structure, inout e
 												operationIndex,
 												transformationId);												
 	var existsMovedProperties : Boolean := true;
+	var parentClassName : String := structure.findStandardClass(self.childClassName).parent.name; 
 	self.pushedPropertiesNames->forEach(propName){
 		var existMovedProperty : Boolean := checkPropertyExistInGeneralClass(
-																self.childClassName,
+																parentClassName,
 																propName,
 																structure, 
 																errorLog, 
@@ -1724,13 +1725,13 @@ helper applyPullUpProperties(inout structure : Structure, childClassName : Strin
 						pulledPropertyNames);	
 }
 
-helper applyPushDownProperties(inout structure : Structure, parentClassName : String, pulledPropertyNames : Collection(String)){
-	var childClass : StandardClass := structure.entities[StandardClass]->
-										selectOne(stdCls | stdCls.hasParentName(parentClassName));
+helper applyPushDownProperties(inout structure : Structure, childClassName : String, pulledPropertyNames : Collection(String)){
+	var childClass : StandardClass := structure.findStandardClass(childClassName);
+	var parentClass : StandardClass := childClass.parent;
 	applyMoveProperties(
 						structure,
-						parentClassName,
-						childClass.name,
+						parentClass.name,
+						childClassName,
 						pulledPropertyNames);	
 }
 
