@@ -361,17 +361,17 @@ helper _pullUpProperties(_childClassName : String, _pulledPropertiesNames : Set(
 	};
 } 
 
-helper _pushDownProperties(_parentClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
-	var condition : Boolean := isLegalClassName(_parentClassName) and 
+helper _pushDownProperties(_childClassName : String, _pushedPropertiesNames : Set(String)):APP::ops::PushDownProperties{
+	var condition : Boolean := isLegalClassName(_childClassName) and 
 			_pushedPropertiesNames <> null and _pushedPropertiesNames->size() > 0 and 
 			_pushedPropertiesNames->forAll(propName | isLegalPropertyName(propName));
 		if(not condition)then{
 		log("Error when calling constructor _pullUpProperties(" + 
-			_parentClassName + ", " + _pushedPropertiesNames->toString() + ")");
+			_childClassName + ", " + _pushedPropertiesNames->toString() + ")");
 	}endif;
 	assert(condition);
 	return object APP::ops::PushDownProperties{
-		parentClassName := _parentClassName;
+		childClassName := _childClassName;
 		pushedPropertiesNames := _pushedPropertiesNames;
 	};
 } 

@@ -237,7 +237,7 @@ package app {
     }
     
     class PushDownProperties extends ModelOperation {
-       attr String[1] parentClassName;
+       attr String[1] childClassName;
        attr String[+] pushedPropertiesNames;
     }
     

@@ -275,7 +275,7 @@
             lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PushDownProperties" eSuperTypes="#//app/ops/ModelOperation">
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentClassName" lowerBound="1"
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="childClassName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="pushedPropertiesNames"
             lowerBound="1" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

@@ -948,15 +948,21 @@ helper APP::ops::PullUpProperties::apply(inout structure : Structure){
 helper APP::ops::PushDownProperties::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean{
 	var transformationId : String := getEvolutionAppTransformationId();
 	var existsChild : Boolean := checkStandardClassExists(					
-													self.parentClassName,
+													self.childClassName,
 													structure, 
 													errorLog, 
 													operationIndex, 
 													transformationId);
+	var hasChildParent : Boolean := checkHasParent(
+												self.childClassName,
+												structure,
+												errorLog,
+												operationIndex,
+												transformationId);												
 	var existsMovedProperties : Boolean := true;
 	self.pushedPropertiesNames->forEach(propName){
 		var existMovedProperty : Boolean := checkPropertyExistInGeneralClass(
-																self.parentClassName,
+																self.childClassName,
 																propName,
 																structure, 
 																errorLog, 
@@ -964,17 +970,12 @@ helper APP::ops::PushDownProperties::isValid(structure : APP::Structure, inout e
 																transformationId);									
 		existsMovedProperties:= existsMovedProperties and existMovedProperty;
 	};
-	var hasAncestor : Boolean := checkHasOneChild(
-												self.parentClassName,
-												structure, 
-												errorLog, 
-												operationIndex, 
-												transformationId);								
-	return existsChild and existsMovedProperties and hasAncestor;
+	
+	return existsChild and existsMovedProperties and hasChildParent;
 }
 
 helper APP::ops::PushDownProperties::apply(inout structure : Structure){
-	applyPushDownProperties(structure, self.parentClassName, self.pushedPropertiesNames);
+	applyPushDownProperties(structure, self.childClassName, self.pushedPropertiesNames);
 }
 
 
@@ -1069,23 +1070,6 @@ helper checkHasParent(standardClassName : String, structure : APP::Structure, in
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								 
 	}endif;
 	return hasParent;
-}
-
-helper checkHasOneChild(standardClassName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsStandardClass(standardClassName))then{
-		return false;
-	}endif;
-	var standardClass : StandardClass := structure.findStandardClass(standardClassName);
-	
-	var ancestorCandidates :=  structure.entities[StandardClass]->
-											select(stdCls | stdCls.hasParentName(standardClassName));
-	var hasAncestor : Boolean := ancestorCandidates->size() = 1;
-	if(not hasAncestor)then{
-		var errorMessage : String := "Standard class called " + standardClassName + 
-										" has less or more than one ancestor class";
-		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								 
-	}endif;
-	return hasAncestor;
 }
 
 helper ModelEntity::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean;

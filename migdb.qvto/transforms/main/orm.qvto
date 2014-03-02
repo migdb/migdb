@@ -930,15 +930,19 @@ helper APP::ops::PullUpProperties::toRdb(appStructure : APP::Structure): Ordered
 	which can be considered wrong
 **/
 helper APP::ops::PushDownProperties::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
-	//var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{}; 
-	//self.pushedPropertiesNames->forEach(propName){
-	//	var pulledProperty : Property := appStructure.findProperty(self.childClassName, propName);
-	//	var multProperty := pulledProperty.oclAsType(MultipliableProperty);
-	//	var targetClassName : String := multProperty.owningGeneralClass.parent.name;
-	//	operations := ormExportProperty(appStructure, pulledProperty, targetClassName, operations);
-	//};
-	//return operations;
-	
+	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
+	var targetClass : StandardClass := appStructure.findStandardClass(self.childClassName);
+	var stdClasses : OrderedSet(StandardClass) := appStructure.entities[StandardClass]; 
+	//targetClass must have parent - it is checked in isValid
+	var sourceClass : StandardClass := targetClass.parent;	
+	self.pushedPropertiesNames->forEach(propName){
+		//there is constraint allowing property to have only one ancestor
+		var pulledProperty : Property := appStructure.findProperty(sourceClass.name, propName);
+		var multProperty := pulledProperty.oclAsType(MultipliableProperty);
+		var targetClassName : String := targetClass.name;
+		operations := ormExportProperty(appStructure, pulledProperty, targetClassName, operations);
+	};
+	return operations;
 }
 
 /** Currently implemented only adding parent **/
