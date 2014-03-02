@@ -2,6 +2,7 @@ package migdb.dsl.ide.launch;
 
 import java.util.List;
 
+import migdb.dsl.ide.Activator;
 import migdb.dsl.ide.runtime.MigDbLauncher;
 
 import org.eclipse.core.resources.IFile;
@@ -104,15 +105,13 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 			throws CoreException {
 		 IJavaProject project = JavaCore.create(resource.getProject());
 		if (!isOnClasspath(MigDbLauncher.class.getName(), project)) {
-			throw new DebugException(new Status(IStatus.ERROR, BUNDLE_ID,
-					"Please put bundle '" + BUNDLE_ID
+			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					"Please put bundle '" + Activator.PLUGIN_ID
 							+ "' on your project's classpath."));
 		}
 	}
 
 	public boolean isOnClasspath(String fullyQualifiedName, IJavaProject project) {
-		if (fullyQualifiedName.indexOf('$') != -1)
-			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
 		try {
 			IType type = project.findType(fullyQualifiedName);
 			return type != null && type.exists();
