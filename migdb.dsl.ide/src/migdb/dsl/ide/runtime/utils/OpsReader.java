@@ -1,4 +1,4 @@
-package migdb.run.utils;
+package migdb.dsl.ide.runtime.utils;
 
 import migdb.dsl.ops.OpsStandaloneSetupGenerated;
 

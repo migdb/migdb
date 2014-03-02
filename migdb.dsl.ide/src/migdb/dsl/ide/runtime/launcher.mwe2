@@ -16,14 +16,13 @@ import migdb.generator.*
 import migdb.mm.rdb.*
 import migdb.mm.app.*
 import migdb.mm.errors.*
-import migdb.run.utils.*
+import migdb.dsl.ide.runtime.utils.*
 
-//DONT CHANGE !!! these parameters are passed from the console/Run configuration.
+//DONT CHANGE THIS !!! these parameters are passed from the console/Run configuration.
 //i.e: java MigDbLauncher launcher.mwe2 -p operations_path=src/in.ops
 var OPS_PATH //the path where the Operations file is located
 
 //constants
-var OUTPUT_XMI_DIR = "outputs_xmi"
 var OUTPUT_SQL_DIR = "outputs_sql"
 var QVTO_DIR = "platform:/resource/migdb.qvto/transforms" //it must contain prefix 'platform:/resource'
 
@@ -56,10 +55,7 @@ Workflow {
 		}
 	}
 	
-	//Clears the output path (XMI, SQL files)
-	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "${OUTPUT_XMI_DIR}"
-	}
+	//Clears the output path (SQL files)
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
 		directory = "${OUTPUT_SQL_DIR}"
 	}
@@ -81,12 +77,7 @@ Workflow {
 	//Creates empty RDB Structure
 	component = QVTOExecutor2 { //uses derived version of QVTOExector
 		transformationFile= "${QVTO_DIR}/tests/structures/rdb/empty_structure.qvto"
-		outputSlot= "strRdb"
-	}
-
-	component = QVTOExecutor2 { //uses derived version of QVTOExector
-		transformationFile= "${QVTO_DIR}/main/creator_rdb_operations.qvto"
-		outputSlot= "opsRdb"
+		outputSlot = "strRdb"
 	}
 
 /***** EXECUTER *****/	
@@ -96,32 +87,9 @@ Workflow {
 		inputSlot = "strApp"
 		outputSlot = "outStrApp"
 		outputSlot = "outStrRdb"
-		inOutSlot = "opsRdb"
+		outputSlot = "opsRdb"
 		outputSlot = "errorLog"
 		transformationFile = "${QVTO_DIR}/main/migdb_executer.qvto"
-	}
-
-/***** WRITE XMI FILES *****/
-	//Saves the transformation result
-	component = Writer {
-		modelSlot = "outStrApp"
-		uri = "${OUTPUT_XMI_DIR}/structure_app.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	component = Writer {
-		modelSlot = "outStrRdb"
-		uri = "${OUTPUT_XMI_DIR}/structure_rdb.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	component = Writer {
-		modelSlot = "opsRdb"
-		uri = "${OUTPUT_XMI_DIR}/operations_rdb.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
 	}
 
 /***** PRINT ERROR LOG *****/
@@ -129,14 +97,16 @@ Workflow {
 	component = ErrorLogger {
 		inputSlot = "errorLog"
 	}
-
-/***** SQL GENERATOR *****/		
-//	component = CodeGenComponent {
-//		withoutModel = false
-//		slot = "opsRdb"
-//		generator = Generator {}
-//		outputPath = "${OUTPUT_SQL_DIR}"
-//	}
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 { //uses derived version of CodeGenComponent
+		withoutModel = false
+		slot = "opsRdb"
+		generator = Generator {
+			filename = "000.sql"
+		}
+		outputPath = "${OUTPUT_SQL_DIR}"
+	}
 
 /***** DATABASE CONNECTION *****/		
 //	component = CommandLineExec{

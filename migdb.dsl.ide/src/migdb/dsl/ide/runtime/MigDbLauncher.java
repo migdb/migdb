@@ -1,4 +1,4 @@
-package migdb.run;
+package migdb.dsl.ide.runtime;
 
 import java.util.HashMap;
 import java.util.Map;

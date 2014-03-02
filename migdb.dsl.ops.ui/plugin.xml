@@ -12,7 +12,7 @@
               extensions="ops"
               icon="icons/model.gif"
               id="migdb.dsl.ops.Ops"
-              name="Ops Editor">
+              name="Operations Editor">
         </editor>
     </extension>
     <extension
@@ -53,7 +53,7 @@
         <page
             class="migdb.dsl.ops.ui.OpsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="migdb.dsl.ops.Ops"
-            name="Ops">
+            name="Operations">
             <keywordReference id="migdb.dsl.ops.ui.keyword_Ops"/>
         </page>
         <page
@@ -76,7 +76,7 @@
         <page
             class="migdb.dsl.ops.ui.OpsExecutableExtensionFactory:org.eclipse.xtext.ui.editor.preferences.LanguageRootPreferencePage"
             id="migdb.dsl.ops.Ops"
-            name="Ops">
+            name="Operations">
             <keywordReference id="migdb.dsl.ops.ui.keyword_Ops"/>
             <enabledWhen>
 	            <adapt type="org.eclipse.core.resources.IProject"/>
@@ -196,7 +196,7 @@
   <extension point="org.eclipse.compare.contentMergeViewers">
     <viewer id="migdb.dsl.ops.Ops.compare.contentMergeViewers"
             class="migdb.dsl.ops.ui.OpsExecutableExtensionFactory:org.eclipse.xtext.ui.compare.InjectableViewerCreator"
-            extensions="ops" label="Ops Compare">
+            extensions="ops" label="Operations Compare">
      </viewer>
   </extension>
   <extension point="org.eclipse.ui.editors.documentProviders">
