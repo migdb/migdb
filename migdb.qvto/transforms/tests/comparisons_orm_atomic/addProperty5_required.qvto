@@ -14,7 +14,7 @@ main() {
 	var addCol : RDB::ops::AddColumn := _addColumn(
 											publicSchemaName,
 											collectionTableName,
-											"id_root",
+											"id_tab",
 											PrimitiveType::int);										
 	var addDataCol : RDB::ops::AddColumn := _addColumn(
 											publicSchemaName,
@@ -24,7 +24,7 @@ main() {
 	var addFK : RDB::ops::ModelOperation := _addForeignKey(
 												publicSchemaName,
 												collectionTableName,
-												"id_root",
+												"id_tab",
 												"fk_col_tab_pr",
 												"tab");
 	var addOrderingCol : RDB::ops::AddColumn := _addColumn(
@@ -33,7 +33,7 @@ main() {
 													"ordering",
 													RDB::PrimitiveType::int);
 	var orderingUXColNames : OrderedSet(String) := OrderedSet{
-														"id_root", 
+														"id_tab", 
 														"pr", 
 														"ordering"};
 	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
@@ -42,7 +42,7 @@ main() {
 													orderingUXColNames,
 													"ux_col_tab_pr_ord");
 	var uxNames : OrderedSet(String) := OrderedSet{
-											"id_root", 
+											"id_tab", 
 											"pr"};
 	var addUX : RDB::ops::AddUnique := _addUnique(
 											publicSchemaName,
