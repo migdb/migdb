@@ -15,7 +15,6 @@ Operations returns app::Operations:
 
 ModelOperation returns ops::ModelOperation:
 	AddPrimitiveClass
-	| AddEmbeddedClass
 	| RenameEntity
 //diploma
 	| AddClass
@@ -35,10 +34,6 @@ ModelOperation returns ops::ModelOperation:
 
 AddPrimitiveClass returns ops::AddPrimitiveClass:
 	'addPrimitive' name=ID ':' primitiveType=PrimitiveType
-;
-
-AddEmbeddedClass returns ops::AddEmbeddedClass:
-	'addEmbedded' name=ID
 ;
 
 RenameEntity returns ops::RenameEntity:

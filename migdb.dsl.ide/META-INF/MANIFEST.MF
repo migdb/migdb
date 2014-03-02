@@ -4,10 +4,7 @@ Bundle-Name: migdb.dsl.ide
 Bundle-SymbolicName: migdb.dsl.ide;singleton:=true
 Bundle-Version: 1.0.0
 Require-Bundle: org.eclipse.ui,
- org.eclipse.core.runtime,
  org.eclipse.ui.ide,
- org.eclipse.emf.mwe2.launch;bundle-version="2.2.0",
- org.apache.log4j;bundle-version="1.2.15",
  org.eclipse.jdt.core;bundle-version="3.7.1",
  org.eclipse.jdt.launching;bundle-version="3.6.1",
  org.eclipse.jdt.ui;bundle-version="3.7.1",
@@ -25,10 +22,7 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.m2m.qvt.oml.common;bundle-version="3.1.0";visibility:=reexport,
  org.eclipse.m2m.qvt.oml.emf.util;bundle-version="3.1.0";visibility:=reexport,
  org.eclipse.core.runtime;visibility:=reexport,
- org.junit;bundle-version="4.8.2",
- org.eclipse.emf.codegen.ecore;bundle-version="2.7.0";visibility:=reexport,
  org.eclipse.emf.mwe2.launch;bundle-version="2.2.0";visibility:=reexport,
- org.apache.log4j;bundle-version="1.2.15",
  org.apache.commons.logging;bundle-version="1.1.1",
  org.eclipse.xtend2.lib;bundle-version="2.2.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
