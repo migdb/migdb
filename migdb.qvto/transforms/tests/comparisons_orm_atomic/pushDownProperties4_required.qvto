@@ -1,0 +1,65 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pushed_pr";
+	//reflection of child class
+	var targetTableName : String := "child";
+	//reflection of parent class in hierarchy
+	var sourceTableName : String := "parent"; 
+	var typeTableName : String := "type";
+	var oldAssocTableName : String := sourceTableName + "_" + firstColumnName;
+	var newAssocTableName : String := targetTableName + "_" + firstColumnName; 
+	var idSourdeName : String := "id_" + sourceTableName;
+	var idTargetName : String := "id_" + targetTableName;
+	var whereCondition : String := sourceTableName + "." + idSourdeName + "=" + targetTableName + 
+											"." + idTargetName;
+	var fkSourceName : String := "fk_" + oldAssocTableName + "_" + sourceTableName;
+	var fkTargetName : String := "fk_" + newAssocTableName + "_" + targetTableName;
+	var oldFkTypeName : String := "fk_" + oldAssocTableName + "_" + typeTableName;
+	var newFkTypeName : String := "fk_" + newAssocTableName + "_" + typeTableName;
+	var idTypeName : String := "id_type";
+	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldAssocTableName,
+																		fkSourceName);
+	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldAssocTableName,
+															idSourdeName,
+															fkTargetName,
+															targetTableName);
+	var removeOldFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssocTableName,
+																	oldFkTypeName);
+	var addNewFkType : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldAssocTableName,
+																idTypeName,
+																newFkTypeName,
+																typeTableName);																															 
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																oldAssocTableName,
+																idSourdeName,
+																idTargetName);
+	var renameAssocTable : RDB::ops::ModelOperation := _renameTable(
+																publicSchemaName,
+																oldAssocTableName,
+																newAssocTableName);																													
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeFkSource,
+															addFkTarget,
+															removeOldFkType,
+															addNewFkType,
+															renameColumn,
+															renameAssocTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,98 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties6_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var exportedColumnName : String := "pushed_pr";
+	//reflection of child class
+	var targetTableName : String := "child";
+	//reflection of parent class in hierarchy
+	var sourceTableName : String := "parent"; 
+	var typeTableName : String := "type";
+	var oldAssocTableName : String := sourceTableName + "_" + exportedColumnName;
+	var newAssocTableName : String := targetTableName + "_" + exportedColumnName; 
+	var idSourceName : String := "id_" + sourceTableName;
+	var idTargetName : String := "id_" + targetTableName;
+	var whereCondition : String := sourceTableName + "." + idSourceName + "=" + targetTableName + 
+											"." + idTargetName;
+	var fkSourceName : String := "fk_" + oldAssocTableName + "_" + sourceTableName;
+	var fkTargetName : String := "fk_" + newAssocTableName + "_" + targetTableName;
+	var oldFkTypeName : String := "fk_" + oldAssocTableName + "_" + typeTableName;
+	var newFkTypeName : String := "fk_" + newAssocTableName + "_" + typeTableName;
+	var idTypeName : String := "id_type";
+	var oldOrdName : String := "ux_" + oldAssocTableName + "_ord";
+	var newOrdName : String := "ux_" + newAssocTableName + "_ord";
+	var oldUxName : String := "ux_" + sourceTableName + "_" + exportedColumnName;
+	var newUxName : String := "ux_" + targetTableName + "_" + exportedColumnName;
+	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldAssocTableName,
+																oldUxName);
+	var uniqueColumns : OrderedSet(String) := OrderedSet{
+														idSourceName,
+														idTypeName};
+	var addUx : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldAssocTableName,
+													uniqueColumns,
+													newUxName);
+var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldAssocTableName,
+																oldOrdName);
+	var orderedColumns : OrderedSet(String) := OrderedSet{
+														idSourceName,
+														idTypeName,
+														"ordering"};
+	var addOrd : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldAssocTableName,
+													orderedColumns,
+													newOrdName);																																																							
+	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldAssocTableName,
+																		fkSourceName);
+	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldAssocTableName,
+															idSourceName,
+															fkTargetName,
+															targetTableName);
+	var removeOldFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssocTableName,
+																	oldFkTypeName);
+	var addNewFkType : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldAssocTableName,
+																idTypeName,
+																newFkTypeName,
+																typeTableName);																															 
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																oldAssocTableName,
+																idSourceName,
+																idTargetName);
+	var renameAssocTable : RDB::ops::ModelOperation := _renameTable(
+																publicSchemaName,
+																oldAssocTableName,
+																newAssocTableName);																													
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeUx,
+															addUx,
+															removeOrd,
+															addOrd,
+															removeFkSource,
+															addFkTarget,
+															removeOldFkType,
+															addNewFkType,
+															renameColumn,
+															renameAssocTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

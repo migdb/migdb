@@ -31,10 +31,6 @@ main() {
 																firstColumnName,
 																ToleranceType::force,
 																whereCondition);
-	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
-																	publicSchemaName,
-																	sourceTableName,
-																	firstColumnName);
 	var removeFirstFk : RDB::ops::ModelOperation := _removeConstraint(
 																	publicSchemaName,
 																	sourceTableName,
@@ -45,6 +41,10 @@ main() {
 															firstColumnName,
 															"fk_parent_pulled_first_pr",
 															typeTableName);																																															
+	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	firstColumnName);
 	var addSecondColumnTarget : RDB::ops::ModelOperation := _addColumn(
 																	publicSchemaName,
 																	targetTableName,
@@ -58,10 +58,6 @@ main() {
 																secondColumnName,
 																ToleranceType::force,
 																whereCondition);
-	var removeSecondColumn : RDB::ops::ModelOperation := _removeColumn(
-																	publicSchemaName,
-																	sourceTableName,
-																	secondColumnName);
 	var removeSecondFk : RDB::ops::ModelOperation := _removeConstraint(
 																	publicSchemaName,
 																	sourceTableName,
@@ -73,19 +69,23 @@ main() {
 															"fk_parent_pulled_second_pr",
 															typeTableName);																																															
 
+	var removeSecondColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	secondColumnName);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															//update first association
 															addFirstColumnTarget,
 															updateFirstColumn,
-															removeFirstColumn,
 															removeFirstFk,
 															addFirstFk,
+															removeFirstColumn,
 															//update second association
 															addSecondColumnTarget,
 															updateSecondColumn,
-															removeSecondColumn,
 															removeSecondFk,
-															addSecondFk
+															addSecondFk,
+															removeSecondColumn															
 	};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

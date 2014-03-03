@@ -316,7 +316,66 @@ TestWorkflow{
 		qvtInput = "${IN_APP_STR}/pullUpProperties6_str.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties6_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - collection, UX, ORD"
+		testDescription = "pullUpProperties - association, UX, ORD"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties1_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - simple"
 	}
 	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009b_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties2_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009c_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties3_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - association 1 x M"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009d_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties4_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - association M x N"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009e_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties5_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - UX, ORD collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009f_pushDownProperties"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtInput = "${IN_APP_STR}/pushDownProperties6_str.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties6_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - UX, ORD association M x N"
+	}
 }

@@ -7,10 +7,6 @@ transformation pullUpProperties2_required(out inoutModel : RDB);
 
 main() {
 	var publicSchemaName : String := getDefaultSchemaName();
-	//reflection of firstProperty name
-	var firstColumnName : String := "pulled_first_pr";
-	//reflection of secondProperty name
-	var secondColumnName : String := "pulled_second_pr";
 	//reflection of parent class
 	var targetTableName : String := "parent";
 	//reflection of child class in hierarchy

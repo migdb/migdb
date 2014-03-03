@@ -2,11 +2,11 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation pushDown1_ops(out inoutModel : APP);
+transformation pushDown2_ops(out inoutModel : APP);
 
 main(){
 	var operation : APP::ops::ModelOperation := _pushDownProperties(
-													"Child", 
-													OrderedSet{"pulledFirstPr", "pulledSecondPr"});
+													"Child",
+													OrderedSet{"pushedPr"});
 	_appOperations(OrderedSet{operation});	
 }
