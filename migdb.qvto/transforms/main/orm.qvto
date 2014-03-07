@@ -947,25 +947,39 @@ helper APP::ops::PushDownProperties::toRdb(appStructure : APP::Structure): Order
 helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var parentClass : StandardClass := appStructure.findStandardClass(self.parentClassName);
 	var childClass : StandardClass := appStructure.findStandardClass(self.className);
-	var parentRepresentative : StandardClass := parentClass.getDbRepresentative();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	var parentRepresentativeDbName : String := parentRepresentative.name.translate();
-		
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := childClass.name.translate();
+	var parentTableName : String := parentClass.name.translate();
+	var idChildTableName : String := getDbIdColumnName(childTableName);
+	var idParentTableName : String := getDbIdColumnName(parentTableName);
+	
 	operations += _removeConstraint(
-								getDefaultSchemaName(), 
-								childClass.name.translate(), 
-								childClass.getParentFkName());	
-//	mappedSet->forEach(cls){	
-//		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, 
-//			childClass.translateIdName());
-	
-//	mappedSet->forEach(cls){
-//		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
-	
-//	};
-//	mappedSet->forEach(cls){
-//		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
-//	};
+								defaultSchemaName,
+								childTableName,
+								getDbPrimaryKeyName(childTableName));
+	//there is strong condition that each entity in db has different id, no id recounting is 
+	//processed
+	operations += _insertRows(
+							defaultSchemaName,
+							childTableName,
+							OrderedSet{idChildTableName},
+							parentTableName,
+							OrderedSet{idParentTableName});							
+	operations += _addForeignKey(
+								defaultSchemaName,
+								childTableName,
+								idChildTableName,
+								getParentFkName(childClass.name),
+								parentTableName);
+	childClass.properties->forEach(prop | parentClass.properties->
+		exists(parProp | parProp.name = prop.name)){
+			operations := ormMergeProperty(
+										appStructure,
+										prop,
+										parentClass.name,
+										operations);
+	};								
 	return operations;
 }
 
@@ -1060,18 +1074,156 @@ helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, target
 																	owningClassName);
 		var targetCollectionTableName : String := getCollectionTableName(
 																	self.name,
-																	targetClassName);															
-//		ops += _insertRows(
-//						defaultSchemaName,
-//						sourceCollectionTableName,
-//						
-//						targetCollectionTableName,
-//						);														
+																	targetClassName);
+		
+		var sourceColumnNames : OrderedSet(String) := OrderedSet{
+															idOwningTableName,
+															mergedColumnName};
+		var targetColumnNames : OrderedSet(String) := OrderedSet{
+															idTargetTableName,
+															mergedColumnName};													
+		ops += _insertRows(
+						defaultSchemaName,
+						sourceCollectionTableName,
+						sourceColumnNames,
+						targetCollectionTableName,
+						targetColumnNames);
+		if(self.isUnique)then{
+			var uxName : String := getUXName(
+											owningClassName, 
+											self.name);
+			ops += _removeConstraint(
+								defaultSchemaName,
+								sourceCollectionTableName,
+								uxName);
+		}endif;
+		if(self.isOrdered)then{
+			var ordName : String := getUXOrderingName(sourceCollectionTableName);
+			ops += _removeConstraint(
+									defaultSchemaName,
+									sourceCollectionTableName,
+									ordName);
+		}endif;
+		var fkName : String := getFkCollectionName(
+												owningClassName,
+												self.name);
+		ops += _removeConstraint(
+								defaultSchemaName,
+								sourceCollectionTableName,
+								fkName);
+		ops += _removeColumn(
+							defaultSchemaName,
+							sourceCollectionTableName,
+							idOwningTableName);
+		ops += _removeColumn(
+							defaultSchemaName,
+							sourceCollectionTableName,
+							mergedColumnName);
+		ops += _removeTable(
+							defaultSchemaName,
+							sourceCollectionTableName);					
 	}endif;
+	return ops;
 }
 
 helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation) {
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var sourceClassName : String := self.owningGeneralClass.name;
+	var typeClassName : String := self.type.name;
+	var sourceTableName : String := sourceClassName.translate();
+	var targetTableName : String := targetClassName.translate();
+	var typeTableName : String := typeClassName.translate();
+	var mergedColumnName : String := self.name.translate();
+	var idSourceTableName : String := getDbIdColumnName(sourceTableName);
+	var idTargetTableName : String := getDbIdColumnName(targetTableName);
+	var idTypeTableName : String := getDbIdColumnName(typeTableName);
 	
+	if(self.upperBound = 1)then{
+		var whereCondition : String := sourceTableName + "." + idSourceTableName + " = " + 
+										targetTableName + "." + idTargetTableName;
+		ops += _updateRow(
+						defaultSchemaName,
+						sourceTableName,
+						mergedColumnName,
+						targetTableName,
+						mergedColumnName,
+						RDB::ToleranceType::strict,
+						whereCondition);
+		var fkName : String := getFkRefencingOppositeName(
+														self.name,
+														sourceClassName,
+														typeClassName);
+		ops += _removeConstraint(
+								defaultSchemaName,
+								sourceTableName,
+								fkName);
+		ops += _removeColumn(
+							defaultSchemaName,
+							sourceTableName,
+							mergedColumnName);
+	//M x N association	
+	}else{
+		var sourceAssociationTableName : String := getAssociationTableName(
+																		self.name, 
+																		sourceClassName);
+		var targetAssociationTableName : String := getAssociationTableName(
+																		self.name, 
+																		targetClassName);
+		var sourceColumnNames : OrderedSet(String) := OrderedSet{
+																idSourceTableName,
+																idTypeTableName};
+		var destinationColumnNames : OrderedSet(String) := OrderedSet{
+																idTargetTableName,
+																idTypeTableName};
+		ops += _insertRows(
+						defaultSchemaName,
+						sourceAssociationTableName,
+						sourceColumnNames,
+						targetAssociationTableName,
+						destinationColumnNames);
+		if(self.isOrdered)then{
+			var ordName : String := getUXOrderingName(sourceAssociationTableName);
+			ops += _removeConstraint(
+									defaultSchemaName,
+									sourceAssociationTableName,
+									ordName);
+		}endif;
+		if(self.isUnique)then{
+			var uxName : String := getUXName(self.name, sourceClassName);
+			ops += _removeConstraint(
+									defaultSchemaName,
+									sourceAssociationTableName,
+									uxName);
+									
+		}endif;
+		var fkSourceName : String := getFKAssociationTableRefName(
+																sourceAssociationTableName,
+																sourceTableName);
+		ops += _removeConstraint(
+								defaultSchemaName,
+								sourceAssociationTableName,
+								fkSourceName);
+		var fkTypeName : String := getFKAssociationTableRefName(
+																sourceAssociationTableName,
+																sourceTableName);
+		ops += _removeConstraint(
+								defaultSchemaName,
+								sourceAssociationTableName,
+								fkTypeName);
+		ops += _removeColumn(
+							defaultSchemaName,
+							sourceAssociationTableName,
+							idSourceTableName);
+		ops += _removeColumn(
+							defaultSchemaName,
+							sourceAssociationTableName,
+							idTypeTableName);
+		ops += _removeTable(
+							defaultSchemaName,
+							sourceAssociationTableName);																								
+	}endif;	
+	return ops;	
 }
 
 /**

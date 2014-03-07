@@ -193,6 +193,25 @@ helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourc
 	};
 }
 
+helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnsNames : OrderedSet(String), _targeTableName : String, _targetColumnNames : OrderedSet(String), _whereCondition : String) : RDB::ops::InsertRows{
+	var condition : Boolean := _whereCondition <> null and _whereCondition <> "";
+	if(not condition)then{
+		var errorMessage : String := "Error when calling constructor _insertRows(" + 
+				_owningSchemaName + "," + _sourceTableName + "," + 
+				_sourceColumnsNames->toString() + "," + _targeTableName + "," + 
+				_targetColumnNames->toString() + ")"; 
+		log(errorMessage);
+	}endif;
+	var newObject : RDB::ops::InsertRows := _insertRows(
+														_owningSchemaName,
+														_sourceTableName,
+														_sourceColumnsNames,
+														_targeTableName,
+														_targetColumnNames);
+	newObject.whereCondition := _whereCondition;													
+	return newObject;	
+}
+
 helper _deleteRows(_owningSchemaName : String, _tableName : String,  _whereCondition : String) : RDB::ops::DeleteRows{
 	return object RDB::ops::DeleteRows {
 		owningSchemaName := _owningSchemaName;
@@ -317,8 +336,7 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  	};
  }
  
- helper _foreignKey(_name : String, _targetTable : Table, 
- 		_constrainedColumn : Column) : ForeignKey {
+ helper _foreignKey(_name : String, _targetTable : Table, _constrainedColumn : Column) : ForeignKey {
  	return object ForeignKey {
  		name := _name;
  		targetTable := _targetTable;
