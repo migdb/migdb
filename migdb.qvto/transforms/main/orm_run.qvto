@@ -7,7 +7,7 @@ modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
-transformation orm_run(in inOps : APP, in inStr : APP, out rdbOutOps : RDB, out errorModel : ERR);
+transformation orm_run(in inStr : APP, in inOps : APP, out rdbOutOps : RDB, out errorModel : ERR);
 
 main(){	
 	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
