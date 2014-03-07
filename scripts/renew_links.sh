@@ -38,6 +38,14 @@ rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
 
+rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$TEXT_SERVICE_LINK
+
+rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$TEXT_SERVICE_LINK
+
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK
 rm $D_MIGDB_QVTO/tests/migdb_executer/$QUERIES_APP_LINK
@@ -49,6 +57,7 @@ rm $D_MIGDB_QVTO/tests/operations/app/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/operations/rdb/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/operations/rdb/$BUILDER_RDB_LINK
+rm $D_MIGDB_QVTO/tests/operations/rdb/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/oracle_tests/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/oracle_tests/$QUERIES_APP_LINK
@@ -60,6 +69,7 @@ rm $D_MIGDB_QVTO/tests/structures/app/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/structures/rdb/$BUILDER_RDB_LINK
 rm $D_MIGDB_QVTO/tests/structures/rdb/$QUERIES_RDB_LINK
+rm $D_MIGDB_QVTO/tests/structures/rdb/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/tests_app_queries/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/tests_app_queries/$QUERIES_APP_LINK
@@ -76,7 +86,7 @@ rm $D_MIGDB_QVTO/tests/validator_app/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
 rm $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_ERRORS_LINK
-
+rm $D_MIGDB_QVTO/tests/validator_postgresql/$TEXT_SERVICE_LINK
 
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$QUERIES_APP_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/code_generation/$BUILDER_APP_LINK
@@ -92,6 +102,15 @@ ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIE
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
 
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_APP_LINK
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_APP_LINK
+ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$TEXT_SERVICE_LINK
+
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_APP_LINK
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_APP_LINK
+ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$TEXT_SERVICE_LINK
+
+
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/migdb_executer/$QUERIES_APP_LINK
@@ -103,6 +122,7 @@ ln -s ../../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/operations/app/$TEXT_SERVI
 
 ln -s ../../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/operations/rdb/$BUILDER_RDB_LINK
 ln -s ../../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/operations/rdb/$QUERIES_RDB_LINK
+ln -s ../../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/operations/rdb/$TEXT_SERVICE_LINK
 
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/oracle_tests/$BUILDER_APP_LINK
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/oracle_tests/$QUERIES_APP_LINK
@@ -114,6 +134,7 @@ ln -s ../../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/structures/app/$TEXT_SERVI
 
 ln -s ../../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/structures/rdb/$BUILDER_RDB_LINK
 ln -s ../../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/structures/rdb/$QUERIES_RDB_LINK
+ln -s ../../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/structures/rdb/$TEXT_SERVICE_LINK
 
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/tests_app_queries/$BUILDER_APP_LINK
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/tests_app_queries/$QUERIES_APP_LINK
@@ -130,5 +151,6 @@ ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/validator_app/$TEXT_SERVICE_L
 
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_RDB_LINK
 ln -s ../../$BUILDER_ERRORS_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$BUILDER_ERRORS_LINK
+ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/validator_postgresql/$TEXT_SERVICE_LINK
 
 
