@@ -348,6 +348,7 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 												currentTransformationId);
 	var hasMovedProperties : Boolean := true;
 	var areAdequateTypes : Boolean := true;
+	var areAdequateCardinality : Boolean := true;	
 	//this can looks weird but have in mind that when you are adding parent to a class you are doing that
 	//in cases when those two classes have similar/same properties that are moved to parent class
 	if(existChild and existParent)then{
@@ -365,9 +366,11 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 		};
 		
 		var childClass : StandardClass := structure.findStandardClass(self.className);
-		parentClass->properties->
-		  select(prop | childClass->properties->exists(childProp | childProp.name = prop.name))->
-		  		forEach(prop){
+		//properties that will be merged together with adequate childProp
+		var conflictProperties : Sequence(MultipliableProperty):=parentClass->properties->
+		  			select(prop | childClass->properties->
+		  			exists(childProp | childProp.name = prop.name));
+		conflictProperties->forEach(prop){
 			var isAdequareType : Boolean := checkHavePropertiesAdequateType(
 														parentClass.name, 
 														prop.name, 
@@ -379,10 +382,22 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 														currentTransformationId);
 			areAdequateTypes := areAdequateTypes and isAdequareType;											
 		};
+		conflictProperties->forEach(prop){
+			var isAdequateCardinality := checkHavePropertiesAdequateCardinality(
+																	parentClass.name, 
+																	prop.name, 
+																	childClass.name,
+																	prop.name, 
+																	structure, 
+																	errorLog, 
+																	operationIndex,
+																	currentTransformationId);
+			areAdequateCardinality := isAdequateCardinality and areAdequateCardinality;														
+		};
 	}endif;
 												
 	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild and 
-		haveSameInheritanceType and hasMovedProperties and areAdequateTypes;
+		haveSameInheritanceType and hasMovedProperties and areAdequateTypes and areAdequateCardinality;
 }
 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
@@ -1371,6 +1386,28 @@ helper checkHaveSameInheritanceType(firstClassName : String, secondClassName : S
 	return haveSameInheritanceType;
 }
 
+/** Checks if Multipliable properties have adequate type. Current implementation returns true 
+  * only if two comparable properties have same cardinality. */
+helper checkHavePropertiesAdequateCardinality(firstStdClsName : String, firstPropertyName : String, secondStdClsName : String, secondPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(firstStdClsName) or 
+		not structure.containsStandardClass(secondStdClsName) or 
+		not structure.isPropertyInGeneralClass(firstStdClsName, firstPropertyName) or
+		not structure.isPropertyInGeneralClass(secondStdClsName, secondPropertyName) )then{
+		return false;
+	}endif;
+	var firstPr : Property := structure.findProperty(firstStdClsName, firstPropertyName);
+	var firstProperty : MultipliableProperty := firstPr.oclAsType(MultipliableProperty);
+	var secondPr : Property := structure.findProperty(secondStdClsName, secondPropertyName);
+	var secondProperty : MultipliableProperty := secondPr.oclAsType(MultipliableProperty);	
+	var haveSameCardinality : Boolean := firstProperty.upperBound = secondProperty.upperBound;
+	if(not haveSameCardinality)then{
+		var errorMessage : String := "Cardinalities of property " + firstProperty.name + " in cls " + 
+				firstProperty.owningGeneralClass.name + " and property " + secondProperty.name + 
+				" in cls " + secondProperty.owningGeneralClass.name +" differ" ;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);				
+	}endif;
+	return haveSameCardinality;
+}
 
 /** Checks if properties have adequate type. Current implementation returns true 
   * only if two comparable properties have same type. */
