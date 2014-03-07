@@ -251,7 +251,18 @@ TestWorkflow {
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addParent_c_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "addParent Man, Person => Man -> Person"
-	}	
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009d_addParent"
+		qvtInput = "${IN_STR}/addParent_d.qvto"
+		qvtInput = "${IN_OPS}/addParent_c_ops.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_STR}/addParent_d.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addParent1d.qvto"
+		testDescription = "Man, Person => conflict cardinalities"
+	}		
 /**/
 	component = TestComponent {
 		transformationFile = "${TEST_TRANSFORMATION}"
