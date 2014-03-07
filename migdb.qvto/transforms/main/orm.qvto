@@ -1005,6 +1005,75 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(
 	return operations;
 }
 
+helper ormMergeProperty(appStructure : APP::Structure, mergedProperty : Property, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	if(mergedProperty.oclIsTypeOf(PrimitiveProperty))then{
+		var mergedPrimProp : PrimitiveProperty := mergedProperty.oclAsType(PrimitiveProperty);
+		return mergedPrimProp.ormMergeProperty(appStructure, targetClassName, operations);
+	}endif;
+	if(mergedProperty.oclIsTypeOf(AssociationProperty))then{
+		var mergedAssocProp : AssociationProperty := mergedProperty.oclAsType(AssociationProperty);
+		return mergedAssocProp.ormMergeProperty(appStructure, targetClassName, operations);
+	}endif;
+	log("Unsupported export of property " + mergedProperty.repr());
+	assert(false);
+	return OrderedSet{};
+}
+
+helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation) {
+	var destinationProperty : Property := appStructure.findProperty(
+																targetClassName, 
+																self.name);
+	var destinationPrimProperty : PrimitiveProperty := destinationProperty.oclAsType(
+																				PrimitiveProperty);
+	var owningClassName : String := destinationPrimProperty.owningGeneralClass.name;																				
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var mergedColumnName : String := destinationPrimProperty.name.translate();
+	var mergedColumnType : RDB::PrimitiveType := toRdbType(
+													destinationPrimProperty.type.primitiveType);
+	var targetTableName : String := targetClassName.translate();
+	var owningTableName : String := owningClassName.translate();
+	var idOwningTableName : String := getIdName(owningClassName);
+	var idTargetTableName : String := getIdName(targetClassName);												
+	//there is a condition in isValid checking same cardinality of props in both classes
+	if(self.upperBound = 1)then{
+		var idEqualityCondition : String = owningTableName + "." + idOwningTableName + " = " + 
+											targetTableName + "." + idTargetTableName;
+		ops += _updateRow(
+						defaultSchemaName,
+						owningTableName,
+						mergedColumnName,
+						targetTableName,
+						mergedColumnName,
+						RDB::ToleranceType::force,
+						idEqualityCondition);
+		ops += _removeColumn(
+						defaultSchemaName,
+						owningTableName,
+						mergedColumnName);
+		return ops;
+	//merge collection
+	} else{
+		var sourceCollectionTableName : String := getCollectionTableName(
+																	self.name,
+																	owningClassName);
+		var targetCollectionTableName : String := getCollectionTableName(
+																	self.name,
+																	targetClassName);															
+//		ops += _insertRows(
+//						defaultSchemaName,
+//						sourceCollectionTableName,
+//						
+//						targetCollectionTableName,
+//						);														
+	}endif;
+}
+
+helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation) {
+	
+}
+
 /**
 	Helper for moving property from property owner class to targetClass IN HIERARCHY. 
 	owningClass extends targetClass or vice versa (it's not important information for mapping).
@@ -1174,10 +1243,10 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 	var defaultSchemaName : String := getDefaultSchemaName();
 	if(self.upperBound = 1) then{
 		ops += _addColumn(
-								defaultSchemaName,
-								targetTableName,
-								dataColumnName,
-								dataColumnType);
+						defaultSchemaName,
+						targetTableName,
+						dataColumnName,
+						dataColumnType);
 		var idEqualityCondition : String = owningTableName + "." + idOwningTableName + " = " + 
 											targetTableName + "." + idTargetTableName;
 		ops += _updateRow(
@@ -1293,7 +1362,7 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
 					(prop.isOneToOneBidirectional() or prop.isOneToOneUnidirectional()) and 
 					prop.isPropertyTypeOf(targetClass));
 		// Define WHERE CONDITION for Update operation (sourceTable.)
-		var WHERE_CONDITION : String :=  sourceClassName + "." + asocProperty.name.translate() + 
+		var whereCondition : String :=  sourceClassName + "." + asocProperty.name.translate() + 
 						" = " + targetClassName + "." + idTargetClassName;
 		// add new column to target class
 		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
@@ -1305,7 +1374,7 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
 						targetClassName, 
 						movedPropertyName, 
 						mergeTypeFromAppToRdb(self.toleranceType), 
-						WHERE_CONDITION);				
+						whereCondition);				
 		// remove old column in source table
 		operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
 	};
@@ -1358,13 +1427,6 @@ helper APP::ops::ExtractClass::toRdb(appStructure : APP::Structure) : OrderedSet
 						idExtractClassName, 
 						"fk_" + (self.associationPropertyName+self.extractClassName).translate(), 
 						extractClassName);
-	// add values from id column of extracted table to FK column in source table
-	operations += _insertRow(
-						getDefaultSchemaName(), 
-						extractClassName, 
-						idExtractClassName, 
-						sourceClassName, 
-						self.associationPropertyName.translate());
 	return operations;
 }
 

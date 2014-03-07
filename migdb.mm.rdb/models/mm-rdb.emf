@@ -217,36 +217,29 @@ package rdb {
       attr String[1] targetTableName;
       attr String[1] targetColumnName;
       attr ToleranceType[1] tolerance;
-      attr String[1] WHERE_CONDITION;
+      attr String[1] whereCondition;
     }
 
     class InsertRows extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] sourceTableName;
-      attr String[*] sourceColumnsNames;
+      attr String[+] sourceColumnsNames;
+      attr String[1] whereCondition;
       attr String[1] targetTableName;
+      attr String[+] targetColumnNames;
+      
     }
     
-    class InsertRow extends ModelOperation {
-      attr String[1] owningSchemaName;
-      attr String[1] sourceTableName;
-      attr String[1] sourceColumnName;
-      attr String[1] targetTableName;
-      attr String[1] targetColumnName;
-    }    
-
     class DeleteRows extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] tableName;
-      attr String[*] descendantsNames;
-      attr String[1] idName;
+      attr String[1] whereCondition;
     }
 
     class HasNoOwnInstances extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] tableName;
-      attr String[*] descendantsNames;
-      attr String[1] idName;
+      attr String[1] whereCondition;
     }
 
     class HasNoInstances extends ModelOperation {
@@ -264,4 +257,3 @@ package rdb {
   }
 
 }
-

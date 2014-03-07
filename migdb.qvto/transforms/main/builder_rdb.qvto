@@ -1,3 +1,5 @@
+import text_service;
+
 library builder_rdb;
 
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
@@ -160,7 +162,7 @@ helper _removeSequence(_owningSchemaName : String, _sequenceName : String) : RDB
 	};
 }
 
-helper _updateRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targetTableName : String, _targerColumnName : String, _tolerance : RDB::ToleranceType, _WHERE_CONDITION : String) : RDB::ops::UpdateRow{
+helper _updateRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targetTableName : String, _targerColumnName : String, _tolerance : RDB::ToleranceType, _whereCondition : String) : RDB::ops::UpdateRow{
 	return object RDB::ops::UpdateRow {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
@@ -168,44 +170,42 @@ helper _updateRow(_owningSchemaName : String, _sourceTableName : String, _source
 		targetTableName := _targetTableName;
 		targetColumnName := _targerColumnName;
 		tolerance := _tolerance;
-		WHERE_CONDITION := _WHERE_CONDITION;
+		whereCondition := _whereCondition;
 	};
 }
 
-helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnsNames : OrderedSet(String), _targeTableName : String) : RDB::ops::InsertRows{
+helper _insertRows(_owningSchemaName : String, _sourceTableName : String, _sourceColumnsNames : OrderedSet(String), _targeTableName : String, _targetColumnNames : OrderedSet(String)) : RDB::ops::InsertRows{
+	var condition : Boolean := _sourceColumnsNames->size() = _targetColumnNames->size();
+	if(not condition)then{
+		var errorMessage : String := "Error when calling constructor _insertRows(" + 
+				_owningSchemaName + "," + _sourceTableName + "," + 
+				_sourceColumnsNames->toString() + "," + _targeTableName + "," + 
+				_targetColumnNames->toString() + ")"; 
+		log(errorMessage);
+		assert(false);
+	}endif;	
 	return object RDB::ops::InsertRows {
 		owningSchemaName := _owningSchemaName;
 		sourceTableName := _sourceTableName;
 		sourceColumnsNames := _sourceColumnsNames;
 		targetTableName := _targeTableName;
+		targetColumnNames := _targetColumnNames;
 	};
 }
 
-helper _insertRow(_owningSchemaName : String, _sourceTableName : String, _sourceColumnName : String, _targeTableName : String, _targeColumnName : String) : RDB::ops::InsertRow{
-	return object RDB::ops::InsertRow {
-		owningSchemaName := _owningSchemaName;
-		sourceTableName := _sourceTableName;
-		sourceColumnName := _sourceColumnName;
-		targetTableName := _targeTableName;
-		targetColumnName := _targeColumnName;
-	};
-}
-
-helper _deleteRows(_owningSchemaName : String, _tableName : String, _descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::DeleteRows{
+helper _deleteRows(_owningSchemaName : String, _tableName : String,  _whereCondition : String) : RDB::ops::DeleteRows{
 	return object RDB::ops::DeleteRows {
 		owningSchemaName := _owningSchemaName;
 		tableName := _tableName;
-		descendantsNames := _descendantsNames;
-		idName := _idName;
+		whereCondition := _whereCondition;
 	};
 }
 
-helper _hasNoOwnInstances(_owningSchemaName : String, _tableName : String, _descendantsNames : OrderedSet(String), _idName : String ) : RDB::ops::HasNoOwnInstances{
+helper _hasNoOwnInstances(_owningSchemaName : String, _tableName : String, _whereCondition : String ) : RDB::ops::HasNoOwnInstances{
 	return object RDB::ops::HasNoOwnInstances {
 		owningSchemaName := _owningSchemaName;
 		tableName := _tableName;
-		descendantsNames := _descendantsNames;
-		idName := _idName;
+		whereCondition := _whereCondition;
 	};
 }
 

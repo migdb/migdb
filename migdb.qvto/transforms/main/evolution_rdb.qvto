@@ -903,60 +903,6 @@ helper RDB::ops::UpdateRow::apply(inout structure : RDB::Structure){
 }
 
 /**
- * INSERT ROW
- * This operation copy one column.
- * That means insert data from source table column to target table column.
- * Columns in source and target table must have same name and same order.
- * @restriction : columns with @sourceColumnName must exists in source table
- * @restriction : columns with @sourceColumnName must exists in target table
- * @restriction : columns must have same name and column type
- */
-query RDB::ops::InsertRow::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(
-										self.owningSchemaName, 
-										structure, 
-										errorLog, 
-										operationIndex, 
-										getEvolutionRdbTransformationId());
-	var existSourceTable : Boolean := checkExistTable(
-											self.owningSchemaName, 
-											self.sourceTableName, 
-											structure, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionRdbTransformationId());
-	var existSourceColumn : Boolean := checkExistColumn(
-											self.owningSchemaName, 
-											self.sourceTableName, 
-											self.sourceColumnName, 
-											structure, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(
-											self.owningSchemaName, 
-											self.targetTableName, 
-											structure, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionRdbTransformationId());
-	var existTargetColumn : Boolean := checkExistColumn(
-											self.owningSchemaName, 
-											self.targetTableName, 
-											self.sourceColumnName, 
-											structure, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionRdbTransformationId());
-	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
-			existTargetColumn;
-}
-
-helper RDB::ops::InsertRow::apply(inout structure : RDB::Structure) {
-	//this is just data operation
-}
-
-/**
  * INSERT ROWS
  * This operation copy collection of columns.
  * That means insert data from source table to target table.
@@ -1001,6 +947,11 @@ query RDB::ops::InsertRows::isValid(structure : RDB::Structure, inout errorLog :
 											errorLog, 
 											operationIndex, 
 											getEvolutionRdbTransformationId());
+	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
+											self.whereCondition, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());											
 	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
 			existTargetColumn;
 }
@@ -1029,15 +980,7 @@ query RDB::ops::DeleteRows::isValid(structure : RDB::Structure, inout errorLog :
 										errorLog, 
 										operationIndex, 
 										getEvolutionRdbTransformationId());
-	var existDescendantTables := checkExistTableSet(
-										self.owningSchemaName, 
-										self.descendantsNames, 
-										structure, 
-										errorLog, 
-										operationIndex, 
-										getEvolutionRdbTransformationId());
-
-	return existSchema and existTable and existDescendantTables;
+	return existSchema and existTable;
 }
 
 helper RDB::ops::DeleteRows::apply(inout structure : RDB::Structure) {
@@ -1107,15 +1050,7 @@ query RDB::ops::HasNoOwnInstances::isValid(structure : RDB::Structure, inout err
 										errorLog, 
 										operationIndex, 
 										getEvolutionRdbTransformationId());
-	var existDescendantTables := checkExistTableSet(
-										self.owningSchemaName, 
-										self.descendantsNames, 
-										structure, 
-										errorLog, 
-										operationIndex, 
-										getEvolutionRdbTransformationId());
-
-	return existSchema and existTable and existDescendantTables;
+	return existSchema and existTable;
 }
 
 helper RDB::ops::HasNoOwnInstances::apply(inout structure : RDB::Structure) {
@@ -1445,4 +1380,13 @@ helper checkIsSameColumnType(owningSchemaName : String, sourceTableName : String
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return isSameType;	
+}
+
+helper checkIsValidWhereSqlPart(whereCondition : String, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	var condition : Boolean := whereCondition <> null and whereCondition <> "";
+	if(not condition)then{
+		var message : String := "Invalid SQL where part...";
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	return condition;	
 }
