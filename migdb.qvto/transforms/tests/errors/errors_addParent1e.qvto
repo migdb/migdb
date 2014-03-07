@@ -1,0 +1,20 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation errors_addParent1e(out inoutModel : ERR);
+
+main(){
+	var notUniqueMessage : String := "Uniqueness of property age in cls Person and property age " +
+											"in cls Man differ";
+	var notUniqueError : EvolutionError := _evolutionError(
+													1, 
+													notUniqueMessage, 
+													"evolution_app.qvto");
+	var notOrderedMessage : String := "Ordering of property age in cls Person and property age in " + 
+											"cls Man differ";
+	var notOrderedError : EvolutionError := _evolutionError(
+													1, 
+													notOrderedMessage, 
+													"evolution_app.qvto");
+	_errorLog(OrderedSet{notUniqueError, notOrderedError});
+}

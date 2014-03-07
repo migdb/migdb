@@ -348,7 +348,9 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 												currentTransformationId);
 	var hasMovedProperties : Boolean := true;
 	var areAdequateTypes : Boolean := true;
-	var areAdequateCardinality : Boolean := true;	
+	var areAdequateCardinality : Boolean := true;
+	var areAdequateUnique : Boolean := true;
+	var areAdequatelyOrdered : Boolean := true;	
 	//this can looks weird but have in mind that when you are adding parent to a class you are doing that
 	//in cases when those two classes have similar/same properties that are moved to parent class
 	if(existChild and existParent)then{
@@ -394,10 +396,35 @@ query APP::ops::AddParent::isValid(structure : APP::Structure, inout errorLog : 
 																	currentTransformationId);
 			areAdequateCardinality := isAdequateCardinality and areAdequateCardinality;														
 		};
+		conflictProperties->forEach(prop){
+			var isAdequateUnique : Boolean := checkHavePropertiesAdequateUniqueness(
+																	parentClass.name, 
+																	prop.name, 
+																	childClass.name,
+																	prop.name, 
+																	structure, 
+																	errorLog, 
+																	operationIndex,
+																	currentTransformationId);
+			areAdequateUnique := isAdequateUnique and areAdequateUnique;
+		};
+		conflictProperties->forEach(prop){
+			var isAdequatelyOrdered : Boolean := checkHavePropertiesAdequateOrdering(
+																	parentClass.name, 
+																	prop.name, 
+																	childClass.name,
+																	prop.name, 
+																	structure, 
+																	errorLog, 
+																	operationIndex,
+																	currentTransformationId);
+			areAdequatelyOrdered := isAdequatelyOrdered and areAdequatelyOrdered;
+		};
 	}endif;
 												
 	return existChild and existParent and isChildRootClass and notIsParentDescendantOfChild and 
-		haveSameInheritanceType and hasMovedProperties and areAdequateTypes and areAdequateCardinality;
+		haveSameInheritanceType and hasMovedProperties and areAdequateTypes and areAdequateCardinality
+		and areAdequateUnique and areAdequatelyOrdered;
 }
 
 helper APP::ops::AddParent::apply(inout structure : APP::Structure) {
@@ -1408,6 +1435,49 @@ helper checkHavePropertiesAdequateCardinality(firstStdClsName : String, firstPro
 	}endif;
 	return haveSameCardinality;
 }
+
+helper checkHavePropertiesAdequateUniqueness(firstStdClsName : String, firstPropertyName : String, secondStdClsName : String, secondPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(firstStdClsName) or 
+		not structure.containsStandardClass(secondStdClsName) or 
+		not structure.isPropertyInGeneralClass(firstStdClsName, firstPropertyName) or
+		not structure.isPropertyInGeneralClass(secondStdClsName, secondPropertyName) )then{
+		return false;
+	}endif;
+	var firstPr : Property := structure.findProperty(firstStdClsName, firstPropertyName);
+	var firstProperty : MultipliableProperty := firstPr.oclAsType(MultipliableProperty);
+	var secondPr : Property := structure.findProperty(secondStdClsName, secondPropertyName);
+	var secondProperty : MultipliableProperty := secondPr.oclAsType(MultipliableProperty);	
+	var haveSameUniqueness : Boolean := firstProperty.isUnique = secondProperty.isUnique;
+	if(not haveSameUniqueness)then{
+		var errorMessage : String := "Uniqueness of property " + firstProperty.name + " in cls " + 
+				firstProperty.owningGeneralClass.name + " and property " + secondProperty.name + 
+				" in cls " + secondProperty.owningGeneralClass.name +" differ" ;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);					
+	}endif;
+	return haveSameUniqueness;
+}
+
+helper checkHavePropertiesAdequateOrdering(firstStdClsName : String, firstPropertyName : String, secondStdClsName : String, secondPropertyName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	if(not structure.containsStandardClass(firstStdClsName) or 
+		not structure.containsStandardClass(secondStdClsName) or 
+		not structure.isPropertyInGeneralClass(firstStdClsName, firstPropertyName) or
+		not structure.isPropertyInGeneralClass(secondStdClsName, secondPropertyName) )then{
+		return false;
+	}endif;
+	var firstPr : Property := structure.findProperty(firstStdClsName, firstPropertyName);
+	var firstProperty : MultipliableProperty := firstPr.oclAsType(MultipliableProperty);
+	var secondPr : Property := structure.findProperty(secondStdClsName, secondPropertyName);
+	var secondProperty : MultipliableProperty := secondPr.oclAsType(MultipliableProperty);	
+	var haveSameOrdering : Boolean := firstProperty.isOrdered = secondProperty.isOrdered;
+	if(not haveSameOrdering)then{
+		var errorMessage : String := "Ordering of property " + firstProperty.name + " in cls " + 
+				firstProperty.owningGeneralClass.name + " and property " + secondProperty.name + 
+				" in cls " + secondProperty.owningGeneralClass.name +" differ" ;
+		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);					
+	}endif;
+	return haveSameOrdering;
+}
+
 
 /** Checks if properties have adequate type. Current implementation returns true 
   * only if two comparable properties have same type. */
