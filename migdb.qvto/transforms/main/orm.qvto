@@ -1201,7 +1201,7 @@ helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targ
 								fkSourceName);
 		var fkTypeName : String := getFKAssociationTableRefName(
 																sourceAssociationTableName,
-																sourceTableName);
+																typeTableName);
 		ops += _removeConstraint(
 								defaultSchemaName,
 								sourceAssociationTableName,

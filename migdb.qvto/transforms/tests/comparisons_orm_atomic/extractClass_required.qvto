@@ -9,7 +9,8 @@ main() {
 																_addPrimaryKey("public", "second","id_second", "pk_second"),
 																_generateSequenceNumbers("public", "second", "id_second", "seq_global"),
 																_addColumn("public", "first", "second", PrimitiveType::int),
-																_addForeignKey("public", "first", "id_second", "fk_second_second", "second"),
-																_insertRow("public", "second", "id_second", "first", "second")};
+																_addForeignKey("public", "first", "id_second", "fk_second_second", "second")
+																//,_insertRow("public", "second", "id_second", "first", "second")
+																};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

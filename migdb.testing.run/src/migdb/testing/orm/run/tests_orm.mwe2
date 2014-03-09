@@ -388,4 +388,44 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "addParent simple adding parency FK"
 	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010b_addParent"
+		qvtInput = "${IN_APP_STR}/addParent_c.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent Man, Person => Man -> Person"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010c_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent (UX, ord age) Man, Person => Man -> Person"
+	}
+		
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010d_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent assoc"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010e_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent UX, ord assoc M x N"
+	}
 }

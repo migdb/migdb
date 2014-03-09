@@ -1,0 +1,101 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addParent5_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "man";
+	var parentTableName : String := "person";
+	var typeTableName : String := "type";
+	var idChildTableName : String := "id_" + childTableName;
+	var idParentTableName : String := "id_" + parentTableName;
+	var idTypeTableName : String := "id_" + typeTableName;
+	var pkChildName : String := "pk_" + childTableName;
+	var parencyFkName : String := "par_" + childTableName;
+	var mergedColumnName : String := "age";
+	
+	var childAssociationTableName : String := childTableName + "_" + mergedColumnName;
+	var parentAssociationTableName : String := parentTableName + "_" + mergedColumnName;
+	
+	var fkSourceAssocRefChildName : String := "fk_" + childAssociationTableName + "_" + 
+													childTableName;
+	var fkSourceAssocRefTypeName : String := "fk_" + childAssociationTableName + "_" + 
+													typeTableName;
+	var ordSourceAssocName : String := "ux_" + childAssociationTableName + "_ord";
+	var uxSourceAssocName : String := "ux_" + mergedColumnName + "_" + childTableName;
+	
+	
+	var removePk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																childTableName,
+																pkChildName);
+	var insertChildIds : RDB::ops::ModelOperation := _insertRows(
+															publicSchemaName,
+															childTableName,
+															OrderedSet{idChildTableName},
+															parentTableName,
+															OrderedSet{idParentTableName});
+	var addParencyFk : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																childTableName,
+																idChildTableName,
+																parencyFkName,
+																parentTableName);
+	//var whereCondition : String := "man.id_man = person.id_person";	
+	var sourceColumnNames : OrderedSet(String) := OrderedSet{
+															idChildTableName,
+															idTypeTableName};
+	var targetColumnNames : OrderedSet(String) := OrderedSet{
+															idParentTableName,
+															idTypeTableName};															
+	var insertAssocTable : RDB::ops::ModelOperation := _insertRows(
+																publicSchemaName,
+																childAssociationTableName,
+																sourceColumnNames,
+																parentAssociationTableName,
+																targetColumnNames);																		
+	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																childAssociationTableName,
+																ordSourceAssocName);
+	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																childAssociationTableName,
+																uxSourceAssocName);
+																
+	var removeFkRefChild : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		childAssociationTableName,
+																		fkSourceAssocRefChildName);
+	var removeFkRefType : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		childAssociationTableName,
+																		fkSourceAssocRefTypeName);
+	var removeIdSource : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																childAssociationTableName,
+																idChildTableName);
+	var removeIdType : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																childAssociationTableName,
+																idTypeTableName);
+	var removeAssocTable : RDB::ops::ModelOperation := _removeTable(
+																publicSchemaName,
+																childAssociationTableName);																																
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removePk, 
+															insertChildIds, 
+															addParencyFk,
+															insertAssocTable,
+															removeOrd,
+															removeUx,
+															removeFkRefChild,
+															removeFkRefType,
+															removeIdSource,
+															removeIdType,
+															removeAssocTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}
