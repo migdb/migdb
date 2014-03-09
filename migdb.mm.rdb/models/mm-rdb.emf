@@ -78,12 +78,6 @@ package rdb {
     float = 3;
   }
 
-  enum ToleranceType {
-    strict = 0;
-    force = 1;
-    tolerant = 2;
-  }
-
   @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-ops", prefix="rdb-ops")
   package ops {
     abstract class ModelOperation {
@@ -210,13 +204,12 @@ package rdb {
       attr String[1] name;
     }
 
-    class UpdateRow extends ModelOperation {
+    class UpdateRows extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] sourceTableName;
       attr String[1] sourceColumnName;
       attr String[1] targetTableName;
       attr String[1] targetColumnName;
-      attr ToleranceType[1] tolerance;
       attr String[1] whereCondition;
     }
 

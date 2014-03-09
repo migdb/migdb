@@ -87,11 +87,6 @@
       <eLiterals name="int" value="2"/>
       <eLiterals name="float" value="3"/>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EEnum" name="ToleranceType">
-      <eLiterals name="strict"/>
-      <eLiterals name="force" value="1"/>
-      <eLiterals name="tolerant" value="2"/>
-    </eClassifiers>
     <eSubpackages name="ops" nsURI="http://www.collectionspro.eu/jam/mm/rdb-ops" nsPrefix="rdb-ops">
       <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningOperations" lowerBound="1"
@@ -261,7 +256,7 @@
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="UpdateRow" eSuperTypes="#//rdb/ops/ModelOperation">
+      <eClassifiers xsi:type="ecore:EClass" name="UpdateRows" eSuperTypes="#//rdb/ops/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="owningSchemaName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="sourceTableName" lowerBound="1"
@@ -272,8 +267,6 @@
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetColumnName" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="tolerance" lowerBound="1"
-            eType="#//rdb/ToleranceType"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="whereCondition" lowerBound="1"
             eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       </eClassifiers>

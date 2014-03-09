@@ -23,13 +23,12 @@ main() {
 																	targetTableName,
 																	firstColumnName,
 																	PrimitiveType::int);
-	var updateFirstColumn : RDB::ops::ModelOperation := _updateRow(
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																sourceTableName,
 																firstColumnName,
 																targetTableName,
 																firstColumnName,
-																ToleranceType::force,
 																whereCondition);
 	var removeFirstFk : RDB::ops::ModelOperation := _removeConstraint(
 																	publicSchemaName,
@@ -50,13 +49,12 @@ main() {
 																	targetTableName,
 																	secondColumnName,
 																	PrimitiveType::int);
-	var updateSecondColumn : RDB::ops::ModelOperation := _updateRow(
+	var updateSecondColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																sourceTableName,
 																secondColumnName,
 																targetTableName,
 																secondColumnName,
-																ToleranceType::force,
 																whereCondition);
 	var removeSecondFk : RDB::ops::ModelOperation := _removeConstraint(
 																	publicSchemaName,

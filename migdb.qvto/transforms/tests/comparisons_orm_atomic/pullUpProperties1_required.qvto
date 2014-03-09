@@ -21,13 +21,12 @@ main() {
 															firstColumnName,
 															PrimitiveType::int);
 	var whereCondition : String := "child.id_child = parent.id_parent";													
-	var updateFirstColumn : RDB::ops::ModelOperation := _updateRow(
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																sourceTableName,
 																firstColumnName,
 																targetTableName,
 																firstColumnName,
-																ToleranceType::force,
 																whereCondition);
 	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
 																	publicSchemaName,
@@ -38,13 +37,12 @@ main() {
 																targetTableName,
 																secondColumnName,
 																PrimitiveType::int);
-	var updateSecondColumn : RDB::ops::ModelOperation := _updateRow(
+	var updateSecondColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																sourceTableName,
 																secondColumnName,
 																targetTableName,
 																secondColumnName,
-																ToleranceType::force,
 																whereCondition);
 	var removeSecondColumn : RDB::ops::ModelOperation := _removeColumn(
 																	publicSchemaName,

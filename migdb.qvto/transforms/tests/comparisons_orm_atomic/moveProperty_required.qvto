@@ -13,19 +13,18 @@ main() {
 													"streetNumber", 
 													rdb::PrimitiveType::char);
 	var whereCondition : String := " = ";
-	var updateRow : rdb::ops::UpdateRow := _updateRow(
+	var updateRows : rdb::ops::UpdateRows := _updateRows(
 												publicSchemaName,
 												"person",
 												"streetNumber",
 												"adress",
 												"streetNumber",
-												ToleranceType::strict,
 												//TODO Add next line + fix WHERE COND 
 												whereCondition
 												);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 													addColumn,
-													updateRow
+													updateRows
 													};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

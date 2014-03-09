@@ -21,13 +21,12 @@ main() {
 																	targetTableName,
 																	firstColumnName,
 																	PrimitiveType::int);
-	var updateFirstColumn : RDB::ops::ModelOperation := _updateRow(
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																sourceTableName,
 																firstColumnName,
 																targetTableName,
 																firstColumnName,
-																ToleranceType::force,
 																whereCondition);
 	var oldFkName : String := "fk_" + sourceTableName + "_" + firstColumnName;
 	var removeFirstFk : RDB::ops::ModelOperation := _removeConstraint(
