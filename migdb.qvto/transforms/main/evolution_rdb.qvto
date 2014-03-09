@@ -848,7 +848,7 @@ helper RDB::ops::RemoveDefaultValue::apply(inout structure : RDB::Structure){
  * @restriction : target column with @targetColumnName must exists in table
  * @restriction : target and source column type must be same
  */
-query RDB::ops::UpdateRow::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+query RDB::ops::UpdateRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
 	var existSchema : Boolean := checkExistSchema(
 										self.owningSchemaName, 
 										structure, 
@@ -899,7 +899,7 @@ query RDB::ops::UpdateRow::isValid(structure : RDB::Structure, inout errorLog : 
 			existTargetColumn and isSameType;
 }
 
-helper RDB::ops::UpdateRow::apply(inout structure : RDB::Structure){
+helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
 }
 
 /**

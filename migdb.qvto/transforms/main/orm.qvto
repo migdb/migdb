@@ -972,11 +972,11 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 								idChildTableName,
 								getParentFkName(childClass.name),
 								parentTableName);
-	childClass.properties->forEach(prop | parentClass.properties->
-		exists(parProp | parProp.name = prop.name)){
+	childClass.properties->forEach(childProp | parentClass.properties->
+		exists(parentProp | childProp.name = parentProp.name)){
 			operations := ormMergeProperty(
 										appStructure,
-										prop,
+										childProp,
 										parentClass.name,
 										operations);
 	};								
@@ -1019,6 +1019,9 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(
 	return operations;
 }
 
+/**
+	mergedProperty is property that will not exist after applying merge
+*/
 helper ormMergeProperty(appStructure : APP::Structure, mergedProperty : Property, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
 	if(mergedProperty.oclIsTypeOf(PrimitiveProperty))then{
 		var mergedPrimProp : PrimitiveProperty := mergedProperty.oclAsType(PrimitiveProperty);
@@ -1033,34 +1036,27 @@ helper ormMergeProperty(appStructure : APP::Structure, mergedProperty : Property
 	return OrderedSet{};
 }
 
-helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation) {
-	var destinationProperty : Property := appStructure.findProperty(
-																targetClassName, 
-																self.name);
-	var destinationPrimProperty : PrimitiveProperty := destinationProperty.oclAsType(
-																				PrimitiveProperty);
-	var owningClassName : String := destinationPrimProperty.owningGeneralClass.name;																				
+helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation) {																			
 	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
-	
+	var owningClassName : String := self.owningGeneralClass.name;
 	var defaultSchemaName : String := getDefaultSchemaName();
-	var mergedColumnName : String := destinationPrimProperty.name.translate();
+	var mergedColumnName : String := self.name.translate();
 	var mergedColumnType : RDB::PrimitiveType := toRdbType(
-													destinationPrimProperty.type.primitiveType);
+													self.type.primitiveType);
 	var targetTableName : String := targetClassName.translate();
 	var owningTableName : String := owningClassName.translate();
-	var idOwningTableName : String := getIdName(owningClassName);
-	var idTargetTableName : String := getIdName(targetClassName);												
+	var idOwningTableName : String := getIdName(owningClassName).translate();
+	var idTargetTableName : String := getIdName(targetClassName).translate();												
 	//there is a condition in isValid checking same cardinality of props in both classes
 	if(self.upperBound = 1)then{
 		var idEqualityCondition : String = owningTableName + "." + idOwningTableName + " = " + 
 											targetTableName + "." + idTargetTableName;
-		ops += _updateRow(
+		ops += _updateRows(
 						defaultSchemaName,
 						owningTableName,
 						mergedColumnName,
 						targetTableName,
 						mergedColumnName,
-						RDB::ToleranceType::force,
 						idEqualityCondition);
 		ops += _removeColumn(
 						defaultSchemaName,
@@ -1142,13 +1138,12 @@ helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targ
 	if(self.upperBound = 1)then{
 		var whereCondition : String := sourceTableName + "." + idSourceTableName + " = " + 
 										targetTableName + "." + idTargetTableName;
-		ops += _updateRow(
+		ops += _updateRows(
 						defaultSchemaName,
 						sourceTableName,
 						mergedColumnName,
 						targetTableName,
 						mergedColumnName,
-						RDB::ToleranceType::strict,
 						whereCondition);
 		var fkName : String := getFkRefencingOppositeName(
 														self.name,
@@ -1268,13 +1263,12 @@ helper AssociationProperty::ormExportProperty(appStructure : APP::Structure, tar
 		var equalityCondition : String := sourceTableName + "." + 
 										idSourceTableName + " = " +
 										targetTableName + "." + idTargetTableName;
-		ops +=	_updateRow(
+		ops +=	_updateRows(
 						publicSchemaName,
 						sourceTableName,
 						columnName,
 						targetTableName,
 						columnName,
-						RDB::ToleranceType::force,
 						equalityCondition);
 		var oldFkName : String := getFkRefencingOppositeName(
 															self.name,
@@ -1401,13 +1395,12 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 						dataColumnType);
 		var idEqualityCondition : String = owningTableName + "." + idOwningTableName + " = " + 
 											targetTableName + "." + idTargetTableName;
-		ops += _updateRow(
+		ops += _updateRows(
 						defaultSchemaName,
 						owningTableName,
 						dataColumnName,
 						targetTableName,
 						dataColumnName,
-						RDB::ToleranceType::force,
 						idEqualityCondition);
 		ops += _removeColumn(
 						defaultSchemaName,
@@ -1519,13 +1512,12 @@ helper APP::ops::MoveProperties::toRdb(appStructure : APP::Structure) : OrderedS
 		// add new column to target class
 		operations += _addColumn(getDefaultSchemaName(), targetClassName, movedPropertyName, type);
 		// update instances in the new column
-		operations += _updateRow(
+		operations += _updateRows(
 						getDefaultSchemaName(), 
 						sourceClassName, 
 						movedPropertyName, 
 						targetClassName, 
 						movedPropertyName, 
-						mergeTypeFromAppToRdb(self.toleranceType), 
 						whereCondition);				
 		// remove old column in source table
 		operations += _removeColumn(getDefaultSchemaName(), sourceClassName, movedPropertyName);
@@ -1607,21 +1599,6 @@ query APP::Property::getDbTypeOfProperty(appStructure : APP::Structure) : RDB::P
 		type := toRdbType(self.oclAsType(EmbeddedProperty).type.primitiveType);
 	} endif;
 	return type;
-}
-
-/**
- * MERGE TYPE FROM APP TO RDB
- * Just retype APP::ToleranceType to RDB::ToleranceType
- * @input : type - APP ToleranceType
- * @return : RDB ToleranceType
- */
-query mergeTypeFromAppToRdb(type : APP::ToleranceType) : RDB::ToleranceType {
-	switch {
-		case (type = APP::ToleranceType::strict) return RDB::ToleranceType::strict;
-		case (type = APP::ToleranceType::force) return RDB::ToleranceType::force;
-		case (type = APP::ToleranceType::tolerant) return RDB::ToleranceType::tolerant;
-	};
-	return null;
 }
 
 /**
