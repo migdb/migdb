@@ -895,8 +895,13 @@ query RDB::ops::UpdateRows::isValid(structure : RDB::Structure, inout errorLog :
 									errorLog, 
 									operationIndex, 
 									getEvolutionRdbTransformationId());
+	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
+														self.whereCondition,
+														errorLog, 
+														operationIndex, 
+														getEvolutionRdbTransformationId());								
 	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
-			existTargetColumn and isSameType;
+			existTargetColumn and isSameType and isValidCondition;
 }
 
 helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
@@ -980,7 +985,12 @@ query RDB::ops::DeleteRows::isValid(structure : RDB::Structure, inout errorLog :
 										errorLog, 
 										operationIndex, 
 										getEvolutionRdbTransformationId());
-	return existSchema and existTable;
+	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
+											self.whereCondition, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());											
+	return existSchema and existTable and isValidCondition;
 }
 
 helper RDB::ops::DeleteRows::apply(inout structure : RDB::Structure) {
@@ -1081,6 +1091,40 @@ query RDB::ops::HasNoInstances::isValid(structure : RDB::Structure, inout errorL
 }
 
 helper RDB::ops::HasNoInstances::apply(inout structure : RDB::Structure) {
+	//this is just data operation
+}
+
+query RDB::ops::NillRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName,
+												self.tableName,
+												self.columnName,
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var isValidSql : Boolean := checkIsValidWhereSqlPart(
+													self.whereCondition,
+													errorLog, 
+													operationIndex, 
+													getEvolutionRdbTransformationId());
+	return existSchema and existTable and existColumn and isValidSql;
+}
+
+helper RDB::ops::NillRows::apply(inout structure : RDB::Structure) {
 	//this is just data operation
 }
 
