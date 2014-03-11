@@ -243,6 +243,15 @@ helper _generateSequenceNumbers(_owningSchemaName : String, _tableName : String,
 	};
 }
 
+helper _nillRows(_owningSchemaName : String, _tableName : String, _columnName : String, _whereCondition : String) : RDB::ops::NillRows{
+ 	return object RDB::ops::NillRows{
+ 		owningSchemaName := _owningSchemaName;
+ 		tableName := _tableName;
+ 		columnName := _columnName;
+ 		whereCondition := _whereCondition;
+ 	} 
+}
+
 
 /********************************************
  *				BUILD MODEL			 	*
@@ -375,4 +384,4 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  		name := _name;
  		constrainedColumn := _constrainedColumn;
 	};
- }
+ } 

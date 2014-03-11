@@ -212,6 +212,13 @@ package rdb {
       attr String[1] targetColumnName;
       attr String[1] whereCondition;
     }
+    
+    class NillRows extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] tableName;
+      attr String[1] columnName;
+      attr String[1] whereCondition; 
+    }
 
     class InsertRows extends ModelOperation {
       attr String[1] owningSchemaName;
