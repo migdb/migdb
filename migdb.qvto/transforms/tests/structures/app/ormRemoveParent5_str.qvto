@@ -1,0 +1,27 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation ormRemoveParent4_str(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(),
+											 app::PrimitiveType::int);
+	var typeCls : StandardClass := _class(
+										"Type",
+										_idProperty("idType",int));										 
+	var distributedProperty : MultipliableProperty := _associationProperty(
+																		"age", 
+																		typeCls,
+																		0,
+																		-1,
+																		true,
+																		true);
+	var parentCls : StandardClass := _class(
+										"Parent", 
+										_idProperty("idParent", int), 
+										OrderedSet{distributedProperty});
+	var childCls : StandardClass := _class("Tab", parentCls, OrderedSet{});
+	_appStructure(OrderedSet{int, parentCls, childCls});
+}

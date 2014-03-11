@@ -428,4 +428,45 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "addParent UX, ord assoc M x N"
 	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - simple remove Parency FK"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011b_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - simple remove Parency FK"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011c_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - distributed collection"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011d_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - distributed association M x 1"
+	}
+	
 }

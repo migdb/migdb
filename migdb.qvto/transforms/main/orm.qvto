@@ -216,10 +216,10 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 	
 	if(self.upperBound = 1)then{
 			operations+=_addColumn(
-						getDefaultSchemaName(), 
-						stcls.name.translate(),
-						self.name.translate(), 
-						collumnType);
+								getDefaultSchemaName(), 
+								stcls.name.translate(),
+								self.name.translate(), 
+								collumnType);
 		return operations;	
 	}else{
 		if(self.upperBound > 1 or self.upperBound = -1)then{
@@ -261,11 +261,11 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 				var columnNames : OrderedSet(String) := OrderedSet{
 															idOwningTableName, 
 															collectionCollumnName};
-					operations += _addUnique(
-											getDefaultSchemaName(),
-											collectionTableName,
-											columnNames,
-											getUXName(stcls.name, self.name));	
+				operations += _addUnique(
+										getDefaultSchemaName(),
+										collectionTableName,
+										columnNames,
+										getUXName(stcls.name, self.name));	
 			}endif;
 			return operations;
 		}else{
@@ -986,36 +986,45 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 /**
  * REMOVE PARENT
  * Delete connection between child and parent class. 
- * After performing this operation is CHILD class a ROOT.
+ * After performing this operation is CHILD class a ROOT. 
+ * This operation should be inversion of addParent - so it addsColumns from parentClass to child 
+ *	and moves data
  */
 helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB::ops::ModelOperation){
 	var childClass : StandardClass := appStructure.findStandardClass(self.className);
 	var parentClass : StandardClass := childClass.parent;
-//	var mappedSet : OrderedSet(StandardClass) := childClass.getMappedClassSet();
 	var operations : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{};
-	// CREATE just for JOIND inheritance type
-		
-	// Remove PK from all classes in new hierarchy
-	//mappedSet ->forEach(cls){
-		operations += _removeConstraint(getDefaultSchemaName(), parentClass.name.translate(), 
-			getDbPrimaryKeyName(parentClass.name));
-	//};
-	
-	// Remove instances from parent class - only instances which not belong to parent class
-	operations += null;
-	
-	// Rename ID column in all classes in new hierarchy
-	//mappedSet ->forEach(cls){
-//		operations += _removeColumn(getDefaultSchemaName(), targetNameColumn, 
-//			childClass.translateIdName());
-	//};
-	//mappedSet->forEach(cls){
-//		operations += _addColumn(getDefaultSchemaName(), targetNameColumn, );
-	
-	//};
-	//mappedSet->forEach(cls){
-//		operations += _addFK(getDefaultSchemaName(), targetNameColumn, );
-	//};
+
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := childClass.name.translate();
+	var parentTableName : String := parentClass.name.translate();
+	var idChildTableName : String := getDbIdColumnName(childTableName);
+	var idParentTableName : String := getDbIdColumnName(parentTableName);
+	parentClass.properties->excluding(parentClass.idProperty)->forEach(parentProp){
+			operations := ormDistributeProperty(
+											appStructure,
+											parentProp,
+											childClass.name,
+											operations);
+	};	
+	//remove parency FK
+	operations += _removeConstraint(
+								defaultSchemaName,
+								childTableName,
+								getParentFkName(childClass.name));
+	var idEqualityCondition : String := parentTableName + "." + idParentTableName + " = " +
+											childTableName + "." + idChildTableName;
+	//remove rows from parent
+	operations += _deleteRows(
+							defaultSchemaName,
+							parentTableName,
+							idEqualityCondition);							
+	//add PK
+	operations += _addPrimaryKey(
+								defaultSchemaName,
+								childTableName,
+								idChildTableName,
+								getDbPrimaryKeyName(childTableName));
 	return operations;
 }
 
@@ -1118,6 +1127,180 @@ helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, target
 		ops += _removeTable(
 							defaultSchemaName,
 							sourceCollectionTableName);					
+	}endif;
+	return ops;
+}
+
+/**
+	The inversion of ormMergeProperty. 
+*/
+helper ormDistributeProperty(appStructure : APP::Structure, distributedProperty : Property, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	if(distributedProperty.oclIsTypeOf(PrimitiveProperty))then{
+		var distributedPrimProp : PrimitiveProperty := distributedProperty.
+																	oclAsType(PrimitiveProperty);
+		return distributedPrimProp.ormDistributeProperty(appStructure, targetClassName, operations);
+	}endif;
+	if(distributedProperty.oclIsTypeOf(AssociationProperty))then{
+		var distributedAssocProp : AssociationProperty := distributedProperty.
+																	oclAsType(AssociationProperty);
+		return distributedAssocProp.
+							ormDistributeProperty(appStructure, targetClassName, operations);
+	}endif;
+	log("Unsupported export of property " + distributedProperty.repr());
+	assert(false);
+	return OrderedSet{};
+}
+
+helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var sourceClassName : String := self.owningGeneralClass.name;
+	var sourceTableName : String := sourceClassName.translate();
+	var targetTableName : String := targetClassName.translate();
+	var idSourceName : String := getDbIdColumnName(sourceTableName);
+	var idTargetName : String := getDbIdColumnName(targetTableName);
+	var distributedColumnName : String := self.name.translate();
+	var dataColumnType : RDB::PrimitiveType := toRdbType(self.type.primitiveType);
+	var appIdType : APP::PrimitiveType := appStructure.findDefaultIdType().primitiveType;
+	var idColumnType : RDB::PrimitiveType := toRdbType(appIdType);
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var idEqualCondition : String := sourceTableName + "." + idSourceName + " = " + 
+											targetTableName + "." + idTargetName;
+	var idComplementCondition : String :=  sourceTableName + "." + idSourceName + " NOT in " + 
+												targetTableName + "." + idTargetName;										
+	
+	if(self.upperBound = 1)then{
+		ops += _addColumn(
+						defaultSchemaName,
+						targetTableName,
+						distributedColumnName,
+						dataColumnType);
+		//update targetColumn
+		ops += _updateRows(
+						defaultSchemaName,
+						sourceTableName,
+						distributedColumnName,
+						targetTableName,
+						distributedColumnName,
+						idEqualCondition);
+		//nill adequate sourceInstances
+		ops += _nillRows(
+						defaultSchemaName,
+						sourceTableName,
+						distributedColumnName,
+						idComplementCondition);
+	//distribute collection					
+	}else{
+		var oldCollectionTableName : String := getCollectionTableName(
+																	distributedColumnName,
+																	sourceClassName);
+		var newCollectionTableName : String := getCollectionTableName(
+																	distributedColumnName,
+																	targetClassName);
+		ops += _addTable(
+						defaultSchemaName,
+						newCollectionTableName);
+		ops += _addColumn(
+						defaultSchemaName,
+						newCollectionTableName,
+						idTargetName,
+						idColumnType);
+		ops += _addColumn(
+						defaultSchemaName,
+						newCollectionTableName,
+						distributedColumnName,
+						dataColumnType);
+		var sourceColumnNames : OrderedSet(String) := OrderedSet{
+																idSourceName,
+																distributedColumnName};
+		var targetColumnNames : OrderedSet(String) := OrderedSet{
+																idTargetName,
+																distributedColumnName};
+		ops += _insertRows(
+						defaultSchemaName,
+						oldCollectionTableName,
+						sourceColumnNames,
+						newCollectionTableName,
+						targetColumnNames,
+						idEqualCondition);
+		ops += _deleteRows(
+						defaultSchemaName,
+						oldCollectionTableName,
+						idComplementCondition);
+		ops := processAddOrdering(
+							ops, 
+							newCollectionTableName, 
+							idTargetName, 
+							distributedColumnName);
+		var uxColumnNames : OrderedSet(String) := OrderedSet{
+															idTargetName, 
+															distributedColumnName};
+		ops += _addUnique(
+						getDefaultSchemaName(),
+						newCollectionTableName,
+						uxColumnNames,
+						getUXName(targetClassName, self.name));	
+		 
+	}endif;
+	return ops;
+}
+
+helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure, targetClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
+	var typeClassName : String := self.type.name;
+	var sourceClassName : String := self.owningGeneralClass.name;
+	var typeTableName : String := typeClassName.translate();
+	var sourceTableName : String := sourceClassName.translate();
+	var targetTableName : String := targetClassName.translate();
+	var idSourceName : String := getDbIdColumnName(sourceTableName);
+	var idTargetName : String := getDbIdColumnName(targetTableName);
+	var distributedColumnName : String := self.name.translate();
+	var idType : RDB::PrimitiveType := toRdbType(appStructure.findDefaultIdType().primitiveType);
+	var idEqualCondition : String := sourceTableName + "." + idSourceName + " = " + 
+											targetTableName + "." + idTargetName;
+	var idComplementCondition : String :=  sourceTableName + "." + idSourceName + " NOT in " + 
+												targetTableName + "." + idTargetName;										
+	//distributing simple association
+	if(self.upperBound = 1)then{
+		var fkName : String :=  getFkRefencingOppositeName(
+														self.name,
+														targetClassName,
+														typeClassName);
+		//add distribColum ref to childClass
+		ops += _addColumn(
+						defaultSchemaName,
+						targetTableName,
+						distributedColumnName,
+						idType);
+		//update child distribColumn
+		ops += _updateRows(
+						defaultSchemaName,
+						sourceTableName,
+						distributedColumnName,
+						targetTableName,
+						distributedColumnName,
+						idEqualCondition);
+		//addition foreign key to child
+		ops += _addForeignKey(
+							defaultSchemaName,
+							targetTableName,
+							distributedColumnName,
+							fkName,
+							typeTableName);
+		ops += _nillRows(
+						defaultSchemaName,
+						sourceTableName,
+						distributedColumnName,
+						idComplementCondition);
+	//distribute association M x N	
+	}else{
+		var sourceCollectionTableName : String := getCollectionTableName(
+																		self.name, 
+																		sourceClassName);
+		var targetCollectionTableName : String := getCollectionTableName(
+																		self.name, 
+																		targetClassName);
+		
 	}endif;
 	return ops;
 }

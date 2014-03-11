@@ -1,0 +1,71 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation removeParent4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "tab";
+	var parentTableName : String := "parent";
+	var idChildTableName : String := "id_tab";
+	var idParentTableName : String := "id_parent";
+	var parencyFkName : String := "par_" + childTableName;
+	var equalityCondition : String := parentTableName + "." + idParentTableName + " = " + 
+											childTableName + "." + idChildTableName;
+	var complementCondition : String := parentTableName + "." + idParentTableName + " NOT in " + 
+											childTableName + "." + idChildTableName; 										
+	var pkChildName : String := "pk_" + childTableName;
+	var distributedColumnName : String := "age";
+	var distributedColumnType : RDB::PrimitiveType := RDB::PrimitiveType::int;
+	var idType : RDB::PrimitiveType := RDB::PrimitiveType::int;
+	var typeTableName : String := "type";
+	var fkChildTypeName : String := "fk_" + childTableName + "_" + distributedColumnName;
+	
+	var addChildColumn : RDB::ops::ModelOperation := _addColumn(
+															publicSchemaName,
+															childTableName,
+															distributedColumnName,
+															distributedColumnType);
+	var updateChildRows : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																parentTableName,
+																distributedColumnName,
+																childTableName,
+																distributedColumnName,
+																equalityCondition);
+	var addFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															childTableName,
+															distributedColumnName,
+															fkChildTypeName,
+															typeTableName);
+	var cleanParentInstances : RDB::ops::ModelOperation := _nillRows(
+																	publicSchemaName,
+																	parentTableName,
+																	distributedColumnName,
+																	complementCondition);														
+	var removeParencyFk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																childTableName,
+																parencyFkName);
+	var cleanParentTable : RDB::ops::ModelOperation := _deleteRows(
+																publicSchemaName,
+																parentTableName,
+																equalityCondition);
+	var addPkChild : RDB::ops::ModelOperation := _addPrimaryKey(
+															publicSchemaName,
+															childTableName,
+															idChildTableName,
+															pkChildName);															
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															addChildColumn,
+															updateChildRows,
+															addFkType,
+															cleanParentInstances,
+															removeParencyFk, 
+															cleanParentTable, 
+															addPkChild};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}
