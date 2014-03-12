@@ -1,9 +1,7 @@
 package migdb.dsl.ide.launch;
 
-import java.util.List;
-
 import migdb.dsl.ide.Activator;
-import migdb.dsl.ide.runtime.MigDbLauncher;
+import migdb.run.MigDbLauncher;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -12,7 +10,6 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -34,7 +31,7 @@ import org.eclipse.ui.IEditorPart;
 
 public class OpsLaunchShortcut implements ILaunchShortcut {
 
-	public static final String BUNDLE_ID = "migdb.dsl.ide.launch";
+	public static final String BUNDLE_ID = "migdb.run";
 
 	// Launches a file from selection.
 	@Override
@@ -106,7 +103,7 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 		 IJavaProject project = JavaCore.create(resource.getProject());
 		if (!isOnClasspath(MigDbLauncher.class.getName(), project)) {
 			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					"Please put bundle '" + Activator.PLUGIN_ID
+					"Please put bundle '" + BUNDLE_ID
 							+ "' on your project's classpath."));
 		}
 	}
