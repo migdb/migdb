@@ -469,4 +469,14 @@ TestWorkflow{
 		testDescription = "removeParent - distributed association M x 1"
 	}
 	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011e_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - distributed association M x N"
+	}
+	
 }
