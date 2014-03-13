@@ -26,11 +26,10 @@ import mm.rdb.ops.impl.RenameTableImpl
 import mm.rdb.ops.impl.SetDefaultValueImpl
 import org.eclipse.emf.ecore.EObject
 import mm.rdb.ops.impl.SetColumnTypeImpl
-import mm.rdb.ops.impl.UpdateRowImpl
 import mm.rdb.ops.impl.InsertRowsImpl
-import mm.rdb.ops.impl.InsertRowImpl
 import mm.rdb.ops.impl.DeleteRowsImpl
 import java.io.PrintWriter
+import mm.rdb.ops.impl.UpdateRowsImpl
 
 
 
@@ -141,14 +140,8 @@ class Generator extends BaseCodeGenerator {
 
 	/**
 	 * CREATE NOT NULL
-	 * To add a constraint, the table constraint syntax is used. For example:
- 	 * >> ALTER TABLE products ADD CONSTRAINT some_name  NOT NULL (product_group_id); <<
- 	 * To add a not-null constraint, which cannot be written as a table constraint, use this syntax:
- 	 * >> ALTER TABLE products ALTER COLUMN product_no SET NOT NULL; <<
- 	 * I choose version without wtiting as table constraint because NotNullConstraint is descendant of ColumnConstraint
-	 * If we want to create not null constraint, we must create column first.
-	 * Then we add not null constraint.
-	 * @param AddNotNullConstraintImpl op : op of type AddNotNullConstraintImpl
+	 * >> ALTER TABLE products ALTER COLUMN product_no SET NOT NULL; <<
+ 	 * @param AddNotNullConstraintImpl op : op of type AddNotNullConstraintImpl
 	 */
 	def dispatch genOperation(AddNotNullImpl op) '''
 		ALTER TABLE «op.owningSchemaName».«op.owningTableName»
@@ -398,46 +391,26 @@ class Generator extends BaseCodeGenerator {
     /**
      * HAS NO OWN INSTANCES
      * This operation check if table has some own rows.
-     * This SQL check ownership between instances and tables. Table can have
-     * a lot of rows ale nemuseji tabulce patrit hierarchicky.
+     * This operation is more specific than HasNoInstances, it checks inexistance
+     * of instances satisfying where condition (constructed in ORM).
      * @param CheckInstances op : op of type CheckInstances
      * @return boolean : t - no instances; f - some instances 
      */ 
     def dispatch genOperation(HasNoOwnInstancesImpl op)'''
     		SELECT COUNT(1) > 0 
-    			FROM «op.owningSchemaName».«op.tableName» AS parent
-    			«FOR tab : op.descendantsNames» LEFT JOIN «tab» ON «tab».«op.idName» = parent.«op.idName»«ENDFOR»
-    			WHERE «FOR tab : op.descendantsNames SEPARATOR "AND"»«tab».«op.idName» IS null «ENDFOR»    	
+    			FROM «op.owningSchemaName».«op.tableName» WHERE «op.whereCondition»;
     '''    
     
 	/**
-	 * UPDATE ROW
+	 * UPDATE ROWS
 	 * This operation copy data from one column to another.
 	 * That means update of one column in target table. 
  	 * Target and source column can be in the same table.
- 	 * ToleranceType:
- 	 * strict -> Can not transfer data if a tables have different number of instances (rows).
- 	 * tolerant -> Can transfer data if source table has less number of instances (rows).
- 	 * force -> Delete rows if there is more instancef in source table. If source table has less number
- 	 * of instances add default value or null.
-	 * @param UpdateRowsImpl op : op of type UpdateRowImpl
+ 	 * @param UpdateRowsImpl op : op of type UpdateRowImpl
 	 */
-	def dispatch genOperation(UpdateRowImpl op){
-		if(op.tolerance.toString().equals("strict")){
-			write(this.isSameTableSize(op.owningSchemaName, op.sourceTableName, op.targetTableName));
+	def dispatch genOperation(UpdateRowsImpl op){
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
-		}
-		if(op.tolerance.toString().equals("force")){
-			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
-		}
-		if(op.tolerance.toString().equals("tolerant")){
-			write(this.targetTableHasMoreRows(op.owningSchemaName, op.sourceTableName, op.targetTableName));
-			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.WHERE_CONDITION» );''';
-		}		
-		return "";
+							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.whereCondition» );''';
 	}
 	
 		
@@ -446,7 +419,7 @@ class Generator extends BaseCodeGenerator {
 	 * INSERT ROWS
 	 * This operation copy data from source columns to target columns.
 	 * That means insert rows from source table to target table. 
- 	 * Target and source columns must have same name and data type.
+ 	 * Target and source columns must have same data type.
  	 * Target table must not have instances.
 	 * @param InsertRowsImpl op : op of type InsertRowsImpl
 	 */
@@ -456,29 +429,13 @@ class Generator extends BaseCodeGenerator {
 	'''
 	
 	/**
-	 * INSERT ROW
-	 * This operation copy data from source column to target column.
-	 * That means insert row from source table to target table. 
- 	 * Target and source column must have same name and data type.
- 	 * Target table must not have instances.
-	 * @param InsertRowImpl op : op of type InsertRowImpl
-	 */
-	def dispatch genOperation(InsertRowImpl op)'''
-		INSERT INTO «op.owningSchemaName».«op.targetTableName» («op.targetColumnName»)
-			SELECT «op.sourceColumnName» FROM «op.sourceTableName»;
-	'''	
-	
-	/**
 	 * DELETE ROWS
 	 * This operation detele row from table
 	 * Delete rows which not belong to table 
 	 * @param DeleteRowsImpl op : op of type DeleteRowsImpl
 	 */
 	def dispatch genOperation(DeleteRowsImpl op)'''
-		DELETE FROM «op.owningSchemaName».«op.tableName» WHERE «op.idName» IN
-			(SELECT «op.tableName».«op.idName» FROM «op.owningSchemaName».«op.tableName»
-			«FOR tab : op.descendantsNames» LEFT JOIN «tab» ON «tab».«op.idName» = parent.«op.idName»«ENDFOR»
-			WHERE «FOR tab : op.descendantsNames SEPARATOR "AND"»«tab».«op.idName» IS null «ENDFOR»);
+		DELETE FROM «op.owningSchemaName».«op.tableName» WHERE «op.whereCondition»;
 	'''	
 	
 	/** 		 QUERRIES	 		**/

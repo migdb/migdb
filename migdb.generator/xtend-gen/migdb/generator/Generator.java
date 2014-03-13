@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import mm.rdb.PrimitiveType;
-import mm.rdb.ToleranceType;
 import mm.rdb.ops.impl.AddColumnImpl;
 import mm.rdb.ops.impl.AddForeignKeyImpl;
 import mm.rdb.ops.impl.AddIndexImpl;
@@ -20,7 +19,6 @@ import mm.rdb.ops.impl.DeleteRowsImpl;
 import mm.rdb.ops.impl.GenerateSequenceNumbersImpl;
 import mm.rdb.ops.impl.HasNoInstancesImpl;
 import mm.rdb.ops.impl.HasNoOwnInstancesImpl;
-import mm.rdb.ops.impl.InsertRowImpl;
 import mm.rdb.ops.impl.InsertRowsImpl;
 import mm.rdb.ops.impl.ModelOperationImpl;
 import mm.rdb.ops.impl.RemoveColumnImpl;
@@ -33,7 +31,7 @@ import mm.rdb.ops.impl.RenameColumnImpl;
 import mm.rdb.ops.impl.RenameTableImpl;
 import mm.rdb.ops.impl.SetColumnTypeImpl;
 import mm.rdb.ops.impl.SetDefaultValueImpl;
-import mm.rdb.ops.impl.UpdateRowImpl;
+import mm.rdb.ops.impl.UpdateRowsImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
@@ -164,13 +162,7 @@ public class Generator extends BaseCodeGenerator {
   
   /**
    * CREATE NOT NULL
-   * To add a constraint, the table constraint syntax is used. For example:
-   * >> ALTER TABLE products ADD CONSTRAINT some_name  NOT NULL (product_group_id); <<
-   * To add a not-null constraint, which cannot be written as a table constraint, use this syntax:
    * >> ALTER TABLE products ALTER COLUMN product_no SET NOT NULL; <<
-   * I choose version without wtiting as table constraint because NotNullConstraint is descendant of ColumnConstraint
-   * If we want to create not null constraint, we must create column first.
-   * Then we add not null constraint.
    * @param AddNotNullConstraintImpl op : op of type AddNotNullConstraintImpl
    */
   protected CharSequence _genOperation(final AddNotNullImpl op) {
@@ -791,8 +783,8 @@ public class Generator extends BaseCodeGenerator {
   /**
    * HAS NO OWN INSTANCES
    * This operation check if table has some own rows.
-   * This SQL check ownership between instances and tables. Table can have
-   * a lot of rows ale nemuseji tabulce patrit hierarchicky.
+   * This operation is more specific than HasNoInstances, it checks inexistance
+   * of instances satisfying where condition (constructed in ORM).
    * @param CheckInstances op : op of type CheckInstances
    * @return boolean : t - no instances; f - some instances
    */
@@ -807,179 +799,56 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(".");
     String _tableName = op.getTableName();
     _builder.append(_tableName, "	");
-    _builder.append(" AS parent");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    {
-      EList<String> _descendantsNames = op.getDescendantsNames();
-      for(final String tab : _descendantsNames) {
-        _builder.append(" LEFT JOIN ");
-        _builder.append(tab, "	");
-        _builder.append(" ON ");
-        _builder.append(tab, "	");
-        _builder.append(".");
-        String _idName = op.getIdName();
-        _builder.append(_idName, "	");
-        _builder.append(" = parent.");
-        String _idName_1 = op.getIdName();
-        _builder.append(_idName_1, "	");
-      }
-    }
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("WHERE ");
-    {
-      EList<String> _descendantsNames_1 = op.getDescendantsNames();
-      boolean _hasElements = false;
-      for(final String tab_1 : _descendantsNames_1) {
-        if (!_hasElements) {
-          _hasElements = true;
-        } else {
-          _builder.appendImmediate("AND", "	");
-        }
-        _builder.append(tab_1, "	");
-        _builder.append(".");
-        String _idName_2 = op.getIdName();
-        _builder.append(_idName_2, "	");
-        _builder.append(" IS null ");
-      }
-    }
-    _builder.append("    \t");
+    _builder.append(" WHERE ");
+    String _whereCondition = op.getWhereCondition();
+    _builder.append(_whereCondition, "	");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
   
   /**
-   * UPDATE ROW
+   * UPDATE ROWS
    * This operation copy data from one column to another.
    * That means update of one column in target table.
    * Target and source column can be in the same table.
-   * ToleranceType:
-   * strict -> Can not transfer data if a tables have different number of instances (rows).
-   * tolerant -> Can transfer data if source table has less number of instances (rows).
-   * force -> Delete rows if there is more instancef in source table. If source table has less number
-   * of instances add default value or null.
    * @param UpdateRowsImpl op : op of type UpdateRowImpl
    */
-  protected CharSequence _genOperation(final UpdateRowImpl op) {
-      ToleranceType _lerance = op.getTolerance();
-      String _string = _lerance.toString();
-      boolean _equals = _string.equals("strict");
-      if (_equals) {
-        {
-          String _owningSchemaName = op.getOwningSchemaName();
-          String _sourceTableName = op.getSourceTableName();
-          String _targetTableName = op.getTargetTableName();
-          CharSequence _isSameTableSize = this.isSameTableSize(_owningSchemaName, _sourceTableName, _targetTableName);
-          this.write(_isSameTableSize);
-          StringConcatenation _builder = new StringConcatenation();
-          _builder.append("UPDATE ");
-          String _owningSchemaName_1 = op.getOwningSchemaName();
-          _builder.append(_owningSchemaName_1, "");
-          _builder.append(".");
-          String _targetTableName_1 = op.getTargetTableName();
-          _builder.append(_targetTableName_1, "");
-          _builder.append(" SET ");
-          String _targetColumnName = op.getTargetColumnName();
-          _builder.append(_targetColumnName, "");
-          _builder.append(" = ");
-          _builder.newLineIfNotEmpty();
-          _builder.append("\t\t\t\t\t\t\t");
-          _builder.append("(SELECT ");
-          String _sourceColumnName = op.getSourceColumnName();
-          _builder.append(_sourceColumnName, "							");
-          _builder.append(" FROM ");
-          String _owningSchemaName_2 = op.getOwningSchemaName();
-          _builder.append(_owningSchemaName_2, "							");
-          _builder.append(".");
-          String _sourceTableName_1 = op.getSourceTableName();
-          _builder.append(_sourceTableName_1, "							");
-          _builder.append(" WHERE ");
-          String _wHERE_CONDITION = op.getWHERE_CONDITION();
-          _builder.append(_wHERE_CONDITION, "							");
-          _builder.append(" );");
-          return _builder;
-        }
-      }
-      ToleranceType _lerance_1 = op.getTolerance();
-      String _string_1 = _lerance_1.toString();
-      boolean _equals_1 = _string_1.equals("force");
-      if (_equals_1) {
-        StringConcatenation _builder_1 = new StringConcatenation();
-        _builder_1.append("UPDATE ");
-        String _owningSchemaName_3 = op.getOwningSchemaName();
-        _builder_1.append(_owningSchemaName_3, "");
-        _builder_1.append(".");
-        String _targetTableName_2 = op.getTargetTableName();
-        _builder_1.append(_targetTableName_2, "");
-        _builder_1.append(" SET ");
-        String _targetColumnName_1 = op.getTargetColumnName();
-        _builder_1.append(_targetColumnName_1, "");
-        _builder_1.append(" = ");
-        _builder_1.newLineIfNotEmpty();
-        _builder_1.append("\t\t\t\t\t\t\t");
-        _builder_1.append("(SELECT ");
-        String _sourceColumnName_1 = op.getSourceColumnName();
-        _builder_1.append(_sourceColumnName_1, "							");
-        _builder_1.append(" FROM ");
-        String _owningSchemaName_4 = op.getOwningSchemaName();
-        _builder_1.append(_owningSchemaName_4, "							");
-        _builder_1.append(".");
-        String _sourceTableName_2 = op.getSourceTableName();
-        _builder_1.append(_sourceTableName_2, "							");
-        _builder_1.append(" WHERE ");
-        String _wHERE_CONDITION_1 = op.getWHERE_CONDITION();
-        _builder_1.append(_wHERE_CONDITION_1, "							");
-        _builder_1.append(" );");
-        return _builder_1;
-      }
-      ToleranceType _lerance_2 = op.getTolerance();
-      String _string_2 = _lerance_2.toString();
-      boolean _equals_2 = _string_2.equals("tolerant");
-      if (_equals_2) {
-        {
-          String _owningSchemaName_5 = op.getOwningSchemaName();
-          String _sourceTableName_3 = op.getSourceTableName();
-          String _targetTableName_3 = op.getTargetTableName();
-          CharSequence _targetTableHasMoreRows = this.targetTableHasMoreRows(_owningSchemaName_5, _sourceTableName_3, _targetTableName_3);
-          this.write(_targetTableHasMoreRows);
-          StringConcatenation _builder_2 = new StringConcatenation();
-          _builder_2.append("UPDATE ");
-          String _owningSchemaName_6 = op.getOwningSchemaName();
-          _builder_2.append(_owningSchemaName_6, "");
-          _builder_2.append(".");
-          String _targetTableName_4 = op.getTargetTableName();
-          _builder_2.append(_targetTableName_4, "");
-          _builder_2.append(" SET ");
-          String _targetColumnName_2 = op.getTargetColumnName();
-          _builder_2.append(_targetColumnName_2, "");
-          _builder_2.append(" = ");
-          _builder_2.newLineIfNotEmpty();
-          _builder_2.append("\t\t\t\t\t\t\t");
-          _builder_2.append("(SELECT ");
-          String _sourceColumnName_2 = op.getSourceColumnName();
-          _builder_2.append(_sourceColumnName_2, "							");
-          _builder_2.append(" FROM ");
-          String _owningSchemaName_7 = op.getOwningSchemaName();
-          _builder_2.append(_owningSchemaName_7, "							");
-          _builder_2.append(".");
-          String _sourceTableName_4 = op.getSourceTableName();
-          _builder_2.append(_sourceTableName_4, "							");
-          _builder_2.append(" WHERE ");
-          String _wHERE_CONDITION_2 = op.getWHERE_CONDITION();
-          _builder_2.append(_wHERE_CONDITION_2, "							");
-          _builder_2.append(" );");
-          return _builder_2;
-        }
-      }
-      return "";
+  protected CharSequence _genOperation(final UpdateRowsImpl op) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("UPDATE ");
+    String _owningSchemaName = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _targetTableName = op.getTargetTableName();
+    _builder.append(_targetTableName, "");
+    _builder.append(" SET ");
+    String _targetColumnName = op.getTargetColumnName();
+    _builder.append(_targetColumnName, "");
+    _builder.append(" = ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("(SELECT ");
+    String _sourceColumnName = op.getSourceColumnName();
+    _builder.append(_sourceColumnName, "							");
+    _builder.append(" FROM ");
+    String _owningSchemaName_1 = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName_1, "							");
+    _builder.append(".");
+    String _sourceTableName = op.getSourceTableName();
+    _builder.append(_sourceTableName, "							");
+    _builder.append(" WHERE ");
+    String _whereCondition = op.getWhereCondition();
+    _builder.append(_whereCondition, "							");
+    _builder.append(" );");
+    return _builder;
   }
   
   /**
    * INSERT ROWS
    * This operation copy data from source columns to target columns.
    * That means insert rows from source table to target table.
-   * Target and source columns must have same name and data type.
+   * Target and source columns must have same data type.
    * Target table must not have instances.
    * @param InsertRowsImpl op : op of type InsertRowsImpl
    */
@@ -1029,39 +898,6 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
-   * INSERT ROW
-   * This operation copy data from source column to target column.
-   * That means insert row from source table to target table.
-   * Target and source column must have same name and data type.
-   * Target table must not have instances.
-   * @param InsertRowImpl op : op of type InsertRowImpl
-   */
-  protected CharSequence _genOperation(final InsertRowImpl op) {
-    StringConcatenation _builder = new StringConcatenation();
-    _builder.append("INSERT INTO ");
-    String _owningSchemaName = op.getOwningSchemaName();
-    _builder.append(_owningSchemaName, "");
-    _builder.append(".");
-    String _targetTableName = op.getTargetTableName();
-    _builder.append(_targetTableName, "");
-    _builder.append(" (");
-    String _targetColumnName = op.getTargetColumnName();
-    _builder.append(_targetColumnName, "");
-    _builder.append(")");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("SELECT ");
-    String _sourceColumnName = op.getSourceColumnName();
-    _builder.append(_sourceColumnName, "	");
-    _builder.append(" FROM ");
-    String _sourceTableName = op.getSourceTableName();
-    _builder.append(_sourceTableName, "	");
-    _builder.append(";");
-    _builder.newLineIfNotEmpty();
-    return _builder;
-  }
-  
-  /**
    * DELETE ROWS
    * This operation detele row from table
    * Delete rows which not belong to table
@@ -1076,60 +912,9 @@ public class Generator extends BaseCodeGenerator {
     String _tableName = op.getTableName();
     _builder.append(_tableName, "");
     _builder.append(" WHERE ");
-    String _idName = op.getIdName();
-    _builder.append(_idName, "");
-    _builder.append(" IN");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("(SELECT ");
-    String _tableName_1 = op.getTableName();
-    _builder.append(_tableName_1, "	");
-    _builder.append(".");
-    String _idName_1 = op.getIdName();
-    _builder.append(_idName_1, "	");
-    _builder.append(" FROM ");
-    String _owningSchemaName_1 = op.getOwningSchemaName();
-    _builder.append(_owningSchemaName_1, "	");
-    _builder.append(".");
-    String _tableName_2 = op.getTableName();
-    _builder.append(_tableName_2, "	");
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    {
-      EList<String> _descendantsNames = op.getDescendantsNames();
-      for(final String tab : _descendantsNames) {
-        _builder.append(" LEFT JOIN ");
-        _builder.append(tab, "	");
-        _builder.append(" ON ");
-        _builder.append(tab, "	");
-        _builder.append(".");
-        String _idName_2 = op.getIdName();
-        _builder.append(_idName_2, "	");
-        _builder.append(" = parent.");
-        String _idName_3 = op.getIdName();
-        _builder.append(_idName_3, "	");
-      }
-    }
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
-    _builder.append("WHERE ");
-    {
-      EList<String> _descendantsNames_1 = op.getDescendantsNames();
-      boolean _hasElements = false;
-      for(final String tab_1 : _descendantsNames_1) {
-        if (!_hasElements) {
-          _hasElements = true;
-        } else {
-          _builder.appendImmediate("AND", "	");
-        }
-        _builder.append(tab_1, "	");
-        _builder.append(".");
-        String _idName_4 = op.getIdName();
-        _builder.append(_idName_4, "	");
-        _builder.append(" IS null ");
-      }
-    }
-    _builder.append(");");
+    String _whereCondition = op.getWhereCondition();
+    _builder.append(_whereCondition, "");
+    _builder.append(";");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -1442,8 +1227,6 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((HasNoInstancesImpl)op);
     } else if (op instanceof HasNoOwnInstancesImpl) {
       return _genOperation((HasNoOwnInstancesImpl)op);
-    } else if (op instanceof InsertRowImpl) {
-      return _genOperation((InsertRowImpl)op);
     } else if (op instanceof InsertRowsImpl) {
       return _genOperation((InsertRowsImpl)op);
     } else if (op instanceof RemoveColumnImpl) {
@@ -1466,8 +1249,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((SetColumnTypeImpl)op);
     } else if (op instanceof SetDefaultValueImpl) {
       return _genOperation((SetDefaultValueImpl)op);
-    } else if (op instanceof UpdateRowImpl) {
-      return _genOperation((UpdateRowImpl)op);
+    } else if (op instanceof UpdateRowsImpl) {
+      return _genOperation((UpdateRowsImpl)op);
     } else {
       throw new IllegalArgumentException("Unhandled parameter types: " +
         Arrays.<Object>asList(op).toString());
