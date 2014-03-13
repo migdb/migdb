@@ -6,33 +6,23 @@
 #read configuration file
 . ~/migdb_config.cfg
 
-#conditional exporting mm.app
-diff -q $D_MIGDB/plugins/migdb.mm.app_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.app_1.0.0.jar
-if [ $? -ne 0 ]
-  then 
-	echo exporting mm app
-	cp $D_ECLIPSE/dropins/migdb.mm.app_1.0.0.jar $D_MIGDB/plugins
-  else
-     echo mm app is actual
-fi
+#exports plugins of actual version from ECLIPSE, importing plugin FROM ECLIPSE INTO REPOSITORY
+exportPlugin() {
+  diff -q "$D_MIGDB/plugins/$1" "$D_ECLIPSE/dropins/$1"
+  if [ $? -ne 0 ]
+    then 
+      echo "exporting $1"
+      cp "$D_ECLIPSE/dropins/$1" "$D_MIGDB/plugins"
+    else
+      echo "$1 is actual"
+  fi
+}
 
-#conditional exporting mm.rdb
-diff -q $D_MIGDB/plugins/migdb.mm.rdb_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.rdb_1.0.0.jar 
-if [ $? -ne 0 ]
-  then 
-	echo exporting mm rdb
-	cp $D_ECLIPSE/dropins/migdb.mm.rdb_1.0.0.jar $D_MIGDB/plugins 
-  else
-     echo mm rdb is actual
-fi
-
-#conditional exporting mm.errors
-diff -q $D_MIGDB/plugins/migdb.mm.errors_1.0.0.jar $D_ECLIPSE/dropins/migdb.mm.errors_1.0.0.jar 
-if [ $? -ne 0 ]
-  then 
-	echo exporting mm errors
-	cp $D_ECLIPSE/dropins/migdb.mm.errors_1.0.0.jar $D_MIGDB/plugins 
-  else
-     echo mm errors is actual
-fi
-
+exportPlugin migdb.dsl.ide_1.0.0.jar
+exportPlugin migdb.dsl.ops.ui_1.0.0.jar
+exportPlugin migdb.dsl.ops_1.0.0.jar
+exportPlugin migdb.generator_1.0.0.jar
+exportPlugin migdb.mm.app_1.0.0.jar
+exportPlugin migdb.mm.errors_1.0.0.jar
+exportPlugin migdb.mm.rdb_1.0.0.jar
+exportPlugin migdb.qvto_1.0.0.jar
