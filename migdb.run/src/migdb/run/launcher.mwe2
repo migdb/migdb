@@ -73,13 +73,6 @@ Workflow {
 		outputSlot = "strApp"
 	}
 
-/***** DATABASE STRUCTURE *****/
-	//Creates empty RDB Structure
-	component = QVTOExecutor2 { //uses derived version of QVTOExector
-		transformationFile= "${QVTO_DIR}/tests/structures/rdb/empty_structure.qvto"
-		outputSlot = "strRdb"
-	}
-
 /***** EXECUTER *****/	
 	//Executes QVTO transformation
 	component = QVTOExecutor2 { //uses derived version of QVTOExector
