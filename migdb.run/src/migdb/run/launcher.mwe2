@@ -83,8 +83,8 @@ Workflow {
 /***** EXECUTER *****/	
 	//Executes QVTO transformation
 	component = QVTOExecutor2 { //uses derived version of QVTOExector
-		inputSlot = "opsApp"
 		inputSlot = "strApp"
+		inputSlot = "opsApp"
 		outputSlot = "outStrApp"
 		outputSlot = "outStrRdb"
 		outputSlot = "opsRdb"

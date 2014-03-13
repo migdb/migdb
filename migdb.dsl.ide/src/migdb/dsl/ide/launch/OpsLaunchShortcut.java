@@ -10,6 +10,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -102,13 +103,15 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 			throws CoreException {
 		 IJavaProject project = JavaCore.create(resource.getProject());
 		if (!isOnClasspath(MigDbLauncher.class.getName(), project)) {
-			throw new CoreException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+			throw new DebugException(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
 					"Please put bundle '" + BUNDLE_ID
 							+ "' on your project's classpath."));
 		}
 	}
 
 	public boolean isOnClasspath(String fullyQualifiedName, IJavaProject project) {
+		if (fullyQualifiedName.indexOf('$') != -1)
+			fullyQualifiedName = fullyQualifiedName.replace('$', '.');
 		try {
 			IType type = project.findType(fullyQualifiedName);
 			return type != null && type.exists();

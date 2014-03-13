@@ -88,7 +88,7 @@ PullUpProperty returns ops::PullUpProperties:
 ;
 
 PushDownProperty returns ops::PushDownProperties:
-	'pushDown' parentClassName=ID
+	'pushDown' childClassName=ID
 	(
 		'.' pushedPropertiesNames+=ID
 		| '{' pushedPropertiesNames+=ID (',' pushedPropertiesNames+=ID)* '}'

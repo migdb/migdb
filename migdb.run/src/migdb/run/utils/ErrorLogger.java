@@ -6,6 +6,7 @@ import java.util.Iterator;
 import mm.errors.Error;
 import mm.errors.ErrorLog;
 
+import org.apache.log4j.Logger;
 import org.eclipse.emf.mwe.core.WorkflowContext;
 import org.eclipse.emf.mwe.core.issues.Issues;
 import org.eclipse.emf.mwe.core.lib.AbstractWorkflowComponent;
@@ -13,6 +14,7 @@ import org.eclipse.emf.mwe.core.monitor.ProgressMonitor;
 
 public class ErrorLogger extends AbstractWorkflowComponent {
 
+	private static final Logger LOG = Logger.getLogger(ErrorLogger.class);
 	private String inputSlot = null;
 
 	/**
@@ -37,11 +39,11 @@ public class ErrorLogger extends AbstractWorkflowComponent {
 		for (Error error : errorLog.getErrors()) {
 			if (!hasErrors)
 				hasErrors = true;
-			issues.addError(error.getMessage());
+			LOG.error(error.getMessage());
 		}
 
 		if (hasErrors)
-			throw new IllegalStateException("Input file contains errors!");
+			issues.addError("Input file contains errors!");
 	}
 
 	private ErrorLog getErrorLog(Object resource) {
