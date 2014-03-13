@@ -23,13 +23,10 @@ query getOrmStructureTransformationId() : String{
 helper APP::Structure::toRdb(inout errorLog : ErrorLog ): RDB::Structure{
 	var publicSchema : RDB::Schema := _schema(getDefaultSchemaName());
 	var rdbStructure : RDB::Structure := _rdbStructure(OrderedSet{publicSchema});
-	log("ORM structure transformation started");
+	log("orm_structure transformation started");
 	var standardClasses : Set(StandardClass) := self.entities[StandardClass];
 	var owningAssociationProperties : Bag(AssociationProperty) := standardClasses->
 		properties[AssociationProperty]->select(prop | prop.isOwning);
-	standardClasses->forEach(stcls){
-		log(stcls.repr());
-	};
 	// 1. mapping standardClasses to tables
 	standardClasses->forEach(stCls | stCls.isRoot() or not stCls.hasSingleTableInheritanceType()){
 		stCls.toTable(publicSchema, errorLog);
@@ -60,7 +57,6 @@ helper APP::Structure::toRdb(inout errorLog : ErrorLog ): RDB::Structure{
 	Switch mapping of Standard class 
 **/
 helper app::StandardClass::toTable(schema : RDB::Schema, inout errorLog : ErrorLog){
-	log("to table " + self.repr());	
 	if(self.hasJoinedInheritanceType())then{
 		self.toJoinedTable(schema, errorLog);
 		return;
@@ -108,7 +104,6 @@ helper app::StandardClass::toTablePerClass(inout schema : RDB::Schema, inout err
 		errorLog.errors +=_ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
-	//log("toTablePerClass section " + self.name);
 	var table : Table := _table(self.name.translate());
 	schema.tables+= table;
 	var columns : OrderedSet(Column) := self.getPathToRoot()->properties[PrimitiveProperty]->
@@ -171,9 +166,7 @@ helper Set(app::MultipliableProperty)::toColumns(inout table : Table, inout erro
 	Mapping Nested Property to set of columns from EmbeddedClass
 **/
 helper app::NestedProperty::toColumns(inout table : RDB::Table, inout errorLog : ErrorLog){
-	log("toEmbeddedColumn section "+ self.name + " " + self.type.name);
 	self.type.oclAsType(EmbeddedClass).embeddedProperties ->forEach(prop){
-		log(prop.name);
 		var column := _column(self.name + "_" + prop.name, toRdbType(prop.getPrimitiveType()));
 		table.columns += column;
 	};
@@ -189,7 +182,6 @@ helper app::PrimitiveProperty::toPrimitive(inout table : Table, inout errorLog :
 		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
-	log("toPrimitive property section " + self.name);
 	var column : Column;
 	column := _column(self.name.translate(), toRdbType(self.getPrimitiveType()), self.defaultValue);
 	if(self.isID())then{
@@ -209,7 +201,6 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table,
 		errorLog.errors += _ormError(errorMessage, getOrmStructureTransformationId());
 		return;
 	}endif;
-	log("To collection " + self.repr());
 	var collectionPropertyColumn : rdb::Column := _column(self.name.translate() , 
 		toRdbType(self.getPrimitiveType()));
 	var idColumn := _column(
@@ -223,7 +214,6 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table,
 											self.getCollectionTableName(), 
 											OrderedSet{collectionPropertyColumn, idColumn}, 
 											OrderedSet{fkOwningTableProjection});
-	log("Before:" + (referencedTable.owningSchema.tables->size()).toString());
 	var schema : Schema := referencedTable.owningSchema;
 	schema.tables+= collectionTable;
 	//adds ordering column
@@ -240,7 +230,6 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table,
 											self.getUniqueConstraintName(), 
 											OrderedSet{collectionPropertyColumn, idColumn});
 	}endif;
-	log("After:" + referencedTable.owningSchema.tables->size().toString());	
 	return;
 }
 
@@ -377,7 +366,6 @@ helper app::StandardClass::addReferenceToParent(inout schema : Schema, inout err
 	var parentProjection : Table := schema.findTable(self.parent.getDbRepresentative().name.
 		translate());
 	var childId : Column := childProjection.getPKColumn();
-	log("child id " + childId.repr());
 	var fkReferencingParent : ForeignKey := _foreignKey(self.getParentFkName(), parentProjection, 
 		childId);
 	childProjection.constraints+= fkReferencingParent;
