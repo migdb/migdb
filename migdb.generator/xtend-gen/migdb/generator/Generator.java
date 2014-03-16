@@ -25,6 +25,7 @@ import mm.rdb.ops.impl.RemoveColumnImpl;
 import mm.rdb.ops.impl.RemoveConstraintImpl;
 import mm.rdb.ops.impl.RemoveDefaultValueImpl;
 import mm.rdb.ops.impl.RemoveIndexImpl;
+import mm.rdb.ops.impl.RemoveNotNullImpl;
 import mm.rdb.ops.impl.RemoveSequenceImpl;
 import mm.rdb.ops.impl.RemoveTableImpl;
 import mm.rdb.ops.impl.RenameColumnImpl;
@@ -179,6 +180,24 @@ public class Generator extends BaseCodeGenerator {
     String _constrainedColumnName = op.getConstrainedColumnName();
     _builder.append(_constrainedColumnName, "	");
     _builder.append(" SET NOT NULL;");
+    _builder.newLineIfNotEmpty();
+    return _builder;
+  }
+  
+  protected CharSequence _genOperation(final RemoveNotNullImpl op) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("ALTER TABLE ");
+    String _owningSchemaName = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _owningTableName = op.getOwningTableName();
+    _builder.append(_owningTableName, "");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append("ALTER COLUMN ");
+    String _constrainedColumnName = op.getConstrainedColumnName();
+    _builder.append(_constrainedColumnName, "	");
+    _builder.append(" DROP NOT NULL;");
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -1237,6 +1256,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((RemoveDefaultValueImpl)op);
     } else if (op instanceof RemoveIndexImpl) {
       return _genOperation((RemoveIndexImpl)op);
+    } else if (op instanceof RemoveNotNullImpl) {
+      return _genOperation((RemoveNotNullImpl)op);
     } else if (op instanceof RemoveSequenceImpl) {
       return _genOperation((RemoveSequenceImpl)op);
     } else if (op instanceof RemoveTableImpl) {

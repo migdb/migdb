@@ -30,6 +30,7 @@ import mm.rdb.ops.impl.InsertRowsImpl
 import mm.rdb.ops.impl.DeleteRowsImpl
 import java.io.PrintWriter
 import mm.rdb.ops.impl.UpdateRowsImpl
+import mm.rdb.ops.impl.RemoveNotNullImpl
 
 
 
@@ -147,6 +148,12 @@ class Generator extends BaseCodeGenerator {
 		ALTER TABLE «op.owningSchemaName».«op.owningTableName»
 			ALTER COLUMN «op.constrainedColumnName» SET NOT NULL;
 	'''	
+	
+	def dispatch genOperation(RemoveNotNullImpl op) '''
+		ALTER TABLE «op.owningSchemaName».«op.owningTableName»
+			ALTER COLUMN «op.constrainedColumnName» DROP NOT NULL;
+	'''
+	
 	
 	/**
 	 * CREATE PRIMARY KEY
@@ -333,8 +340,8 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(SetDefaultValueImpl op) '''
 		ALTER TABLE «op.owningSchemaName».«op.owningTableName» 
 			ALTER COLUMN «op.owningColumnName» SET DEFAULT «op.newDefaultValue»;
-	'''	
-	
+	'''
+		
 	/**
 	 * SET COLUMN TYPE
 	 * To convert a column to a different data type, use a command like:
