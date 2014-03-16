@@ -180,5 +180,15 @@ TestWorkflow{
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
 		testDescription = "removeColumn"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/15_removeNotNull"
+		qvtInput = "${IN_STR}/removeNotNull_str.qvto"
+		qvtInput = "${IN_OPS}/removeNotNull_ops.qvto"
+		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/removeNotNull_required.qvto"
+		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "removeNotNull"
+	}
 											
 }

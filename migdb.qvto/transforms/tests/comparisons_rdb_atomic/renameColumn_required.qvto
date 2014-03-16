@@ -6,7 +6,7 @@ transformation renameColumn_required(out inoutModel : RDB);
 main() {
 	var column : RDB::Column := _column("col", RDB::PrimitiveType::char);
 	var columnFK : RDB::Column := _column("cizi", RDB::PrimitiveType::int);
-	var columnUQ : RDB::Column := _column("not", RDB::PrimitiveType::char);
+	var columnUQ : RDB::Column := _column("not", RDB::PrimitiveType::char, true);
 	var index : RDB::Index := _index("ix_col_first", OrderedSet{column});
 	var table : RDB::Table := _table("first", OrderedSet{column, columnFK, columnUQ});
 	var pk : RDB::PrimaryKey := _primaryKey("pk_first", column);
@@ -23,9 +23,6 @@ main() {
 
 	var uq : RDB::Unique := _unique("uq_uniq", OrderedSet{columnUQ});
 	table.constraints += uq;
-	
-	var notNull : RDB::NotNull := _notNull("nn_uniq", columnUQ);
-	table.constraints += notNull;
 	
 	var publicSchema : Schema := _schema(
 										"public", 

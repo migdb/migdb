@@ -72,12 +72,19 @@ helper _addForeignKey(_owningSchemaName : String, _owningTableName : String, _co
 	};
 }
 
-helper _addNotNull(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String, _name : String) : RDB::ops::AddNotNull{
+helper _addNotNull(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String) : RDB::ops::AddNotNull{
 	return object RDB::ops::AddNotNull {
 		owningSchemaName := _owningSchemaName;
 		owningTableName := _owningTableName;
 		constrainedColumnName := _constraineColumnName;
-		name := _name;
+	};
+}
+
+helper _removeNotNull(_owningSchemaName : String, _owningTableName : String, _constraineColumnName : String) : RDB::ops::RemoveNotNull{
+	return object RDB::ops::RemoveNotNull{
+		owningSchemaName := _owningSchemaName;
+		owningTableName := _owningTableName;
+		constrainedColumnName := _constraineColumnName;
 	};
 }
 
@@ -324,7 +331,7 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  }
  
  
- helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(Constraint) ) : Table {	
+ helper _table(_name : String, _columns : OrderedSet(Column), _constraints : OrderedSet(TableConstraint) ) : Table {	
  	var table : Table := _table(_name, _columns);
  	table.constraints := _constraints;
  	return table;
@@ -358,13 +365,25 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  		type := _type;
  	};
  }
+
+ helper _column(_name : String, _type : PrimitiveType, _isNillable : Boolean) : Column{
+ 	var column : Column := _column(_name, _type);
+ 	column.isNillable := _isNillable;
+ 	return column; 
+ } 
  
-  helper _column(_name : String, _type : PrimitiveType, _defaultValue : String) : Column {
+ helper _column(_name : String, _type : PrimitiveType, _defaultValue : String) : Column {
  	var column : Column := _column(_name, _type);
  	column.defaultValue := _defaultValue;
-	return column;
+ 	return column;
  }
  
+ helper _column(_name : String, _type : PrimitiveType, _defaultValue : String, _isNillable : Boolean) : Column{
+ 	var column : Column := _column(_name, _type, _defaultValue);
+ 	column.isNillable := _isNillable;
+ 	return column;
+ }
+  
  helper _sequence(_name : String, _startValue : Integer) : RDB::Sequence {
  	return object RDB::Sequence {
  		name := _name;
@@ -378,10 +397,3 @@ helper _table(_name : String, _columns : OrderedSet(Column)) : Table {
  		uniqueColumns := _constrainedColumns;
 	};
  }
- 
- helper _notNull(_name : String, _constrainedColumn : Column) : RDB::NotNull{
- 	return object NotNull{
- 		name := _name;
- 		constrainedColumn := _constrainedColumn;
-	};
- } 

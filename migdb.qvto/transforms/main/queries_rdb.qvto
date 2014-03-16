@@ -138,7 +138,7 @@ query RDB::Structure::hasConstraintUniqueName(constraintableName : String) : Boo
 		const.name = constraintableName)->size() = 1;
 }
 
-query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::Constraint {
+query RDB::Structure::findConstraint(schemaName : String, tableName : String, rName : String) : RDB::TableConstraint {
 	return self.findTable(schemaName, tableName).constraints->any(name = rName);
 }
 
@@ -230,7 +230,7 @@ query rdb::Column::hasUniqueName() : Boolean{
 	return self.owningTable->columns->forAll(column | column.name <> self.name or column = self);
 }
 
-query rdb::Constraint::hasUniqueName() : Boolean{
+query rdb::TableConstraint::hasUniqueName() : Boolean{
 	return self.owningTable->owningSchema->tables->constraints->forAll(const | 
 		const.name <> self.name or const = self);
 }

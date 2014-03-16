@@ -38,37 +38,33 @@ package rdb {
     readonly derived ref Schema[1]#tables owningSchema;
     attr String[1] name;
     val Column[*]#owningTable columns;
-    val Constraint[*]#owningTable constraints;
+    val TableConstraint[*]#owningTable constraints;
   }
 
   class Column {
     readonly derived ref Table[1]#columns owningTable;
     attr String[1] name;
     attr PrimitiveType[1] type;
-    attr String defaultValue;
+    attr String[?] defaultValue;
+    attr Boolean[1] isNillable = true;
   }
 
-  abstract class Constraint {
+  abstract class TableConstraint{
     attr String[1] name;
     derived ref Table[1]#constraints owningTable;
   }
 
-  abstract class ColumnConstraint extends Constraint {
-    ref Column[1] constrainedColumn;
-  }
-
-  class Unique extends Constraint {
+  class Unique extends TableConstraint {
     ref Column[*] uniqueColumns;
   }
 
-  class PrimaryKey extends ColumnConstraint {
+  class PrimaryKey extends TableConstraint {
+  	ref Column[1] constrainedColumn;
   }
 
-  class ForeignKey extends ColumnConstraint {
+  class ForeignKey extends TableConstraint {
     ref Table[1] targetTable;
-  }
-
-  class NotNull extends ColumnConstraint {
+  	ref Column[1] constrainedColumn;    
   }
 
   enum PrimitiveType {
@@ -117,7 +113,7 @@ package rdb {
     class AddPrimaryKey extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] owningTableName;
-      attr String[1] constrainedColumnName = "";
+      attr String[1] constrainedColumnName;
       attr String[1] name;
     }
 
@@ -140,7 +136,12 @@ package rdb {
       attr String[1] owningSchemaName;
       attr String[1] owningTableName;
       attr String[1] constrainedColumnName;
-      attr String[1] name;
+    }
+    
+    class RemoveNotNull extends ModelOperation{
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] constrainedColumnName;
     }
 
     class RenameTable extends ModelOperation {
@@ -171,6 +172,12 @@ package rdb {
       attr String[1] newDefaultValue;
     }
 
+    class RemoveDefaultValue extends ModelOperation {
+      attr String[1] owningSchemaName;
+      attr String[1] owningTableName;
+      attr String[1] owningColumnName;
+    }
+
     class RemoveTable extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] name;
@@ -191,12 +198,6 @@ package rdb {
     class RemoveIndex extends ModelOperation {
       attr String[1] owningSchemaName;
       attr String[1] name;
-    }
-
-    class RemoveDefaultValue extends ModelOperation {
-      attr String[1] owningSchemaName;
-      attr String[1] owningTableName;
-      attr String[1] owningColumnName;
     }
 
     class RemoveSequence extends ModelOperation {

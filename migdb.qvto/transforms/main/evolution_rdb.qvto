@@ -209,7 +209,7 @@ helper RDB::ops::AddColumn::apply(inout structure : RDB::Structure) {
 	var modifiedTable : RDB::Table := structure.findTable(
 														self.owningSchemaName, 
 														self.owningTableName);
-	modifiedTable.columns += _column(self.name, self.type, self.defaultValue); 
+	modifiedTable.columns += _column(self.name, self.type); 
 	return;
 }
 
@@ -418,15 +418,8 @@ query RDB::ops::AddNotNull::isValid(structure : RDB::Structure, inout errorLog :
 												errorLog, 
 												operationIndex, 
 												getEvolutionRdbTransformationId());
-	var notExistConstraint : Boolean := checkNotExistConstraint(
-														self.owningSchemaName, 
-														self.name, 
-														structure, 
-														errorLog, 
-														operationIndex, 
-														getEvolutionRdbTransformationId());
 	
-	return existSchema and existTable and existColumn and notExistConstraint;	   
+	return existSchema and existTable and existColumn;	   
 }
 
 helper RDB::ops::AddNotNull::apply(inout structure : RDB::Structure) {
@@ -435,9 +428,7 @@ helper RDB::ops::AddNotNull::apply(inout structure : RDB::Structure) {
 														self.owningSchemaName, 
 														self.owningTableName, 
 														self.constrainedColumnName);
-	modifiedTable.constraints += _notNull(
-							self.name, 
-							constrainedColumn);
+	constrainedColumn.isNillable := true;
 	return; 
 }
 
@@ -755,7 +746,7 @@ query RDB::ops::RemoveConstraint::isValid(structure : RDB::Structure, inout erro
 
 helper RDB::ops::RemoveConstraint::apply(inout structure : RDB::Structure) {
 	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	table.constraints := table.constraints->reject(constraint | constraint.name = self.name);
+	table.constraints := table.constraints->reject(constraint |constraint.name = self.name);
 	return;
 }
 
@@ -1243,7 +1234,7 @@ helper checkNotIsColumnConstrained(owningSchemaName : String, tableName : String
 		return false;
 	}endif;
 	var checkedColumn : Column := structure.findColumn(owningSchemaName, tableName, columnName);
-	var constraints : Sequence(Constraint) := structure.schemas->tables->constraints;
+	var constraints : Sequence(TableConstraint) := structure.schemas->tables->constraints;
 	var isColumnNotConstrained : Boolean := constraints[ForeignKey]->select(fk | 
 		fk.constrainedColumn = checkedColumn)->size()=0 and constraints[Unique]->select(unique |
 		 	unique.uniqueColumns->includes(checkedColumn))->size()=0;

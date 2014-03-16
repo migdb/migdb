@@ -4,7 +4,7 @@ transformation addNotNull_ops(out inoutModel : RDB);
 
 
 main() {
-	var addNotNull : RDB::ops::ModelOperation := _addNotNull("public", "first", "uniq", "nn_uniq");
+	var addNotNull : RDB::ops::ModelOperation := _addNotNull("public", "first", "uniq");
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addNotNull};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
