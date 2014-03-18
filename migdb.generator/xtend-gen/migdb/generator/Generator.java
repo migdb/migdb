@@ -21,6 +21,7 @@ import mm.rdb.ops.impl.HasNoInstancesImpl;
 import mm.rdb.ops.impl.HasNoOwnInstancesImpl;
 import mm.rdb.ops.impl.InsertRowsImpl;
 import mm.rdb.ops.impl.ModelOperationImpl;
+import mm.rdb.ops.impl.NillRowsImpl;
 import mm.rdb.ops.impl.RemoveColumnImpl;
 import mm.rdb.ops.impl.RemoveConstraintImpl;
 import mm.rdb.ops.impl.RemoveDefaultValueImpl;
@@ -864,6 +865,30 @@ public class Generator extends BaseCodeGenerator {
   }
   
   /**
+   * Nill Rows
+   */
+  protected CharSequence _genOperation(final NillRowsImpl op) {
+    StringConcatenation _builder = new StringConcatenation();
+    _builder.append("UPDATE ");
+    String _owningSchemaName = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName, "");
+    _builder.append(".");
+    String _tableName = op.getTableName();
+    _builder.append(_tableName, "");
+    _builder.append(" SET ");
+    String _columnName = op.getColumnName();
+    _builder.append(_columnName, "");
+    _builder.append(" = ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t\t\t\t\t");
+    _builder.append("NULL WHERE ");
+    String _whereCondition = op.getWhereCondition();
+    _builder.append(_whereCondition, "							");
+    _builder.append(" ;");
+    return _builder;
+  }
+  
+  /**
    * INSERT ROWS
    * This operation copy data from source columns to target columns.
    * That means insert rows from source table to target table.
@@ -1248,6 +1273,8 @@ public class Generator extends BaseCodeGenerator {
       return _genOperation((HasNoOwnInstancesImpl)op);
     } else if (op instanceof InsertRowsImpl) {
       return _genOperation((InsertRowsImpl)op);
+    } else if (op instanceof NillRowsImpl) {
+      return _genOperation((NillRowsImpl)op);
     } else if (op instanceof RemoveColumnImpl) {
       return _genOperation((RemoveColumnImpl)op);
     } else if (op instanceof RemoveConstraintImpl) {

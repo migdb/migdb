@@ -31,6 +31,7 @@ import mm.rdb.ops.impl.DeleteRowsImpl
 import java.io.PrintWriter
 import mm.rdb.ops.impl.UpdateRowsImpl
 import mm.rdb.ops.impl.RemoveNotNullImpl
+import mm.rdb.ops.impl.NillRowsImpl
 
 
 
@@ -420,7 +421,13 @@ class Generator extends BaseCodeGenerator {
 							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.whereCondition» );''';
 	}
 	
-		
+	/**
+	 * Nill Rows
+	 */
+	def dispatch genOperation(NillRowsImpl op){
+			return '''UPDATE «op.owningSchemaName».«op.tableName» SET «op.columnName» = 
+							NULL WHERE «op.whereCondition» ;''';
+	}
 
 	/**
 	 * INSERT ROWS
