@@ -8,6 +8,10 @@ main(){
 	var int : PrimitiveClass := _primitiveClass(
 											getAppDefaultIdTypeName(), 
 											app::PrimitiveType::int);
-	_appStructure(OrderedSet{int, _class("Tab", _idProperty("idTab", int), 
-		OrderedSet{_primitiveProperty("newPropertyName", int)}, InheritanceType::singleTable)});
+	var classTab : ModelEntity :=_class(
+									"Tab", 
+									_idProperty("idTab", int), 
+									OrderedSet{_primitiveProperty("newPropertyName", int)}, 
+									InheritanceType::joined);
+	_appStructure(OrderedSet{int, classTab});
 }

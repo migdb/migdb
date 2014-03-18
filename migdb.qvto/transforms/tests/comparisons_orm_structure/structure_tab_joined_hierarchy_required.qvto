@@ -1,0 +1,38 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation structure_tab_joined_hierarchy_required(out inoutModel : RDB);
+
+main() {
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var idRoot : Column := _column("id_root", PrimitiveType::int, false);
+	var rootColumns : OrderedSet(Column) := OrderedSet{
+													idRoot};
+	var pkRoot : PrimaryKey := _primaryKey("pk_root", idRoot);
+	var tableRoot : Table :=_table(
+								"root",
+								rootColumns,
+								OrderedSet{pkRoot});
+	
+	var idTab : Column := _column("id_tab", PrimitiveType::int, false);
+	var tabColumns : OrderedSet(Column) := OrderedSet{
+													idTab};
+	var parencyFkTab : ForeignKey := _foreignKey("par_tab", tableRoot, idTab);
+	var tableTab : Table :=_table(
+								"tab",
+								tabColumns,
+								OrderedSet{parencyFkTab});
+	var idDesc : Column := _column("id_descendant", PrimitiveType::int, false);
+	var descColumns : OrderedSet(Column) := OrderedSet{
+													idDesc};
+	var parencyFkDesc : ForeignKey := _foreignKey("par_descendant", tableTab, idDesc);
+	var tableDesc : Table :=_table(
+								"descendant",
+								descColumns,
+								OrderedSet{parencyFkDesc});
+	var tables : OrderedSet(Table) := OrderedSet{tableRoot, tableTab, tableDesc};
+	var publicSchema : Schema := _schema(defaultSchemaName , tables);
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});	 
+}

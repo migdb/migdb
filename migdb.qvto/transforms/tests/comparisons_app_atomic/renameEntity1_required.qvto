@@ -13,6 +13,6 @@ main(){
 									_idProperty("idCls", int),
 									OrderedSet{_primitiveProperty("pr", int)}, 
 									false, 
-									InheritanceType::singleTable);
+									InheritanceType::joined);
 	_appStructure(OrderedSet{int, cls});
 }

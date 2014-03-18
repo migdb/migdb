@@ -60,7 +60,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/structure_tab_plain.qvto"
 		qvtInput = "${IN_OPS}/addClass1.qvto"
 		qvtComparison = ""
-		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addClass1b_required"
+		qvtComparison = "${IN_STR}/structure_tab_plain.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addClass1b.qvto"
 		testDescription = "addClass - added class already exists"
 	}

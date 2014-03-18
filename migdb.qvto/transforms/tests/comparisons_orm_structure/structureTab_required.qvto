@@ -1,0 +1,21 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation structureTab_required(out inoutModel : RDB);
+
+main() {
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var idTab : Column := _column("id_tab", PrimitiveType::int, false);
+	var tabColumns : OrderedSet(Column) := OrderedSet{
+													_column("pr", PrimitiveType::int),
+													idTab};
+	var pkTab : PrimaryKey := _primaryKey("pk_tab", idTab);
+	var tableTab : Table :=_table(
+								"tab",
+								tabColumns,
+								OrderedSet{pkTab});
+	var publicSchema : Schema := _schema(defaultSchemaName , OrderedSet{tableTab});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});	 
+}

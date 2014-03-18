@@ -10,6 +10,6 @@ main(){
 										"Tab", 
 										_idProperty("idTab", int), 
 										false, 
-										InheritanceType::singleTable);
+										InheritanceType::joined);
 	_appStructure(OrderedSet{int, classTab});
 }
