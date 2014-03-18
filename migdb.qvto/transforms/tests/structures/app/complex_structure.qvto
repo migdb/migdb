@@ -1,0 +1,82 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation structureComplexApp(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	
+	var stRoot : StandardClass := _class(
+										"StRoot", 
+										_idProperty("idStRoot", int), 
+										OrderedSet{_primitiveProperty("StRootPr", int)}, 
+										app::InheritanceType::singleTable);
+	var stChild : StandardClass := _class(
+										"StChild", 
+										stRoot, 
+										OrderedSet{_primitiveProperty("StChildPr", int)}, 
+										app::InheritanceType::singleTable);
+	var stGrandChild : StandardClass := _class(
+											"StGrandChild", 
+											stChild, 
+											OrderedSet{_primitiveProperty("StGrandChildPr", int)},
+											app::InheritanceType::singleTable);
+
+	var tpcRoot : StandardClass := _class(
+										"TpcRoot", 
+										_idProperty("idTpcRoot", int), 
+										OrderedSet{_primitiveProperty("TpcRootPr", int)}, 
+										app::InheritanceType::tablePerClass);
+	var tpcChild : StandardClass := _class(
+										"TpcChild", 
+										tpcRoot, 
+										OrderedSet{_primitiveProperty("TpcChildPr", int)}, 
+										app::InheritanceType::tablePerClass);
+	var tpcGrandChildProp : MultipliableProperty := _primitiveProperty("TpcGrandChildPr", int);
+	var tpcGrandChild : StandardClass := _class(
+												"TpcGrandChild", 
+												tpcChild, 
+												OrderedSet{tpcGrandChildProp}, 
+												app::InheritanceType::tablePerClass);
+	var tpcCollection : PrimitiveProperty := _primitiveProperty("collection", int, 0, 5);
+	tpcRoot.properties += tpcCollection;
+	var stCollection : PrimitiveProperty := _primitiveProperty("collection", int, 1, -1);
+	stRoot.properties += stCollection;
+
+	var tpcAssocRoot : StandardClass := _class(
+											"TpcARoot", 
+											_idProperty("idTpcRoot", int), 
+											OrderedSet{_primitiveProperty("tpcARootPr", int)}, 
+											app::InheritanceType::tablePerClass);
+	var tpcAssocChild : StandardClass := _class(
+											"tpcAChild", 
+											tpcAssocRoot, 
+											OrderedSet{_primitiveProperty("TpcAChildPr", int)}, 
+											app::InheritanceType::tablePerClass);
+	var tpcAGrChildProp : MultipliableProperty := _primitiveProperty("tpcAGrandChildPr", int);
+	var tpcAssocGrandChild : StandardClass := _class(
+													"TpcAGrandChild", 
+													tpcAssocChild, 
+													OrderedSet{tpcAGrChildProp},
+													app::InheritanceType::tablePerClass);
+	var associationProperty : AssociationProperty := _associationProperty(
+																	"association", 
+																	tpcAssocRoot);  
+	tpcRoot.properties += associationProperty;
+	
+	var entitySet : OrderedSet(ModelEntity) := OrderedSet{
+														int, 
+														stRoot,
+														stChild, 
+														stGrandChild, 
+														tpcRoot, 
+														tpcChild, 
+														tpcGrandChild, 
+														tpcAssocRoot, 
+														tpcAssocChild, 
+														tpcAssocGrandChild};
+	_appStructure(entitySet);
+}

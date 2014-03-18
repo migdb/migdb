@@ -1,0 +1,36 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation complex_joined_hierarchy(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var joinedCollection : PrimitiveProperty := _primitiveProperty("collection", int, 0, -1);
+	var joinedRootProp : MultipliableProperty := _primitiveProperty("joinedRootPr", int);
+	var joinedRoot : StandardClass := _class(
+											"JoinedRoot", 
+											_idProperty("idJoinedRoot", int), 
+											OrderedSet{joinedRootProp, joinedCollection}, 
+											app::InheritanceType::joined);
+	var joinedChildProp : MultipliableProperty := _primitiveProperty("joinedChildPr", int);
+	var joinedChild : StandardClass := _class(
+											"JoinedChild", 
+											joinedRoot, 
+											OrderedSet{joinedChildProp});
+	var assocProp : MultipliableProperty := _associationProperty("assocPr", joinedChild);
+	var mnProp : MultipliableProperty := _associationProperty("mnPr", joinedChild, 0, -1);
+	var typeCls : StandardClass := _class(
+										"Type",
+										_idProperty("_idType", int),
+										OrderedSet{assocProp, mnProp},
+										app::InheritanceType::joined); 
+	var entitySet : OrderedSet(ModelEntity) := OrderedSet{
+														int,
+														joinedRoot,
+														joinedChild, 
+														typeCls};
+	_appStructure(entitySet);											
+}

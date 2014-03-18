@@ -41,6 +41,12 @@ query Structure::print(){
 		log("schema: " + schema.name);
 		schema.tables->forEach(table){
 			log(table.repr());
+			table->columns->forEach(col){
+				log(col.repr());
+			};
+			table->constraints->forEach(constraint){
+				log(constraint.repr());
+			};
 		}
 	}	
 }
@@ -153,9 +159,6 @@ query RDB::Structure::isSameColumnType (schemaName : String, tableNameA : String
 
 /********************************* VALIDATOR QUERIES *********************************/
 
-query rdb::Table::getPKColumn():rdb::Column{
-	return self.constraints![rdb::PrimaryKey].constrainedColumn;
-}
 
 query RDB::Table::hasRedundantId() : Boolean{
 	return self.constraints[PrimaryKey]->size() > 1;

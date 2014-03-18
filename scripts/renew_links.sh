@@ -38,13 +38,17 @@ rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
 
-rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_APP_LINK
-rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_RDB_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$TEXT_SERVICE_LINK
 
-rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_APP_LINK
-rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_RDB_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_RDB_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$TEXT_SERVICE_LINK
+
+rm $D_MIGDB_QVTO/tests/comparisons_orm_structure/$QUERIES_RDB_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_structure/$BUILDER_RDB_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_orm_structure/$TEXT_SERVICE_LINK
 
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK
@@ -102,14 +106,17 @@ ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIE
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
 
-ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_APP_LINK
-ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_APP_LINK
+ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_RDB_LINK
+ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_RDB_LINK
 ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$TEXT_SERVICE_LINK
 
-ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_APP_LINK
-ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_APP_LINK
+ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$QUERIES_RDB_LINK
+ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$BUILDER_RDB_LINK
 ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_orm_atomic/$TEXT_SERVICE_LINK
 
+ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_orm_structure/$QUERIES_RDB_LINK
+ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_orm_structure/$BUILDER_RDB_LINK
+ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_orm_structure/$TEXT_SERVICE_LINK
 
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_APP_LINK
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/migdb_executer/$BUILDER_RDB_LINK

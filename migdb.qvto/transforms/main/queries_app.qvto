@@ -662,7 +662,15 @@ helper StandardClass::hasParentName(standardClassName : String) : Boolean{
 query app::Structure::print(){
 	self->entities->forEach(ent){
 		log(ent.repr());
-	}
+	};
+}
+
+query StandardClass::repr() : String{
+	var returnVal : String := self.repr();
+	self.properties->forEach(prop){
+		returnVal := returnVal + "\n" + prop.repr();
+	};
+	return returnVal;
 }
 
 query app::Operations::print(){

@@ -11,6 +11,6 @@ main(){
 										_idProperty("idTab", int), 
 										OrderedSet{_primitiveProperty("pr", int)}, 
 										false, 
-										InheritanceType::singleTable);
+										InheritanceType::joined);
 	_appStructure(OrderedSet{int, classTab});
 }

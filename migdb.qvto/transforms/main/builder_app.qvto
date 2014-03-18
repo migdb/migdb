@@ -625,7 +625,7 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
  		properties := clsProperties;
  		idProperty := _idProperty;
  		isAbstract := _isAbstract;
- 		inheritanceType := _parent.inheritanceType;
+ 		inheritanceType := _inheritanceType;
  	};
 	return cls;	
 }
