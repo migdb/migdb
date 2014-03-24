@@ -27,10 +27,6 @@ main() {
 	var ordSourceAssocName : String := "ux_" + childAssociationTableName + "_ord";
 	var uxSourceAssocName : String := "ux_" + childTableName + "_" + mergedColumnName;
 	
-	var removePk : RDB::ops::ModelOperation := _removeConstraint(
-																publicSchemaName,
-																childTableName,
-																pkChildName);
 	var insertChildIds : RDB::ops::ModelOperation := _insertRows(
 															publicSchemaName,
 															childTableName,
@@ -89,7 +85,6 @@ main() {
 																publicSchemaName,
 																childAssociationTableName);																																
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-															removePk, 
 															insertChildIds, 
 															addParencyFk,
 															insertAssocTable,

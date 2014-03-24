@@ -89,13 +89,18 @@ helper app::StandardClass::toJoinedTable(inout schema : RDB::Schema, inout error
 	var table : Table := _table(tableName);
 	schema.tables += table;
 	//mapping owning properties
-	self->properties[PrimitiveProperty]->asSet()->toColumns(table, errorLog);
+	self->properties[PrimitiveProperty]->toColumns(table, errorLog);
 	var defaultPriCls : PrimitiveClass := self.owningModel.findPrimitiveClass(
 																	getAppDefaultIdTypeName());
 	var defaultIdType : RDB::PrimitiveType := toRdbType(defaultPriCls.primitiveType);	
 	//it's necessary to update nonroot table 
 	if(not self.isRoot())then{
-		table.columns += _column(getDbIdColumnName(table.name), defaultIdType, false);
+		var pkColumn : Column :=_column(getDbIdColumnName(table.name), defaultIdType, false);
+		table.columns += pkColumn;
+		var pk : PrimaryKey := _primaryKey(
+										getDbPrimaryKeyName(table.name),
+										pkColumn);
+		table.constraints += pk;
 	}endif;
 	return;
 }
@@ -113,8 +118,8 @@ helper app::StandardClass::toTablePerClass(inout schema : RDB::Schema, inout err
 	}endif;
 	var table : Table := _table(self.name.translate());
 	schema.tables+= table;
-	var columns : OrderedSet(Column) := self.getPathToRoot()->properties[PrimitiveProperty]->
-		asSet()->toColumns(table, errorLog);
+	var columns : OrderedSet(Column) := self.getPathToRoot()->properties[PrimitiveProperty]
+											->toColumns(table, errorLog);
 	return;
 }
 
@@ -131,7 +136,7 @@ helper app::StandardClass::toSingleTable(inout schema : RDB::Schema, inout error
 	}endif;
 	var table : Table := _table(self.name.translate(), OrderedSet{}, OrderedSet{});
 	schema.tables+=table;
-	self.getAllDescendants()->properties->asSet()->toColumns(table, errorLog);
+	self.getAllDescendants()->properties->toColumns(table, errorLog);
 	//needs existance of String Class
 	table.columns += _column(getDbDiscriminatorColumnName(), RDB::PrimitiveType::char);
 	return;
@@ -140,7 +145,7 @@ helper app::StandardClass::toSingleTable(inout schema : RDB::Schema, inout error
 /**
 	Switch mapping for multipliable properties
 **/
-helper Set(app::MultipliableProperty)::toColumns(inout table : Table, inout errorLog : ErrorLog){
+helper Sequence(app::MultipliableProperty)::toColumns(inout table : Table, inout errorLog : ErrorLog){
 	self->forEach(prop){
 		if(prop.oclIsTypeOf(PrimitiveProperty))then{
 			var primitiveProperty : PrimitiveProperty := prop.oclAsType(PrimitiveProperty);

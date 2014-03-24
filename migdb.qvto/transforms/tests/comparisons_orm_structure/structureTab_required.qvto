@@ -9,8 +9,8 @@ main() {
 	var defaultSchemaName : String := getDefaultSchemaName();
 	var idTab : Column := _column("id_tab", PrimitiveType::int, false);
 	var tabColumns : OrderedSet(Column) := OrderedSet{
-													_column("pr", PrimitiveType::int),
-													idTab};
+													idTab,
+													_column("pr", PrimitiveType::int)};
 	var pkTab : PrimaryKey := _primaryKey("pk_tab", idTab);
 	var tableTab : Table :=_table(
 								"tab",

@@ -306,24 +306,25 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet
 	}endif;
 	//rename StandardClass with inheritanceType joined 
 	if(entity.oclIsTypeOf(StandardClass))then{
-		var stcls : StandardClass := entity.oclAsType(StandardClass);
 		//rename all FKs outside hierarchy
-		var renamedCls : StandardClass := appStructure.findStandardClass(self.name);
-		var oldIdName : String := stcls.translateIdName();
-		var newIdName : String := getDbIdColumnName(self.name.translate()); 
+		var renamedCls : StandardClass := entity.oclAsType(StandardClass);
+		var oldTableName : String := renamedCls.name.translate();
+		var newTableName : String := self.newName.translate();
+		var oldIdName : String := renamedCls.translateIdName();
+		var newIdName : String := getDbIdColumnName(newTableName); 
+		var oldPkName : String := getDbPrimaryKeyName(oldTableName);
+		var newPkName : String := getDbPrimaryKeyName(newTableName);
 		//renameFksTo renamed cls = remove + create new Fks
 		operations := ormRenameFksReferencingCls(
 												appStructure,
 												renamedCls,
 												self.newName,
-												operations
-												);
+												operations);
 		if(renamedCls.parent != null)then{
-			var renamedTableName : String := renamedCls.name.translate();
 			operations := updateFkName(
 									defaultSchemaName,
-									renamedTableName,
-									getDbIdColumnName(renamedTableName),
+									oldTableName,
+									getDbIdColumnName(oldTableName),
 									renamedCls.getParentFkName(),
 									getParentFkName(self.newName),
 									renamedCls.parent.name.translate(),
@@ -332,9 +333,19 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet
 		//renameIdColumn
 		operations += _renameColumn(
 									defaultSchemaName,
-									renamedCls.name.translate(),
-									getDbIdColumnName(renamedCls.name.translate()),									
-									getDbIdColumnName(self.newName.translate()));														
+									oldTableName,
+									oldIdName,									
+									newIdName);
+		//rename pk - must be done by remove + add...
+		operations += _removeConstraint(
+									defaultSchemaName,
+									oldTableName,
+									oldPkName);
+		operations += _addPrimaryKey(
+									defaultSchemaName,
+									oldTableName,
+									newIdName,
+									newPkName);														
 		//rename refCols to a class
 		operations := ormRenameRefColsToCls(
 											appStructure,
@@ -350,14 +361,14 @@ helper APP::ops::RenameEntity::toRdb(appStructure : APP::Structure) : OrderedSet
 		//rename Table - is last operation because of implementation getClassDescendants which includes cls
 		operations += _renameTable(
 								getDefaultSchemaName(), 
-								self.name.translate(), 
-								self.newName.translate());										
+								oldTableName, 
+								newTableName);										
 	}endif;
 	return operations;
 }
 
 //
-helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClass, newName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
+helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClass, newClassName : String, operations : OrderedSet(rdb::ops::ModelOperation)) : OrderedSet(rdb::ops::ModelOperation){
 	var ops : OrderedSet(RDB::ops::ModelOperation) := operations;
 	var defaultSchemaName : String := getDefaultSchemaName();
 	//rename Collection FKs, FKs TO renamedTable
@@ -372,7 +383,7 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 						collectionTableName,
 						idOwningTableName,
 						getFkCollectionName(clz.name, prop.name),
-						getFkCollectionName(newName, prop.name),
+						getFkCollectionName(newClassName, prop.name),
 						owningTableName,
 						ops);
 	};
@@ -388,7 +399,7 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 		var targetTableName : String := assocProp.type.name.translate();
 		var newFkName : String := getFkRefencingOppositeName(
 											assocProp.name,
-											newName,
+											newClassName,
 											assocProp.type.name);
 		ops := updateFkName(
 						defaultSchemaName,
@@ -412,13 +423,13 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 															assProp.owningGeneralClass.name);
 			newAssociationTableName := getAssociationTableName(
 															assProp.name,
-															newName);											
+															newClassName);											
 			var oldFKName : String := getFKAssociationTableRefName(
 												associationTableName,
 												clz.name.translate());
 			var newFkName : String := getFKAssociationTableRefName(
 												newAssociationTableName,
-												newName.translate());								
+												newClassName.translate());								
 			ops := updateFkName(
 							defaultSchemaName,
 							associationTableName,
@@ -955,10 +966,6 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 	var idChildTableName : String := getDbIdColumnName(childTableName);
 	var idParentTableName : String := getDbIdColumnName(parentTableName);
 	
-	operations += _removeConstraint(
-								defaultSchemaName,
-								childTableName,
-								getDbPrimaryKeyName(childTableName));
 	//there is strong condition that each entity in db has different id, no id recounting is 
 	//processed, all rows from source table all selected so no whereSQL part is needed 
 	operations += _insertRows(
@@ -1020,12 +1027,6 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure): OrderedSet(
 							defaultSchemaName,
 							parentTableName,
 							idEqualityCondition);							
-	//add PK
-	operations += _addPrimaryKey(
-								defaultSchemaName,
-								childTableName,
-								idChildTableName,
-								getDbPrimaryKeyName(childTableName));
 	return operations;
 }
 

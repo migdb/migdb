@@ -11,10 +11,6 @@ main() {
 	var parentTableName : String := "parent";
 	var idChildTableName : String := "id_tab";
 	var idParentTableName : String := "id_parent";
-	var removePk : RDB::ops::ModelOperation := _removeConstraint(
-																publicSchemaName,
-																childTableName,
-																"pk_tab");
 	var insertRows : RDB::ops::ModelOperation := _insertRows(
 															publicSchemaName,
 															childTableName,
@@ -27,6 +23,6 @@ main() {
 																idChildTableName,
 																"par_tab",
 																parentTableName);
-	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{removePk, insertRows, addFkParent};
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{insertRows, addFkParent};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

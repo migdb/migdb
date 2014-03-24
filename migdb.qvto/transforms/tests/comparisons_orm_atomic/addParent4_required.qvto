@@ -16,10 +16,6 @@ main() {
 	var mergedColumnName : String := "age";
 	var fkChildRefTypeName : String := "fk_" + childTableName + "_" + mergedColumnName;
 	
-	var removePk : RDB::ops::ModelOperation := _removeConstraint(
-																publicSchemaName,
-																childTableName,
-																pkChildName);
 	var insertChildIds : RDB::ops::ModelOperation := _insertRows(
 															publicSchemaName,
 															childTableName,
@@ -49,7 +45,6 @@ main() {
 																	childTableName,
 																	mergedColumnName);																		
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-															removePk, 
 															insertChildIds, 
 															addParencyFk,
 															updateParentMergedProp,

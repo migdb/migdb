@@ -10,8 +10,8 @@ main() {
 	var defaultSchemaName : String := getDefaultSchemaName();
 	var idRoot : Column := _column("id_joined_root", int, false);
 	var rootColumns : OrderedSet(Column) := OrderedSet{
-													_column("joined_root_pr", PrimitiveType::int),
-													idRoot};
+													idRoot,
+													_column("joined_root_pr", PrimitiveType::int)};
 	var pkRoot : PrimaryKey := _primaryKey("pk_joined_root", idRoot);
 	var tableRoot : Table :=_table(
 								"joined_root",
@@ -33,6 +33,9 @@ main() {
 										OrderedSet{fkCollectionRoot});
 	var childProp : Column := _column("joined_child_pr", int);
 	var idChild : Column := _column("id_joined_child", int, false);
+	var pkChild : PrimaryKey := _primaryKey(
+										"pk_joined_child",
+										idChild);
 	var parencyFk : ForeignKey := _foreignKey(
 											"par_joined_child",
 											tableRoot, 
@@ -43,7 +46,7 @@ main() {
 	var childTable : Table :=_table(
 								"joined_child",
 								childColumns,
-								OrderedSet{parencyFk});
+								OrderedSet{pkChild, parencyFk});
 	var idType : Column := _column("id_type", int, false);
 	var refChildCol : Column := _column("assoc_pr", int);
 	var typeColumns : OrderedSet(Column) := OrderedSet{

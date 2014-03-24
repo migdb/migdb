@@ -7,6 +7,12 @@ transformation renameEntity4_required(out inoutModel : RDB);
 
 main() {
 	var publicSchemaName : String := getDefaultSchemaName();
+	var oldTableName : String := "teacher"; 
+	var newTableName : String := "university_teacher";
+	var oldPkName : String := getDbPrimaryKeyName(oldTableName);
+	var newPkName : String := getDbPrimaryKeyName(newTableName);
+	var oldIdName : String := "id_" + oldTableName;
+	var newIdName : String := "id_" + newTableName;
 	var removeFKAsTable : RDB::ops::ModelOperation := _removeConstraint(
 																		publicSchemaName,
 																		"teacher",
@@ -22,6 +28,15 @@ main() {
 																"teacher",
 																"id_teacher",
 																"id_university_teacher");
+	var removeOldPk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldTableName,
+																oldPkName);
+	var addNewPk : RDB::ops::ModelOperation := _addPrimaryKey(
+															publicSchemaName,
+															oldTableName,
+															newIdName,
+															newPkName);	
 	var renameOwnerTable : RDB::ops::ModelOperation := _renameTable(
 																publicSchemaName,
 																"teacher",
@@ -30,6 +45,8 @@ main() {
 															removeFKAsTable,
 															addNewFkAsTable,
 															renameIdCol,
+															removeOldPk,
+															addNewPk,
 															renameOwnerTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);																												
 }

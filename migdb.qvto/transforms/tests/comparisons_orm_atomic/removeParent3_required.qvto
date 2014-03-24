@@ -87,11 +87,6 @@ main() {
 																publicSchemaName,
 																parentTableName,
 																equalityCondition);
-	var addPkChild : RDB::ops::ModelOperation := _addPrimaryKey(
-															publicSchemaName,
-															childTableName,
-															idChildTableName,
-															pkChildName);															
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															addNewCollectionTable,
 															addIdChildColumnToColectTab,
@@ -102,7 +97,6 @@ main() {
 															addOrderingConstraint,
 															addUxConstraint,
 															removeParencyFk, 
-															cleanParentTable, 
-															addPkChild};
+															cleanParentTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
