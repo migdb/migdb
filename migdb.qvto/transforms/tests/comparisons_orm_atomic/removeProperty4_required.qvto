@@ -15,6 +15,11 @@ main() {
 																		publicSchemaName,
 																		associationTableName,
 																		"ux_tab_pr");
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																associationTableName,
+																getDbOrderingColumnName());
+	
 	var removeOrdConstraint : RDB::ops::ModelOperation := _removeConstraint(
 																		publicSchemaName,
 																		associationTableName,
@@ -41,6 +46,7 @@ main() {
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 																removeUXConstraint,
 																removeOrdConstraint,
+																removeOrdColumn,
 																removefkOwner,
 																removefkType,
 																removeIdOwnerColumn,

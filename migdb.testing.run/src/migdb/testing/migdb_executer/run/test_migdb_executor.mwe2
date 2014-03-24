@@ -1,4 +1,4 @@
-module migb.testing_migdb_executer_test1
+module migb.test_migdb_executor
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -26,10 +26,10 @@ var COMPARISONS_RDB_OPS_DIR = "${QVTO_DIR}/tests/comparisons_migdb_executer/rdb_
 
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/migdb_executer.qvto"
 
-Workflow{
+TestWorkflow{
 		
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/component/test_migdb_executor/"
+		directory = "${OUTPUT_BASE_DIR}/"
 	}
 	
 		

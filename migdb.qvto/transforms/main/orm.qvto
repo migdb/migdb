@@ -790,21 +790,18 @@ helper APP::ops::RemoveProperty::primitiveInStandardCls(primitiveProperty : Prim
 		var idOwningTableName : String := primitiveProperty.owningGeneralClass.translateIdName();
 		var collectionCollumnName : String := self.name.translate();
 		if(primitiveProperty.isOrdered)then{
-			var columnNames : OrderedSet(String) := OrderedSet{
-														idOwningTableName, 
-														collectionCollumnName,
-														getDbOrderingColumnName()};
 			var uxOrderName : String := getUXOrderingName(collectionTableName);
 			//remove UX constraint
-			operations+= _removeConstraint(
+			operations += _removeConstraint(
 										defaultSchemaName,
 										collectionTableName,
 										uxOrderName);
+			operations += _removeColumn(
+									defaultSchemaName,
+									collectionTableName,
+									getDbOrderingColumnName());							
 		}endif;
 		if(primitiveProperty.isUnique)then{
-			var columnNames : OrderedSet(String) := OrderedSet{
-														idOwningTableName, 
-														collectionCollumnName};
 			var uxName : String := getUXName(
 											primitiveProperty.owningGeneralClass.name, 
 											primitiveProperty.name);
@@ -883,6 +880,10 @@ helper APP::ops::RemoveProperty::associationInStandardCls(associationProperty : 
 											defaultSchemaName,
 											associationTableName,
 											getUXOrderingName(associationTableName));
+			operations += _removeColumn(
+										defaultSchemaName,
+										associationTableName,
+										getDbOrderingColumnName());
 		}endif;
 		var fkAssocOwnerName : String := getFKAssociationTableRefName(
 																associationTableName, 
@@ -959,7 +960,7 @@ helper APP::ops::AddParent::toRdb(appStructure : APP::Structure): OrderedSet(RDB
 								childTableName,
 								getDbPrimaryKeyName(childTableName));
 	//there is strong condition that each entity in db has different id, no id recounting is 
-	//processed
+	//processed, all rows from source table all selected so no whereSQL part is needed 
 	operations += _insertRows(
 							defaultSchemaName,
 							childTableName,
@@ -1108,6 +1109,10 @@ helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, target
 									defaultSchemaName,
 									sourceCollectionTableName,
 									ordName);
+			ops += _removeColumn(
+								defaultSchemaName,
+								sourceCollectionTableName,
+								getDbOrderingColumnName());
 		}endif;
 		var fkName : String := getFkCollectionName(
 												owningClassName,
@@ -1434,9 +1439,13 @@ helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targ
 									defaultSchemaName,
 									sourceAssociationTableName,
 									ordName);
+			ops += _removeColumn(
+								defaultSchemaName,
+								sourceAssociationTableName,
+								getDbOrderingColumnName());						
 		}endif;
 		if(self.isUnique)then{
-			var uxName : String := getUXName(self.name, sourceClassName);
+			var uxName : String := getUXName(sourceClassName, self.name);
 			ops += _removeConstraint(
 									defaultSchemaName,
 									sourceAssociationTableName,

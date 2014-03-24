@@ -57,6 +57,10 @@ main() {
 																		publicSchemaName,
 																		oldCollectionName,
 																		ordConstraintName);
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	oldCollectionName,
+																	getDbOrderingColumnName());
 	var removeFkChildTable : RDB::ops::ModelOperation := _removeConstraint(
 																		publicSchemaName,
 																		oldCollectionName,
@@ -79,6 +83,7 @@ main() {
 															insertCollectionData,
 															removeUxConstraint,
 															removeOrdConstraint,
+															removeOrdColumn,
 															removeFkChildTable,
 															removeIdColumn,
 															removeDataColumn,

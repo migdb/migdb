@@ -19,5 +19,5 @@ main(){
 										_idProperty("idParent", int), 
 										OrderedSet{distributedProperty});
 	var childCls : StandardClass := _class("Tab", parentCls, OrderedSet{});
-	_appStructure(OrderedSet{int, parentCls, childCls});
+	_appStructure(OrderedSet{int, typeCls, parentCls, childCls});
 }

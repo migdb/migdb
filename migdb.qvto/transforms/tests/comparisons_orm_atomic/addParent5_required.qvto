@@ -25,8 +25,7 @@ main() {
 	var fkSourceAssocRefTypeName : String := "fk_" + childAssociationTableName + "_" + 
 													typeTableName;
 	var ordSourceAssocName : String := "ux_" + childAssociationTableName + "_ord";
-	var uxSourceAssocName : String := "ux_" + mergedColumnName + "_" + childTableName;
-	
+	var uxSourceAssocName : String := "ux_" + childTableName + "_" + mergedColumnName;
 	
 	var removePk : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
@@ -57,10 +56,14 @@ main() {
 																sourceColumnNames,
 																parentAssociationTableName,
 																targetColumnNames);																		
-	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+	var removeOrdConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		childAssociationTableName,
+																		ordSourceAssocName);
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
 																publicSchemaName,
 																childAssociationTableName,
-																ordSourceAssocName);
+																getDbOrderingColumnName());																	
 	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																childAssociationTableName,
@@ -90,7 +93,8 @@ main() {
 															insertChildIds, 
 															addParencyFk,
 															insertAssocTable,
-															removeOrd,
+															removeOrdConstraint,
+															removeOrdColumn,
 															removeUx,
 															removeFkRefChild,
 															removeFkRefType,

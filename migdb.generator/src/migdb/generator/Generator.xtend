@@ -439,7 +439,9 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(InsertRowsImpl op)'''
 		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»;
+			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»
+			«IF op.whereCondition != null && op.whereCondition != ""» where «op.whereCondition»«ENDIF»
+			;
 	'''
 	
 	/**

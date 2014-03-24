@@ -13,6 +13,10 @@ main() {
 																	publicSchemaName,
 																	collectionTableName,
 																	"ux_col_tab_pr_ord");
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																collectionTableName,
+																getDbOrderingColumnName());
 	var removeUxConst : RDB::ops::ModelOperation := _removeConstraint(
 																	publicSchemaName,
 																	collectionTableName,
@@ -34,6 +38,7 @@ main() {
 															collectionTableName);																
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															removeOrdConst,
+															removeOrdColumn,
 															removeUxConst,
 															removeFk,
 															removeDataColumn,

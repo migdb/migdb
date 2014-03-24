@@ -27,6 +27,7 @@ library evolution_rdb;
 import queries_rdb;
 import builder_rdb; 
 import builder_errors;
+import text_service;
 
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
@@ -34,8 +35,7 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 abstract query RDB::ops::ModelOperation::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
 
-abstract helper RDB::ops::ModelOperation::
-	apply(inout structure : RDB::Structure);
+abstract helper RDB::ops::ModelOperation::apply(inout structure : RDB::Structure);
 
 
 /********************************************************************************
@@ -938,16 +938,13 @@ query RDB::ops::InsertRows::isValid(structure : RDB::Structure, inout errorLog :
 	var existTargetColumn : Boolean := checkExistColumnSet(
 											self.owningSchemaName, 
 											self.targetTableName, 
-											self.sourceColumnsNames, 
+											self.targetColumnNames, 
 											structure, 
 											errorLog, 
 											operationIndex, 
 											getEvolutionRdbTransformationId());
-	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
-											self.whereCondition, 
-											errorLog, 
-											operationIndex, 
-											getEvolutionRdbTransformationId());											
+	//it doesn't validate where part - there is case when you copy all selected instances so no 
+	//wherePart is needed
 	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
 			existTargetColumn;
 }
@@ -1204,10 +1201,11 @@ helper checkHasNoColumns(owningSchemaName : String, tableName : String, structur
 			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
-	var hasNoColumns : Boolean := structure.findTable(owningSchemaName, tableName).
-		columns->size() = 0;
+	var checkedTable : Table := structure.findTable(owningSchemaName, tableName);
+	var hasNoColumns : Boolean := checkedTable.columns->size() = 0;
 	if(not hasNoColumns)then{
-		var errorMessage : String := "Table " + tableName + " contans columns";
+		var errorMessage : String := "Table " + tableName + " contains columns " + 
+			checkedTable.columns->collect(col | col.name)->toString();
 		errorLog.errors+= _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return hasNoColumns;
@@ -1348,7 +1346,9 @@ helper checkExistColumn(owningSchemaName : String, tableName : String, columnNam
 													tableName, 
 													columnName);
 	if(not isColumnInTable)then{
-		var errorMessage : String := "Column is not contained in table " + tableName + 
+		structure.print();
+		log("Debug");
+		var errorMessage : String := "Column "+ columnName + " is not contained in table " + tableName + 
 			" in schema " + owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
@@ -1375,7 +1375,7 @@ helper checkExistConstraint(owningSchemaName : String, constraintName : String, 
 	var existConstraint : Boolean := structure.findSchema(owningSchemaName).tables->constraints->
 		exists(constr | constr.name = constraintName);
 	if(not existConstraint)then{
-		var errorMessage : String := "Constraint called " + constraintName + " exists";
+		var errorMessage : String := "Constraint called " + constraintName + " not exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return existConstraint;	

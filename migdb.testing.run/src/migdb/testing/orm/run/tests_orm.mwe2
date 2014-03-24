@@ -80,7 +80,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "add association property to standard class"
+		testDescription = "addProperty_b association property to standard class"
 	}
 	
 	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
@@ -92,7 +92,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops2.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "add association property UB = -1 to standard class"
+		testDescription = "addProperty_c association property UB = -1 to standard class"
 	}
 	
 	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
@@ -104,7 +104,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops3.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "add association UX, ORD property to standard class"
+		testDescription = "addProperty_d association UX, ORD property to standard class"
 	}
 	
 	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
@@ -116,7 +116,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops4.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty5_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "add primitive UX, ORD property to standard class"
+		testDescription = "addProperty_e primitive UX, ORD property to standard class"
 	}	
 	
 	component = TestComponent{
@@ -136,9 +136,10 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameEntityOrm2_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameEntity - DB association table"
+		testDescription = "renameEntity - simple table rename"
 	}
 
+	/**In this test, associationProperty address is not affected by rename */
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/004b_renameEntity"
@@ -146,7 +147,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameEntity - DB association collumn"
+		testDescription = "renameEntity_b - collection"
 	}
 	
 	component = TestComponent{
@@ -156,7 +157,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameEntity - DB association table"
+		testDescription = "renameEntity_c - DB association table"
 	}	
 
 	component = TestComponent{
@@ -176,7 +177,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeEntity2.qvto"
 		qvtComparison = "${EMPTY_RDB_OPS}"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeEntity PrimitiveCls"
+		testDescription = "removeEntity_b PrimitiveCls"
 	}
 			
 	component = TestComponent{
@@ -196,7 +197,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameProperty PrimitiveProp - unique ordered collection"
+		testDescription = "renameProperty_b PrimitiveProp - unique ordered collection"
 	}
 	
 	component = TestComponent{
@@ -206,7 +207,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameProperty AssociationProp UB = 1 in StdCls"
+		testDescription = "renameProperty_c AssociationProp UB = 1 in StdCls"
 	}
 	
 	component = TestComponent{
@@ -216,7 +217,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameProperty AssociationProp UB = -1 in StdCls"
+		testDescription = "renameProperty_d AssociationProp UB = -1 in StdCls"
 	}
 	
 	component = TestComponent{
@@ -236,7 +237,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeProperty collection Primitive"
+		testDescription = "removeProperty_b collection Primitive"
 	}
 	
 	component = TestComponent{
@@ -246,7 +247,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeProperty - association property"
+		testDescription = "removeProperty_c - association property"
 	}
 	
 	component = TestComponent{
@@ -256,7 +257,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeProperty - association property M x N, ordered, UX"
+		testDescription = "removeProperty_d - association property M x N, ordered, UX"
 	}
 	
 	component = TestComponent{
@@ -276,7 +277,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - collection"
+		testDescription = "pullUpProperties_b - collection"
 	}
 	
 	component = TestComponent{
@@ -286,7 +287,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - association 1 - M"
+		testDescription = "pullUpProperties_c - association 1 - M"
 	}
 
 	component = TestComponent{
@@ -296,7 +297,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - association N - M"
+		testDescription = "pullUpProperties_d - association N - M"
 	}
 	
 	component = TestComponent{
@@ -306,7 +307,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties5_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - collection, UX, ORD"
+		testDescription = "pullUpProperties_e - collection, UX, ORD"
 	}
 	
 	component = TestComponent{
@@ -316,7 +317,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties6_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pullUpProperties - association, UX, ORD"
+		testDescription = "pullUpProperties_f - association, UX, ORD"
 	}
 
 	component = TestComponent{
@@ -336,7 +337,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pushDownProperties - collection"
+		testDescription = "pushDownProperties_b - collection"
 	}
 	
 	component = TestComponent{
@@ -346,7 +347,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pushDownProperties - association 1 x M"
+		testDescription = "pushDownProperties_c - association 1 x M"
 	}
 	
 	component = TestComponent{
@@ -356,7 +357,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pushDownProperties - association M x N"
+		testDescription = "pushDownProperties_d - association M x N"
 	}
 	
 	component = TestComponent{
@@ -366,7 +367,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties5_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pushDownProperties - UX, ORD collection"
+		testDescription = "pushDownProperties_e - UX, ORD collection"
 	}
 	
 	component = TestComponent{
@@ -376,7 +377,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
 		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties6_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "pushDownProperties - UX, ORD association M x N"
+		testDescription = "pushDownProperties_f - UX, ORD association M x N"
 	}
 	
 	component = TestComponent {
@@ -396,7 +397,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "addParent Man, Person => Man -> Person"
+		testDescription = "addParent_b Man, Person => Man -> Person"
 	}
 	
 	component = TestComponent {
@@ -406,7 +407,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "addParent (UX, ord age) Man, Person => Man -> Person"
+		testDescription = "addParent_c (UX, ord age) Man, Person => Man -> Person"
 	}
 		
 	component = TestComponent {
@@ -416,7 +417,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "addParent assoc"
+		testDescription = "addParent_d assoc"
 	}
 	
 	component = TestComponent {
@@ -426,7 +427,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent5_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "addParent UX, ord assoc M x N"
+		testDescription = "addParent_e UX, ord assoc M x N"
 	}
 	
 	component = TestComponent {
@@ -446,7 +447,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeParent - simple remove Parency FK"
+		testDescription = "removeParent_b - distribute primitive atribute"
 	}
 	
 	component = TestComponent {
@@ -456,7 +457,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent3_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeParent - distributed collection"
+		testDescription = "removeParent_c - distributed collection"
 	}
 	
 	component = TestComponent {
@@ -466,7 +467,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent4_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeParent - distributed association M x 1"
+		testDescription = "removeParent_d - distributed association M x 1"
 	}
 	
 	component = TestComponent {
@@ -476,7 +477,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent5_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "removeParent - distributed association M x N"
+		testDescription = "removeParent_e - distributed association M x N"
 	}
 	
 }

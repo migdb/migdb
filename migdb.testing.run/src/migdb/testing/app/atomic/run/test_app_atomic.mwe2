@@ -62,7 +62,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_tab_plain.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addClass1b.qvto"
-		testDescription = "addClass - added class already exists"
+		testDescription = "addClass_b - added class already exists"
 	}
 /**/	
 	component = TestComponent{
@@ -84,7 +84,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addProperty1b_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addProperty1b.qvto"
-		testDescription = "addProperty - prop already exists"
+		testDescription = "addProperty_b - prop already exists"
 	}		
 /**/	
 	component = TestComponent{
@@ -106,7 +106,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addPrimitiveClass1b_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addPrimitiveClass1b.qvto"
-		testDescription = "addPrimitiveClass - primitiveClass already exists"
+		testDescription = "addPrimitiveClass_b - primitiveClass already exists"
 	}
 	
 /**/
@@ -129,7 +129,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/renameEntity1b_required"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_renameEntity4b.qvto"
-		testDescription = "renameEntity target not Existing"
+		testDescription = "renameEntity_b target not Existing"
 	}
 /**/	
 	component = TestComponent {
@@ -151,7 +151,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/empty_structure.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "removeEntity PrimitiveClass"
+		testDescription = "removeEntity_b PrimitiveClass"
 	}
 /**/	
 	component = TestComponent {
@@ -162,7 +162,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_removeEntity1c.qvto"
-		testDescription = "removeEntity target not exists"
+		testDescription = "removeEntity_c target not exists"
 	}
 /**/	
 	component = TestComponent {
@@ -195,7 +195,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_removeProperty1b.qvto"
-		testDescription = "removeProperty pr - owningClass not exists"
+		testDescription = "removeProperty_b pr - owningClass not exists"
 	}
 /**/	
 	component = TestComponent {
@@ -217,7 +217,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/setAbstract2_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_setAbstract_tab_primitive.qvto"
-		testDescription = "setAbstract tab primitive"
+		testDescription = "setAbstract_b tab primitive"
 	}
 /**/
 	component = TestComponent {
@@ -239,7 +239,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/errors_addParent1b.qvto"
-		testDescription = "addParent NO Parent NO Child Exists"
+		testDescription = "addParent_b NO Parent NO Child Exists"
 	}
 /**/	
 	component = TestComponent {
@@ -250,7 +250,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/addParent_c_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
-		testDescription = "addParent Man, Person => Man -> Person"
+		testDescription = "addParent_c Man, Person => Man -> Person"
 	}
 	
 	component = TestComponent {
@@ -261,7 +261,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/addParent_d.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_addParent1d.qvto"
-		testDescription = "Man, Person => conflict cardinalities"
+		testDescription = "addParend_d Man, Person => conflict cardinalities"
 	}
 	
 	component = TestComponent {
@@ -272,7 +272,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/addParent_e.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/errors_addParent1e.qvto"
-		testDescription = "addParent Man, Person => conflict UX, ORD"
+		testDescription = "addParent_e Man, Person => conflict UX, ORD"
 	}
 /**/
 	component = TestComponent {
@@ -294,7 +294,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_removeParent1b.qvto"
-		testDescription = "removeParent NO child class exists"
+		testDescription = "removeParent_b NO child class exists"
 	}
 /**/
 	component = TestComponent {
@@ -327,7 +327,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_extractClass1b_required.qvto"
-		testDescription = "extractClass NO source class exists"
+		testDescription = "extractClass_b NO source class exists"
 	}
 /**/	
 	component = TestComponent {
@@ -349,7 +349,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1b_required.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_extractSubclass1b_required.qvto"
-		testDescription = "extractSubclass - parent doesn't exist"
+		testDescription = "extractSubclass_b - parent doesn't exist"
 	}
 /**/
 	component = TestComponent{
@@ -371,7 +371,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/structure_int.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/errors_moveProperty1b.qvto"
-		testDescription = "moveProperty - source not exist"
+		testDescription = "moveProperty_b - source not exist"
 	}
 /**/	
 	component = TestComponent{
@@ -393,7 +393,7 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_STR}/changeBiAsToUnidir1b_str.qvto"
 		qvtComparison = "${COMPARE_ERRORS_DIR}/error_changeBiAsToUnidir1b.qvto"
-		testDescription = "changeBiAsToUnidir - link not exists"
+		testDescription = "changeBiAsToUnidir_b - link not exists"
 	}	
 /**/
 	component = TestComponent{

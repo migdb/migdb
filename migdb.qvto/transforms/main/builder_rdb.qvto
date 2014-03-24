@@ -284,6 +284,8 @@ helper _rdbOperations(_operations : OrderedSet(RDB::ops::ModelOperation)) : RDB:
 helper _schema( _name : String) : RDB::Schema{
 	return object RDB::Schema{
 		name := _name;
+		tables := OrderedSet{};
+		indexes := OrderedSet{};
 	};
 }
 
@@ -291,6 +293,7 @@ helper _schema( _tables : OrderedSet(RDB::Table)) : RDB::Schema{
 	return object RDB::Schema{
 		name := "public";
 		tables := _tables;
+		indexes := OrderedSet{};
 	};
 }
 
@@ -321,6 +324,8 @@ helper _schema(_name : String, _tables : OrderedSet(RDB::Table), _sequence : RDB
 helper _table(_name : String) : Table {	
  	return object Table {
  		name := _name;
+ 		columns := OrderedSet{};
+ 		constraints := OrderedSet{};
  	};
  }
 

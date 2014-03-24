@@ -39,6 +39,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.BooleanExtensions;
 import org.eclipse.xtext.xbase.lib.Exceptions;
+import org.eclipse.xtext.xbase.lib.ObjectExtensions;
 
 @SuppressWarnings("all")
 public class Generator extends BaseCodeGenerator {
@@ -936,8 +937,29 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" FROM ");
     String _sourceTableName = op.getSourceTableName();
     _builder.append(_sourceTableName, "	");
-    _builder.append(";");
     _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    {
+      boolean _operator_and = false;
+      String _whereCondition = op.getWhereCondition();
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(_whereCondition, null);
+      if (!_operator_notEquals) {
+        _operator_and = false;
+      } else {
+        String _whereCondition_1 = op.getWhereCondition();
+        boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(_whereCondition_1, "");
+        _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_notEquals_1);
+      }
+      if (_operator_and) {
+        _builder.append(" where ");
+        String _whereCondition_2 = op.getWhereCondition();
+        _builder.append(_whereCondition_2, "	");
+      }
+    }
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append(";");
+    _builder.newLine();
     return _builder;
   }
   

@@ -30,5 +30,5 @@ main(){
 										"Child",
 										parentCls,
 										childProps);
-	_appStructure(OrderedSet{int, parentCls, childCls});
+	_appStructure(OrderedSet{int, typeCls, parentCls, childCls});
 }

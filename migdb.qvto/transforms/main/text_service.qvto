@@ -32,12 +32,12 @@ query String :: translate() : String{
 }
 
 query Collection(String)::toString() : String{
-	var colString : String := "Collection(";
+	var colString : String := "[";
 	
 	self->forEach(str){
 		colString:= colString + str;
 	};
-	colString:= colString + ")";
+	colString:= colString + "]";
 	return colString;
 }
 
@@ -81,10 +81,6 @@ query getDbUniquePrefix() : String{
 	return "ux_";
 }
 
-query getDbOrderedPrefix() : String{
-	return "ordered_";
-}
-
 query getDbPkPrefix() : String{
 	return "pk_";
 }
@@ -95,18 +91,6 @@ query getDbFkPrefix() : String{
 
 query getDbCollectionPrefix() : String{
 	return "col_";
-}
-
-query getNotNullPrefix() : String{
-	return "nnull_";
-}
-
-/**
-	There can be only one ordering column in table so tableName is also identifier for each 
-unique ordering constraint
-**/
-query getDbOrderingConstraintName(tableName : String ) : String{
-	return getDbUniquePrefix() + getDbOrderedPrefix() + tableName;
 }
 
 // 

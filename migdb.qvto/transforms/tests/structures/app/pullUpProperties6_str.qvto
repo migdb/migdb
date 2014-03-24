@@ -29,5 +29,5 @@ main(){
 										"Child",
 										parentCls,
 										OrderedSet{pulledProp});
-	_appStructure(OrderedSet{int, parentCls, childCls});
+	_appStructure(OrderedSet{int, typeCls, parentCls, childCls});
 }

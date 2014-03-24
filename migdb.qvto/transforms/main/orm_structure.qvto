@@ -241,7 +241,7 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout
 		var orderingColumn : Column :=_column(getDbOrderingColumnName(), RDB::PrimitiveType::int);
 		collectionTable.columns += orderingColumn;
 		collectionTable.constraints+= _unique(
-											getDbOrderingConstraintName(collectionTable.name), 
+											getUXOrderingName(collectionTable.name), 
 											OrderedSet{orderingColumn, idColumn});
 	}endif;
 	//adding unique constraint
@@ -316,11 +316,12 @@ helper app::AssociationProperty::toAssociationTable(inout schema : RDB::Schema, 
 														RDB::PrimitiveType::int);
 				associationTable.columns += orderingColumn;
 				var uniqueOrder : rdb::Unique := _unique(
-											getDbOrderingConstraintName(associationTable.name), 
+											getUXOrderingName(associationTable.name), 
 											OrderedSet{owningAssociationColumn, orderingColumn});
+				associationTable.constraints += uniqueOrder;
 			}endif;
 			// adding uniqueness to collection		
-			if(self.isUnique or (self.oppositeProperty != null and 
+			if(self.isUnique or (self.oppositeProperty != null and  
 					self.oppositeProperty.isUnique))then{
 				var uniqueConstraintName : String := self.getUniqueConstraintName();
 				var uniqueConstraint :rdb::Unique := _unique(
@@ -395,6 +396,7 @@ helper app::StandardClass::addReferenceToParent(inout schema : Schema, inout err
 													parentProjection, 
 													childId);
 	childProjection.constraints+= fkReferencingParent;
+
 	return;
 }
 
