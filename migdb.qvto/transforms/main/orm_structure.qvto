@@ -227,9 +227,10 @@ helper app::PrimitiveProperty::toCollection(inout referencedTable : Table, inout
 	var collectionPropertyColumn : rdb::Column := _column(
 														self.name.translate() , 
 														toRdbType(self.getPrimitiveType()));
+	var defaultIdType : PrimitiveClass := self.owningGeneralClass.owningModel.findDefaultIdType();
 	var idColumn := _column(
 						self.owningGeneralClass.translateIdName(), 
-						toRdbType(self.owningGeneralClass.getId().getPrimitiveType()), 
+						toRdbType(defaultIdType.primitiveType), 
 						false);
 	var fkOwningTableProjection : rdb::ForeignKey := _foreignKey(
 														self.getFKCollectionName(), 
