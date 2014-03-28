@@ -46,7 +46,8 @@ TestWorkflow{
 		testDescription = "TEST 01 VALID"
 	}
 	
-	component = TestComponent{
+//Unsupported mapping type	
+/**	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/valid_02"
 		qvtInput = "${INPUT_DIR}/test_app_02.qvto"
@@ -54,6 +55,8 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "TEST 02 VALID TPC M-N Association"
 	}
+* 
+*/
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -146,13 +149,24 @@ TestWorkflow{
 		testDescription = "TEST 08 INVALID - missing root ID"
 	}
 
-	component = TestComponent{
+	/** CURRENTLY UNSUPPORTED hierarchy type */
+/*	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_09"
 		qvtInput = "${INPUT_DIR}/test_app_invalid_09.qvto"
 		qvtInput = "${EMPTY_ERRORS}"
 		qvtComparison = "${INPUT_DIR}/test_err_invalid_09_required.qvto"
 		testDescription = "TEST 09 INVALID - TPC M-N association"
+	}
+*/
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_10"
+		qvtInput = "${INPUT_DIR}/test_app_invalid_10.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_10_required.qvto"
+		testDescription = "TEST 10 INVALID - non joined hierarchy"
 	}
 	
 }

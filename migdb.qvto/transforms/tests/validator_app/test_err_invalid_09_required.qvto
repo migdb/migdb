@@ -1,7 +1,7 @@
 import builder_errors;
 
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
-transformation test_err_invalid_08_required(out outModel : ERR);
+transformation test_err_invalid_09_required(out outModel : ERR);
 
 
 main() {

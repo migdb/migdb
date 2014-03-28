@@ -52,6 +52,7 @@ query getValidatorAppId() : String{
 }
 
 query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
+	var areClassesJoined : Boolean := true;
 	var classUniqueName : Boolean := true; 
 	var propUniqueName : Boolean := true;
 	var notCycledHierarchies : Boolean := true;
@@ -155,10 +156,17 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notTpcExpansion := false;
 	};
+	stdClasses->forEach(stdCls | stdCls.inheritanceType <> app::InheritanceType::joined){
+		var errorMessage : String := "Structure contains unsupported hierarchy type of mapping "+ 
+				" : class name \"" + stdCls.name + "\" inheritanceType: " + 
+				stdCls.inheritanceType.repr() + "";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		areClassesJoined := false;
+	};
 	var valid : Boolean := 	classUniqueName and areEntityNamesLegal and propUniqueName and 
-							arePropertyNamesLegal and notCycledHierarchies and 
-							oppositeProperty and notHasNonRootId and idBounds and idTypes and 
-							notTpcExpansion and rootsId;	
+							arePropertyNamesLegal and notCycledHierarchies and oppositeProperty 
+							and notHasNonRootId and idBounds and idTypes and notTpcExpansion and 
+							rootsId and areClassesJoined;	
 	return  valid;
 	//entities->logFirstPropName();
 	return false;

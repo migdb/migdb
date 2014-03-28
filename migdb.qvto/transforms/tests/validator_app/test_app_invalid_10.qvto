@@ -1,0 +1,16 @@
+import builder_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+transformation test_app_invalid_10(out inoutModel : APP);
+
+main() {
+	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
+	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	
+	var thing : APP::StandardClass := _class(
+											"Thing", 
+											_idProperty("idThing", integer), 
+											OrderedSet{ _primitiveProperty("name", string)},
+											InheritanceType::tablePerClass);
+		var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string, thing});
+	 
+}
