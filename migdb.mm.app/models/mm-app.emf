@@ -26,11 +26,6 @@ package app {
     attr PrimitiveType[1] primitiveType;
   }
   
-  class EmbeddedClass extends GeneralClass {
-    val EmbeddedProperty[+]#owningEmbeddedClass embeddedProperties;
-    ref EmbeddedProperty[1] idProperty;
-  }
-
   class StandardClass extends GeneralClass {
     ref StandardClass parent;
     attr boolean isAbstract = false;
@@ -80,16 +75,6 @@ package app {
     attr String[1] name;
   }
 
-  class NestedProperty extends MultipliableProperty {
-    ref EmbeddedClass[1] type;
-  }
-
-  class EmbeddedProperty extends Property {
-    ref PrimitiveClass[1] type;
-    derived ref EmbeddedClass#embeddedProperties owningEmbeddedClass;
-    attr boolean[1] isMandatory;
-  }
-
   @namespace(uri="http://www.collectionspro.eu/jam/mm/app-ops", prefix="app-ops")
   package ops {
     abstract class ModelOperation {
@@ -99,10 +84,6 @@ package app {
     class AddPrimitiveClass extends ModelOperation {
       attr String[1] name;
       attr PrimitiveType[1] primitiveType;
-    }
-
-    class AddEmbeddedClass extends ModelOperation {
-      attr String[1] name;
     }
 
     class AddStandardClass extends ModelOperation {
@@ -130,7 +111,7 @@ package app {
       attr String[1] name;
       attr String[1] typeName;
       attr String defaultValue;
-      attr int lowerBound;
+      attr int lowerBound = 0;
       attr int upperBound = 1;
       attr boolean isOrdered;
       attr boolean isUnique;
@@ -198,7 +179,6 @@ package app {
       attr String[*] propertyNames;
     }
             
-   //START DAVID LUKSCH
     class ChangeBidirectionalAssociationToUnidirectional extends ModelOperation {
        attr String[1] className;
        attr String[1] owningAssociationPropertyName;
@@ -244,11 +224,9 @@ package app {
     class MoveProperties extends ModelOperation {
       attr String[1] sourceClassName;
       attr String[1] linkName;
-      //attr String[1] targetClassName;
       attr String[+] propertiesNames;
       attr ToleranceType[1] toleranceType;
-    }
-    
+    }    
   }
 
 }

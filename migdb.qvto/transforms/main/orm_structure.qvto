@@ -161,26 +161,11 @@ helper Sequence(app::MultipliableProperty)::toColumns(inout table : Table, inout
 				}endif;
 			}endif;
 		}else {
-			if(prop.oclIsTypeOf(NestedProperty))then{
-				prop.oclAsType(NestedProperty).toColumns(table, errorLog);
-			}else{
-				var errorMessage : String := "property " + prop.repr() + 
-					" has unknown type - can't be mapped";
-				errorLog.errors+= _ormError(errorMessage, getOrmStructureTransformationId());
-				return;
-			}endif;		
+			var errorMessage : String := "property " + prop.repr() + 
+				" has unknown type - can't be mapped";
+			errorLog.errors+= _ormError(errorMessage, getOrmStructureTransformationId());
+			return;
 		}endif;
-	};
-	return;
-}
-
-/**
-	Mapping Nested Property to set of columns from EmbeddedClass
-**/
-helper app::NestedProperty::toColumns(inout table : RDB::Table, inout errorLog : ErrorLog){
-	self.type.oclAsType(EmbeddedClass).embeddedProperties ->forEach(prop){
-		var column := _column(self.name + "_" + prop.name, toRdbType(prop.getPrimitiveType()));
-		table.columns += column;
 	};
 	return;
 }

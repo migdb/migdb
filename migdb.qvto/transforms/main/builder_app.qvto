@@ -22,18 +22,6 @@ helper _addPrimitiveClass(_name : String, _primitiveType : PrimitiveType) : APP:
 	}
 }
 
-
-helper _addEmbeddedClass(_name : String) : APP::ops::AddEmbeddedClass {
-	var condition : Boolean := isLegalClassName(_name);
-	if(not condition)then{
-		log("Error when calling constructor _addEmbeddedClass(" + _name + ")");
-	}endif;
-	assert(condition);	
-	return object APP::ops::AddEmbeddedClass {
-		name := _name;
-	}
-}
-
 helper _addStandardClass(_name : String, _isAbstract : Boolean, _inheritanceType : InheritanceType) : APP::ops::AddStandardClass {
 	var condition : Boolean := isLegalClassName(_name) and _isAbstract <> null and _inheritanceType <> null;
 	if(not condition)then{
@@ -532,52 +520,6 @@ helper _associationProperty(_name : String, _type : StandardClass, _lowerBound :
 	return prop;
 }
 
-helper _embeddedProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
-	var condition : Boolean := isLegalPropertyName(_name) and _type <> null ;
-	if(not condition)then{
-		log("Error when calling constructor _embeddedProperty(" + _name + ", " + _type.repr() + 
-		  ")");
- 	}endif;	
-	assert(condition);
-	var emb : EmbeddedProperty := object EmbeddedProperty{
-		name := _name;
-		type := _type;
-	};
-	return emb;
-}
-
-helper _embeddedProperty(_name : String, _type : PrimitiveClass, _isMandatory : Boolean) : EmbeddedProperty{
-	var condition : Boolean := _isMandatory <> null;
-	if(not condition)then{
-		log("Error when calling constructor _embeddedProperty(" + _name + ", " + _type.repr() + 
-		  ", " + _isMandatory.repr() + ")");
- 	}endif;	
-	assert(condition);
-	var emb : EmbeddedProperty := _embeddedProperty(_name, _type);
-	emb.isMandatory := _isMandatory;
-	return emb;
-}
-
-helper _embeddedIdProperty(_name : String, _type : PrimitiveClass) : EmbeddedProperty{
-	return _embeddedProperty(_name, _type, true);
-		
-}
-
-helper _nestedProperty(_name : String, _type : EmbeddedClass) : NestedProperty{
-	var condition : Boolean := isLegalPropertyName(_name) and _type <> null ;
-	if(not condition)then{
-		log("Error when calling constructor _nestedProperty(" + _name + ", " + _type.repr() + 
-		  ")");
- 	}endif;	
-	assert(condition);
-	return object NestedProperty{
-		name := _name;
-		type := _type;
-		lowerBound := 0;
-		upperBound := 1;
-	}
-}
-
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {
  	var condition : Boolean := isLegalClassName(_name) and _parent <> null and 
  		_properties <> null;
@@ -665,8 +607,6 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _properties : Ord
 	return cls;
 }
 
-
- 
 helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : PrimitiveClass {
  	var condition : Boolean := _name <> null and _name <> "" and _primitiveType <> null;
  	if(not condition)then{
@@ -678,29 +618,4 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
  		name := _name;
  		primitiveType := _primitiveType;
  	}
-}
-
-helper _embeddedClass(_name : String, _idProperty : EmbeddedProperty) : EmbeddedClass {
- 	var condition : Boolean := _name <> null and _name <> "" and _idProperty <> null;
- 	if(not condition)then{
- 		log("Error when calling constructor _embeddedClass(" + _name + ", " + 
- 			_idProperty.repr() + ")");
- 	}endif;
- 	assert(condition);
- 	return object EmbeddedClass {
- 		name := _name;
- 		idProperty := _idProperty;
- 	}
-}
-
-helper _embeddedClass(_name : String, _properties : OrderedSet(EmbeddedProperty), _idProperty : EmbeddedProperty) : EmbeddedClass {
- 	var condition : Boolean := _properties <> null;
- 	if(not condition)then{
- 		log("Error when calling constructor _embeddedClass(" + _name + ", " + 
- 			_properties->toString() + ", " + _idProperty.repr() + ")");
- 	}endif;
- 	assert(condition);
- 	var embClass : EmbeddedClass := _embeddedClass(_name, _idProperty);
- 	embClass.embeddedProperties += _properties;
- 	return embClass;
 }

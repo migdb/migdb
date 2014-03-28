@@ -35,123 +35,9 @@ query app::AssociationProperty::isID():Boolean{
 	return false;
 }
 
-query app::EmbeddedProperty::isID():Boolean{
-	return self.owningEmbeddedClass.idProperty = self;
-}
-
 query app::PrimitiveProperty::isID() : Boolean{
 	return self.owningGeneralClass.parent = null and self.owningGeneralClass.getId() = self;
 }
-
-query app::Property::equals(_property : app::Property): Boolean{
-	log("code equals method of Property " + self.repr() + " wasn't yet implemented");
-	assert(false);
-	return false;
-};
-
-query app::AssociationProperty::equals(_property : app::Property) : Boolean{
-	if(_property = null or not _property.oclIsTypeOf(AssociationProperty))then{
-		return false;
-	}endif;
-	var multipliableProperty : AssociationProperty := _property.oclAsType(AssociationProperty);
-	if(self.name <> multipliableProperty.name or 
-			self.upperBound <> multipliableProperty.upperBound or 
-	        self.lowerBound <> multipliableProperty.lowerBound or 
-	        self.isOrdered <> multipliableProperty.isOrdered or 
-	        self.isUnique <> multipliableProperty.isUnique and 
-	        self.type.equalsType(multipliableProperty.type))then{
-		return false;
-	}endif;
-	return true;
-}
-
-query app::PrimitiveProperty::equals(_property : app::Property) : Boolean{
-	if(_property = null or not _property.oclIsTypeOf(PrimitiveProperty))then{
-		return false;
-	}endif;
-	var primitiveProperty : PrimitiveProperty := _property.oclAsType(PrimitiveProperty);
-
-	if(self.name <> primitiveProperty.name or self.upperBound <> primitiveProperty.upperBound or 
-	        self.lowerBound <> primitiveProperty.lowerBound or 
-	        self.isOrdered <> primitiveProperty.isOrdered or 
-	        self.isUnique <> primitiveProperty.isUnique or 
-	        not self.type.equalsType(primitiveProperty.type))then{
-		return false;
-	}endif;
-	return true;
-}
-
-
-query APP::NestedProperty::isID() : Boolean{
-	return false;	
-}
-
-query ModelEntity::equals(modelEntity : ModelEntity):Boolean{
-    log("code equals method of Entity " + self.repr() + " wasn't yet implemented");
-	assert(false);
-	return false;
-}
-
-query StandardClass::equals(modelEntity : ModelEntity):Boolean{
-    if(modelEntity = null or not self.equalsType(modelEntity))then{
-		return false;
-	}endif;
-	var stdClass : StandardClass := modelEntity.oclAsType(StandardClass);
-	//attribute name equality is hidden in equalsType method called above
-	if(not self.parent.equalsType(stdClass.parent) or stdClass.isAbstract <> self.isAbstract or
-	     self.inheritanceType <> stdClass.inheritanceType or 
-	     (not self.idProperty.equals(stdClass.idProperty)) and self.idProperty <> null and 
-	     	stdClass.idProperty <> null)then{
-		return false;
-	}endif;
-	
-	return self.properties->exists( pr | modelEntity.oclAsType(StandardClass)->properties->
-			exists(modEnPr | pr.equals(modEnPr)));
-}
-
-query PrimitiveClass::equals(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(PrimitiveClass) or 
-			self.name <> modelEntity.name)then{
-		return false;
-	}endif;
-	return self.primitiveType = modelEntity.oclAsType(PrimitiveClass).primitiveType;
-}
-
-query EmbeddedClass::equals(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or 
-	self.name <> modelEntity.name)then{
-		return false;
-	}endif;
-	return self.embeddedProperties->exists(pr | modelEntity.oclAsType(EmbeddedClass)->
-		embeddedProperties->exists(modEnPr | pr.equals(modEnPr)));
-}
-
-query ModelEntity::equalsType(modelEntity : ModelEntity) : Boolean{
-	log("code equalsType method of Entity " + self.repr() + " wasn't yet implemented");
-	assert(false);
-	return false;	
-}
-
-query PrimitiveClass::equalsType(modelEntity : ModelEntity) : Boolean{
-	return self.equals(modelEntity);
-}
-
-query StandardClass::equalsType(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(StandardClass) or 
-			self.name <> modelEntity.name)then{
-		return false;
-	}endif;	
-	return true;
-}
-
-query EmbeddedClass::equalsType(modelEntity : ModelEntity) : Boolean{
-	if(modelEntity = null or not modelEntity.oclIsKindOf(EmbeddedClass) or 
-			self.name <> modelEntity.name)then{
-		return false;
-	}endif;	
-	return true;
-}
-
 
 /**	Checks if this class has default inheritanceType **/
 query app::StandardClass::hasImplicitInheritanceType():Boolean{
@@ -363,11 +249,6 @@ query APP::Structure::containsStandardClass(className : String) : Boolean {
 	return self.entities[StandardClass]->exists(name = className);
 }
 
-query APP::Structure::containsEmbeddedClass(className : String) : Boolean{
-	return self.entities[EmbeddedClass]->exists(name = className);
-}
-
-
 query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
 	return self.entities![name = eName];
 }
@@ -383,12 +264,6 @@ query APP::Structure::findPrimitiveClass(className : String) : APP::PrimitiveCla
 query APP::Structure::findGeneralClass(className : String) : APP::GeneralClass {
 	return self.findEntity(className).oclAsType(GeneralClass);
 }
-
-query APP::Structure::findEmbeddedClass(className : String) : APP::EmbeddedClass {
-	return self.findEntity(className).oclAsType(EmbeddedClass);
-}
-
-
 
 query APP::Structure::isPropertyInGeneralClass(className : String, propertyName : String) : Boolean {
 	return self.findGeneralClass(className).containsProperty(propertyName);
@@ -413,22 +288,10 @@ query StandardClass::containsProperty(propertyName : String) : Boolean{
 	return self.properties->exists(name = propertyName);
 } 
 
-query EmbeddedClass::containsProperty(propertyName : String) : Boolean{
-	return self.embeddedProperties->exists(name = propertyName);
-}
-
 abstract query GeneralClass::containsProperty(primitiveType : PrimitiveClass) : Boolean;
 
 query StandardClass::containsPropertyOfType(_primitiveType : PrimitiveClass) : Boolean{
 	return self.properties[PrimitiveProperty]->exists(prop | prop.type = _primitiveType);
-}
-
-query EmbeddedClass::containsPropertyOfType(_primitiveType : PrimitiveClass) : Boolean{
-	return self.embeddedProperties->exists(prop | prop.type = _primitiveType);
-}
-
-query StandardClass::containsPropertyOfType(_type : EmbeddedClass) : Boolean{
-	return self.properties[NestedProperty]->exists(prop | prop.type = _type );
 }
 
 query StandardClass::containsPropertyOfType(_type : StandardClass) : Boolean{
@@ -453,10 +316,6 @@ abstract query GeneralClass::getProperty(propertyName : String) : APP:: Property
 
 query StandardClass::getProperty(propertyName : String) : APP:: Property{
 	return self.properties![name = propertyName];
-}
-
-query EmbeddedClass::getProperty(propertyName : String) : APP:: Property{
-	return self.embeddedProperties![name = propertyName];
 }
 
 query APP::Structure::containsClass(className : String) : Boolean {
@@ -534,22 +393,12 @@ query Property::getType() : ModelEntity{
 	if(self.oclIsTypeOf(AssociationProperty))then{
 		return self.oclAsType(AssociationProperty).type;
 	}endif;
-	if(self.oclIsTypeOf(EmbeddedProperty))then {
-		return self.oclAsType(EmbeddedProperty).type;
-	}endif;
-	if(self.oclIsTypeOf(NestedProperty))then{
-		return self.oclAsType(NestedProperty).type;
-	}endif;
 	log("Error occured - unimplemented method getType for property " + self.repr());
 	assert(false);
 	return null;
 }
 
 query PrimitiveProperty::getPrimitiveType(): APP::PrimitiveType{
-	return self.type.primitiveType;
-}
-
-query EmbeddedProperty::getPrimitiveType(): APP::PrimitiveType{
 	return self.type.primitiveType;
 }
 

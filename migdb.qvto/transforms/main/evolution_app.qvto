@@ -74,27 +74,6 @@ helper APP::ops::AddPrimitiveClass::apply(inout structure : APP::Structure) {
 	return;
 }
 
-query APP::ops::AddEmbeddedClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var notExistEntity : Boolean := checkEntityNotExists(
-										self.name, 
-										structure, 
-										errorLog, 
-										operationIndex, 
-										getEvolutionAppTransformationId());
-	var formOfName : Boolean := checkEntityName(
-									self.name, 
-									structure,
-									errorLog, 
-									operationIndex, 
-									getEvolutionAppTransformationId());
-	return notExistEntity and formOfName;
-}
-
-helper APP::ops::AddEmbeddedClass::apply(inout structure : APP::Structure) {
-	applyAddEmbeddedClass(structure, self.name);
-   	return;
-}
-
 query APP::ops::AddStandardClass::isValid(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
 	var notExistEntity : Boolean := checkEntityNotExists(
 										self.name, 
@@ -1117,23 +1096,6 @@ helper checkHasParent(standardClassName : String, structure : APP::Structure, in
 
 helper ModelEntity::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean;
 
-helper EmbeddedClass::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	var notExistsPropertyOfType : Boolean :=  not self.owningModel->
-	        entities[APP::StandardClass]->exists(cls | cls.containsPropertyOfType(self));
-	var isEmbeddedEmpty : Boolean := self.embeddedProperties->isEmpty();		
-	if(not notExistsPropertyOfType)then{
-		var errorMessage : String := "Model contains entity containing property of property of type " + 
-			self.repr();
-		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
-	}endif;
-	if(not isEmbeddedEmpty)then{
-		var errorMessage : String := "entity is not empty - cannot be removed";
-		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);
-	}endif;
-	
-	return notExistsPropertyOfType and isEmbeddedEmpty;
-}
-
 helper StandardClass::checkIsRemoveable(structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
 	var notExisPropertyOfType : Boolean :=  not self.owningModel->entities[APP::StandardClass]->
 			exists(cls | cls.containsPropertyOfType(self));
@@ -1239,9 +1201,6 @@ helper checkIsPropertyTypeValid(owningClassName : String, propertyTypeName : Str
 }
 
 query APP::GeneralClass::isTypeValid(type : String) : Boolean {
-	if (self.oclIsTypeOf(APP::EmbeddedClass)) then {
-		return self.owningModel.containsPrimitiveClass(type);
-	} endif;
 	if (self.oclIsTypeOf(APP::StandardClass)) then {
 		return self.owningModel.containsPrimitiveClass(type) or 
 			self.owningModel.containsGeneralClass(type);
@@ -1501,11 +1460,6 @@ helper checkHavePropertiesAdequateType(firstClassName : String, firstPropertyNam
 		haveSameType := firstProperty.oclAsType(PrimitiveProperty).type = 
 								secondProperty.oclAsType(PrimitiveProperty).type;
 	}endif;
-	if(firstProperty.oclIsTypeOf(NestedProperty) and 
-			secondProperty.oclIsTypeOf(NestedProperty))then{
-		haveSameType := firstProperty.oclAsType(NestedProperty).type = 
-								secondProperty.oclAsType(NestedProperty).type;
-	}endif;
 	if(not haveSameType) then {
 		var errorMessage : String := "Properties " + firstProperty.repr() + " and " + 
 				secondProperty.repr() + " types differ" ;
@@ -1579,19 +1533,9 @@ helper applyRemoveProperty(inout owningClass : GeneralClass, removedPropertyName
 	if(owningClass.oclIsTypeOf(StandardClass))then {
 		applyRemoveProperty(owningClass.oclAsType(StandardClass), removedPropertyName);
 	}else {
-		if(owningClass.oclIsTypeOf(EmbeddedClass))then {
-			applyRemoveProperty(owningClass.oclAsType(EmbeddedClass), removedPropertyName);
-		}else {
-			log("Removing from not StandardClass neither EmbeddedClass not allowed");
-			assert(false);
-		}endif;
+		log("Removing from not StandardClass neither EmbeddedClass not allowed");
+		assert(false);
 	} endif;
-}
-
-helper applyRemoveProperty(inout owningEmbeddedClass : EmbeddedClass ,removedPropertyName : String){
-	owningEmbeddedClass.embeddedProperties := owningEmbeddedClass.embeddedProperties->
-		reject(pr | pr.name = removedPropertyName);
-	return;
 }
 
 helper applyRemoveProperty(inout owningStandardClass : StandardClass, removedPropertyName : String){
@@ -1603,15 +1547,6 @@ helper applyRemoveProperty(inout owningStandardClass : StandardClass, removedPro
 helper applyAddPrimitiveClass(inout appStructure : Structure, primitiveClassName : String, primitiveType : PrimitiveType){
 	appStructure.entities += _primitiveClass(primitiveClassName, primitiveType);
 	return;
-}
-
-helper applyAddEmbeddedClass(inout structure : Structure, embeddedClassName : String){
-	var embeddedId : EmbeddedProperty := _embeddedProperty(
-    										"id", 
-    										structure.findDefaultIdType(),
-    										false);
-	structure.entities += _embeddedClass(embeddedClassName, embeddedId);
-	return;	
 }
 
 helper applyRenameEntity(inout structure : Structure, entityName : String, newName : String){

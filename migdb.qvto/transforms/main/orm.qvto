@@ -52,11 +52,6 @@ helper APP::ops::AddPrimitiveClass::toRdb(appStructure : APP::Structure) : Order
 	return OrderedSet{};	
 }
 
-// this operation is not mapped to RDB
-helper APP::ops::AddEmbeddedClass::toRdb(appStructure : APP::Structure) : OrderedSet(RDB::ops::ModelOperation) {
-	return OrderedSet{};
-}
-
 /**	
 	Helper used to map APP primitiveType to RDB primitiveType
 **/
@@ -1854,10 +1849,6 @@ query APP::Property::getDbTypeOfProperty(appStructure : APP::Structure) : RDB::P
 	if(self.oclIsTypeOf(PrimitiveProperty)) then {
 		// Primitive property can be only int, char or boolean
 		type := toRdbType(self.oclAsType(PrimitiveProperty).type.primitiveType);
-	} endif;
-	if(self.oclIsTypeOf(EmbeddedProperty)) then {
-		// Embedded property can be only int, char or boolean
-		type := toRdbType(self.oclAsType(EmbeddedProperty).type.primitiveType);
 	} endif;
 	return type;
 }
