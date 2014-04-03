@@ -33,6 +33,10 @@ migdb.run/output*/*
 #generated test outputs
 migdb.testing.run/output-tests/*
 
+#xtend
+migdb.generator/bin/*
+migdb.generator/xtend-gen/*
+
 #~files
 scripts/*~
 .gitignore~
