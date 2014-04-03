@@ -1,0 +1,87 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addParent3_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "man";
+	var parentTableName : String := "person";
+	var idChildTableName : String := "id_" + childTableName;
+	var idParentTableName : String := "id_" + parentTableName;
+	var pkChildName : String := "pk_" + childTableName;
+	var parencyFkName : String := "par_" + childTableName;
+	var mergedColumnName : String := "age";
+	var newCollectionName : String := "col_" + parentTableName + "_" + mergedColumnName;
+	var oldCollectionName : String := "col_" + childTableName + "_" + mergedColumnName ;
+	var uxConstraintName : String := "ux_" + childTableName + "_" + mergedColumnName;
+	var ordConstraintName : String := "ux_" + oldCollectionName + "_ord";
+	var fkRefChildTableName : String := "fk_" + oldCollectionName;
+	
+	var insertChildIds : RDB::ops::ModelOperation := _insertRows(
+															publicSchemaName,
+															childTableName,
+															OrderedSet{idChildTableName},
+															parentTableName,
+															OrderedSet{idParentTableName});
+	var addParencyFk : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																childTableName,
+																idChildTableName,
+																parencyFkName,
+																parentTableName);
+	var sourceCollectionColumns : OrderedSet(String) := OrderedSet{
+																idChildTableName,
+																mergedColumnName};
+	var targetCollectionColumns : OrderedSet(String) := OrderedSet{
+																idParentTableName,
+																mergedColumnName};
+														
+	var insertCollectionData : RDB::ops::ModelOperation := _insertRows(
+																	publicSchemaName,
+																	oldCollectionName,
+																	sourceCollectionColumns,
+																	newCollectionName,
+																	targetCollectionColumns);
+	var removeUxConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldCollectionName,
+																		uxConstraintName);
+	var removeOrdConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldCollectionName,
+																		ordConstraintName);
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	oldCollectionName,
+																	getDbOrderingColumnName());
+	var removeFkChildTable : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldCollectionName,
+																		fkRefChildTableName);
+	var removeIdColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																oldCollectionName,
+																idChildTableName);
+	var removeDataColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	oldCollectionName,
+																	mergedColumnName);
+	var removeChildCollectionTable : RDB::ops::ModelOperation := _removeTable(
+																			publicSchemaName,
+																			oldCollectionName);																																
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															insertChildIds, 
+															addParencyFk, 
+															insertCollectionData,
+															removeUxConstraint,
+															removeOrdConstraint,
+															removeOrdColumn,
+															removeFkChildTable,
+															removeIdColumn,
+															removeDataColumn,
+															removeChildCollectionTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

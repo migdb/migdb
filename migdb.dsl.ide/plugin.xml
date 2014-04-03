@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            id="migdb.dsl.ide"
+            name="MigDb">
+      </category>
+      <wizard
+            category="migdb.dsl.ide"
+            class="migdb.dsl.ide.wizard.OpsNewWizard"
+            icon="icons/model.gif"
+            id="migdb.dsl.ide.wizard.OpsNewWizard"
+            name="Operations">
+            <description>Creates a new Operations file</description>
+      </wizard>
+   </extension>
+   
+   <extension
+         point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.core.runtime.text"
+            file-extensions="ops,OPS"
+            id="migdb.dsl.ide.type.OpsType"
+            name="Operations"
+            priority="normal">
+      </content-type>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="migdb.dsl.ide.launch.OpsLaunchDelegate"
+            id="migdb.dsl.ide.launch.OpsLaunchConfigurationType"
+            modes="run, debug"
+            name="Operations Launch">
+      </launchConfigurationType>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTypeImages">
+      <launchConfigurationTypeImage
+            configTypeID="migdb.dsl.ide.launch.OpsLaunchConfigurationType"
+            icon="icons/model.gif"
+            id="migdb.dsl.ide.launch.OpsLaunchConfigurationTypeImage">
+      </launchConfigurationTypeImage>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchShortcuts">
+      <shortcut
+            class="migdb.dsl.ide.launch.OpsLaunchShortcut"
+            description="Launches an *.ops file"
+            icon="icons/model.gif"
+            id="migdb.dsl.ide.launch.shortcut1"
+            label="Operations"
+            modes="run, debug">
+         <contextualLaunch>
+    		 <enablement>
+             <with variable="selection">
+               <count value="1"/>
+               <iterate
+                     ifEmpty="false"
+                     operator="and">
+                  <adapt type="org.eclipse.core.resources.IFile"/>
+                    <test property="org.eclipse.debug.ui.matchesPattern"
+                          value="*.ops"/>
+               </iterate>
+             </with>
+           	</enablement>
+            <contextLabel
+                  label="Operations"
+                  mode="run">
+            </contextLabel>
+            <contextLabel
+                  label="Operations"
+                  mode="debug">
+            </contextLabel>
+         </contextualLaunch>
+      </shortcut>
+   </extension>
+   
+   <extension
+         point="org.eclipse.debug.ui.launchConfigurationTabGroups">
+      <launchConfigurationTabGroup
+            class="migdb.dsl.ide.launch.OpsLaunchTabGroup"
+            id="migdb.dsl.ide.launch.OpsLaunchConfigurationTabGroup"
+            type="migdb.dsl.ide.launch.OpsLaunchConfigurationType">
+         <launchMode
+               description="Debug a ops file"
+               mode="debug"
+               perspective="org.eclipse.debug.ui.DebugPerspective">
+         </launchMode>
+         <launchMode
+               description="Run a ops file"
+               mode="run">
+         </launchMode>
+      </launchConfigurationTabGroup>
+   </extension>
+
+</plugin>

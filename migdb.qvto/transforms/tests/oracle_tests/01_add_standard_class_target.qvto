@@ -1,0 +1,12 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation add_standard_class_target_01(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var cls3 : StandardClass := _class("Cls3", _idProperty("idThreeRoot", int), 
+		OrderedSet{});
+	_appStructure(OrderedSet{int, cls3});
+}

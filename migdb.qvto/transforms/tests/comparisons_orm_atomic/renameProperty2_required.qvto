@@ -1,0 +1,58 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameProperty2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var collectionTable : String := "col_tab_pr";
+	var removeOrdConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																			publicSchemaName,
+																			collectionTable,
+																			"ux_col_tab_pr_ord");
+	var addOrdUx : RDB::ops::ModelOperation := _addUnique(
+														publicSchemaName,
+														collectionTable,
+														OrderedSet{"id_tab", "pr", "ordering"},
+														"ux_col_tab_new_property_name_ord");
+	var removeUxConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		collectionTable,
+																		"ux_tab_pr");
+	var addUx : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													collectionTable,
+													OrderedSet{"id_tab", "pr"},
+													"ux_tab_new_property_name");
+	var removeFk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																collectionTable,
+																"fk_col_tab_pr");
+	var addFk : RDB::ops::ModelOperation := _addForeignKey(
+														publicSchemaName,
+														collectionTable,
+														"id_tab",
+														"fk_col_tab_new_property_name",
+														"tab");
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																collectionTable,
+																"pr",
+																"new_property_name");
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															collectionTable,
+															"col_tab_new_property_name");															 																																																																						
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeOrdConstraint,
+															addOrdUx,
+															removeUxConstraint,
+															addUx,
+															removeFk,
+															addFk,
+															renameColumn,
+															renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,233 @@
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+package mm;
+
+@namespace(uri="http://www.collectionspro.eu/jam/mm/app", prefix="app")
+package app {
+  abstract class ModelRoot {
+  }
+
+  class Structure extends ModelRoot {
+    val ModelEntity[*]#owningModel entities;
+  }
+
+  class Operations extends ModelRoot {
+    val ops.ModelOperation[*]#owningOperations operations;
+  }
+
+  abstract class ModelEntity {
+    readonly derived ref Structure[1]#entities owningModel;
+    attr String[1] name;
+  }
+
+  abstract class GeneralClass extends ModelEntity {
+  }
+
+  class PrimitiveClass extends ModelEntity {
+    attr PrimitiveType[1] primitiveType;
+  }
+  
+  class StandardClass extends GeneralClass {
+    ref StandardClass parent;
+    attr boolean isAbstract = false;
+    attr InheritanceType[1] inheritanceType;
+    val MultipliableProperty[*]#owningGeneralClass properties;
+    !unique !resolve ref PrimitiveProperty idProperty;
+  }
+
+  enum InheritanceType {
+    joined = 0;
+    tablePerClass = 1;
+    singleTable = 2;
+  }
+
+  enum ToleranceType {
+    strict = 0;
+    force = 1;
+    tolerant = 2;
+  }
+
+  enum PrimitiveType {
+    boolean = 0;
+    char = 1;
+    int = 2;
+  }
+
+  class AssociationProperty extends MultipliableProperty {
+    ref AssociationProperty oppositeProperty;
+    ref StandardClass[1] type;
+    attr boolean[1] isOwning = true;
+  }
+
+  abstract class MultipliableProperty extends Property {
+    readonly derived ref StandardClass[1]#properties owningGeneralClass;
+    attr int upperBound = 1;
+    attr int lowerBound = 0;
+    attr boolean isOrdered = false;
+    attr boolean isUnique = false;
+  }
+
+  class PrimitiveProperty extends MultipliableProperty {
+    ref PrimitiveClass[1] type;
+    attr String defaultValue;
+  }
+
+  abstract class Property {
+    attr String[1] name;
+  }
+
+  @namespace(uri="http://www.collectionspro.eu/jam/mm/app-ops", prefix="app-ops")
+  package ops {
+    abstract class ModelOperation {
+      readonly derived ref Operations[1]#operations owningOperations;
+    }
+
+    class AddPrimitiveClass extends ModelOperation {
+      attr String[1] name;
+      attr PrimitiveType[1] primitiveType;
+    }
+
+    class AddStandardClass extends ModelOperation {
+      attr String[1] name;
+      attr boolean isAbstract;
+      attr InheritanceType[1] inheritanceType;
+    }
+
+    class RenameEntity extends ModelOperation {
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class SetAbstract extends ModelOperation {
+      attr String[1] name;
+      attr boolean[1] isAbstract;
+    }
+
+    class RemoveEntity extends ModelOperation {
+      attr String[1] name;
+    }
+
+    class AddProperty extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr String[1] typeName;
+      attr String defaultValue;
+      attr int lowerBound = 0;
+      attr int upperBound = 1;
+      attr boolean isOrdered;
+      attr boolean isUnique;
+    }
+
+    class RenameProperty extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr String[1] newName;
+    }
+
+    class RemoveProperty extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+    }
+
+    class SetType extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr String[1] typeName;
+    }
+
+    class SetBounds extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr int[1] lowerBound;
+      attr int[1] upperBound;
+    }
+
+    class SetOrdered extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr boolean[1] isOrdered;
+    }
+
+    class SetUnique extends ModelOperation {
+      attr String[1] owningClassName;
+      attr String[1] name;
+      attr boolean[1] isUnique;
+    }
+
+    class AddParent extends ModelOperation {
+      attr String[1] className;
+      attr String[1] parentClassName;
+    }
+
+    class RemoveParent extends ModelOperation {
+      attr String[1] className;
+    }    
+    
+    // Create new class witch is connect by pointer from source class
+    class ExtractClass extends ModelOperation{
+      attr String[1] sourceClassName;
+      attr String[1] extractClassName;
+      attr String[1] associationPropertyName;
+      attr String[1] oppositePropertyName;
+      attr String[+] propertyNames;
+    }    
+
+	// Create new parent to classes
+	// in Fowler it extracts properties as well
+    class ExtractSuperClass extends ModelOperation {
+      attr String[+] sourceClassesName;
+      attr String[1] extractParentName;
+      attr String[*] propertyNames;
+    }
+            
+    class ChangeBidirectionalAssociationToUnidirectional extends ModelOperation {
+       attr String[1] className;
+       attr String[1] owningAssociationPropertyName;
+    }
+
+    class ChangeUnidirectionalAssociationToBidirectional extends ModelOperation {
+       attr String[1] className;
+       attr String[1] associationPropertyName;
+       attr String[1] oppositePropertyName;
+    }    
+
+    // isIntoSub == true => collapse the superclass into the subclass
+    // isIntoSub == false => collapse the subclass into the superclass
+    class CollapseHierarchy extends ModelOperation {
+       attr String[1] superClassName;
+       attr String[1] subClassName;
+       attr boolean[1] isIntoSub;
+    }    
+    
+    class ExtractSubClass extends ModelOperation {
+       attr String[1] sourceClassName;
+       attr String[1] extractedClassName;
+       attr String[*] extractedPropertiesNames;
+    }
+        
+    // associationProperty is the association property pointing from the target class to the inlined class
+    class InlineClass extends ModelOperation {
+       attr String[1] targetClassName;
+       attr String[1] associationPropertyName;
+       attr ToleranceType[1] toleranceType;
+    }
+    
+    class PullUpProperties extends ModelOperation {
+       attr String[1] childClassName;
+       attr String[+] pulledPropertiesNames;
+    }
+    
+    class PushDownProperties extends ModelOperation {
+       attr String[1] childClassName;
+       attr String[+] pushedPropertiesNames;
+    }
+    
+    class MoveProperties extends ModelOperation {
+      attr String[1] sourceClassName;
+      attr String[1] linkName;
+      attr String[+] propertiesNames;
+      attr ToleranceType[1] toleranceType;
+    }    
+  }
+
+}
+

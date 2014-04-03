@@ -1,0 +1,70 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var targetTableName : String := "child"; 
+	var exportedPropertyName : String := "pushed_pr";
+	var oldCollectionTableName : String := "col_parent_" + exportedPropertyName;
+	var sourceIdColumnName : String := "id_parent";
+	var targetIdColumnName : String := "id_child";
+	
+	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldCollectionTableName,
+																"ux_col_parent_pushed_pr_ord");
+	var orderingColumns : OrderedSet(String) := OrderedSet{
+														sourceIdColumnName,
+														exportedPropertyName,
+														"ordering"};
+	var addOrd : RDB::ops::ModelOperation := _addUnique(
+														publicSchemaName,
+														oldCollectionTableName,
+														orderingColumns,
+														"ux_col_child_pushed_pr_ord");
+	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
+															publicSchemaName,
+															oldCollectionTableName,
+															"ux_parent_pushed_pr");
+	var uxColumnNames : OrderedSet(String) := OrderedSet{
+														sourceIdColumnName,
+														exportedPropertyName};
+	var addUx : RDB::ops::ModelOperation :=	_addUnique(
+													publicSchemaName,
+													oldCollectionTableName,
+													uxColumnNames,
+													"ux_child_pushed_pr");																																								
+	var removeFkColect : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldCollectionTableName,
+																"fk_col_parent_pushed_pr");
+	var addFKColect : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldCollectionTableName,
+																sourceIdColumnName,
+																"fk_col_child_pushed_pr",
+																targetTableName);															
+	var renameColectPr : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldCollectionTableName,
+																	sourceIdColumnName,
+																	targetIdColumnName);
+	var renameColectTable : RDB::ops::ModelOperation := _renameTable(
+																	publicSchemaName,
+																	oldCollectionTableName,
+																	"col_child_pushed_pr");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeOrd,
+															addOrd,
+															removeUx,
+															addUx,
+															removeFkColect,
+															addFKColect,
+															renameColectPr,
+															renameColectTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

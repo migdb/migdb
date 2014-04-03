@@ -1,0 +1,10 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addSequence_ops(out inoutModel : RDB);
+
+
+main() {
+	var addSequence : RDB::ops::ModelOperation := _addSequence("public", "seq_global", 1);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addSequence};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

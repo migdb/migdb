@@ -1,10 +1,9 @@
 import builder_rdb;
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
-transformation secondAPP(out inoutModel : RDB);
+transformation test_postgresl_invalid_01(out inoutModel : RDB);
 
 
-main() {
-	log("TEST_RDB_INVALID_01: schema name");	
-	
-	var root : rdb::ModelRoot := _rdbStructure(Set{_schema("collision_schema"), _schema("collision_schema")});
+main() {	
+	var root : rdb::ModelRoot := _rdbStructure(OrderedSet{_schema("collision_schema"), 
+			_schema("collision_schema")});
 }

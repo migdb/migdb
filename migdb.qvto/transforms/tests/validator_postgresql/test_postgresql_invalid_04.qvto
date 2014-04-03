@@ -11,5 +11,5 @@ main() {
 	var collisionPk : PrimaryKey := _primaryKey("collision_constraint",col);
 	table.constraints := OrderedSet{collisionFk, collisionPk};
 	
-	var root : rdb::ModelRoot := _rdbStructure(Set{_schema(OrderedSet{table})});
+	var root : rdb::ModelRoot := _rdbStructure(OrderedSet{_schema(OrderedSet{table})});
 }

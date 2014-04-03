@@ -1,4 +1,4 @@
-module migb.testing_migdb_executer_test1
+module migb.test_migdb_executor
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -15,90 +15,52 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
-Workflow{
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/migdb_executer"
+var IN_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
+var COMPARISONS_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var COMPARISONS_APP_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_migdb_executer/app_str"
+var COMPARISONS_RDB_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_migdb_executer/rdb_str"
+var COMPARISONS_RDB_OPS_DIR = "${QVTO_DIR}/tests/comparisons_migdb_executer/rdb_str"
+
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/migdb_executer.qvto"
+
+TestWorkflow{
 		
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/component/test_migdb_executor/"
+		directory = "${OUTPUT_BASE_DIR}/"
 	}
 	
 		
-	/* Define of APP metamodel */
+	/* APP metamodel registration */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
 	
-	/* Define of RDB metamodel */
+	/* RDB metamodel registration */
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
 	
+	/*Error metamodel registration */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}		
 	
-	/*AppStr */
-	component = QVTOExecutor {
-		transformationFile= "../migdb.qvto/transforms/tests/migdb_executer/strApp.qvto"
-		outputSlot= "strApp"
-	}
 	
-	/*AppOps */
-	component = QVTOExecutor {
-		transformationFile= "../migdb.qvto/transforms/tests/migdb_executer/opsApp.qvto"
-		outputSlot= "opsApp"
-	}
-	
-	/*RdbStr */
-	component = QVTOExecutor {
-		transformationFile= "../migdb.qvto/transforms/tests/migdb_executer/strRdb.qvto"
-		outputSlot= "strRdb"
-	}
-	
-	/*Helper rdb ops */
-	component = QVTOExecutor {
-		transformationFile= "../migdb.qvto/transforms/tests/orm/operations/empty_rdb_ops.qvto"
-		outputSlot= "opsRdb"
-	}
-	
-	/**Executor Transformation */
-	component = QVTOExecutor{
-		inputSlot="opsApp"
-		inputSlot="strApp"
-		outputSlot="outStrApp"
-		inputSlot="strRdb"
-		outputSlot="outStrRdb"
-		inOutSlot="opsRdb"
-		transformationFile="../migdb.qvto/transforms/evolution/migdb_executer.qvto"
-	}
-	
-	/**outStrApp writer */
-	component = Writer {
-		modelSlot = "outStrApp"
-		uri = "output-tests/migdb_executer/outStrApp.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	/**outStrRdb writer */
-	component = Writer {
-		modelSlot = "outStrRdb"
-		uri = "output-tests/migdb_executer/outStrRdb.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	/**outStrRdb writer */
-	component = Writer {
-		modelSlot = "opsRdb"
-		uri = "output-tests/migdb_executer/opsRdb.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
-	component = Writer {
-		modelSlot = "strRdb"
-		uri = "output-tests/migdb_executer/strRdb.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
-	}
-	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002_addProperty"
+		qvtInput = "${IN_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtInput = "${IN_OPS}/addProperty1.qvto"
+		qvtComparison = ""//"${COMPARISONS_APP_STRUCTURES_DIR}"
+		qvtComparison = ""//"${COMPARISONS_RDB_STRUCTURES_DIR}"
+		qvtComparison = ""//"${COMPARISONS_RDB_OPS_DIR}"
+		qvtComparison = ""//"${COMPARISONS_ERRORS_DIR}"
+		testDescription = "addProperty"
+	}	
 }

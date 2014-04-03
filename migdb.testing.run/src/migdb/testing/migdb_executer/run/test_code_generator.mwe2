@@ -1,0 +1,1039 @@
+module migdb.test_code_generator
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+import migdb.run.utils.*
+import migdb.mm.rdb.*
+import migdb.mm.app.*
+import migdb.mm.errors.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/code_gen"
+var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
+//rdb ops output slot of TestingComponent
+var RDB_OPS_SLOT = "RESULT_2"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/migdb_executer.qvto"
+
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var EMPTY_ERRORS = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+
+var ADD_CLASS_STRING = "001_addClass"
+var OUT_DIR_ADD_CLASS = "${OUTPUT_BASE_DIR}/${ADD_CLASS_STRING}"
+
+var ADD_PROPERTY_STRING = "002_addProperty"
+var OUT_DIR_ADD_PROPERTY = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_STRING}"
+
+var ADD_PROPERTY_B_STRING = "002b_addProperty"
+var OUT_DIR_ADD_PROPERTY_B = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_B_STRING}"
+
+var ADD_PROPERTY_C_STRING = "002c_addProperty"
+var OUT_DIR_ADD_PROPERTY_C = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_C_STRING}"
+
+var ADD_PROPERTY_D_STRING = "002d_addProperty"
+var OUT_DIR_ADD_PROPERTY_D = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_D_STRING}"
+
+var ADD_PROPERTY_E_STRING = "002e_addProperty"
+var OUT_DIR_ADD_PROPERTY_E = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_E_STRING}"
+
+var RENAME_ENTITY_STRING = "003_renameEntity"
+var OUT_DIR_RENAME_ENTITY = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_STRING}"
+
+var RENAME_ENTITY_B_STRING = "003b_renameEntity"
+var OUT_DIR_RENAME_ENTITY_B = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_B_STRING}"
+
+var RENAME_ENTITY_C_STRING = "003c_renameEntity"
+var OUT_DIR_RENAME_ENTITY_C = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_C_STRING}"
+
+var REMOVE_ENTITY_STRING = "004_removeEntity"
+var OUT_DIR_REMOVE_ENTITY = "${OUTPUT_BASE_DIR}/${REMOVE_ENTITY_STRING}"
+
+var RENAME_PROPERTY_STRING = "005_renameProperty"
+var OUT_DIR_RENAME_PROPERTY = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_STRING}"
+
+var RENAME_PROPERTY_B_STRING = "005b_renameProperty"
+var OUT_DIR_RENAME_PROPERTY_B = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_B_STRING}"
+
+var RENAME_PROPERTY_C_STRING = "005c_renameProperty"
+var OUT_DIR_RENAME_PROPERTY_C = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_C_STRING}"
+
+var RENAME_PROPERTY_D_STRING = "005d_renameProperty"
+var OUT_DIR_RENAME_PROPERTY_D = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_D_STRING}"
+
+var REMOVE_PROPERTY_STRING = "006_removeProperty"
+var OUT_DIR_REMOVE_PROPERTY = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_STRING}"
+
+var REMOVE_PROPERTY_B_STRING = "006b_removeProperty"
+var OUT_DIR_REMOVE_PROPERTY_B = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_B_STRING}"
+
+var REMOVE_PROPERTY_C_STRING = "006c_removeProperty"
+var OUT_DIR_REMOVE_PROPERTY_C = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_C_STRING}"
+
+var REMOVE_PROPERTY_D_STRING = "006d_removeProperty"
+var OUT_DIR_REMOVE_PROPERTY_D = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_D_STRING}"
+
+var PULL_UP_PROPERTIES_STRING = "007_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_STRING}"
+
+var PULL_UP_PROPERTIES_B_STRING = "007b_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES_B = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_B_STRING}"
+
+var PULL_UP_PROPERTIES_C_STRING = "007c_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES_C = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_C_STRING}"
+
+var PULL_UP_PROPERTIES_D_STRING = "007d_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES_D = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_D_STRING}"
+
+var PULL_UP_PROPERTIES_E_STRING = "007e_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES_E = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_E_STRING}"
+
+var PULL_UP_PROPERTIES_F_STRING = "007f_pullUpProperties"
+var OUT_DIR_PULL_UP_PROPERTIES_F = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_F_STRING}"
+
+var PUSH_DOWN_PROPERTIES_STRING = "008_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_STRING}"
+
+var PUSH_DOWN_PROPERTIES_B_STRING = "008b_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_B = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_B_STRING}"
+
+var PUSH_DOWN_PROPERTIES_C_STRING = "008c_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_C = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_C_STRING}"
+
+var PUSH_DOWN_PROPERTIES_D_STRING = "008d_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_D = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_D_STRING}"
+
+var PUSH_DOWN_PROPERTIES_E_STRING = "008e_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_E = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_E_STRING}"
+
+var PUSH_DOWN_PROPERTIES_F_STRING = "008f_pushDownProperties"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_F = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_F_STRING}"
+
+var ADD_PARENT_STRING = "009_addParent"
+var OUT_DIR_ADD_PARENT = "${OUTPUT_BASE_DIR}/${ADD_PARENT_STRING}"
+
+var ADD_PARENT_B_STRING = "009b_addParent"
+var OUT_DIR_ADD_PARENT_B = "${OUTPUT_BASE_DIR}/${ADD_PARENT_B_STRING}"
+
+var ADD_PARENT_C_STRING = "009c_addParent"
+var OUT_DIR_ADD_PARENT_C = "${OUTPUT_BASE_DIR}/${ADD_PARENT_C_STRING}"
+
+var ADD_PARENT_D_STRING = "009d_addParent"
+var OUT_DIR_ADD_PARENT_D = "${OUTPUT_BASE_DIR}/${ADD_PARENT_D_STRING}"
+
+var ADD_PARENT_E_STRING = "009e_addParent"
+var OUT_DIR_ADD_PARENT_E = "${OUTPUT_BASE_DIR}/${ADD_PARENT_E_STRING}"
+
+var REMOVE_PARENT_STRING = "010_removeParent"
+var OUT_DIR_REMOVE_PARENT = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_STRING}"
+
+var REMOVE_PARENT_B_STRING = "010b_removeParent"
+var OUT_DIR_REMOVE_PARENT_B = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_B_STRING}"
+
+var REMOVE_PARENT_C_STRING = "010c_removeParent"
+var OUT_DIR_REMOVE_PARENT_C = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_C_STRING}"
+
+var REMOVE_PARENT_D_STRING = "010d_removeParent"
+var OUT_DIR_REMOVE_PARENT_D = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_D_STRING}"
+
+var REMOVE_PARENT_E_STRING = "010e_removeParent"
+var OUT_DIR_REMOVE_PARENT_E = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_E_STRING}"
+
+/** This workflow uses TestingComponent as a "shortcut" to get results of migdb_executer 
+ *  transformation and then execute code generation. This workflow wasn't designed to 
+ *  test orm_run, orm_structure_run, evolution_rdb_run nor evolution_app_run so each 
+ *  TestComponent has "" comparison slots
+ */
+TestWorkflow{
+		
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+	
+		
+		/* APP metamodel registration */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* RDB metamodel registration */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+	
+	/*Error metamodel registration */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+		
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_CLASS}"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtInput = "${IN_APP_OPS}/addClass1.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_CLASS_STRING}"
+	}	
+	
+	/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_CLASS_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_CLASS}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtInput = "${IN_APP_OPS}/addProperty1.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PROPERTY_STRING} primitive"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PROPERTY_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_B}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PROPERTY_B_STRING} - association property to standard class"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PROPERTY_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_C}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops2.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PROPERTY_C_STRING} - association property UB = -1 to standard class"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PROPERTY_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_C}"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_D}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops3.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PROPERTY_D_STRING} - association UX, ORD property to standard class"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PROPERTY_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_E}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops4.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PROPERTY_E_STRING} - primitive UX, ORD property to standard class"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PROPERTY_E_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_E}"
+	}
+		
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY}"
+		qvtInput = "${IN_APP_STR}/structure_teacher_person.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm2_ops.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_ENTITY_STRING} - simple table rename"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_ENTITY_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY_B}"
+		qvtInput = "${IN_APP_STR}/structure_person_collection_addresses.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_ENTITY_B_STRING} - collection"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_ENTITY_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY_C}"
+		qvtInput = "${IN_APP_STR}/structure_person_M_N_addresses.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_ENTITY_C_STRING} - DB association collumn"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_ENTITY_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY_C}"
+	}
+	
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_ENTITY}"
+		qvtInput = "${IN_APP_STR}/structure_tab_plain.qvto"
+		qvtInput = "${IN_APP_OPS}/removeEntity1.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_ENTITY_STRING} - standardClass"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_ENTITY_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_ENTITY}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY}"
+		qvtInput = "${IN_APP_STR}/structure_tab.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_PROPERTY_STRING} - PrimitiveProp"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_PROPERTY_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_B}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_PROPERTY_B_STRING} - unique ordered collection"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_PROPERTY_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_C}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"		
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_PROPERTY_C_STRING} - AssociationProp UB = 1 in StdCls"
+	}	
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_PROPERTY_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_D}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${RENAME_PROPERTY_D_STRING} - AssociationProp UB = -1 in StdCls"		
+	}
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${RENAME_PROPERTY_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PROPERTY_STRING} - plain Primitive"		
+	}
+	
+/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PROPERTY_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_B}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_collection.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PROPERTY_B_STRING} - collection Primitive"
+	}
+	
+	/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PROPERTY_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_C}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PROPERTY_C_STRING} - association property"
+	}
+
+	/***** SQL GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PROPERTY_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_D}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PROPERTY_D_STRING} - association property M x N, ordered, UX"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PROPERTY_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_STRING} - primitive"
+	}	
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_B}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_B_STRING} - collection"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_C}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_C_STRING} - association 1 - M"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_D}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_D_STRING} - association N - M"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_E}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_E_STRING} - collection, UX, ORD"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_E_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_E}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_F}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties6_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PULL_UP_PROPERTIES_F_STRING} - association, UX, ORD"
+	}
+
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PULL_UP_PROPERTIES_F_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_F}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_STRING} - simple"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_B_STRING} - collection"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_C_STRING} - association 1 x M"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_D_STRING} - association M x N"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_E_STRING} - UX, ORD collection"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_E_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties6_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${PUSH_DOWN_PROPERTIES_F_STRING} - UX, ORD association M x N"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${PUSH_DOWN_PROPERTIES_F_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT}"
+		qvtInput = "${IN_APP_STR}/structure_tab_parent_joined.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PARENT_STRING} simple adding parency FK"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PARENT_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT}"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_B}"
+		qvtInput = "${IN_APP_STR}/addParent_c.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PARENT_B_STRING} Man, Person => Man -> Person"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PARENT_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_B}"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_C}"
+		qvtInput = "${IN_APP_STR}/ormAddParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PARENT_C_STRING} - UX, ord primitive prop age"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PARENT_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_D}"
+		qvtInput = "${IN_APP_STR}/ormAddParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PARENT_D_STRING} - assoc"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PARENT_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_E}"
+		qvtInput = "${IN_APP_STR}/ormAddParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${ADD_PARENT_E_STRING} - UX, ord assoc M x N"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${ADD_PARENT_E_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_E}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PARENT_STRING} - simple remove Parency FK"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PARENT_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_B}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PARENT_B_STRING} - distribute primitive atribute"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PARENT_B_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_B}"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_C}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PARENT_C_STRING} - distributed collection"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PARENT_C_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_C}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_D}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PARENT_D_STRING} - distributed association M x 1"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PARENT_D_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_D}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_E}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"	
+		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "${REMOVE_PARENT_E_STRING} - distributed association M x N"
+	}
+	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_OPS_SLOT}"
+		generator = Generator {
+			filename = "${REMOVE_PARENT_E_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_E}"
+	}	
+}

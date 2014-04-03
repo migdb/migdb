@@ -1,0 +1,10 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation renameColumn_ops(out inoutModel : RDB);
+
+
+main() {
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn("public", "first", "uniq", "not");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{renameColumn};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

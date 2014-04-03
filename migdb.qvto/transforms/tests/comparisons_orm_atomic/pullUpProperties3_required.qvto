@@ -1,0 +1,89 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties3_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pulled_first_pr";
+	//reflection of secondProperty name
+	var secondColumnName : String := "pulled_second_pr";
+	//reflection of parent class
+	var targetTableName : String := "parent";
+	//reflection of child class in hierarchy
+	var sourceTableName : String := "child"; 
+	var typeTableName : String := "type";
+	var whereCondition : String := "child.id_child = parent.id_parent";
+
+	var addFirstColumnTarget : RDB::ops::ModelOperation := _addColumn(
+																	publicSchemaName,
+																	targetTableName,
+																	firstColumnName,
+																	PrimitiveType::int);
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																firstColumnName,
+																targetTableName,
+																firstColumnName,
+																whereCondition);
+	var removeFirstFk : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	sourceTableName,
+																	"fk_child_pulled_first_pr");
+	var addFirstFk : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															targetTableName,
+															firstColumnName,
+															"fk_parent_pulled_first_pr",
+															typeTableName);																																															
+	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	firstColumnName);
+	var addSecondColumnTarget : RDB::ops::ModelOperation := _addColumn(
+																	publicSchemaName,
+																	targetTableName,
+																	secondColumnName,
+																	PrimitiveType::int);
+	var updateSecondColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																secondColumnName,
+																targetTableName,
+																secondColumnName,
+																whereCondition);
+	var removeSecondFk : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	sourceTableName,
+																	"fk_child_pulled_second_pr");
+	var addSecondFk : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															targetTableName,
+															secondColumnName,
+															"fk_parent_pulled_second_pr",
+															typeTableName);																																															
+
+	var removeSecondColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	secondColumnName);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//update first association
+															addFirstColumnTarget,
+															updateFirstColumn,
+															removeFirstFk,
+															addFirstFk,
+															removeFirstColumn,
+															//update second association
+															addSecondColumnTarget,
+															updateSecondColumn,
+															removeSecondFk,
+															addSecondFk,
+															removeSecondColumn															
+	};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

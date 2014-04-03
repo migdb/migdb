@@ -2,7 +2,7 @@ import builder_app;
 import queries_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 
-transformation DFSQueryTest(out inoutModel : APP);
+transformation getDescendantsTest(out inoutModel : APP);
 
 main(){
 	var int : PrimitiveClass := _integer();
@@ -19,6 +19,7 @@ main(){
 	structure.entities:= OrderedSet{int, root, cl1, cl2, cl3, cl4, cl5, cl6, cl7};
 	structure.print();
 	
+	log("descendants:");
 	var rootDescendants := structure.getClassDescendants("root");
 	rootDescendants->printOrderedClassSet();
 }

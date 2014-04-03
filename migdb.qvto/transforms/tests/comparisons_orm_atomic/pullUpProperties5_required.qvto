@@ -1,0 +1,71 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties5_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var constrainedColumnName : String := "unique_and_ord";
+	var sourceIdName : String := "id_child";
+	var targetIdName : String := "id_parent";
+	var oldCollectionTableName : String := "col_child_unique_and_ord";
+	var newCollectionTableName : String := "col_parent_unique_and_ord";
+	
+	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldCollectionTableName,
+																"ux_col_child_unique_and_ord_ord");
+	var orderingColumns : OrderedSet(String) := OrderedSet{
+														"id_child",
+														constrainedColumnName, 
+														"ordering"};															
+	var addOrd : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldCollectionTableName,
+													orderingColumns,
+													"ux_col_parent_" + constrainedColumnName + "_ord");
+	var uxColumns : OrderedSet(String) := OrderedSet{
+												"id_child",
+												constrainedColumnName};
+	
+	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldCollectionTableName,
+																"ux_child_unique_and_ord");																											
+	var addUx : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldCollectionTableName,
+													uxColumns,
+													"ux_parent_unique_and_ord");
+	var removeFK : RDB::ops::ModelOperation := _removeConstraint(
+															publicSchemaName,
+															oldCollectionTableName,
+															"fk_" + oldCollectionTableName);
+	var addFk : RDB::ops::ModelOperation := _addForeignKey(
+														publicSchemaName,
+														oldCollectionTableName,
+														sourceIdName,
+														"fk_" + newCollectionTableName,
+														"parent");
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																oldCollectionTableName,
+																sourceIdName,
+																targetIdName);
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															oldCollectionTableName,
+															newCollectionTableName);																												
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeOrd,
+															addOrd,
+															removeUx,
+															addUx,
+															removeFK,
+															addFk,
+															renameColumn,
+															renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

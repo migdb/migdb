@@ -1,0 +1,56 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties3_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pushed_pr";
+	//reflection of child class
+	var targetTableName : String := "child";
+	//reflection of parent class in hierarchy
+	var sourceTableName : String := "parent"; 
+	var typeTableName : String := "type";
+	var whereCondition : String := "parent.id_parent = child.id_child";
+
+	var addFirstColumnTarget : RDB::ops::ModelOperation := _addColumn(
+																	publicSchemaName,
+																	targetTableName,
+																	firstColumnName,
+																	PrimitiveType::int);
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																firstColumnName,
+																targetTableName,
+																firstColumnName,
+																whereCondition);
+	var oldFkName : String := "fk_" + sourceTableName + "_" + firstColumnName;
+	var removeFirstFk : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	sourceTableName,
+																	oldFkName);
+	var newFkName : String := "fk_" + targetTableName + "_" + firstColumnName;
+	var addFirstFk : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															targetTableName,
+															firstColumnName,
+															newFkName,
+															typeTableName);																																															
+	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	firstColumnName);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//update first association
+															addFirstColumnTarget,
+															updateFirstColumn,
+															removeFirstFk,
+															addFirstFk,
+															removeFirstColumn
+	};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

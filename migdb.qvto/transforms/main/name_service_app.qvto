@@ -1,0 +1,113 @@
+library name_service_app;
+
+import queries_app;
+import text_service;
+
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+
+/******************************************************************************
+ *				DEVELOPER NOTES			 	                                  *
+ *  	This file represents dictionary for elements and their associated     *
+ * relations in app metamodel retrieving their representation in database.    * 
+ *****************************************************************************/
+
+/** Retrieves association table - name is created from associationProperty and owner of association **/
+query getAssociationTableName(associationProperty : AssociationProperty, associationOwningClass : StandardClass) : String{
+	return getAssociationTableName(associationProperty.name, associationOwningClass.name);	
+}
+
+query getAssociationTableName(associationPropertyName : String, associationOwningClassName : String) : String{
+	return associationOwningClassName.translate() + "_" + 
+					associationPropertyName.translate();	
+}
+
+/**
+	Get the name of ordering in targetTable
+**/
+query getUXOrderingName(tableName : String) : String{
+	return getDbUniquePrefix() + tableName + "_" + "ord";
+}
+
+/** Returns FK name referencing table from association table. Returned fk is/should be unique 
+	because associationTable's name is unique(pair sourceClass + property is unique) and 
+	both referenced table names differs. The parameters MUST be tableNames - there is no SINGLE 
+	entity in app model that reflects into associationTable */
+query getFKAssociationTableRefName(associationTableName : String, referencedTableName : String) : String {
+	return getDbFkPrefix() + associationTableName + "_" + referencedTableName;
+}
+
+query AssociationProperty::getFkRefencingOppositeName(sourceClass : StandardClass, targetClass : StandardClass): String{
+	return getFkRefencingOppositeName(self.name, sourceClass.name, targetClass.name);
+}
+
+query getFkRefencingOppositeName(associationPropertyName : String, associationOwnerClassName : String, targetClassName : String) : String{
+	return getDbFkPrefix() + associationOwnerClassName.translate() + "_" + 
+			associationPropertyName.translate();
+}
+
+/** Translates idProperty name into db "language" **/
+query StandardClass::translateIdName() : String{
+	//currently each cls has it's own idName
+	//if(self.parent = null)then{
+		return getDbIdColumnName(self.name.translate());
+	//}endif;
+	//return self.parent.translateIdName();
+}
+
+/** Helper query for retrieving Fk name to parent class **/
+query StandardClass::getParentFkName() : String{
+	//currently implemented as a FK_ tableName + parent name is unique because of 1-N parent-child 
+	//relationship  
+	return getParentFkName(self.name);
+}
+
+query getParentFkName(className : String) : String{
+	return getDbFkParentPrefix() + className.translate();
+}
+
+/**
+	Returns name of the unique constraint for the specific property in a class
+**/
+query MultipliableProperty::getUniqueConstraintName() : String{
+	return getUXName(self.owningGeneralClass.name, self.name);
+}
+
+/**
+	Returns name of the unique constraint for the specific propertyName and a className
+**/
+query getUXName(className : String, propertyName : String) : String{
+	return getDbUniquePrefix() + className.translate() + "_" + propertyName.translate();
+}
+
+/**	not using getFkCollection function because this method is used in ORM_STRUCTURE 
+	which supports ALL inheritance types */
+query PrimitiveProperty::getFKCollectionName():String{
+	return getDbFkPrefix() + getDbCollectionPrefix() + 
+		self.owningGeneralClass.getDbRepresentative().name.translate() + "_" + 
+		self.name.translate();
+}
+
+/** used only in ORM, supports only joined InheritanceType **/
+query getFkCollectionName(owningClassName : String, propertyName : String) : String{
+	return getDbFkPrefix() + getDbCollectionPrefix() +  owningClassName.translate() + 
+				"_"+ propertyName.translate()
+}
+
+query PrimitiveProperty::getCollectionTableName():String{
+	return getCollectionTableName(self.name, self.owningGeneralClass.name);
+}
+
+/**
+	Retrieve name for representation of collection "table" in database. It is 
+	necessary to add owningClassName to differenciate collections of more classes
+**/
+query getCollectionTableName(propertyName : String, owningClassName : String) : String{
+	return getDbCollectionPrefix() + owningClassName.translate() + "_" + propertyName.translate();
+}
+
+/**
+	Returns ID COLUMN NAME - eg string used in DB model
+**/
+query getDbIdColumnName(tableName : String) : String{
+	return getDbIdPrefix() + tableName;
+}

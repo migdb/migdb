@@ -1,0 +1,39 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pushUpDownProperties1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pushed_pr";
+	//reflection of child class
+	var targetTableName : String := "child";
+	//reflection of parent class in hierarchy
+	var sourceTableName : String := "parent"; 
+	var addFirstColumn : RDB::ops::ModelOperation := _addColumn(
+															publicSchemaName,
+															targetTableName,
+															firstColumnName,
+															PrimitiveType::int);
+	var whereCondition : String := "parent.id_parent = child.id_child";													
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																firstColumnName,
+																targetTableName,
+																firstColumnName,
+																whereCondition);
+	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	firstColumnName);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															addFirstColumn,
+															updateFirstColumn,
+															removeFirstColumn
+	};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

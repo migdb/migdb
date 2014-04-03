@@ -1,0 +1,56 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation removeProperty3_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var idOwnerName : String := "id_tab";
+	var idTypeName : String := "id_address";
+	var associationTableName : String := "tab_pr";
+
+	var removeUXConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		associationTableName,
+																		"ux_tab_pr");
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																associationTableName,
+																getDbOrderingColumnName());
+	
+	var removeOrdConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		associationTableName,
+																		"ux_tab_pr_ord");
+	var removefkOwner : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	associationTableName,
+																	"fk_tab_pr_tab");
+	var removefkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	associationTableName,
+																	"fk_tab_pr_address");
+	var removeIdOwnerColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	associationTableName,
+																	"id_tab");
+	var removeIdTypeColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	associationTableName,
+																	"id_address");
+	var removeAssociationTable : RDB::ops::ModelOperation := _removeTable(
+																		publicSchemaName,
+																		associationTableName);															
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+																removeUXConstraint,
+																removeOrdConstraint,
+																removeOrdColumn,
+																removefkOwner,
+																removefkType,
+																removeIdOwnerColumn,
+																removeIdTypeColumn,
+																removeAssociationTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,21 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation structure_tab_ST_hierarchy_required(out inoutModel : RDB);
+
+main() {
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var idRoot : Column := _column("id_root", PrimitiveType::int, false);
+	var rootColumns : OrderedSet(Column) := OrderedSet{
+													idRoot, 
+													_column("discriminator", PrimitiveType::char)};
+	var pkRoot : PrimaryKey := _primaryKey("pk_root", idRoot);
+	var tableRoot : Table :=_table(
+								"root",
+								rootColumns,
+								OrderedSet{pkRoot});
+	var publicSchema : Schema := _schema(defaultSchemaName , OrderedSet{tableRoot});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});	 
+}

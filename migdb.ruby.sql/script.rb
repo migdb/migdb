@@ -20,7 +20,7 @@ Dir[ARGV[0] + "/*.*"].sort.each {|file|
     handler.sql_file(File.read file )
   elsif File.extname(file) == '.q'
     res = handler.q_file(File.read file )
-    abort("neprošel q soubor:"+ file) if res.values[0].first == 'f'
+    abort("neprosel q soubor:"+ file) if res.values[0].first == 'f'
   end
 }
 

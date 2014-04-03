@@ -1,0 +1,33 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation pullUpProperties5_str(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+
+	var parentCls : StandardClass := _class(
+										"Parent", 
+										_idProperty("idParent", int), 
+										OrderedSet{_primitiveProperty("prParent", int)});
+	var typeCls : StandardClass := _class(
+										"Type",
+										_idProperty("idType", int),
+										OrderedSet{});
+	var pulledProp : AssociationProperty := _associationProperty(
+															"uniqueAndOrd", 
+															typeCls, 
+															0, 
+															-1, 
+															true, 
+															true);
+	
+	var childCls : StandardClass := _class(
+										"Child",
+										parentCls,
+										OrderedSet{pulledProp});
+	_appStructure(OrderedSet{int, typeCls, parentCls, childCls});
+}

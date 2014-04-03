@@ -1,4 +1,4 @@
-module migb.testing.orm.run.orm_runner
+module migbb.testing.orm.run.tests_orm
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*
@@ -15,225 +15,469 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
-Workflow{	
-	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/orm/"
-	}
-	
-	/* Define of APP metamodel */
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/orm_atomic"
+var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var EMPTY_ERRORS = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+var COMPARISONS_OPS_DIR = "${QVTO_DIR}/tests/comparisons_orm_atomic"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_run.qvto"
+var EMPTY_RDB_OPS = "${QVTO_DIR}/tests/operations/rdb/empty_rdb_ops.qvto"
+
+TestWorkflow{	
+/***** DEFINE META-MODELS *****/
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.app.AppPackage"
 	}
-	
-	/* Define of RDB metamodel */
+/**/
 	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
 		platformUri=".."
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
-	
-	//str Integer
-	component = QVTOExecutor{
-		outputSlot = "structureInteger"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_int.qvto" 
-	}
-	
-	//addClass1
-	component = QVTOExecutor{
-		outputSlot = "addClass1"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addClass1.qvto" 
-	}
-	
-	//helper - empty rdbOps
-	component = QVTOExecutor{
-		outputSlot = "emptyRdbOps"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/rdb/empty_rdb_ops.qvto" 
-	}
-	
-	component = QVTOExecutor{
-		inputSlot = "addClass1"
-		inputSlot = "structureInteger"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addClass1-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
-	}
-	
-	component = Writer {
-		modelSlot = "addClass1-out"
-		uri = "output-tests/orm/addClass1_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+/**/
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}		
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
 	}
 
-	//addProperty1
-	component = QVTOExecutor{
-		outputSlot = "addProperty1"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty1.qvto" 
+/***** MAIN TESTING *****/
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/001_addClass"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtInput = "${IN_APP_OPS}/addClass1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addClass1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addClass"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002_addProperty"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtInput = "${IN_APP_OPS}/addProperty1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addProperty - primitive"
 	}
 
-	//structureTab
-	component = QVTOExecutor{
-		outputSlot = "structureTab"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab.qvto" 
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite */	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002b_addProperty"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addProperty_b association property to standard class"
 	}
 	
-	component = QVTOExecutor{
-		inputSlot = "addProperty1"
-		inputSlot = "structureTab"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty1-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite 	*/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002c_addProperty"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops2.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addProperty_c association property UB = -1 to standard class"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty1-out"
-		uri = "output-tests/orm/addProperty1_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite 	*/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002d_addProperty"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops3.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addProperty_d association UX, ORD property to standard class"
 	}
 	
-	//str_tab_joined
-	component = QVTOExecutor{
-		outputSlot = "structure_tab_joined_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_joined_hierarchy.qvto" 
+	/** Input of this test is named addPropertyOrm_ops.qvto  because there is 
+	 *  no testcase in APP test suite */	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/002e_addProperty"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtInput = "${IN_APP_OPS}/addPropertyOrm_ops4.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addProperty5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addProperty_e primitive UX, ORD property to standard class"
+	}	
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/003_addPrimitiveClass"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtInput = "${IN_APP_OPS}/addPrimitiveClass1.qvto"
+		qvtComparison = "${EMPTY_RDB_OPS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addPrimitiveClass"
 	}
 
-	component = QVTOExecutor{
-		inputSlot = "addProperty1"
-		inputSlot = "structure_tab_joined_hierarchy"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty1a-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
-	}
-	
-	component = Writer {
-		modelSlot = "addProperty1a-out"
-		uri = "output-tests/orm/addProperty1a_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004_renameEntity"
+		qvtInput = "${IN_APP_STR}/structure_teacher_person.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm2_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity - simple table rename"
 	}
 
-	//str_tab_ST
-	component = QVTOExecutor{
-		outputSlot = "structure_tab_ST_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_ST_hierarchy.qvto" 
+	/**In this test, associationProperty address is not affected by rename */
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004b_renameEntity"
+		qvtInput = "${IN_APP_STR}/structure_person_collection_addresses.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity_b - collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004c_renameEntity"
+		qvtInput = "${IN_APP_STR}/structure_person_M_N_addresses.qvto"
+		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameEntity_c - DB association table"
+	}	
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005_removeEntity"
+		qvtInput = "${IN_APP_STR}/structure_tab_plain.qvto"
+		qvtInput = "${IN_APP_OPS}/removeEntity1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeEntity_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeEntity standardClass"
 	}
 
-	component = QVTOExecutor{
-		inputSlot = "addProperty1"
-		inputSlot = "structure_tab_ST_hierarchy"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty1b-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/005b_removeEntity"
+		qvtInput = "${IN_APP_STR}/structure_int.qvto"
+		qvtInput = "${IN_APP_OPS}/removeEntity2.qvto"
+		qvtComparison = "${EMPTY_RDB_OPS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeEntity_b PrimitiveCls"
+	}
+			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006_renameProperty"
+		qvtInput = "${IN_APP_STR}/structure_tab.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty PrimitiveProp"
+	}
+			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006b_renameProperty"
+		qvtInput = "${IN_APP_STR}/ormRenameProp.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty_b PrimitiveProp - unique ordered collection"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty1b-out"
-		uri = "output-tests/orm/addProperty1b_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006c_renameProperty"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty_c AssociationProp UB = 1 in StdCls"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/006d_renameProperty"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtInput = "${IN_APP_OPS}/renameProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/renameProperty4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "renameProperty_d AssociationProp UB = -1 in StdCls"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007_removeProperty"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty plain Primitive"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007b_removeProperty"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_collection.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty_b collection Primitive"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007c_removeProperty"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty_c - association property"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/007d_removeProperty"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtInput = "${IN_APP_OPS}/removeProperty1.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeProperty4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeProperty_d - association property M x N, ordered, UX"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties - primitive"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008b_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties_b - collection"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008c_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties_c - association 1 - M"
 	}
 
-	//str_tab_TPC
-	component = QVTOExecutor{
-		outputSlot = "structure_tab_TPC_hierarchy"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_TPC_hierarchy.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008d_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp1_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties_d - association N - M"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008e_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties_e - collection, UX, ORD"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/008f_pullUpProperties"
+		qvtInput = "${IN_APP_STR}/pullUpProperties6_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pullUp2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pullUpProperties6_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pullUpProperties_f - association, UX, ORD"
 	}
 
-	component = QVTOExecutor{
-		inputSlot = "addProperty1"
-		inputSlot = "structure_tab_TPC_hierarchy"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty1c-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties - simple"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty1c-out"
-		uri = "output-tests/orm/addProperty1c_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009b_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties_b - collection"
 	}
 	
-	//str_tab_embedded
-	component = QVTOExecutor{
-		outputSlot = "structure_tab_embedded"
-		transformationFile = "../migdb.qvto/transforms/tests//structures/app/structure_tab_embedded.qvto" 
-	}
-
-	component = QVTOExecutor{
-		inputSlot = "addProperty1"
-		inputSlot = "structure_tab_embedded"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty1d-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009c_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties_c - association 1 x M"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty1d-out"
-		uri = "output-tests/orm/addProperty1d_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009d_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties_d - association M x N"
 	}
 	
-	//addProperty2
-	component = QVTOExecutor{
-		outputSlot = "addProperty2"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty2.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009e_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties_e - UX, ORD collection"
 	}
 	
-	//str_tab_type
-	component = QVTOExecutor{
-		outputSlot = "structure_tab_type"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_tab_type.qvto" 
-	}
-
-	component = QVTOExecutor{
-		inputSlot = "addProperty2"
-		inputSlot = "structure_tab_type"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty2-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/009f_pushDownProperties"
+		qvtInput = "${IN_APP_STR}/pushDownProperties6_str.qvto"
+		qvtInput = "${IN_APP_OPS}/pushDown2_ops.qvto"	
+		qvtComparison = "${COMPARISONS_OPS_DIR}/pushDownProperties6_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "pushDownProperties_f - UX, ORD association M x N"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty2-out"
-		uri = "output-tests/orm/addProperty2_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010_addParent"
+		qvtInput = "${IN_APP_STR}/structure_tab_parent.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent simple adding parency FK"
 	}
 	
-	//addProperty3
-	component = QVTOExecutor{
-		outputSlot = "addProperty3"
-		transformationFile = "../migdb.qvto/transforms/tests/operations/app/addProperty3.qvto" 
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010b_addParent"
+		qvtInput = "${IN_APP_STR}/addParent_c.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent_b Man, Person => Man -> Person"
 	}
 	
-	//str_embedded_type
-	component = QVTOExecutor{
-		outputSlot = "structure_embedded_hierarchy_TPC"
-		transformationFile = "../migdb.qvto/transforms/tests/structures/app/structure_embedded_hierarchy_TPC.qvto" 
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010c_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent_c (UX, ord age) Man, Person => Man -> Person"
 	}
-
-	component = QVTOExecutor{
-		inputSlot = "addProperty3"
-		inputSlot = "structure_embedded_hierarchy_TPC"
-		inputSlot = "emptyRdbOps"
-		outputSlot = "addProperty3-out"
-		transformationFile = "../migdb.qvto/transforms/tests/orm/orm_run.qvto" 
+		
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010d_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent_d assoc"
 	}
 	
-	component = Writer {
-		modelSlot = "addProperty3-out"
-		uri = "output-tests/orm/addProperty3_out.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/010e_addParent"
+		qvtInput = "${IN_APP_STR}/ormAddParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/addParent_c_ops.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/addParent5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "addParent_e UX, ord assoc M x N"
 	}
 	
-	component = Writer {
-		modelSlot = "structure_embedded_hierarchy_TPC"
-		uri = "output-tests/orm/structure_embedded_hierarchy_TPC.xmi"
-		cloneSlotContents = false
-		useSingleGlobalResourceSet = true
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent1_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent1_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent - simple remove Parency FK"
 	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011b_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent2_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent2_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent_b - distribute primitive atribute"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011c_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent3_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent3_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent_c - distributed collection"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011d_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent4_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent4_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent_d - distributed association M x 1"
+	}
+	
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/011e_removeParent"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent5_str.qvto"
+		qvtInput = "${IN_APP_OPS}/removeParent1.qvto"
+		qvtComparison = "${COMPARISONS_OPS_DIR}/removeParent5_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "removeParent_e - distributed association M x N"
+	}
+	
 }

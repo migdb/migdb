@@ -1,0 +1,15 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation removeColumn_required(out inoutModel : RDB);
+
+
+main() {
+	var table : RDB::Table := _table("first", OrderedSet{});
+		
+	var publicSchema : Schema := _schema(
+										"public", 
+										OrderedSet{table}, 
+										_sequence("seq_global", 1), 
+										OrderedSet{});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});
+}

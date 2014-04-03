@@ -1,0 +1,54 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addParent4_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "man";
+	var parentTableName : String := "person";
+	var idChildTableName : String := "id_" + childTableName;
+	var idParentTableName : String := "id_" + parentTableName;
+	var pkChildName : String := "pk_" + childTableName;
+	var parencyFkName : String := "par_" + childTableName;
+	var mergedColumnName : String := "age";
+	var fkChildRefTypeName : String := "fk_" + childTableName + "_" + mergedColumnName;
+	
+	var insertChildIds : RDB::ops::ModelOperation := _insertRows(
+															publicSchemaName,
+															childTableName,
+															OrderedSet{idChildTableName},
+															parentTableName,
+															OrderedSet{idParentTableName});
+	var addParencyFk : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																childTableName,
+																idChildTableName,
+																parencyFkName,
+																parentTableName);
+	var whereCondition : String := "man.id_man = person.id_person";
+	var updateParentMergedProp : RDB::ops::ModelOperation := _updateRows(
+																	publicSchemaName,
+																	childTableName,
+																	mergedColumnName,
+																	parentTableName,
+																	mergedColumnName,
+																	whereCondition);
+	var removeFkChildRefType : RDB::ops::ModelOperation := _removeConstraint(
+																			publicSchemaName,
+																			childTableName,
+																			fkChildRefTypeName);
+	var removeDataColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	childTableName,
+																	mergedColumnName);																		
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															insertChildIds, 
+															addParencyFk,
+															updateParentMergedProp,
+															removeFkChildRefType,
+															removeDataColumn};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

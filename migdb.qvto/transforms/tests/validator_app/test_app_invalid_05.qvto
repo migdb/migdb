@@ -1,20 +1,22 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_05(out inoutModel : APP);
 
 main() {
 /**	
 *	condition "ambiguous property in class" is also violated 
 **/
-	log("TEST_APP_INVALID_05 - invalid : Non root ID");	
+//	log("TEST_APP_INVALID_05 - invalid : Non root ID");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
 	
-	var person : APP::StandardClass := _class("Person", _idProperty("idPerson", integer), OrderedSet{ _primitiveProperty("name", string) });
+	var person : APP::StandardClass := _class("Person", _idProperty("idPerson", integer), 
+		OrderedSet{ _primitiveProperty("name", string) });
 	
 	var idPropTeacher := _idProperty("idTeacher", integer);
-	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ _primitiveProperty("sallary", string), idPropTeacher});
+	var teacher : APP::StandardClass := _class("Teacher", person, OrderedSet{ 
+		_primitiveProperty("sallary", string), idPropTeacher});
 	teacher.idProperty := idPropTeacher;
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,person, teacher});
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,person, teacher});
 }

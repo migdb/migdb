@@ -1,0 +1,23 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addProperty2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var addProp : RDB::ops::AddColumn := _addColumn(
+											publicSchemaName,
+											"person",
+											"residental_address",
+											PrimitiveType::int);
+	var addFk : RDB::ops::AddForeignKey := _addForeignKey(
+											publicSchemaName,
+											"person",
+											"residental_address",
+											"fk_person_residental_address",
+											"address");			
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addProp, addFk};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,20 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation extractClass_str(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var string : PrimitiveClass := _primitiveClass("String", app::PrimitiveType::char);
+	var propertySet : OrderedSet(MultipliableProperty) := OrderedSet{
+														_primitiveProperty("att", int), 
+														_primitiveProperty("extractedPr", int)};
+	var first : StandardClass := _class(
+									"First", 
+									_idProperty("idFirst", int), 
+									propertySet, 
+									app::InheritanceType::joined);
+	
+	_appStructure(OrderedSet{int, string, first});
+}

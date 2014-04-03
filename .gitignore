@@ -15,9 +15,17 @@ migdb.dsl.app.ui/bin/
 migdb.dsl.ops/bin/
 migdb.dsl.ops.ui/bin/
 
+#ide
+migdb.dsl.ide/bin/
+
 #workflow binaries 
 migdb.testing.run/bin/*
 migdb.run/bin/*
+
+#"helper "workflows - used for testing some operations
+migdb.testing.run/src/migdb/testing/app/atomic/run/test_app_atomic_so.mwe2
+migdb.testing.run/src/migdb/testing/orm/run/tests_orm_so.mwe2
+migdb.testing.run/src/migdb/testing/migdb_executer/run/test_code_generator_so.mwe2
 
 #generated SQLs
 migdb.run/output*/*
@@ -28,3 +36,4 @@ migdb.testing.run/output-tests/*
 #~files
 scripts/*~
 .gitignore~
+.DS_Store~

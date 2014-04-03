@@ -1,0 +1,11 @@
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_05_required(out outModel : ERR);
+
+
+main() {
+	var error : Error := _validationError("Table \"collision\" in schema \"public\" has "
+		+"redundant PK", "validator_postgresql.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

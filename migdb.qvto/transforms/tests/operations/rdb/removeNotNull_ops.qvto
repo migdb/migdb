@@ -1,0 +1,13 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation removeNotNull_ops(out inoutModel : RDB);
+
+
+main() {
+	var removeNotNull : RDB::ops::ModelOperation := _removeNotNull(
+																"public", 
+																"first", 
+																"col");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{removeNotNull};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

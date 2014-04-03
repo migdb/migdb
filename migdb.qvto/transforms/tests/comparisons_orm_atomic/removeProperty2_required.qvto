@@ -1,0 +1,48 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation removeProperty1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var columnName : String := "pr";
+	var collectionTableName : String := "col_tab_pr";
+	var removeOrdConst : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	collectionTableName,
+																	"ux_col_tab_pr_ord");
+	var removeOrdColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																collectionTableName,
+																getDbOrderingColumnName());
+	var removeUxConst : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	collectionTableName,
+																	"ux_tab_pr");																
+	var removeFk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																collectionTableName,
+																"fk_col_tab_pr");
+	var removeDataColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	collectionTableName,
+																	"pr");
+	var removeRefColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																collectionTableName,
+																"id_tab");
+	var removeTable : RDB::ops::ModelOperation := _removeTable(
+															publicSchemaName,
+															collectionTableName);																
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeOrdConst,
+															removeOrdColumn,
+															removeUxConst,
+															removeFk,
+															removeDataColumn,
+															removeRefColumn,
+															removeTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

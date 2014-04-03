@@ -1,0 +1,12 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+/**
+	This file contains in it's name ORM because it is tested only in ORM, not in application layer
+**/
+transformation addPropertyOrm_ops(out inoutModel : APP);
+
+main(){
+	_appOperations(OrderedSet{_addProperty( "Person", "residentalAddress", "Address")});
+}

@@ -1,0 +1,26 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation removeEntity_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var removeConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	"tab",
+																	"pk_tab");
+	var removeColumn : RDB::ops::ModelOperation := _removeColumn(
+																publicSchemaName,
+																"tab",
+																"id_tab");																
+	var removeTable : RDB::ops::ModelOperation := _removeTable(
+															publicSchemaName,
+															"tab");
+	var ops : OrderedSet(RDB::ops::ModelOperation) := OrderedSet{
+															removeConstraint,
+															removeColumn,
+															removeTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);																												
+}

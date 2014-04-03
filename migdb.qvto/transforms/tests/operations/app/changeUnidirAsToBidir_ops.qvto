@@ -1,0 +1,10 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation changeUnidirAsToBidir_ops(out inoutModel : APP);
+
+main(){
+	_appOperations(OrderedSet{_changeUnidirectionalAssociationToBidirectional(
+									"Person", "residentalAddress", "occupyingResident")});	
+}

@@ -1,16 +1,17 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_03(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy - self parent");	
+//	log("TEST_APP_INVALID_03 - invalid : Cycled hierarchy - self parent");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	var string : APP::PrimitiveClass := _primitiveClass("String", PrimitiveType::char);
+	//NOT USING constructor - nonstandard creation for nonstandard object
 	var country : APP::StandardClass := object StandardClass{
 		name := "Country";
 	 	properties := OrderedSet{ _primitiveProperty("name", string)}
 	};
 	country.parent := country;
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,string,country});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,string,country});	 
 }

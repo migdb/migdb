@@ -14,175 +14,129 @@ Operations returns app::Operations:
 ;
 
 ModelOperation returns ops::ModelOperation:
-	AtomicOperation
-	| DecomposableOperation
-;
-	
-AtomicOperation returns ops::AtomicOperation:
 	AddPrimitiveClass
-	| AddEmbeddedClass
-	| AddStandardClass
 	| RenameEntity
-	| SetAbstract
+//diploma
+	| AddClass
 	| RemoveEntity
 	| AddProperty
 	| RenameProperty
 	| RemoveProperty
-	| SetType
-	| SetOpposite
-	| SetBounds
-	| SetOrdered
-	| SetUnique
-	| CopyProperty
 	| MoveProperty
+	| PullUpProperty
+	| PushDownProperty
 	| AddParent
 	| RemoveParent
+	| ExtractClass
+	| ExtractSubClass
+	| ExtractSuperClass
 ;
 
-DecomposableOperation returns ops::DecomposableOperation:
-	ExtractClass
-	| ExtractParent
-;
-
-/**
- * Atomic Operations:
- */
-//addPrimitiveClass(name, boolean) adds new primitive class by selected type
 AddPrimitiveClass returns ops::AddPrimitiveClass:
-	name=ID '=' /*'new'*/ 'primitive' primitiveType=PrimitiveType
+	'addPrimitive' name=ID ':' primitiveType=PrimitiveType
 ;
 
-//addEmbeddedClass(name) adds new embedded class
-AddEmbeddedClass returns ops::AddEmbeddedClass:
-	name=ID '=' /*'new'*/ 'embedded'
-;
-
-//addStandardClass(name, boolean, InheritanceType)
-//adds StandardClass with abstract flag and given maping type in DB
-AddStandardClass returns ops::AddStandardClass:
-	name=ID '=' /*'new'*/ ((isAbstract?='abstract' | '!abstract')? & inheritanceType=InheritanceType?) 'class'
-;
-
-//renameEntity(A, B) renames entity A to B
 RenameEntity returns ops::RenameEntity:
-//	'set'
-	 name=ID '->' newName=ID
+	'rename' name=ID '->' newName=ID
 ;
 
-//addParent(A, B) sets A new parent B
-AddParent returns ops::AddParent:
-//	'set'
-	 className=ID '<:' parentClassName=ID
+/////////////
+// Diploma //
+/////////////
+AddClass returns ops::AddStandardClass:
+	'add' name=ID
 ;
 
-//addParent(A, B) sets A new parent B
-RemoveParent returns ops::RemoveParent:
-//	'set'
-	 className=ID '!<:'
-;
-
-//setAbstract(name, boolean) sets/unsets given class as abstract
-SetAbstract returns ops::SetAbstract:
-//	'set'
-	 name=ID ( isAbstract?='abstract' | '!abstract') 
-;
-
-//removeEntity(name) removes entity (GeneralClass, PrimitiveClass and all its subtypes)
 RemoveEntity returns ops::RemoveEntity:
-//	'delete'
-	'!'	name=ID
+	'remove' name=ID
 ;
 
-//addProperty(owningClass, propertyName, propertyType) adds property and its type to a class
 AddProperty returns ops::AddProperty:
-	owningClassName=ID '+=' 
-		(
-			('!ordered' | isOrdered?='ordered')?
-			& ('!unique' | isUnique?='unique')?
-		)
-		name=ID ':' type=ID 
+	'add' 
+//	(
+//		('!ordered' | isOrdered?='ordered')?
+//		& ('!unique' | isUnique?='unique')?
+//	) 
+	owningClassName=ID '.' name=ID ':' typeName=ID 
 		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
-		('=' defaultValue=DefaultValue)?
- ;
+		//('=' defaultValue=DefaultValue)?
+;
 
-//renamePropety(A, id, identifier) renames A's property id to identifier
 RenameProperty returns ops::RenameProperty:
-//	'set'
-	owningClassName=ID '.' name=ID '->' newName=ID
+	'rename' owningClassName=ID '.' name=ID '->' newName=ID
 ;
 
-//removePropety(A, id) removes A's property id
 RemoveProperty returns ops::RemoveProperty:
-	owningClassName=ID '-=' name=ID
+	'remove' owningClassName=ID '.' name=ID
 ;
 
-//setType(A, id, int) changes type of A's propety id to int
-SetType returns ops::SetType:
-//	'set'
-	owningClassName=ID '.' name=ID ':' type=ID
+MoveProperty returns ops::MoveProperties:
+	'move' sourceClassName=ID
+	(
+		'.' propertiesNames+=ID
+		| '{' propertiesNames+=ID (',' propertiesNames+=ID)* '}'
+	)
+	'/' linkName=ID '->' ID
 ;
 
-//setOpposite(A, key, B, id, true) creates link between A's key and B's id
-//setOpposite(A, key, B, id, false) destroys link between A's key and B's id
-SetOpposite returns ops::SetOpposite:
-//	'set'
-	firstClassName=ID '.' firstPropertyName=ID (isOpposite?='<->' | '!<->') secondClassName=ID '.' secondPropertyName=ID
+PullUpProperty returns ops::PullUpProperties:
+	'pullUp' childClassName=ID
+	(
+		'.' pulledPropertiesNames+=ID
+		| '{' pulledPropertiesNames+=ID (',' pulledPropertiesNames+=ID)* '}'
+	)
 ;
 
-//setBounds(A, list, 0, 50) sets bounds to A's property list to 0,50 (lower, upper)
-SetBounds returns ops::SetBounds:
-	//set
-	owningClassName=ID '.' name=ID ('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+PushDownProperty returns ops::PushDownProperties:
+	'pushDown' childClassName=ID
+	(
+		'.' pushedPropertiesNames+=ID
+		| '{' pushedPropertiesNames+=ID (',' pushedPropertiesNames+=ID)* '}'
+	)
 ;
 
-//setOrdered(A, list, true) sets A's property list as ordered
-//setOrdered(A, list, false) sets A's property list as unordered
-SetOrdered returns ops::SetOrdered:
-	//set
-	 owningClassName=ID '.' name=ID (isOrdered?='ordered' | '!ordered')
+AddParent returns ops::AddParent:
+	'set' className=ID '<:' parentClassName=ID
 ;
 
-//setUnique(A, list, true) sets A's property list as unique
-//setUnique(A, list, false) unsets unique status of A's property list
-SetUnique returns ops::SetUnique:
-	//set
-	owningClassName=ID '.' name=ID (isUnique?='unique' | '!unique')
+RemoveParent returns ops::RemoveParent:
+	'set' className=ID '!<:' ID
 ;
 
-//copyPropety(A, id, B, MergeType) copies A's property id to B by selected MergeType
-CopyProperty returns ops::CopyProperty:
-	 'copy' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
-;
-
-//movePropety(A, id, B, MergeType) moves (and deletes) A's property id to B by selected MergeType
-MoveProperty returns ops::MoveProperty:
-	'move' type=MergeType owningClassName=ID '.' name=ID '->' targetClassName=ID
-;
-
-
-/**
- * Decomposable Operations:
- */
-//extractClass(A, {id, name}, B) creates B and moves A's properties {id, name} to created B
 ExtractClass returns ops::ExtractClass:
-	'extract' sourceClassName=ID '.' '[' extractPropertiesNames+=ID ( "," extractPropertiesNames+=ID)* ']' '->' extractClassName=ID
+	'extract' sourceClassName=ID
+	(
+		'.' propertyNames+=ID
+		| '{' propertyNames+=ID (',' propertyNames+=ID)* '}'
+	)
+	'/' associationPropertyName=ID '->' extractClassName=ID '.' oppositePropertyName=ID
 ;
 
-//extractParent({A, B}, {id, name}, C)
-// creates C, sets C as parent of A and B and moves A's and B's properties {id, name} to C
-ExtractParent returns ops::ExtractParent:
-	'extract' '[' sourceClassesName+=ID ( "," sourceClassesName+=ID)* ']' '.' '[' extractPropertiesName+=ID ( "," extractPropertiesName+=ID)* ']' 
-		'->' extractParentName=ID
+ExtractSubClass returns ops::ExtractSubClass:
+	'extractSub' sourceClassName=ID
+	(
+		'.' extractedPropertiesNames+=ID
+		| '{' extractedPropertiesNames+=ID (',' extractedPropertiesNames+=ID)* '}'
+	)
+	'->' extractedClassName=ID
+;
+
+ExtractSuperClass returns ops::ExtractSuperClass:
+	'extractSuper' 
+	(
+		sourceClassesName+=ID
+		| '{' sourceClassesName+=ID (',' sourceClassesName+=ID)* '}'
+	)
+	'.'
+	(
+		propertyNames+=ID
+		| '{' propertyNames+=ID (',' propertyNames+=ID)* '}'
+	)
+	'->' extractParentName=ID
 ;
 
 /**
  */
-enum MergeType returns ops::MergeType:
-	strict = 'strict'
-	| force = 'force'
-	| tolerant = 'tolerant'
-;
-
 enum PrimitiveType returns app::PrimitiveType:
 	boolean = 'boolean'
 	| char = 'char'

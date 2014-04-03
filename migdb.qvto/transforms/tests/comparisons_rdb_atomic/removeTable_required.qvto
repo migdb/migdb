@@ -1,0 +1,9 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation removeTable_required(out inoutModel : RDB);
+
+
+main() {
+	var publicSchema : Schema := _schema("public", OrderedSet{}, null, OrderedSet{});
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});
+}

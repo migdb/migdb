@@ -1,0 +1,30 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation removeParent1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "tab";
+	var parentTableName : String := "parent";
+	var idChildTableName : String := "id_tab";
+	var idParentTableName : String := "id_parent";
+	var parencyFkName : String := "par_" + childTableName;
+	var equalityCondition : String := parentTableName + "." + idParentTableName + " = " + 
+											childTableName + "." + idChildTableName;
+	var pkChildName : String := "pk_" + childTableName;
+	var removeParencyFk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																childTableName,
+																parencyFkName);
+	var cleanParentTable : RDB::ops::ModelOperation := _deleteRows(
+																publicSchemaName,
+																parentTableName,
+																equalityCondition);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeParencyFk, 
+															cleanParentTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

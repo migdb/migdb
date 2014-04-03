@@ -1,0 +1,28 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addParent1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var childTableName : String := "tab";
+	var parentTableName : String := "parent";
+	var idChildTableName : String := "id_tab";
+	var idParentTableName : String := "id_parent";
+	var insertRows : RDB::ops::ModelOperation := _insertRows(
+															publicSchemaName,
+															childTableName,
+															OrderedSet{idChildTableName},
+															parentTableName,
+															OrderedSet{idParentTableName});
+	var addFkParent : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																childTableName,
+																idChildTableName,
+																"par_tab",
+																parentTableName);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{insertRows, addFkParent};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

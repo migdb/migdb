@@ -1,10 +1,10 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_ordered_result(out inoutModel : APP);
 
 
 main() {
-	var ops : OrderedSet(app::ops::ModelOperation) := OrderedSet{_renameEntity("cls", "newCls"),
-	_addProperty("cls", "prop", "int")};
+	var ops : OrderedSet(app::ops::ModelOperation) := OrderedSet{
+		_addProperty("cls", "prop", "int"), _renameEntity("cls", "newCls")};
 	var root : ModelRoot := _appOperations(ops);	
 }

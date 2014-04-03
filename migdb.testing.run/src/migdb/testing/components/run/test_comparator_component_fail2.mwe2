@@ -15,12 +15,15 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
+var TEST_DIR_PREFIX = "../migdb.qvto/transforms/tests/"
+var OUTPUT_DIR = "output-tests/test_comparator_component/test_comparator_component/2-differents/"
 /**
- * Test of the ComparatorComponent. Tested models are of different types.
+ * Test of the ComparatorComponent. Tested models are of different types. 
+ * Exception should be raised
  */
 Workflow{
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/component/test_comparator_component/2-differents/"
+		directory = "${OUTPUT_DIR}"
 	}
 	
 		
@@ -38,20 +41,20 @@ Workflow{
 		
 	/*Create compared file 1 */
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_app/test_app_01.qvto"
+		transformationFile = "${TEST_DIR_PREFIX}/validator_app/test_app_01.qvto"
 		outputSlot = "first"
 	}
 
 	/*Create compared file 2 */
 	component = QVTOExecutor {
-		transformationFile = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
+		transformationFile = "${TEST_DIR_PREFIX}/validator_postgresql/test_postgresql_01.qvto"
 		outputSlot = "second"
 	}
 	
 	/* write result */
 	component = Writer {
 		modelSlot = "first"
-		uri = "output-tests/test_comparator_component/2-differents/expected_result_1.xmi"
+		uri = "${OUTPUT_DIR}/expected_result_1.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
@@ -59,14 +62,14 @@ Workflow{
 	/* write test */
 	component = Writer {
 		modelSlot = "second"
-		uri = "output-tests/test_comparator_component/2-differents/test_1.xmi"
+		uri = "${OUTPUT_DIR}/test_1.xmi"
 		cloneSlotContents = false
 		useSingleGlobalResourceSet = true
 	}
 	
 	component = ModelComparator {
 		testDescription = "COMPARATOR COMPONENT"
-		resultURI = "output-tests/test_comparator_component/2-differents/expected_result_1.xmi"
-		testedURI = "output-tests/test_comparator_component/2-differents/test_1.xmi"
+		resultURI = "${OUTPUT_DIR}/expected_result_1.xmi"
+		testedURI = "${OUTPUT_DIR}/test_1.xmi"
 	}
 }

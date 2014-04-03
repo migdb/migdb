@@ -1,16 +1,41 @@
+/**
+ * The MIT License
+ * 
+ * Copyright (c) 2010-2014 MigDB team [https://github.com/migdb/migdb/wiki]
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ * 
+ */
+library evolution_rdb;
+ 
 import queries_rdb;
 import builder_rdb; 
 import builder_errors;
+import text_service;
 
 modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
-library evolution_rdb;
 
-abstract query RDB::ops::ModelOperation::
-	isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
 
-abstract helper RDB::ops::ModelOperation::
-	apply(inout structure : RDB::Structure);
+abstract query RDB::ops::ModelOperation::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean;
+
+abstract helper RDB::ops::ModelOperation::apply(inout structure : RDB::Structure);
 
 
 /********************************************************************************
@@ -27,7 +52,12 @@ query getEvolutionRdbTransformationId():String {
  * @restriction : schema with @name must not exists in current structure
  */
 query RDB::ops::AddSchema::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	return return checkNotExistSchema(self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	return return checkNotExistSchema(
+						self.name, 
+						structure, 
+						errorLog, 
+						operationIndex, 
+						getEvolutionRdbTransformationId());
 }
 
 helper RDB::ops::AddSchema::apply(inout structure : RDB::Structure) {
@@ -43,14 +73,25 @@ helper RDB::ops::AddSchema::apply(inout structure : RDB::Structure) {
  * @restriction : in the schema must not be other sequence
  */
 query RDB::ops::AddSequence::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistSequence : Boolean := checkNotExistSequence(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var notExistSequence : Boolean := checkNotExistSequence(
+											self.owningSchemaName, 
+											self.name, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
 	return existSchema and notExistSequence;
 }
 
 helper RDB::ops::AddSequence::apply(inout structure : RDB::Structure) {
-	var s : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	s.sequence := _sequence(self.name, self.startValue);
+	var owningSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
+	owningSchema.sequence := _sequence(self.name, self.startValue);
 	return;
 }
 
@@ -61,16 +102,51 @@ helper RDB::ops::AddSequence::apply(inout structure : RDB::Structure) {
  * @restriction : columns with @columnsNames must exists in table
  */
 query RDB::ops::AddIndex::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistIndex : Boolean := checkNotExistIndex(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName , structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	return existSchema and notExistIndex 
-		and structure.containsColumnsInTable(self.owningSchemaName, self.owningTableName, self.columnsNames);
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var notExistIndex : Boolean := checkNotExistIndex(
+										self.owningSchemaName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+									self.owningSchemaName, 
+									self.owningTableName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var existColumns := true;
+	self.columnsNames->forEach(name){
+		//logic multiplication used to log all errors and not stop loop
+		existColumns := checkExistColumn(
+								self.owningSchemaName, 
+								self.owningTableName, 
+								name, 
+								structure, 
+								errorLog, 
+								operationIndex, 
+								getEvolutionRdbTransformationId()) and existColumns;
+	};
+		
+	return existSchema and notExistIndex and existColumns;
 }
 
 helper RDB::ops::AddIndex::apply(inout structure : RDB::Structure) {
-	var s : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	s.indexes += _index(self.name, structure.findColumns(self.owningSchemaName, self.owningTableName, self.columnsNames));
+	var owningSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
+	var columns : OrderedSet(Column) := structure.findColumns(
+															self.owningSchemaName, 
+															self.owningTableName, 
+															self.columnsNames);
+	owningSchema.indexes += _index(
+								self.name, 
+								columns);
 	return; 
 }
 
@@ -80,14 +156,25 @@ helper RDB::ops::AddIndex::apply(inout structure : RDB::Structure) {
  * @restriction : in the schema must not be a table with the same @name.
  */
 query RDB::ops::AddTable::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistTable : Boolean := checkNotExistTable(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var notExistTable : Boolean := checkNotExistTable(
+										self.owningSchemaName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 	return existSchema and notExistTable;
 }
 
 helper RDB::ops::AddTable::apply(inout structure : RDB::Structure) {
-	var s : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	s.tables += _table(self.name);
+	var owningSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
+	owningSchema.tables += _table(self.name);
 	return;
 }
 
@@ -98,15 +185,31 @@ helper RDB::ops::AddTable::apply(inout structure : RDB::Structure) {
  * @restriction : @type must exist in PrimitiveType.
  */
 query RDB::ops::AddColumn::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistColumn : Boolean := checkNotExistColumn(self.owningSchemaName, self.owningTableName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, 
+		operationIndex, getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var notExistColumn : Boolean := checkNotExistColumn(
+													self.owningSchemaName, 
+													self.owningTableName, 
+													self.name, 
+													structure, 
+													errorLog, 
+													operationIndex, 
+													getEvolutionRdbTransformationId());
 	return existSchema and existTable and notExistColumn;
 }
 
 helper RDB::ops::AddColumn::apply(inout structure : RDB::Structure) {
-	var t : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	t.columns += _column(self.name, self.type, self.defaultValue); 
+	var modifiedTable : RDB::Table := structure.findTable(
+														self.owningSchemaName, 
+														self.owningTableName);
+	modifiedTable.columns += _column(self.name, self.type); 
 	return;
 }
 
@@ -117,12 +220,40 @@ helper RDB::ops::AddColumn::apply(inout structure : RDB::Structure) {
  * @restriction : column with @columnName must exists in table
  */
 query RDB::ops::AddUnique::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistConstraint : Boolean := checkNotExistConstraint(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+												self.owningSchemaName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existConstrainedColumns : Boolean := true;
+	self.constrainedColumnNames->forEach(constrainedColName){
+		var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName, 
+												self.owningTableName, 
+												constrainedColName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+		existConstrainedColumns := existConstrainedColumns and existColumn;										
+	};
+	var notExistConstraint : Boolean := checkNotExistConstraint(
+															self.owningSchemaName, 
+															self.name, 
+															structure, 
+															errorLog, 
+															operationIndex, 
+															getEvolutionRdbTransformationId());
 	
-	return existSchema and existTable and existColumn and notExistConstraint;
+	return existSchema and existTable and existConstrainedColumns and notExistConstraint;
 }
 
 helper RDB::ops::AddUnique::apply(inout structure : RDB::Structure) {
@@ -145,18 +276,57 @@ helper RDB::ops::AddUnique::apply(inout structure : RDB::Structure) {
  * @restriction : column with @columnName must exists in table
  */
 query RDB::ops::AddPrimaryKey::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistConstraint : Boolean := checkNotExistConstraint(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistPrimaryKey : Boolean := checkNotExistPrimaryKey(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+												self.owningSchemaName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName, 
+												self.owningTableName, 
+												self.constrainedColumnName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var notExistConstraint : Boolean := checkNotExistConstraint(
+															self.owningSchemaName, 
+															self.name, 
+															structure, 
+															errorLog, 
+															operationIndex, 
+															getEvolutionRdbTransformationId());
+	var notExistPrimaryKey : Boolean := checkNotExistPrimaryKey(
+															self.owningSchemaName, 
+															self.owningTableName, 
+															structure, 
+															errorLog, 
+															operationIndex, 
+															getEvolutionRdbTransformationId());
 
-	return existTable and existColumn and existColumn and notExistConstraint and notExistPrimaryKey;
+	return existTable and existColumn and existColumn and notExistConstraint and 
+			notExistPrimaryKey;
 }
 
 helper RDB::ops::AddPrimaryKey::apply(inout structure : RDB::Structure) {
-	var t : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _primaryKey(self.name, structure.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	var updatedTable : RDB::Table := structure.findTable(
+											self.owningSchemaName, 
+											self.owningTableName);
+	var constrainedColumn : Column := structure.findColumn(
+														self.owningSchemaName, 
+														self.owningTableName, 
+														self.constrainedColumnName);
+	updatedTable.constraints += _primaryKey(
+									self.name,
+									constrainedColumn);
 	return;
 }
 
@@ -168,21 +338,55 @@ helper RDB::ops::AddPrimaryKey::apply(inout structure : RDB::Structure) {
  * @restriction : table with @targetTableName must exists in schema.
  */
 query RDB::ops::AddForeignKey::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistConstraint : Boolean := checkNotExistConstraint(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.targetTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										self.constrainedColumnName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var notExistConstraint : Boolean := checkNotExistConstraint(
+											self.owningSchemaName, 
+											self.name,
+	 										structure, 
+	 										errorLog, 
+	 										operationIndex, 
+	 										getEvolutionRdbTransformationId());
 	//existance of default id is expected and unchecked
 	return existSchema and existTable and existTargetTable and existColumn and notExistConstraint;
 }
 
 helper RDB::ops::AddForeignKey::apply(inout structure : RDB::Structure) {
 	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
+	var constrainedColumn : Column := structure.findColumn(
+														self.owningSchemaName, 
+														self.owningTableName, 
+														self.constrainedColumnName);
 	table.constraints += _foreignKey(
-						self.name, 
-						structure.findTable(self.owningSchemaName, self.targetTableName),
-						structure.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+								self.name, 
+								structure.findTable(self.owningSchemaName, self.targetTableName),
+								constrainedColumn);
 	return; 
 }
 
@@ -193,17 +397,38 @@ helper RDB::ops::AddForeignKey::apply(inout structure : RDB::Structure) {
  * @restriction : column with @owningColumnName must exists in table
  */
 query RDB::ops::AddNotNull::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistConstraint : Boolean := checkNotExistConstraint(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+												self.owningSchemaName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName, 
+												self.owningTableName, 
+												self.constrainedColumnName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
 	
-	return existSchema and existTable and existColumn and notExistConstraint;	   
+	return existSchema and existTable and existColumn;	   
 }
 
 helper RDB::ops::AddNotNull::apply(inout structure : RDB::Structure) {
-	var t : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints += _notNull(self.name, structure.findColumn(self.owningSchemaName, self.owningTableName, self.constrainedColumnName));
+	var modifiedTable : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
+	var constrainedColumn : Column := structure.findColumn(
+														self.owningSchemaName, 
+														self.owningTableName, 
+														self.constrainedColumnName);
+	constrainedColumn.isNillable := true;
 	return; 
 }
 
@@ -218,9 +443,26 @@ helper RDB::ops::AddNotNull::apply(inout structure : RDB::Structure) {
  * @restriction : in the schema must not be a table with the same @newName.
  */
 query RDB::ops::RenameTable::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistTable : Boolean := checkNotExistTable(self.owningSchemaName, self.newName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+												self.owningSchemaName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.name, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var notExistTable : Boolean := checkNotExistTable(
+													self.owningSchemaName, 
+													self.newName, 
+													structure, 
+													errorLog, 
+													operationIndex, 
+													getEvolutionRdbTransformationId());
 
 	return existSchema and existTable and notExistTable;
 }
@@ -238,19 +480,48 @@ helper RDB::ops::RenameTable::apply(inout structure : RDB::Structure) {
  * @restriction : in the table must not be a column with the same @newName.
  */
 query RDB::ops::RenameColumn::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notExistColumn : Boolean := checkNotExistColumn(self.owningSchemaName, self.owningTableName, self.newName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+												self.owningSchemaName, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName, 
+												self.owningTableName, 
+												self.name, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var notExistColumn : Boolean := checkNotExistColumn(
+										self.owningSchemaName, 
+										self.owningTableName,
+										self.newName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 
 	return existSchema and existTable and existColumn and notExistColumn;
 }
 
 helper RDB::ops::RenameColumn::apply(inout structure : RDB::Structure) {
 	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	var renamedColumn : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName, self.name);
-	table.constraints[ForeignKey]->forEach(foreignKey | foreignKey.constrainedColumn.name = renamedColumn.name.toLower()) {
-		foreignKey.name := foreignKey.name.replace("_" + self.name + "_", "_" + self.newName + "_");
+	var renamedColumn : RDB::Column := structure.findColumn(
+														self.owningSchemaName, 
+														self.owningTableName, self.name);
+	table.constraints[ForeignKey]->forEach(foreignKey | 
+			foreignKey.constrainedColumn.name = renamedColumn.name.toLower()) {
+		foreignKey.name := foreignKey.name.replace("_" + self.name + "_", "_" + self.newName + 
+			"_");
 	};
 	renamedColumn.name := self.newName;
 	return;
@@ -263,14 +534,35 @@ helper RDB::ops::RenameColumn::apply(inout structure : RDB::Structure) {
  * @restriction : column with @name must exists in table
  */
 query RDB::ops::SetColumnType::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+									self.owningSchemaName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+									self.owningSchemaName, 
+									self.owningTableName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										self.owningColumnName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 	return existSchema and existTable and existColumn;
 }
 
 helper RDB::ops::SetColumnType::apply(inout structure : RDB::Structure){
-	var column : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	var column : RDB::Column := structure.findColumn(
+											self.owningSchemaName, 
+											self.owningTableName, 
+											self.owningColumnName);
 	column.type := self.newType;
 	return;
 }
@@ -279,19 +571,41 @@ helper RDB::ops::SetColumnType::apply(inout structure : RDB::Structure){
  * SET COLUMN DEFAULT VALUE
  * This operation set new default value to column
  * Column must exists in actual model structure. 
- * If is property isSequence set on TRUE - Sequence must exist in structure - this information is used only in SQL structureerator
- * In sequence case @newDefaultValue means name of sequence in model structure
+ * If is property isSequence set on TRUE - Sequence must exist in structure - this information is 
+ * used only in SQL structureerator. In sequence case @newDefaultValue means name of sequence in 
+ * model structure
  * @restriction : column with @owningColumnName must exists in table
  */
 query RDB::ops::SetDefaultValue::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+									self.owningSchemaName, 
+									self.owningTableName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+									self.owningSchemaName, 
+									self.owningTableName, 
+									self.owningColumnName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
 	return existSchema and existTable and existColumn;
 }
 
 helper RDB::ops::SetDefaultValue::apply(inout structure : RDB::Structure){
-	var column : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
+	var column : RDB::Column := structure.findColumn(
+													self.owningSchemaName, 
+													self.owningTableName, 
+													self.owningColumnName);
 	column.defaultValue := self.newDefaultValue;
 	return;
 }
@@ -310,18 +624,47 @@ helper RDB::ops::SetDefaultValue::apply(inout structure : RDB::Structure){
  * @restriction : table must not have table constraints
  */
 query RDB::ops::RemoveTable::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var hasNoColumns : Boolean := checkHasNoColumns(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var hasNoConstraints : Boolean := checkHasNoConstraints(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var isNotTableReferenced : Boolean := checkIsNotReferenced(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	
-	return existSchema and existTable and hasNoColumns and hasNoConstraints and isNotTableReferenced;
+	var existSchema : Boolean := checkExistSchema(
+									self.owningSchemaName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+									self.owningSchemaName, 
+									self.name, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var hasNoColumns : Boolean := checkHasNoColumns(
+										self.owningSchemaName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var hasNoConstraints : Boolean := checkHasNoConstraints(
+										self.owningSchemaName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var isNotTableReferenced : Boolean := checkIsNotReferenced(
+												self.owningSchemaName, 
+												self.name, 
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	return existSchema and existTable and hasNoColumns and hasNoConstraints and 
+		isNotTableReferenced;
 }
 
 helper RDB::ops::RemoveTable::apply(inout structure : RDB::Structure) {
 	var schema : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	schema.tables := schema.tables->excluding(structure.findTable(self.owningSchemaName, self.name));
+	schema.tables := schema.tables->reject(table | table.name = self.name);
 	return;
 }
 
@@ -333,18 +676,41 @@ helper RDB::ops::RemoveTable::apply(inout structure : RDB::Structure) {
  * @restriction : column mustn't be part of constraint
  */
 query RDB::ops::RemoveColumn::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var notIsColumnConstrined := checkNotIsColumnConstrained(self.owningSchemaName, self.owningTableName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var notIsColumnConstrined := checkNotIsColumnConstrained(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										self.name, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 	return existSchema and existTable and existColumn and notIsColumnConstrined;
 }
 
 helper RDB::ops::RemoveColumn::apply(inout structure : RDB::Structure) {
 	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	var column : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName, self.name);
-	table.columns := table.columns->excluding(column);
+	table.columns := table.columns->reject(column | column.name = self.name);
 	return;
 }
 
@@ -354,16 +720,33 @@ helper RDB::ops::RemoveColumn::apply(inout structure : RDB::Structure) {
  * @restriction : table constraint with @name must exists in table 
  */
 query RDB::ops::RemoveConstraint::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existConstraint : Boolean := checkExistConstraint(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existConstraint : Boolean := checkExistConstraint(
+											self.owningSchemaName, 
+											self.name, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
 	
 	return existSchema and existTable and existConstraint;
 }
 
 helper RDB::ops::RemoveConstraint::apply(inout structure : RDB::Structure) {
-	var t : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
-	t.constraints := t.constraints->excluding(structure.findConstraint(self.owningSchemaName, self.owningTableName, self.name));
+	var table : RDB::Table := structure.findTable(self.owningSchemaName, self.owningTableName);
+	table.constraints := table.constraints->reject(constraint |constraint.name = self.name);
 	return;
 }
 
@@ -374,15 +757,26 @@ helper RDB::ops::RemoveConstraint::apply(inout structure : RDB::Structure) {
  * @restriction : index with @name must exists in schema 
  */
 query RDB::ops::RemoveIndex::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existIndex : Boolean := checkExistIndex(self.owningSchemaName, self.name, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existIndex : Boolean := checkExistIndex(
+									self.owningSchemaName, 
+									self.name, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
 
 	return existSchema and existIndex;
 }
 
 helper RDB::ops::RemoveIndex::apply(inout structure : RDB::Structure) {
-	var s : RDB::Schema := structure.findSchema(self.owningSchemaName);
-	s.indexes := s.indexes->excluding(structure.findIndex(self.owningSchemaName, self.name));
+	var updatedSchema : RDB::Schema := structure.findSchema(self.owningSchemaName);
+	updatedSchema.indexes := updatedSchema.indexes->reject(index | index.name = self.name);
 	return;
 }
 
@@ -393,16 +787,37 @@ helper RDB::ops::RemoveIndex::apply(inout structure : RDB::Structure) {
  * @restriction :  column with @name must exists in structure
  */
 query RDB::ops::RemoveDefaultValue::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean { 
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.owningTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+										self.owningSchemaName, 
+										self.owningTableName, 
+										self.owningColumnName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 	
 	return existSchema and existTable and existColumn;
 }
 
 helper RDB::ops::RemoveDefaultValue::apply(inout structure : RDB::Structure){
-	var c : RDB::Column := structure.findColumn(self.owningSchemaName, self.owningTableName, self.owningColumnName);
-	c.defaultValue := null;
+	var updatedColumn : RDB::Column := structure.findColumn(
+														self.owningSchemaName, 
+														self.owningTableName, 
+														self.owningColumnName);
+	updatedColumn.defaultValue := null;
 	return;
 }
 
@@ -415,7 +830,6 @@ helper RDB::ops::RemoveDefaultValue::apply(inout structure : RDB::Structure){
  * This operation copy data from one column to another.
  * That means update of one column in target table. 
  * Target and source column can be contained by the same table.
- * Update instances works in hierarchy only.
  * MergeType:
  * strict -> Can not transfer data if a tables have different number of instances (rows).
  * tolerant -> Can transfer data if source table has less number of instances (rows).
@@ -426,14 +840,59 @@ helper RDB::ops::RemoveDefaultValue::apply(inout structure : RDB::Structure){
  * @restriction : target and source column type must be same
  */
 query RDB::ops::UpdateRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceColumn : Boolean := checkExistColumn(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetColumn : Boolean := checkExistColumn(self.owningSchemaName, self.targetTableName, self.targetColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var isSameType : Boolean := checkIsSameColumnType(self.owningSchemaName, self.sourceTableName, self.sourceColumnName, self.targetTableName, self.targetColumnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-
-	return existSchema and existSourceTable and existSourceColumn and existTargetTable and existTargetColumn and isSameType;
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existSourceTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.sourceTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existSourceColumn : Boolean := checkExistColumn(
+											self.owningSchemaName, 
+											self.sourceTableName, 
+											self.sourceColumnName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.targetTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existTargetColumn : Boolean := checkExistColumn(
+											self.owningSchemaName, 
+											self.targetTableName, 
+											self.targetColumnName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var isSameType : Boolean := checkIsSameColumnType(
+									self.owningSchemaName, 
+									self.sourceTableName, 
+									self.sourceColumnName, 
+									self.targetTableName, 
+									self.targetColumnName, 
+									structure, 
+									errorLog, 
+									operationIndex, 
+									getEvolutionRdbTransformationId());
+	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
+														self.whereCondition,
+														errorLog, 
+														operationIndex, 
+														getEvolutionRdbTransformationId());								
+	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
+			existTargetColumn and isSameType and isValidCondition;
 }
 
 helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
@@ -449,16 +908,80 @@ helper RDB::ops::UpdateRows::apply(inout structure : RDB::Structure){
  * @restriction : columns must have same name and column type
  */
 query RDB::ops::InsertRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, self.sourceTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSourceColumn : Boolean := checkExistColumnSet(self.owningSchemaName, self.sourceTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetTable : Boolean := checkExistTable(self.owningSchemaName, self.targetTableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTargetColumn : Boolean := checkExistColumnSet(self.owningSchemaName, self.targetTableName, self.sourceColumnsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-
-	return existSchema and existSourceTable and existSourceColumn and existTargetTable and existTargetColumn;
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existSourceTable : Boolean := checkExistTable(self.owningSchemaName, 
+											self.sourceTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existSourceColumn : Boolean := checkExistColumnSet(
+											self.owningSchemaName, 
+											self.sourceTableName, 
+											self.sourceColumnsNames, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existTargetTable : Boolean := checkExistTable(
+											self.owningSchemaName, 
+											self.targetTableName, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	var existTargetColumn : Boolean := checkExistColumnSet(
+											self.owningSchemaName, 
+											self.targetTableName, 
+											self.targetColumnNames, 
+											structure, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());
+	//it doesn't validate where part - there is case when you copy all selected instances so no 
+	//wherePart is needed
+	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
+			existTargetColumn;
 }
 
 helper RDB::ops::InsertRows::apply(inout structure : RDB::Structure) {
+	//this is just data operation
+}
+
+/**
+ * DELETE ROWS
+ * This operation delete instances (rows) which not belong to @tableName
+ * @restriction : table with @tableName must exists in structure
+ * @restriction : child tables with @descendantNames must exists in structure
+ */
+query RDB::ops::DeleteRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
+											self.whereCondition, 
+											errorLog, 
+											operationIndex, 
+											getEvolutionRdbTransformationId());											
+	return existSchema and existTable and isValidCondition;
+}
+
+helper RDB::ops::DeleteRows::apply(inout structure : RDB::Structure) {
 	//this is just data operation
 }
 
@@ -469,16 +992,40 @@ helper RDB::ops::InsertRows::apply(inout structure : RDB::Structure) {
  * @restriction : sequence with @sequenceName must exists in schema
  */
 query RDB::ops::GenerateSequenceNumbers::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.tableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existColumn : Boolean := checkExistColumn(self.owningSchemaName, self.tableName, self.columnName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existSequence : Boolean := checkExistSequence(self.owningSchemaName, self.sequenceName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+										self.owningSchemaName, 
+										self.tableName, 
+										self.columnName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existSequence : Boolean := checkExistSequence(
+										self.owningSchemaName, 
+										self.sequenceName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 
 	return existSchema and existTable and existColumn and existSequence;
 }
 
 helper RDB::ops::GenerateSequenceNumbers::apply(inout structure : RDB::Structure) {
-	//DATA operation??
+	//this is just data operation
 }
 
 /**
@@ -488,15 +1035,24 @@ helper RDB::ops::GenerateSequenceNumbers::apply(inout structure : RDB::Structure
  * @restriction : child tables with @descendantNames must exists in structure
  */
 query RDB::ops::HasNoOwnInstances::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.tableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existDescendantTables := checkExistTableSet(self.owningSchemaName, self.descendantsNames, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-
-	return existSchema and existTable and existDescendantTables;
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	return existSchema and existTable;
 }
 
 helper RDB::ops::HasNoOwnInstances::apply(inout structure : RDB::Structure) {
-
+	//this is just data operation
 }
 
 /**
@@ -505,14 +1061,59 @@ helper RDB::ops::HasNoOwnInstances::apply(inout structure : RDB::Structure) {
  * @restriction : table with @tableName must exists in structure
  */
 query RDB::ops::HasNoInstances::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
-	var existSchema : Boolean := checkExistSchema(self.owningSchemaName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
-	var existTable : Boolean := checkExistTable(self.owningSchemaName, self.tableName, structure, errorLog, operationIndex, getEvolutionRdbTransformationId());
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
 
 	return existSchema and existTable;
 }
 
 helper RDB::ops::HasNoInstances::apply(inout structure : RDB::Structure) {
+	//this is just data operation
+}
 
+query RDB::ops::NillRows::isValid(structure : RDB::Structure, inout errorLog : ErrorLog, operationIndex : Integer) : Boolean {
+	var existSchema : Boolean := checkExistSchema(
+										self.owningSchemaName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existTable : Boolean := checkExistTable(
+										self.owningSchemaName, 
+										self.tableName, 
+										structure, 
+										errorLog, 
+										operationIndex, 
+										getEvolutionRdbTransformationId());
+	var existColumn : Boolean := checkExistColumn(
+												self.owningSchemaName,
+												self.tableName,
+												self.columnName,
+												structure, 
+												errorLog, 
+												operationIndex, 
+												getEvolutionRdbTransformationId());
+	var isValidSql : Boolean := checkIsValidWhereSqlPart(
+													self.whereCondition,
+													errorLog, 
+													operationIndex, 
+													getEvolutionRdbTransformationId());
+	return existSchema and existTable and existColumn and isValidSql;
+}
+
+helper RDB::ops::NillRows::apply(inout structure : RDB::Structure) {
+	//this is just data operation
 }
 
 
@@ -538,12 +1139,15 @@ helper checkNotExistSchema(schemaName : String, structure : Structure, inout err
 }
 
 helper checkNotExistPrimaryKey(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then{
 		return false;
 	}endif;
-	var notExistPk : Boolean := structure.findTable(owningSchemaName, tableName).constraints[PrimaryKey]->size() = 0;
+	var notExistPk : Boolean := structure.findTable(owningSchemaName, tableName).
+		constraints[PrimaryKey]->size() = 0;
 	if(not notExistPk)then{
-		var errorMessage : String := "Table " + tableName + " in schema " + owningSchemaName + " already contains PrimaryKey";
+		var errorMessage : String := "Table " + tableName + " in schema " + owningSchemaName + 
+			" already contains PrimaryKey";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return notExistPk;	
@@ -555,7 +1159,8 @@ helper checkExistTable(owningSchemaName : String, tableName : String, structure 
 	}endif;
 	var existTable : Boolean := structure.containsTableInSchema(owningSchemaName, tableName);
 	if(not existTable)then{
-		var errorMessage : String := "Table " + tableName + " doesn't exists in schema " + owningSchemaName;
+		var errorMessage : String := "Table " + tableName + " doesn't exists in schema " + 
+			owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return existTable;
@@ -567,7 +1172,13 @@ helper checkExistTableSet(owningSchemaName : String, tableNames : OrderedSet(Str
 	}endif;
 	var existTableSet : Boolean := true;
 	tableNames->forEach(name){
-		existTableSet := checkExistTable(owningSchemaName, name, structure, errorLog, operationIndex, transformationId);
+		existTableSet := checkExistTable(
+							owningSchemaName, 
+							name, 
+							structure, 
+							errorLog, 
+							operationIndex, 
+							transformationId);
 	};
 	return existTableSet;
 }
@@ -576,31 +1187,37 @@ helper checkNotExistTable(owningSchemaName : String, tableName : String, structu
 	if(not structure.containsSchema(owningSchemaName))then{
 		return false;
 	}endif;
-	var notExistTable : Boolean := not structure.containsTableInSchema(owningSchemaName, tableName);
+	var notExistTable: Boolean := not structure.containsTableInSchema(owningSchemaName, tableName);
 	if(not notExistTable)then{
-		var errorMessage : String := "Table " + tableName + " exists in schema " + owningSchemaName;
+		var errorMessage : String := "Table " + tableName + " exists in schema " + 
+				owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return notExistTable;
 }
 
 helper checkHasNoColumns(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then {
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
-	var hasNoColumns : Boolean := structure.findTable(owningSchemaName, tableName).columns->size() = 0;
+	var checkedTable : Table := structure.findTable(owningSchemaName, tableName);
+	var hasNoColumns : Boolean := checkedTable.columns->size() = 0;
 	if(not hasNoColumns)then{
-		var errorMessage : String := "Table " + tableName + " contans columns";
+		var errorMessage : String := "Table " + tableName + " contains columns " + 
+			checkedTable.columns->collect(col | col.name)->toString();
 		errorLog.errors+= _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return hasNoColumns;
 }
 
 helper checkHasNoConstraints(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then {
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
-	var hasNoConstraints : Boolean := structure.findTable(owningSchemaName, tableName).constraints->size() = 0;
+	var hasNoConstraints : Boolean := structure.findTable(owningSchemaName, tableName).
+		constraints->size() = 0;
 	if(not hasNoConstraints)then{
 		var errorMessage : String := "Table " + tableName + " contans columns";
 		errorLog.errors+= _evolutionError(operationIndex, errorMessage, transformationId);
@@ -609,13 +1226,16 @@ helper checkHasNoConstraints(owningSchemaName : String, tableName : String, stru
 }
 
 helper checkNotIsColumnConstrained(owningSchemaName : String, tableName : String, columnName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName) or not structure.containsColumnInTable(owningSchemaName, tableName, columnName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName) or 
+			not structure.containsColumnInTable(owningSchemaName,tableName, columnName))then{
 		return false;
 	}endif;
 	var checkedColumn : Column := structure.findColumn(owningSchemaName, tableName, columnName);
-	var constraints : Bag(Constraint) := structure.schemas->tables->constraints;
-	var isColumnNotConstrained : Boolean := constraints[ForeignKey]->select(fk | fk.constrainedColumn = checkedColumn)->size()=0 
-			and constraints[Unique]->select(unique | unique.uniqueColumns->includes(checkedColumn))->size()=0;
+	var constraints : Sequence(TableConstraint) := structure.schemas->tables->constraints;
+	var isColumnNotConstrained : Boolean := constraints[ForeignKey]->select(fk | 
+		fk.constrainedColumn = checkedColumn)->size()=0 and constraints[Unique]->select(unique |
+		 	unique.uniqueColumns->includes(checkedColumn))->size()=0;
 	if(not isColumnNotConstrained)then{
 		var errorMessage : String := "Column is constrained";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -625,10 +1245,12 @@ helper checkNotIsColumnConstrained(owningSchemaName : String, tableName : String
 
 // currently checking references from the same schema
 helper checkIsNotReferenced(owningSchemaName : String, tableName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or structure.containsTableInSchema(owningSchemaName, tableName))then {
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then {
 		return false;
 	}endif;
-	var isNotReferenced : Boolean := structure.findSchema(owningSchemaName).tables->constraints[ForeignKey]->forAll(foreignKey | foreignKey.targetTable.name <> tableName);
+	var isNotReferenced : Boolean := structure.findSchema(owningSchemaName).tables->
+		constraints[ForeignKey]->forAll(foreignKey | foreignKey.targetTable.name <> tableName);
 	if(not isNotReferenced)then{
 		var errorMessage : String := "Table " + tableName + " is referenced from another table";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -641,7 +1263,9 @@ helper checkNotExistSequence(owningSchemaName : String, sequenceName : String, s
 	if(not structure.containsSchema(owningSchemaName))then{
 		return false;
 	}endif;
-	var notExistSequence : Boolean := not structure.containsSequenceInSchema(owningSchemaName, sequenceName);
+	var notExistSequence : Boolean := not structure.containsSequenceInSchema(
+																		owningSchemaName, 
+																		sequenceName);
 	if(not notExistSequence)then{
 		var errorMessage : String := "Sequence " + sequenceName + " already exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -653,7 +1277,9 @@ helper checkExistSequence(owningSchemaName : String, sequenceName : String, stru
 	if(not structure.containsSchema(owningSchemaName))then{
 		return false;
 	}endif;
-	var existSequence : Boolean := structure.containsSequenceInSchema(owningSchemaName, sequenceName);
+	var existSequence : Boolean := structure.containsSequenceInSchema(
+																	owningSchemaName, 
+																	sequenceName);
 	if(not existSequence)then{
 		var errorMessage : String := "Sequence " + sequenceName + " already exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -665,44 +1291,65 @@ helper checkNotExistIndex(owningSchemaName : String, indexName : String, structu
 	if(not structure.containsSchema(owningSchemaName))then{
 		return false;
 	}endif;
-	var notExistIndex : Boolean := not structure.containsIndexInSchema(owningSchemaName, indexName);
-	if(notExistIndex)then{
-		var errorMessage : String := "Index " + indexName + " already exists in schema " + owningSchemaName;
+	var notExistIndex :Boolean := not structure.containsIndexInSchema(owningSchemaName, indexName);
+	if(not notExistIndex)then{
+		var errorMessage : String := "Index " + indexName + " already exists in schema " + 
+			owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return notExistIndex;
 }
 
 helper checkNotExistColumn(owningSchemaName : String, tableName : String, columnName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+			not structure.containsTableInSchema(owningSchemaName, tableName))then{
 		return false;
 	}endif;
-	var notIsColumnInTable : Boolean := not structure.containsColumnInTable(owningSchemaName, tableName, columnName);
+	var notIsColumnInTable : Boolean := not structure.containsColumnInTable(
+																		owningSchemaName, 
+																		tableName, 
+																		columnName);
 	if(not notIsColumnInTable)then{
-		var errorMessage : String := "Column is not contained in table " + tableName + " in schema " + owningSchemaName;
+		var errorMessage : String := "Column is not contained in table " + tableName + 
+			" in schema " + owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return notIsColumnInTable;
 }
 
 helper checkExistColumnSet(owningSchemaName : String, tableName : String, columnNames : OrderedSet(String), structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+	   		not structure.containsTableInSchema(owningSchemaName, tableName))then{
 		return false;
 	}endif;
 	var isColumnSetInTable : Boolean := true;
 	columnNames->forEach(name){
-		isColumnSetInTable := isColumnSetInTable and checkExistColumn(owningSchemaName, tableName, name, structure, errorLog, operationIndex, transformationId);
+		isColumnSetInTable := isColumnSetInTable and checkExistColumn(
+														owningSchemaName, 
+														tableName, 
+														name, 
+														structure, 
+														errorLog, 
+														operationIndex, 
+														transformationId);
 	};
 	return isColumnSetInTable;
 }
 
 helper checkExistColumn(owningSchemaName : String, tableName : String, columnName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean {
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, tableName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+	   		not structure.containsTableInSchema(owningSchemaName, tableName))then{
 		return false;
 	}endif;
-	var isColumnInTable : Boolean := structure.containsColumnInTable(owningSchemaName, tableName, columnName);
+	var isColumnInTable : Boolean := structure.containsColumnInTable(
+													owningSchemaName, 
+													tableName, 
+													columnName);
 	if(not isColumnInTable)then{
-		var errorMessage : String := "Column is not contained in table " + tableName + " in schema " + owningSchemaName;
+		structure.print();
+		log("Debug");
+		var errorMessage : String := "Column "+ columnName + " is not contained in table " + tableName + 
+			" in schema " + owningSchemaName;
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return isColumnInTable;
@@ -712,7 +1359,8 @@ helper checkNotExistConstraint(owningSchemaName : String, constraintName : Strin
 	if(not structure.containsSchema(owningSchemaName))then {
 		return false;
 	}endif;
-	var notExistConstraint : Boolean := not structure.findSchema(owningSchemaName).tables->constraints->exists(constr | constr.name = constraintName);
+	var notExistConstraint : Boolean := not structure.findSchema(owningSchemaName).
+		tables->constraints->exists(constr | constr.name = constraintName);
 	if(not notExistConstraint)then{
 		var errorMessage : String := "Constraint called " + constraintName + " exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -724,9 +1372,10 @@ helper checkExistConstraint(owningSchemaName : String, constraintName : String, 
 	if(not structure.containsSchema(owningSchemaName))then {
 		return false;
 	}endif;
-	var existConstraint : Boolean := structure.findSchema(owningSchemaName).tables->constraints->exists(constr | constr.name = constraintName);
+	var existConstraint : Boolean := structure.findSchema(owningSchemaName).tables->constraints->
+		exists(constr | constr.name = constraintName);
 	if(not existConstraint)then{
-		var errorMessage : String := "Constraint called " + constraintName + " exists";
+		var errorMessage : String := "Constraint called " + constraintName + " not exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return existConstraint;	
@@ -736,7 +1385,8 @@ helper checkExistIndex(owningSchemaName : String, indexName : String, structure 
 	if(not structure.containsSchema(owningSchemaName))then {
 		return false;
 	}endif;
-	var existIndex : Boolean := structure.findSchema(owningSchemaName).indexes->exists(index | index.name = indexName);
+	var existIndex : Boolean := structure.findSchema(owningSchemaName).indexes->
+		exists(index | index.name = indexName);
 	if(not existIndex)then{
 		var errorMessage : String := "Index " + indexName + " doesn't exists";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
@@ -745,16 +1395,33 @@ helper checkExistIndex(owningSchemaName : String, indexName : String, structure 
 }
 
 helper checkIsSameColumnType(owningSchemaName : String, sourceTableName : String, sourceColumnName : String, targetTableName : String, targetColumnName : String, structure : Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
-	if(not structure.containsSchema(owningSchemaName) or not structure.containsTableInSchema(owningSchemaName, sourceTableName) 
-			or not structure.containsColumnInTable(owningSchemaName, sourceTableName, sourceColumnName) 
-			or not structure.containsTableInSchema(owningSchemaName, targetTableName) 
-			or not structure.containsColumnInTable(owningSchemaName, targetTableName, targetColumnName))then{
+	if(not structure.containsSchema(owningSchemaName) or 
+		not structure.containsTableInSchema(owningSchemaName, sourceTableName) or
+		not structure.containsColumnInTable(owningSchemaName, sourceTableName, sourceColumnName) or 
+		not structure.containsTableInSchema(owningSchemaName, targetTableName) or 
+		not structure.containsColumnInTable(owningSchemaName, targetTableName, targetColumnName)
+	)then{
 		return false;
 	}endif;
-	var isSameType : Boolean := structure.isSameColumnType(owningSchemaName, sourceTableName, sourceColumnName, targetTableName, targetColumnName);
+	var isSameType : Boolean := structure.isSameColumnType(
+														owningSchemaName, 
+														sourceTableName, 
+														sourceColumnName, 
+														targetTableName, 
+														targetColumnName);
 	if(not isSameType)then{
-		var errorMessage : String :=  targetTableName +"." + targetColumnName + " and " + sourceTableName + "." + sourceColumnName + " differs";
+		var errorMessage : String :=  targetTableName +"." + targetColumnName + " and " + 
+			sourceTableName + "." + sourceColumnName + " differs";
 		errorLog.errors += _evolutionError(operationIndex, errorMessage, transformationId);
 	}endif;
 	return isSameType;	
+}
+
+helper checkIsValidWhereSqlPart(whereCondition : String, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
+	var condition : Boolean := whereCondition <> null and whereCondition <> "";
+	if(not condition)then{
+		var message : String := "Invalid SQL where part...";
+		errorLog.errors += _evolutionError(operationIndex, message, transformationId);
+	}endif;
+	return condition;	
 }

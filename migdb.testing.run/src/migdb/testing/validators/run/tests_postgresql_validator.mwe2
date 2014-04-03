@@ -15,9 +15,17 @@ import org.eclipse.emf.mwe.utils.Reader
 import eu.collectionspro.mwe.*
 import migdb.generator.*
 
-Workflow{	
+var OUTPUT_BASE_DIR = "output-tests/validator_postgresql/"
+var QVTO_DIR = "../migdb.qvto/transforms"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/validator_postgresql.qvto"
+var INPUT_DIR = "${QVTO_DIR}/tests/validator_postgresql/"
+var EMPTY_ERRORS = "${QVTO_DIR}/tests/errors/empty_errors.qvto"
+
+
+
+TestWorkflow{	
 	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
-		directory = "output-tests/validator_postgresql/"
+		directory = "${OUTPUT_BASE_DIR}/"
 	}
 	
 	
@@ -27,76 +35,101 @@ Workflow{
 		registerGeneratedEPackage = "mm.rdb.RdbPackage"
 	}
 	
-	/* Test_postgresql_01*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_01"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_01.xmi"
+	/* Define of ERR metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
 	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/valid_01"
+		qvtInput = "${INPUT_DIR}/test_postgresql_01.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "TEST_01_valid"
+	}
+		
 	/* Test_postgresql_invalid_01*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_01.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_01"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_01.xmi"
-	}			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_01"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_01.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_01_required.qvto"
+		testDescription = "TEST_01_invalid"
+	}
 	
 	/* Test_postgresql_invalid_02*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_02.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_02"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_02.xmi"
-	}			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_02"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_02.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_02_required.qvto"
+		testDescription = "TEST_02_invalid"
+	}
 
-	
 	/* Test_postgresql_invalid_03*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_03.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_03"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_03.xmi"
-	}			
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_03"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_03.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_03_required.qvto"
+		testDescription = "TEST_03_invalid"
+	}
 	
 	/* Test_postgresql_invalid_04*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_04"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04.xmi"
-	}			
-
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_04"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_04.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_04_required.qvto"
+		testDescription = "TEST_04_invalid"
+	}
+	
 	/* Test_postgresql_invalid_04_b*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_04_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_04_B"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_04_b.xmi"
-	}			
-
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_04_b"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_04_b.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_04_b_required.qvto"
+		testDescription = "TEST_04_B_invalid"
+	}
+	
 	/* Test_postgresql_invalid_05*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_05.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_05"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_05.xmi"
-	}			
-
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_05"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_05.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_05_required.qvto"
+		testDescription = "TEST_05_invalid"
+	}
+	
 	/* Test_postgresql_invalid_06*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_06"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06.xmi"
-	}			
-
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_06"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_06.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_06_required.qvto"
+		testDescription = "TEST_06_invalid"
+	}
+	
 	/* Test_postgresql_invalid_06_b*/
-	component = QVTOValidatorTest {		
-		createTransformation = "../migdb.qvto/transforms/tests/validator_postgresql/test_postgresql_invalid_06_b.qvto"
-		testTransformation = "../migdb.qvto/transforms/main/validator_postgresql.qvto"
-		modelSlot = "TEST_POSTGRESQL_INVALID_06_B"
-		outputUri = "output-tests/validator_postgresql/test_postgresql_invalid_06_b.xmi"
-	}				
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/invalid_06_b"
+		qvtInput = "${INPUT_DIR}/test_postgresql_invalid_06_b.qvto"
+		qvtInput = "${EMPTY_ERRORS}"
+		qvtComparison = "${INPUT_DIR}/test_err_invalid_06_b_required.qvto"
+		testDescription = "TEST_06_b_invalid"
+	}
+	
+	
+	
 }

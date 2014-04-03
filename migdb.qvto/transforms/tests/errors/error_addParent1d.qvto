@@ -1,0 +1,14 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation error_addParent1d(out inoutModel : ERR);
+
+main(){
+	var cardinalityErrorMessage : String := "Cardinalities of property age in cls Person and" + 
+														" property age in cls Man differ";
+	var cardinalitiesDifferError : EvolutionError := _evolutionError(
+																	1, 
+																	cardinalityErrorMessage, 
+																	"evolution_app.qvto");
+	_errorLog(OrderedSet{cardinalitiesDifferError});
+}

@@ -1,0 +1,95 @@
+module migb.testing.orm.run.tests_orm_structure
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE = "output-tests/orm_structure"
+var INPUT_APP_STRUCTURE ="${QVTO_DIR}/tests/structures/app"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_structure_run.qvto"
+
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var COMPARISONS_RDB_STR_DIR = "${QVTO_DIR}/tests/comparisons_orm_structure"
+var EMPTY_ERRORS = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+
+TestWorkflow{	
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE}"
+	}
+	
+		
+	/* Define of APP metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+	
+	/* Define of RDB metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.rdb.RdbPackage"
+	}
+
+	/* Define of Error metamodel */
+	bean=org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri=".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE}/structureTab"
+		qvtInput = "${INPUT_APP_STRUCTURE}/structure_tab.qvto"
+		qvtComparison = "${COMPARISONS_RDB_STR_DIR}/structureTab_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "simple class tab"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE}/structure_tab_ST_hierarchy"
+		qvtInput = "${INPUT_APP_STRUCTURE}/structure_tab_ST_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_RDB_STR_DIR}/structure_tab_ST_hierarchy_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "ST hierarchy"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE}/structure_tab_TPC_hierarchy"
+		qvtInput = "${INPUT_APP_STRUCTURE}/structure_tab_TPC_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_RDB_STR_DIR}/structure_tab_TPC_hierarchy_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "TPC hierarchy"
+	}	
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE}/structure_tab_joined_hierarchy"
+		qvtInput = "${INPUT_APP_STRUCTURE}/structure_tab_joined_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_RDB_STR_DIR}/structure_tab_joined_hierarchy_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "joined hierarchy"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE}/complex_joined_hierarchy"
+		qvtInput = "${INPUT_APP_STRUCTURE}/complex_joined_hierarchy.qvto"
+		qvtComparison = "${COMPARISONS_RDB_STR_DIR}/complex_joined_hierarchy_required.qvto"
+		qvtComparison = "${EMPTY_ERRORS}"
+		testDescription = "complex joined hierarchy"
+	}
+		
+}

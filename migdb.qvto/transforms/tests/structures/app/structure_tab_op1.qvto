@@ -1,0 +1,17 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation structure_tab_op1(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var tab : StandardClass := _class("Tab", _idProperty("idTab", int), false, 
+		InheritanceType::singleTable);
+	var op : StandardClass := _class("Op", _idProperty("idOp", int), false, 
+		InheritanceType::singleTable);
+	tab.properties+=_associationProperty("tabOp", op);
+	op.properties+=_associationProperty("opOp", tab);
+	
+	_appStructure(OrderedSet{int, tab, op});
+}

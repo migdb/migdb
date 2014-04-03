@@ -1,0 +1,8 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addSchema_str(out inoutModel : RDB);
+
+
+main() {	
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{});
+}

@@ -1,0 +1,61 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	//reflection of firstProperty name
+	var firstColumnName : String := "pulled_first_pr";
+	//reflection of secondProperty name
+	var secondColumnName : String := "pulled_second_pr";
+	//reflection of parent class
+	var targetTableName : String := "parent";
+	//reflection of child class in hierarchy
+	var sourceTableName : String := "child"; 
+	var addFirstColumn : RDB::ops::ModelOperation := _addColumn(
+															publicSchemaName,
+															targetTableName,
+															firstColumnName,
+															PrimitiveType::int);
+	var whereCondition : String := "child.id_child = parent.id_parent";													
+	var updateFirstColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																firstColumnName,
+																targetTableName,
+																firstColumnName,
+																whereCondition);
+	var removeFirstColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	firstColumnName);
+	var addSecondColumn : RDB::ops::ModelOperation := _addColumn(
+																publicSchemaName,
+																targetTableName,
+																secondColumnName,
+																PrimitiveType::int);
+	var updateSecondColumn : RDB::ops::ModelOperation := _updateRows(
+																publicSchemaName,
+																sourceTableName,
+																secondColumnName,
+																targetTableName,
+																secondColumnName,
+																whereCondition);
+	var removeSecondColumn : RDB::ops::ModelOperation := _removeColumn(
+																	publicSchemaName,
+																	sourceTableName,
+																	secondColumnName);
+																																												
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															addFirstColumn,
+															updateFirstColumn,
+															removeFirstColumn,
+															addSecondColumn,
+															updateSecondColumn,
+															removeSecondColumn
+	};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

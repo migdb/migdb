@@ -1,0 +1,12 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation pullUp2_ops(out inoutModel : APP);
+
+main(){
+	var operation : APP::ops::ModelOperation := _pullUpProperties(
+													"Child", 
+													OrderedSet{"uniqueAndOrd"});
+	_appOperations(OrderedSet{operation});	
+}

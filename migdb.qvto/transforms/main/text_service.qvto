@@ -1,0 +1,122 @@
+library text_service;
+
+/*
+	This file provides String constants and methods to manipulate with Strings. It is independent 
+	to any metamodel. Methods connected with database metamodel contains Db word. Method translate
+	is connection of the STRINGS from those two worlds
+*/
+
+/**
+	Returns discriminator column constant 
+**/
+query getDbDiscriminatorColumnName() : String{
+	return "discriminator";
+}
+
+/**
+	Translate identifier from app into db. Upper characters are transformed into lower chars,
+ 	words are divided by character '_'
+**/
+query String :: translate() : String{
+	var dbName : String := self.substring(1,1).toLower();
+	var i : Integer := 2; 
+	while(self.size() >= i){
+		if(self.substring(i,i).toLower() != self.substring(i,i))then{
+			dbName := dbName + "_" + self.substring(i,i).toLower();
+		}else{
+			dbName := dbName + self.substring(i,i);
+		}endif;
+		i:= i + 1;
+	};
+	return dbName;
+}
+
+query Collection(String)::toString() : String{
+	var colString : String := "[";
+	
+	self->forEach(str){
+		colString:= colString + str;
+	};
+	colString:= colString + "]";
+	return colString;
+}
+
+/** returns column name for ordered collections **/ 
+query getDbOrderingColumnName() : String {
+	return "ordering";
+}
+
+/**
+	Returns ID PROPERTY NAME - eg text string in APP model
+**/
+query getIdName(className : String) : String{
+	return getIdPrefix() + className;
+}
+
+
+/**
+	Returns ID PROPERTY NAME PREFIX - eg text string used in APP model
+**/
+query getIdPrefix() : String{
+	return "id";
+}
+
+/**
+	Returns ID COLUMN NAME PREFIX - eg text string used in DB model
+**/
+query getDbIdPrefix() : String{
+	return "id_";
+}
+
+/** Helper query for String manipulation **/
+query String::at(index : Integer) : String{
+	return self.substring(index,index);
+}
+
+query getDbFkParentPrefix() : String{
+	return "par_";
+}
+
+query getDbUniquePrefix() : String{
+	return "ux_";
+}
+
+query getDbPkPrefix() : String{
+	return "pk_";
+}
+
+query getDbFkPrefix() : String{
+	return "fk_";	
+}
+
+query getDbCollectionPrefix() : String{
+	return "col_";
+}
+
+// 
+query getDbPrimaryKeyName(tableName : String) : String{
+	return getDbPkPrefix() + tableName;
+}
+
+query isCharacter(char : String) : Boolean {
+	if(char.size() != 1)then{
+		log("Invalid use of method isCharacter(" + char+")");
+		assert(false);
+	}endif;
+	return char.match("^[a-z,A-Z]");
+}
+
+/** BOOLEAN QUERIES **/
+query isLegalClassName(name : String) : Boolean {
+	//return isCharacter(name.substring(1,1));
+	return isLegalString(name);
+}
+
+query isLegalPropertyName(name : String) : Boolean {
+	//return isCharacter(name.substring(1,1));
+	return isLegalString(name);
+}
+
+query isLegalString(testedString : String) : Boolean{
+	return testedString <> "" and testedString <> null;
+}

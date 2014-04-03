@@ -1,0 +1,72 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation renameEntity2_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var oldTableName : String := "person"; 
+	var newTableName : String := "man";
+	var oldPkName : String := getDbPrimaryKeyName(oldTableName);
+	var newPkName : String := getDbPrimaryKeyName(newTableName);
+	var oldIdName : String := "id_" + oldTableName;
+	var newIdName : String := "id_" + newTableName;
+	
+	var removeFKCollection : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		"col_person_hobby",
+																		"fk_col_person_hobby");
+	var addNewFkCollection : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																"col_person_hobby",
+																"id_person",
+																"fk_col_man_hobby",
+																oldTableName);										
+	var removeAssocFK : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldTableName,
+																	"fk_person_residental_address"
+																	);
+	var addNewAssocFk : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldTableName,
+																"residental_address",
+																"fk_man_residental_address",
+																"street");
+	var renameId : RDB::ops::ModelOperation := _renameColumn(
+															publicSchemaName,
+															oldTableName,
+															"id_person",
+															newIdName);
+	var removeOldPk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldTableName,
+																oldPkName);
+	var addNewPk : RDB::ops::ModelOperation := _addPrimaryKey(
+															publicSchemaName,
+															oldTableName,
+															newIdName,
+															newPkName);															
+	var renameCollectionRefCol : RDB::ops::ModelOperation := _renameColumn(
+																		publicSchemaName,
+																		"col_person_hobby",
+																		oldIdName,
+																		newIdName);
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															oldTableName,
+															newTableName);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeFKCollection,
+															addNewFkCollection,
+															removeAssocFK,
+															addNewAssocFk,
+															renameId,
+															removeOldPk,
+															addNewPk,
+															renameCollectionRefCol,
+															renameTable};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

@@ -1,0 +1,19 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation errors_addParent1b(out inoutModel : ERR);
+
+main(){
+	var notExistParentMessage : String := "Structure doesn't contains standardClass called Tab";
+	var notExistParentError : EvolutionError := _evolutionError(
+													1, 
+													notExistParentMessage, 
+													"evolution_app.qvto");
+	var notExistChildMessage : String := "Structure doesn't contains standardClass called Parent";
+	var notExistChildError : EvolutionError := _evolutionError(
+													1, 
+													notExistChildMessage, 
+													"evolution_app.qvto");
+													
+	_errorLog(OrderedSet{notExistParentError, notExistChildError});
+}

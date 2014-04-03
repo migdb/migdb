@@ -1,0 +1,18 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation extractSubclass1_structure(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var propertySet : OrderedSet(MultipliableProperty) := OrderedSet{
+										_primitiveProperty("stayingPr", int),
+										_primitiveProperty("extractedPr", int)};
+	var parent : StandardClass := _class(
+									"Parent", 
+									_idProperty("idParent", int),
+									propertySet);
+	
+	_appStructure(OrderedSet{int, parent});
+}

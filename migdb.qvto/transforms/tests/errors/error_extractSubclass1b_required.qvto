@@ -1,0 +1,13 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation error_extractSubclass1b(out inoutModel : ERR);
+
+main(){
+	var errorMessage : String := "Structure doesn't contains standardClass called Parent";
+	var evolutionError : EvolutionError := _evolutionError(
+											1, 
+											errorMessage,
+											"evolution_app.qvto");
+	_errorLog(OrderedSet{evolutionError});
+}

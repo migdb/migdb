@@ -14,53 +14,48 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 
 /**
-	There is problem with the same types of models - solution find in creator_rdb_operations.qvto
+	There is problem with the same types of models - solution found in creator_rdb_operations.qvto
+	but outROperations must be inout model.
 **/
-transformation perform_process(in appOperations:APP , in inAStructure:APP, out outAStructure : APP, 
-	out outRStructure : RDB , out rOperations :RDB, out errorModel : ERR);
+transformation migdb_executer(in inAStructure:APP, in appOperations:APP , out outAStructure : APP, 
+	out outRStructure : RDB , inout outROperations :RDB, out errorModel : ERR);
 
 main() {
 	inAStructure.rootObjects().deepclone();
 	// hack - creating root model of rOperations by creator_rdb_operations.qvto
-	new creator_rdb_operations(rOperations);
+	new creator_rdb_operations(outROperations).transform();
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
-	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
+	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	processedAStructure.isModelValid(errorLog);
 	var processedRStructure : RDB::Structure := processedAStructure.toRdb(errorLog);
-	var outRdbOps : RDB::Operations := rOperations.rootObjects()![RDB::Operations];
+	var outRdbOps : RDB::Operations := outROperations.rootObjects()![RDB::Operations];
 	var operationIndex : Integer := 1;
 	
-	//forEach operation - doesn't stop on invalid operation because errors in operations can be independent
-	appOperations.rootObjects()![APP::Operations]->operations->forEach(op){
-		var atomicOperations : OrderedSet(APP::ops::AtomicOperation); 
-		if(op.oclIsKindOf(APP::ops::DecomposableOperation))then{
-			atomicOperations := op.oclAsType(APP::ops::DecomposableOperation).decompose(processedAStructure);
-		}else {
-			if(op.oclIsKindOf(APP::ops::AtomicOperation))then{
-				atomicOperations := OrderedSet{op.oclAsType(APP::ops::AtomicOperation)};
-			}endif;
-		}endif;
-		atomicOperations->forEach(atomicOp){
+	//forEach operation - doesn't stop on invalid operation because errors in operations 
+	// can be independent
+	appOperations.rootObjects()![APP::Operations]->operations->forEach(apOperation){
 		//check atomicOperation validity
-			if(atomicOp.isValid(processedAStructure, errorLog, operationIndex))then{
-				// map throught ORM - TODO
-				var dbOps : OrderedSet(RDB::ops::ModelOperation) := atomicOp.toRdb(processedAStructure);
-				outRdbOps.operations+=dbOps;
-				//apply dbOps
-				dbOps->forEach(dbOp){
-					//log("check executer " + dbOp.isValid(processedRStructure).repr());
-					if(dbOp.isValid(processedRStructure, errorLog, operationIndex))then{
-						dbOp.apply(processedRStructure);
-					}else{
-						//log and "break" only set of Mapped operations from AtomicAppOp
-						log("rdb_operation not valid in current context " + dbOp.repr());
-						break;
-					}endif;
-				};
-				atomicOp.apply(processedAStructure);
-				operationIndex := operationIndex + 1;
-			}endif;
-		};
+		if(apOperation.isValid(processedAStructure, errorLog, operationIndex)) then {
+			// map throught ORM - TODO
+			var dbOps : OrderedSet(RDB::ops::ModelOperation) := apOperation.toRdb(
+																			processedAStructure);
+			outRdbOps.operations += dbOps;
+			//apply dbOps
+			dbOps->forEach(dbOperation){
+				//log("check executer " + dbOp.isValid(processedRStructure).repr());
+				if(dbOperation.isValid(processedRStructure, errorLog, operationIndex)) then {
+					dbOperation.apply(processedRStructure);
+				}else{
+					//log and "break" only set of Mapped operations from AtomicAppOp
+					log("rdb_operation not valid in current context " + dbOperation .repr());
+					break;
+				}endif;
+			};
+			apOperation.apply(processedAStructure);
+			operationIndex := operationIndex + 1;
+		}else{
+			log("app_operation not valid in current context " + apOperation.repr());
+		}endif;
 	};
 	log("migdb_executer process finished");
 }

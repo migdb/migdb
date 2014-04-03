@@ -1,22 +1,27 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Run
+Bundle-Name: Migdb Run
 Bundle-SymbolicName: migdb.run
 Bundle-Version: 1.0.0
-Require-Bundle: org.eclipse.emf.codegen.ecore;bundle-version="2.7.0",
- org.eclipse.emf.mwe2.launch;bundle-version="2.2.0",
+Require-Bundle: eu.collectionspro.mwe;bundle-version="1.0.0";visibility:=reexport,
+ migdb.mm.app;bundle-version="1.0.0";visibility:=reexport,
+ migdb.mm.rdb;bundle-version="1.0.0";visibility:=reexport,
+ migdb.generator;bundle-version="1.0.0";visibility:=reexport,
+ migdb.mm.errors;bundle-version="1.0.0";visibility:=reexport,
+ migdb.qvto;bundle-version="1.0.0";visibility:=reexport,
+ migdb.dsl.ops;bundle-version="1.0.0";visibility:=reexport,
+ org.eclipse.m2m.qvt.oml;bundle-version="3.1.0";visibility:=reexport,
+ org.eclipse.acceleo.engine;bundle-version="3.1.1",
+ org.eclipse.m2m.qvt.oml.common;bundle-version="3.1.0";visibility:=reexport,
+ org.eclipse.m2m.qvt.oml.emf.util;bundle-version="3.1.0";visibility:=reexport,
+ org.eclipse.core.runtime;visibility:=reexport,
+ org.junit;bundle-version="4.8.2",
+ org.eclipse.emf.codegen.ecore;bundle-version="2.7.0";visibility:=reexport,
+ org.eclipse.emf.mwe2.launch;bundle-version="2.2.0";visibility:=reexport,
  org.apache.log4j;bundle-version="1.2.15",
  org.apache.commons.logging;bundle-version="1.1.1",
- eu.collectionspro.mwe;bundle-version="1.0.0",
- migdb.mm.app;bundle-version="1.0.0",
- migdb.mm.rdb;bundle-version="1.0.0",
- migdb.generator;bundle-version="1.0.0",
- org.eclipse.m2m.qvt.oml;bundle-version="3.1.0",
- org.eclipse.acceleo.engine;bundle-version="3.1.1",
- org.eclipse.m2m.qvt.oml.common;bundle-version="3.1.0",
- org.eclipse.m2m.qvt.oml.emf.util;bundle-version="3.1.0",
- org.eclipse.core.runtime,
- org.junit;bundle-version="4.8.2",
- migdb.mm.errors;bundle-version="1.0.0"
+ org.eclipse.xtend2.lib;bundle-version="2.2.1";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: migdb.run,
+ migdb.run.utils

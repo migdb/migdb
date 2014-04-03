@@ -1,0 +1,12 @@
+import builder_errors;
+
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+transformation test_err_invalid_10_required(out outModel : ERR);
+
+
+main() {
+	var errorMessage : String := "Structure contains unsupported hierarchy type of mapping  : "+ 
+		"class name \"Thing\" inheritanceType: tablePerClass";
+	var error : Error := _validationError(errorMessage, "validator_app.qvto"); 
+	_errorLog(OrderedSet{error});	 
+}

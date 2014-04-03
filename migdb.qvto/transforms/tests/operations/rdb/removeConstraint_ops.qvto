@@ -1,0 +1,13 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation removeConstraint_ops(out inoutModel : RDB);
+
+
+main() {
+	var removeConstraint : RDB::ops::ModelOperation := _removeConstraint(
+																		"public", 
+																		"first", 
+																		"pk_first");
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{removeConstraint};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

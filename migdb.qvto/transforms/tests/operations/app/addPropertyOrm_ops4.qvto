@@ -1,0 +1,21 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+/**
+	This file contains in it's name ORM because it is tested only in ORM, not in application layer
+**/
+transformation addPropertyOrm_ops4(out inoutModel : APP);
+
+main(){
+	var addProperty : APP::ops::ModelOperation := _addProperty(
+															"Tab", 
+															"pr", 
+															getAppDefaultIdTypeName(), 
+															0, 
+															-1, 
+															null, 
+															true, 
+															true);
+	_appOperations(OrderedSet{addProperty});
+}

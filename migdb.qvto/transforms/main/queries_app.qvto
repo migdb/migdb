@@ -22,7 +22,8 @@
  * THE SOFTWARE.
  * 
  */
-library APP_queries;
+library queries_app;
+
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
@@ -34,28 +35,8 @@ query app::AssociationProperty::isID():Boolean{
 	return false;
 }
 
-query app::EmbeddedProperty::isID():Boolean{
-	return self.owningEmbeddedClass.idProperty = self;
-}
-
 query app::PrimitiveProperty::isID() : Boolean{
-	return self.owningGeneralClass.getId() = self;
-}
-
-query APP::NestedProperty::isID() : Boolean{
-	return false;	
-}
-
-abstract query app::GeneralClass::removeProperty(removedPropertyName : String);
-
-helper EmbeddedClass::removeProperty(removedPropertyName : String){
-	self.embeddedProperties->excluding(self.getProperty(removedPropertyName).oclAsType(EmbeddedProperty));
-	return;
-}
-
-helper StandardClass::removeProperty(removedPropertyName : String){
-	self.properties->excluding(self.getProperty(removedPropertyName).oclAsType(MultipliableProperty));
-	return;
+	return self.owningGeneralClass.parent = null and self.owningGeneralClass.getId() = self;
 }
 
 /**	Checks if this class has default inheritanceType **/
@@ -99,37 +80,55 @@ query app::MultipliableProperty::isPrimitive():Boolean{
 }
 
 /**
-	Returns path to rootClass starting with self and ending with root. 
-	NOTE: In the case of cyclic hierarchy returns empty OrderedSet.
+	Returns path to root class or to strong component (including classes in Strong component).
+	This method also returns object it was invoked from
 **/
 query app::StandardClass::getPathToRoot():OrderedSet(app::StandardClass){
 	var emptyOrderedSet : OrderedSet(app::StandardClass) := OrderedSet{};
-	if(not self.containsCycle(emptyOrderedSet)) then{
-			return self.getPath(emptyOrderedSet);
-		}endif;
-	return OrderedSet{};	
-		
+	return self.getPath(emptyOrderedSet);		
 }
 
 /** 
-	Returns path to root class in class hierarchy.
-	NOTE - accyclity of self class hierarchy is not checked 
-	NOTE - this query should not be called dirrectly
+	Recursive helper for getPathToRoot method - hides collection parameter. Returns path to root 
+	class or to strong component (including classes in Strong component). 
 **/
 query app::StandardClass::getPath(collection : OrderedSet(app::StandardClass)):OrderedSet(app::StandardClass){
+	//return path + strong component
+	if(collection->includes(self))then{
+		return collection
+	}endif;
+	// return path
 	if(self.parent = null)then{
 		return collection->append(self);
 	}endif;
+	//continue recursively
 	return self.parent.getPath(collection->append(self));
 }
+
+/* Returns true if Property represents unidirectional 1:1 association */
+query app::MultipliableProperty::isOneToOneUnidirectional() : Boolean{
+	//return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and 
+	//		self.oclAsType(AssociationProperty).oppositeProperty = null;
+	//THERE IS NO WAY TO REPRESENT THIS TYPE OF ASSOCIATION IN MODEL
+	return false;
+}
+
+query app::MultipliableProperty::isPropertyTypeOf(typeClass : StandardClass) : Boolean{
+	if(not self.oclIsKindOf(AssociationProperty)) then{
+		return false;
+	}endif;
+	return self.oclAsType(AssociationProperty).type = typeClass;
+}
+
 
 /**
 	Overuje, jestli dana Property reprezentuje bidirectional (oboustranne navigabilni) vazbu 1-1
 **/
 query app::MultipliableProperty::isOneToOneBidirectional():Boolean{
 	return self.oclIsKindOf(AssociationProperty) and self.upperBound = 1 and 
-	self.oclAsType(AssociationProperty).oppositeProperty.oppositeProperty = self and
-	self.oclAsType(AssociationProperty).oppositeProperty.upperBound = 1;
+		self.oclAsType(AssociationProperty).oppositeProperty != null and
+		self.oclAsType(AssociationProperty).oppositeProperty.oppositeProperty = self and
+		self.oclAsType(AssociationProperty).oppositeProperty.upperBound = 1;
 }
 
 /**
@@ -142,8 +141,8 @@ query app::MultipliableProperty::isOneToManyUnidirectional():Boolean{
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 	
 	return associationProperty.upperBound = 1 and associationProperty.oppositeProperty = null and 
-	not associationProperty.owningGeneralClass.isNonleafTPCClass() and
-	not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+		not associationProperty.owningGeneralClass.isNonleafTPCClass() and
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -155,9 +154,10 @@ query app::MultipliableProperty::isOneToManyBidirectional():Boolean{
 	}endif;
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 	
-	return self.upperBound = -1 and	associationProperty.oppositeProperty.oppositeProperty = self and
-	associationProperty.oppositeProperty.upperBound = 1 and not associationProperty.owningGeneralClass.isNonleafTPCClass() and 
-	not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+	return self.upperBound = -1 and	associationProperty.oppositeProperty.oppositeProperty = self 
+		and associationProperty.oppositeProperty.upperBound = 1 and 
+		not associationProperty.owningGeneralClass.isNonleafTPCClass() and 
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -170,8 +170,8 @@ query app::MultipliableProperty::isManyToManyUnidirectional():Boolean{
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 
 	return associationProperty.upperBound = -1 and associationProperty.oppositeProperty = null and 
-	not associationProperty.owningGeneralClass.isNonleafTPCClass() and not 
-	associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+		not associationProperty.owningGeneralClass.isNonleafTPCClass() and 
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -183,9 +183,10 @@ query app::MultipliableProperty::isManyToManyBidirectional():Boolean{
 	}endif;
 	var associationProperty : AssociationProperty := self.oclAsType(AssociationProperty);
 	
-	return associationProperty.upperBound = -1 and associationProperty.oppositeProperty.oppositeProperty = self and
-	associationProperty.oppositeProperty.upperBound = -1 and not self.owningGeneralClass.isNonleafTPCClass() and 
-	not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
+	return associationProperty.upperBound = -1 and associationProperty.oppositeProperty.
+		oppositeProperty = self and associationProperty.oppositeProperty.upperBound = -1 and
+		not self.owningGeneralClass.isNonleafTPCClass() and 
+		not associationProperty.type.oclAsType(app::StandardClass).isNonleafTPCClass();
 }
 
 /**
@@ -194,27 +195,32 @@ query app::MultipliableProperty::isManyToManyBidirectional():Boolean{
 	TablePerClass.
 **/
 query app::GeneralClass::isNonleafTPCClass():Boolean{
-		if(self.oclIsTypeOf(StandardClass) and self.oclAsType(StandardClass).inheritanceType = app::InheritanceType::tablePerClass and 
-			self.owningModel.entities[app::StandardClass]->exists(cls | cls.parent = self))then{
+		if(self.oclIsTypeOf(StandardClass) and 
+				self.oclAsType(StandardClass).inheritanceType = app::InheritanceType::tablePerClass 
+				and self.owningModel.entities[app::StandardClass]->exists(cls | cls.parent = self)
+		)then{
 			return true;
 		}endif;
 	return false;
 }
 
 /** 
-	Toto query vrati boolean hodnotu urcujici, jestli je trida soucasti cyklu v hierarchii dedicnosti. 
-	Inout parametr addedClasses 
+	This query checks whether self Class is contained in cycle - not CYCLED hierarchy. In first call
+	 it should has self as actualClass parameter. 
 **/
-query app::StandardClass::containsCycle(inout addedClasses : Set(app::StandardClass)) :Boolean{
-	if(addedClasses->includes(self)) then {
+query app::StandardClass::isContainedInCycle(inout visitedClasses : Set(app::StandardClass), 
+		in actualClass : StandardClass) :Boolean{
+	//if it iterated to self and actualClass is already visited (preventing starting call)
+	if(actualClass = self and visitedClasses->includes(actualClass)) then {
 		return true;
 	} endif;
 
-	if(self.parent = null) then {
+	//stop when comes to root or class already visited
+	if(actualClass.parent = null or visitedClasses->includes(actualClass)) then {
 		return false;
 	}endif;
 
-	return self.parent.containsCycle(addedClasses->including(self));
+	return self.isContainedInCycle(visitedClasses->including(actualClass), actualClass.parent);
 }
 
 
@@ -227,42 +233,46 @@ query APP::Structure::findDefaultIdType() : PrimitiveClass{
 	return self.findPrimitiveClass(getAppDefaultIdTypeName());
 }
 
-query APP::Structure::containsEntity(eName : String) : Boolean {
-	return self.entities->exists(name = eName);
+query APP::Structure::containsEntity(entityName : String) : Boolean {
+	return self.entities->exists(name = entityName);
 }
 
 query APP::Structure::containsPrimitiveClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsTypeOf(APP::PrimitiveClass);
+	return self.entities[PrimitiveClass]->exists(name = className);
 }
 
 query APP::Structure::containsGeneralClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsKindOf(APP::GeneralClass);
+	return self.entities[GeneralClass]->exists(name = className);
 }
 
 query APP::Structure::containsStandardClass(className : String) : Boolean {
-	return self.findEntity(className).oclIsKindOf(APP::StandardClass);
+	return self.entities[StandardClass]->exists(name = className);
 }
-
 
 query APP::Structure::findEntity(eName : String) : APP::ModelEntity {
 	return self.entities![name = eName];
 }
 
 query APP::Structure::findStandardClass(className : String) : APP::StandardClass {
-	return self.findEntity(className).oclAsType(APP::StandardClass);
+	return self.findEntity(className).oclAsType(StandardClass);
 }
 
 query APP::Structure::findPrimitiveClass(className : String) : APP::PrimitiveClass {
-	return self.findEntity(className).oclAsType(APP::PrimitiveClass);
+	return self.findEntity(className).oclAsType(PrimitiveClass);
 }
 
 query APP::Structure::findGeneralClass(className : String) : APP::GeneralClass {
-	return self.findEntity(className).oclAsType(APP::GeneralClass);
+	return self.findEntity(className).oclAsType(GeneralClass);
 }
 
 query APP::Structure::isPropertyInGeneralClass(className : String, propertyName : String) : Boolean {
 	return self.findGeneralClass(className).containsProperty(propertyName);
 }
+
+query APP::Structure::isAssociationPropertyInStandardClass(className : String, assocPropName : String) : Boolean {
+	return self.findStandardClass(className).containsAssociationProperty(assocPropName);
+}
+
 
 query APP::Structure::isPropertyInClass(className : String, propertyName : String) : Boolean {
 	return self.findClass(className).containsProperty(propertyName);
@@ -270,26 +280,22 @@ query APP::Structure::isPropertyInClass(className : String, propertyName : Strin
 
 abstract query GeneralClass::containsProperty(propertyName : String) : Boolean;
 
+query StandardClass::containsAssociationProperty(propertyName : String) : Boolean{
+	return self.properties[AssociationProperty]->exists(name = propertyName);
+} 
+
 query StandardClass::containsProperty(propertyName : String) : Boolean{
 	return self.properties->exists(name = propertyName);
 } 
 
-query EmbeddedClass::containsProperty(propertyName : String) : Boolean{
-	return self.embeddedProperties->exists(name = propertyName);
-}
-
 abstract query GeneralClass::containsProperty(primitiveType : PrimitiveClass) : Boolean;
 
-query StandardClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean{
+query StandardClass::containsPropertyOfType(_primitiveType : PrimitiveClass) : Boolean{
 	return self.properties[PrimitiveProperty]->exists(prop | prop.type = _primitiveType);
 }
 
-query StandardClass::containsProperty(_type : EmbeddedClass) : Boolean{
-	return self.properties[NestedProperty]->exists(prop | prop.type) = _type;
-}
-
-query EmbeddedClass::containsProperty(_primitiveType : PrimitiveClass) : Boolean{
-	return self.embeddedProperties->exists(prop | prop.type = _primitiveType);
+query StandardClass::containsPropertyOfType(_type : StandardClass) : Boolean{
+	return self->properties[AssociationProperty]->exists(prop | prop.type = _type);	
 }
 
 query APP::Structure::arePropertiesInClass(className : String, propertyNames : OrderedSet(String)) : Boolean {
@@ -301,14 +307,15 @@ query APP::Structure::findProperty(className : String, propertyName : String) : 
 	return self.findGeneralClass(className).getProperty(propertyName);
 }
 
+query APP::Structure::findAssociationProperty(standardClassName : String, assocPropName : String) : APP::AssociationProperty {
+	return self.findStandardClass(standardClassName).properties[AssociationProperty]->
+				selectOne(assocProp |assocProp.name = assocPropName);
+}
+
 abstract query GeneralClass::getProperty(propertyName : String) : APP:: Property;
 
 query StandardClass::getProperty(propertyName : String) : APP:: Property{
 	return self.properties![name = propertyName];
-}
-
-query EmbeddedClass::getProperty(propertyName : String) : APP:: Property{
-	return self.embeddedProperties![name = propertyName];
 }
 
 query APP::Structure::containsClass(className : String) : Boolean {
@@ -320,10 +327,12 @@ query APP::Structure::findClass(className : String) : APP::StandardClass {
 }
 
 query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
-	return (lowerBound > -1 and (upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
+	return (lowerBound > -1 and 
+				(upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
 }
 
-// overime, zda-li je trida potomkem tridy precedessorName
+
+//checks if self class is descendantOf class precedessorName
 query APP::Structure::isDescendantOf(className : String, precedessorName : String ) : Boolean {
 	var cls : StandardClass := self.findStandardClass(className);
 	return cls.isDescendantOf(precedessorName);
@@ -334,12 +343,13 @@ query APP::StandardClass::isDescendantOf(precedessorName : String): Boolean {
 }
 
 query APP::Structure::areClassesRelatives(className : String , secondClassName : String ) : Boolean{
-	return  self.isDescendantOf(className, secondClassName) or self.isDescendantOf(secondClassName, className);
-	
+	return  self.isDescendantOf(className, secondClassName) or 
+		self.isDescendantOf(secondClassName, className);
 }
 
 /**
-	Vrati vsechny potomky dane tridy v topologickem usporadani - tj predek nesmi byt v listu pozdeji nez jeho potomek
+	Returns class and all of it's descendants in topologic ordering - eg child is later in list
+	than it's parent
 **/
 query APP::Structure::getClassDescendants(className : String) : OrderedSet(StandardClass){
 	var _clas := self.findStandardClass(className);
@@ -347,11 +357,12 @@ query APP::Structure::getClassDescendants(className : String) : OrderedSet(Stand
 }
 
 /**
-	Vrati potomky dane tridy v topologickem usporadani - Nyni implementovano pomoci DFS. Nema deterministicke chovani. 
-	Opetovne spusteni muze vratit jine, ale platne usporadani    
+	Returns ancestors of class in topologic ordering - implemented by BFS. Is not deterministic.
+	Each execution may return different VALID ordering
 **/
 query APP::StandardClass::getAllDescendants() : OrderedSet(StandardClass){
-	return self.getDescendants(OrderedSet{}, OrderedSet{InheritanceType::joined, InheritanceType::tablePerClass, InheritanceType::singleTable});
+	return self.getDescendants(OrderedSet{}, OrderedSet{InheritanceType::joined,
+		InheritanceType::tablePerClass, InheritanceType::singleTable});
 }
 
 query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType) : OrderedSet(StandardClass){
@@ -359,7 +370,8 @@ query APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceTyp
 }
 
 /** 
-	NOTE: This query should not be called directly - see APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType)
+	NOTE: This query should not be called directly - see 
+	APP::StandardClass::getDescendantsOfType(_inheritanceType : InheritanceType)
 	returns descendants of chosen inheritanceTypes
 **/
 query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardClass), _inheritanceTypes: OrderedSet(InheritanceType)) : OrderedSet(StandardClass){
@@ -374,42 +386,52 @@ query APP::StandardClass::getDescendants(_descendantsList : OrderedSet(StandardC
 	return set;
 }
 
+query Property::getType() : ModelEntity{
+	if(self.oclIsTypeOf(PrimitiveProperty))then{
+		return self.oclAsType(PrimitiveProperty).type;
+	}endif;
+	if(self.oclIsTypeOf(AssociationProperty))then{
+		return self.oclAsType(AssociationProperty).type;
+	}endif;
+	log("Error occured - unimplemented method getType for property " + self.repr());
+	assert(false);
+	return null;
+}
+
 query PrimitiveProperty::getPrimitiveType(): APP::PrimitiveType{
 	return self.type.primitiveType;
 }
 
-query EmbeddedProperty::getPrimitiveType(): APP::PrimitiveType{
-	return self.type.primitiveType;
-}
-
 /**+++++++++++++++++++++ Validator Queries +++++++++++++++++++++**/
-/* Returns true if Property represents unidirectional 1:1 association */
-query app::MultipliableProperty::isOneToOneUnidirectional():Boolean{
-	return false;
-}
-
 /** Returns true if class has idProperty, false otherwise **/
 query StandardClass::hasId():Boolean{
 	return self.idProperty <> null;
 }
 
 query app::Structure::containsNonleafTPCAssociation():Boolean{
-	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and prop.owningGeneralClass.isNonleafTPCClass() and 
-	(prop.isOneToOneUnidirectional()or prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
-	prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or prop.isManyToManyBidirectional()));
+	return self.entities[app::StandardClass]->properties->exists( prop | not prop.isPrimitive() and 
+		prop.owningGeneralClass.isNonleafTPCClass() and 
+		(prop.isOneToOneUnidirectional() or 
+				prop.isOneToOneBidirectional() or prop.isOneToManyUnidirectional() or 
+				prop.isOneToManyBidirectional() or prop.isManyToManyUnidirectional() or 
+				prop.isManyToManyBidirectional()
+		)
+	);
 }
 
 query app::StandardClass::areIDTypesCorrectlySet() : Boolean{
-    return self.getId().type.name = getAppDefaultIdTypeName();
+    return self.parent <> null or self.getId().type.name = getAppDefaultIdTypeName();
 }
 
 query app::StandardClass::areIDBoundsCorrectlySet() : Boolean{
-    return self.getId().lowerBound = 1 and self.getId().upperBound = 1;
+    return self.parent <> null or 
+    (self.getId().lowerBound = 1 and self.getId().upperBound = 1);
 }
 
 query app::AssociationProperty::isOppositeCorrectlySet():Boolean{
 	return self.oppositeProperty = null or (self.oppositeProperty.oppositeProperty = self and 
-	self.type=self.oppositeProperty.owningGeneralClass and self.owningGeneralClass = self.oppositeProperty.type);
+		self.type=self.oppositeProperty.owningGeneralClass and 
+		self.owningGeneralClass = self.oppositeProperty.type);
 }
 
 query app::ModelEntity::hasUniqueName():Boolean{
@@ -422,21 +444,82 @@ query app::MultipliableProperty::hasUniqueNameInHierarchy():Boolean{
     	log("This method can be called only on Property owned by StandardClass");
     	assert(false);
     }endif;
-    self.owningGeneralClass[StandardClass].getPathToRoot()->properties->forEach(prop | prop.name = self.name and prop <> self){
-		return false;
-	};
+    self.owningGeneralClass[StandardClass].getPathToRoot()->properties->
+    	forEach(prop | prop.name = self.name and prop <> self){
+			return false;
+		};
 	return true;	
 }
 
 query StandardClass::getId():PrimitiveProperty{ 
-	return self.idProperty;
+	if(self.isRoot())then{
+		return self.idProperty;
+	}endif;
+	if(self.idProperty = null)then{
+		log("Invalid getId call - no root, no ID: " + self.repr());
+		assert(false);
+	}endif;
+	return self.parent.getId();
+}
+
+/** Returns class representative - e.g. origin class of table where are stored instances of this 
+ *  cls. 
+ */
+query StandardClass::getDbRepresentative(): StandardClass{
+	var representant : StandardClass := self;
+	while(representant.parent <> null and representant.hasSingleTableInheritanceType()){
+		representant := representant.parent;
+	};
+	return representant;
+}
+
+query app::StandardClass::isRoot():Boolean{
+	return self.parent = null;
+}
+
+
+helper setOpposite(inout associationProperty : AssociationProperty, inout oppositeProperty : AssociationProperty){
+	if(associationProperty.oppositeProperty <> null)then{
+		log("Cannot set oppositeProperty to " + associationProperty.repr() + 
+			" it's oppositeProperty atribute is already set");
+		assert(false);
+		return;
+	}endif;
+	if(oppositeProperty.oppositeProperty <> null)then{
+		log("Cannot set oppositeProperty to " + oppositeProperty.repr() + 
+			" it's oppositeProperty atribute is already set");
+		assert(false);
+		return;
+	}endif;
+	associationProperty.oppositeProperty := oppositeProperty;
+	oppositeProperty.oppositeProperty := associationProperty;
+	if(associationProperty.upperBound = 1 or (oppositeProperty.upperBound != 1))then{
+		oppositeProperty.isOwning := false;
+		associationProperty.isOwning := true;
+	}endif;
+	return;
+}
+
+helper StandardClass::hasParentName(standardClassName : String) : Boolean{
+	if(self.parent.name = standardClassName)then{
+		return true;
+	}endif;
+	return false;
 }
 
 /**+++++++++++++++++++++ Printing on standard output +++++++++++++++++++++**/
 query app::Structure::print(){
 	self->entities->forEach(ent){
 		log(ent.repr());
-	}
+	};
+}
+
+query StandardClass::repr() : String{
+	var returnVal : String := self.repr();
+	self.properties->forEach(prop){
+		returnVal := returnVal + "\n" + prop.repr();
+	};
+	return returnVal;
 }
 
 query app::Operations::print(){
@@ -445,6 +528,15 @@ query app::Operations::print(){
 	}
 }
 
-query app::StandardClass::isRoot():Boolean{
-	return self.parent = null;
+
+/** ++++++++++++++++++++++++ TO String for collection+++++++++++++++++++++++++++++++*/
+query Collection(Property)::toString() : String{
+	var colString : String := "Collection(";
+	
+	self->forEach(prop){
+		colString:= colString + prop.repr() + "\n";
+	};
+	colString:= colString + ")";
+	return colString;
 }
+

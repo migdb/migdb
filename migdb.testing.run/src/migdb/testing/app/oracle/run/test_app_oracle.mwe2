@@ -1,0 +1,64 @@
+module migb.testing.app.oracle.run.test_app_oracle
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/app_oracle"
+var IN_STR = "${QVTO_DIR}/tests/oracle_tests"
+var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_oracle"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/oracle_app_run.qvto"
+
+TestWorkflow {
+/***** DEFINE META-MODELS *****/
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+
+/***** MAIN TESTING *****/
+/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/01_add_standard_class"
+		qvtInput = "${IN_STR}/01_add_standard_class_source.qvto"
+		qvtInput = "${IN_STR}/01_add_standard_class_target.qvto"
+		qvtComparison = ""//"${COMPARISONS_STRUCTURES_DIR}/01_add_standard_class_oracled.qvto"
+		qvtComparison = ""//"${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "TEST 01 addStandardClassOracle"
+	}
+/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/02_rename_entity"
+		qvtInput = "${IN_STR}/02_rename_entity_source.qvto"
+		qvtInput = "${IN_STR}/02_rename_entity_target.qvto"
+		qvtComparison = ""//"${COMPARISONS_STRUCTURES_DIR}/01_add_standard_class_oracled.qvto"
+		qvtComparison = ""//"${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+		testDescription = "TEST 02 renameEntity"
+	}	
+}

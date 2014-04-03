@@ -25,28 +25,34 @@
 
 import queries_app;
 import builder_errors;
+import queries_errors;
+import name_service_app;
 	
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 modeltype ERR uses 'http://www.collectionspro.eu/jam/mm/errors';
 
-transformation APP_VALIDATE(in inModel : APP, inout errorModel : ERR);
+transformation validator_app(in inModel : APP, in inErrorModel : ERR, out outErrorModel : ERR);
 
 main() {	
 	log("Validation aplication model started...");
+	inErrorModel.rootObjects()[ErrorLog].deepclone();
 	if(inModel.rootObjects()->exists(root | root.oclIsTypeOf(APP::Structure)))then{
-		inModel.rootObjects()![Structure].isModelValid(errorModel.rootObjects()![ErrorLog]);
-		log("");
+		 var errorLog : ErrorLog := outErrorModel.rootObjects()![ErrorLog];
+		 inModel.rootObjects()![Structure].isModelValid(errorLog);
+		 //errorLog.print();
+		 //log("");
 	}else{
 		log("Root element doesn't conform to APP::Structure type");
 	}endif;
 }
-///////////////---------------------------------Validacni query --------------------------------///////////
+///////////////---------------------------------Validacni query ------------------------///////////
 
 query getValidatorAppId() : String{
 	return "validator_app.qvto";
 }
 
 query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
+	var areClassesJoined : Boolean := true;
 	var classUniqueName : Boolean := true; 
 	var propUniqueName : Boolean := true;
 	var notCycledHierarchies : Boolean := true;
@@ -56,70 +62,112 @@ query app::Structure::isModelValid(inout errorLog : ErrorLog):Boolean{
 	var idTypes : Boolean := true;
 	var notTpcExpansion : Boolean := true;
 	var rootsId : Boolean := true;
+	var areHierarchyTypesHomogenous : Boolean := true;
+	var areEntityNamesLegal : Boolean := true;
+	var arePropertyNamesLegal : Boolean := true;
 	
-	var entities : Set(ModelEntity) := self.oclAsType(Structure).entities;
-	var stdClasses : Set(StandardClass) := entities[StandardClass];
-	var stdClassProps : Bag(MultipliableProperty) := stdClasses->properties;
+	var entities : OrderedSet(ModelEntity) := self.oclAsType(Structure).entities;
+	var stdClasses : OrderedSet(StandardClass) := entities[StandardClass];
+	var stdClassProps : Sequence(MultipliableProperty) := stdClasses->properties;
 	//classes leading to cycle
-	var cycles : Set(StandardClass) := Set{};
+	var cycles : OrderedSet(StandardClass) := OrderedSet{};
 	entities->forEach(ent | not ent.hasUniqueName()) {
-		errorLog.errors+= _validationError("Structure contains ambigous Class name \"" + ent.name + "\"", getValidatorAppId());		
+		var errorMessage : String := "Structure contains ambigous Class name \"" + ent.name + "\"";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		classUniqueName := false;
 	};
+	entities->forEach( ent | not isLegalClassName(ent.name) ){
+		var errorMessage : String := "Structure contains entity with invalid name " + ent.name;
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		areEntityNamesLegal := false;
+	};
 	stdClassProps->forEach(prop | not prop.hasUniqueNameInHierarchy()) {
-		errorLog.errors+= _validationError("Structure contains ambigous property name \"" + prop.name +
-		 "\" in class \"" + prop.owningGeneralClass.name + "\"", getValidatorAppId());
+		var errorMessage : String := "Structure contains ambigous property name \"" + prop.name +
+		 "\" in class \"" + prop.owningGeneralClass.name + "\"";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		propUniqueName := false;		
 	};
-	stdClasses->forEach(cls | cls.containsCycle(OrderedSet{}) and not cycles->includes(cls)) {
-		var  iterateClass : StandardClass := cls;  
-		var errorMessage : String := "Structure contains cycled hierarchy:\"" + cls.name +"\"";
-		while(not cycles->includes(iterateClass)){
-			cycles += iterateClass;
-			iterateClass := iterateClass.parent;
-			errorMessage := errorMessage + ", \"" + iterateClass.name+"\"";					
+	stdClassProps->forEach(prop | not isLegalPropertyName(prop.name)) {
+		var errorMessage : String := "Structure contains property with illegal name \"" + 
+			prop.name + "\" in class \"" + prop.owningGeneralClass.name + "\"";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		arePropertyNamesLegal := false;		
+	};
+	
+	// logs only one cycle + path leading to cycle to prevent from expansion Error amount
+	// logs firstly FIRST class in alphabetical ordering - eg "a" < "ab", "c" > "ab"
+	stdClasses->forEach(cls | cls.isContainedInCycle(OrderedSet{}, cls) and 
+			not cycles->includes(cls)) {
+		var errorMessage : String := "Structure contains cycled hierarchy:";
+		var topologicallyFirst : StandardClass := cls;
+		cls.getPath(OrderedSet{})->forEach(cycleClass){
+			if(cycleClass.name < topologicallyFirst.name)then{
+				topologicallyFirst := cycleClass;
+			}endif;
 		};
-		errorLog.errors+= _validationError(errorMessage + "...", getValidatorAppId());
+		
+		//topologicallyFirst->getPathToRoot()->forEach(cycleClass){
+		topologicallyFirst.getPathToRoot()->forEach(cycleClass){
+			cycles+= cycleClass;
+			errorMessage := errorMessage + "\"" + cycleClass.name+"\", ";
+		};
+		errorMessage := errorMessage + "\"" + topologicallyFirst.name +"\"...";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notCycledHierarchies := false;
 	};
 	stdClassProps[AssociationProperty]->forEach(assocProp | not assocProp.isOppositeCorrectlySet()){
-		var errorMessage : String := "Structure contains property \""+ assocProp.name + "\" property in class \""
-		 + assocProp.owningGeneralClass.name + "\" opposite not correctly set";
-		errorLog.errors+= _validationError(errorMessage, getValidatorAppId());
-		 oppositeProperty := false;
+		var errorMessage : String := "Structure contains property \""+ assocProp.name + 
+				"\" property in class \""
+		 		+ assocProp.owningGeneralClass.name + "\" opposite not correctly set";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		oppositeProperty := false;
 	};
+		
     stdClasses->forEach(cls | cls.parent <> null and cls.hasId()){
-    	var errorMessage : String := "Structure contains Non-root class \"" + cls.name + "\" containing id property " 
-    	+ cls.idProperty.name + " .";
-    	errorLog.errors+= _validationError(errorMessage, getValidatorAppId());
-    	notHasNonRootId := false;
+    	var errorMessage : String := "Structure contains Non-root class \"" + cls.name + 
+    		"\" containing id property \"" + cls.idProperty.name + "\".";
+    	addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		notHasNonRootId := false;
     };
 	stdClasses->forEach(cls | not cls.areIDBoundsCorrectlySet()){
-		var errorMessage : String := "Structure contains class \"" + cls.name + "\" with id bounds not correctly set";
-		errorLog.errors+= _validationError(errorMessage, getValidatorAppId());
+		var errorMessage : String := "Structure contains class \"" + cls.name + 
+			"\" with id bounds not correctly set";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		idBounds := false;
 	};
 	stdClasses->forEach(cls | not cls.areIDTypesCorrectlySet()){
 		var errorMessage : String := "Structure contains class \"" +cls.name + 
 		"\" with id not according primitive Integer";
-	    errorLog.errors+= _validationError(errorMessage, getValidatorAppId());
-	     idTypes := false;
+	    addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		idTypes := false;
 	};
 	
 	stdClasses->forEach(cls | cls.parent = null and not cls.hasId()){
 		rootsId := false;
-		var errorMessage : String := "Structure contains root class " + cls.name + " with no id Property";
-		errorLog.errors+= _validationError(errorMessage, getValidatorAppId());	
+		var errorMessage : String := "Structure contains root class \"" + cls.name + "\" with no"+
+			" id property";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 	};
 	
 	stdClassProps->forEach(prop | (prop.owningGeneralClass.isNonleafTPCClass() and
 	  (prop.upperBound > 1 or prop.upperBound = -1))){
-	  var errorMessage : String := "Structure contains TPC hierarchy causing table expansion class \""
-		 + prop.owningGeneralClass.name + "\" property\"" + prop.name + "\"";
-		errorLog.errors+= _validationError(errorMessage, getValidatorAppId());
+	  var errorMessage : String := "Structure contains TPC hierarchy causing table expansion "+ 
+	  		"class \"" + prop.owningGeneralClass.name + "\" property\"" + prop.name + "\"";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
 		notTpcExpansion := false;
 	};
-	var valid : Boolean := classUniqueName and propUniqueName and notCycledHierarchies and oppositeProperty
-	 	 and notHasNonRootId and idBounds and idTypes and notTpcExpansion and rootsId;
+	stdClasses->forEach(stdCls | stdCls.inheritanceType <> app::InheritanceType::joined){
+		var errorMessage : String := "Structure contains unsupported hierarchy type of mapping "+ 
+				" : class name \"" + stdCls.name + "\" inheritanceType: " + 
+				stdCls.inheritanceType.repr() + "";
+		addValidationError(errorLog, errorMessage, getValidatorAppId());		
+		areClassesJoined := false;
+	};
+	var valid : Boolean := 	classUniqueName and areEntityNamesLegal and propUniqueName and 
+							arePropertyNamesLegal and notCycledHierarchies and oppositeProperty 
+							and notHasNonRootId and idBounds and idTypes and notTpcExpansion and 
+							rootsId and areClassesJoined;	
 	return  valid;
+	//entities->logFirstPropName();
+	return false;
 }

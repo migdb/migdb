@@ -1,0 +1,67 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addProperty3_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var addTable : RDB::ops::AddTable := _addTable(
+											publicSchemaName,
+											"person_residental_address");
+	var addPersonCol : RDB::ops::AddColumn := _addColumn(
+													publicSchemaName,
+													"person_residental_address",
+													"id_person",
+													rdb::PrimitiveType::int);
+	var addAddrCol : RDB::ops::AddColumn := _addColumn(
+													publicSchemaName,
+													"person_residental_address",
+													"id_address",
+													rdb::PrimitiveType::int);
+	var addFkPerson : RDB::ops::AddForeignKey := _addForeignKey(
+													publicSchemaName,
+													"person_residental_address",
+													"id_person",
+													"fk_person_residental_address_person",
+													"person");
+	var addFkAddress : RDB::ops::AddForeignKey := _addForeignKey(
+														publicSchemaName,
+														"person_residental_address",
+														"id_address",
+														"fk_person_residental_address_address",
+														"address");
+	var addOrderingCol : RDB::ops::AddColumn := _addColumn(
+													publicSchemaName,
+													"person_residental_address",
+													"ordering",
+													RDB::PrimitiveType::int);
+	var orderingUXColNames : OrderedSet(String) := OrderedSet{
+														"id_person", 
+														"id_address", 
+														"ordering"};
+	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
+													publicSchemaName,
+													"person_residental_address",
+													orderingUXColNames,
+													"ux_person_residental_address_ord");
+	var uxNames : OrderedSet(String) := OrderedSet{
+											"id_person", 
+											"id_address"};
+	var addUX : RDB::ops::AddUnique := _addUnique(
+											publicSchemaName,
+											"person_residental_address",
+											uxNames,
+											"ux_person_residental_address");																																							
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															addTable, 
+															addPersonCol,
+															addAddrCol,
+															addFkPerson,
+															addFkAddress,
+															addOrderingCol,
+															addOrderingUX,
+															addUX};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

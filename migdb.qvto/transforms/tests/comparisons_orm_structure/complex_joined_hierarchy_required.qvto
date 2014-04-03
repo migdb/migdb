@@ -1,0 +1,88 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation complex_joined_hierarchy_required(out inoutModel : RDB);
+
+main() {
+	var int : PrimitiveType := PrimitiveType::int;
+	var defaultSchemaName : String := getDefaultSchemaName();
+	var idRoot : Column := _column("id_joined_root", int, false);
+	var rootColumns : OrderedSet(Column) := OrderedSet{
+													idRoot,
+													_column("joined_root_pr", PrimitiveType::int)};
+	var pkRoot : PrimaryKey := _primaryKey("pk_joined_root", idRoot);
+	var tableRoot : Table :=_table(
+								"joined_root",
+								rootColumns,
+								OrderedSet{pkRoot});
+	var collectData : Column := _column("collection", int);
+	var refRootCol : Column := _column("id_joined_root", int, false);
+	
+	var collectionTabProps : OrderedSet(Column) := OrderedSet{
+															collectData,
+															refRootCol};
+	var fkCollectionRoot : ForeignKey := _foreignKey(
+													"fk_col_joined_root_collection",
+													tableRoot,
+													refRootCol);
+	var collectionTab : Table := _table(
+										"col_joined_root_collection",
+										collectionTabProps,
+										OrderedSet{fkCollectionRoot});
+	var childProp : Column := _column("joined_child_pr", int);
+	var idChild : Column := _column("id_joined_child", int, false);
+	var pkChild : PrimaryKey := _primaryKey(
+										"pk_joined_child",
+										idChild);
+	var parencyFk : ForeignKey := _foreignKey(
+											"par_joined_child",
+											tableRoot, 
+											idChild);
+	var childColumns : OrderedSet(Column) := OrderedSet{
+													childProp,
+													idChild};
+	var childTable : Table :=_table(
+								"joined_child",
+								childColumns,
+								OrderedSet{pkChild, parencyFk});
+	var idType : Column := _column("id_type", int, false);
+	var refChildCol : Column := _column("assoc_pr", int);
+	var typeColumns : OrderedSet(Column) := OrderedSet{
+													idType,
+													refChildCol};
+	var pkTypeTable : PrimaryKey := _primaryKey(
+												"pk_type",
+												idType);
+	var fkTypeRefChild : ForeignKey := _foreignKey(
+												"fk_type_assoc_pr",
+												childTable,
+												refChildCol);
+	var typeTable : Table :=_table(
+								"type",
+								typeColumns,
+								OrderedSet{pkTypeTable, fkTypeRefChild});
+	var assocTabRefTypeCol : Column := _column("id_type", int, false);
+	var assocTabRefChildCol : Column := _column("id_joined_child", int, false);
+	var fkAssocTabType : ForeignKey := _foreignKey(
+												"fk_type_mn_pr_type",
+												typeTable,
+												assocTabRefTypeCol);
+	var fkAssocTabChild : ForeignKey := _foreignKey(
+												"fk_type_mn_pr_joined_child",
+												childTable,
+												assocTabRefChildCol);
+	var	assocTab : Table := _table(
+								"type_mn_pr",
+								OrderedSet{assocTabRefTypeCol, assocTabRefChildCol},
+								OrderedSet{fkAssocTabType, fkAssocTabChild});						
+	var tables : OrderedSet(Table) := OrderedSet{
+												tableRoot, 
+												collectionTab, 
+												childTable, 
+												typeTable, 
+												assocTab};
+	var publicSchema : Schema := _schema(defaultSchemaName , tables);
+	var model : RDB::ModelRoot := _rdbStructure(OrderedSet{publicSchema});	 
+}

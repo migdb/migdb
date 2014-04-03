@@ -1,0 +1,13 @@
+import builder_app;
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation app_root_cleaner(in inStructure : APP, out outStructure : APP);
+
+main() {
+	//log("processing cleaning");
+	inStructure.rootObjects()->forEach(rootObj | rootObj.oclIsKindOf(ModelRoot)){
+			//log("Cloning root object");
+			rootObj.deepclone();
+	}; 
+}

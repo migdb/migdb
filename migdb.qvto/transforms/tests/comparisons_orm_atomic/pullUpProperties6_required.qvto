@@ -1,0 +1,87 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation pullUpProperties6_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var constrainedColumnName : String := "unique_and_ord";
+	var sourceIdName : String := "id_child";
+	var targetIdName : String := "id_parent";
+	var typeIdName : String := "id_type";
+	var oldAssociationTableName : String := "child_unique_and_ord";
+	var newAssociationTableName : String := "parent_unique_and_ord";
+	
+
+	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldAssociationTableName,
+																"ux_child_unique_and_ord");
+	var uxColumns : OrderedSet(String) := OrderedSet{
+													sourceIdName,
+													typeIdName};
+	var addUx : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldAssociationTableName,
+													uxColumns,
+													"ux_parent_unique_and_ord");
+	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldAssociationTableName,
+																"ux_child_unique_and_ord_ord");
+	var ordColumns : OrderedSet(String) := OrderedSet{
+													sourceIdName,
+													typeIdName,
+													"ordering"};
+
+	var addOrd : RDB::ops::ModelOperation := _addUnique(
+													publicSchemaName,
+													oldAssociationTableName,
+													ordColumns,
+													"ux_parent_unique_and_ord_ord");
+	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_child_unique_and_ord_child");
+	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldAssociationTableName,
+																sourceIdName,
+																"fk_parent_unique_and_ord_parent",
+																"parent");
+	var removeFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_child_unique_and_ord_type");															
+	var addFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldAssociationTableName,
+															typeIdName,
+															"fk_parent_unique_and_ord_type",
+															"type");
+	//rename owner column														
+	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
+																publicSchemaName,
+																oldAssociationTableName,
+																sourceIdName,
+																targetIdName);
+	var renameTable : RDB::ops::ModelOperation := _renameTable(
+															publicSchemaName,
+															oldAssociationTableName,
+															newAssociationTableName);															 														
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeUx,
+															addUx,
+															removeOrd,
+															addOrd,
+															removeFkSource,
+															addFkTarget,
+															removeFkType,
+															addFkType,
+															renameColumn,
+															renameTable
+	};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

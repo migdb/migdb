@@ -1,14 +1,15 @@
 import builder_app;
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
-transformation secondAPP(out inoutModel : APP);
+transformation test_app_invalid_06_b(out inoutModel : APP);
 
 main() {
-	log("TEST_APP_INVALID_06_b - invalid : ID upperBound ");	
+//	log("TEST_APP_INVALID_06_b - invalid : ID upperBound ");	
 	var integer : APP::PrimitiveClass := _primitiveClass("Integer", PrimitiveType::int);
 	
 	var idPropPerson : APP::PrimitiveProperty := _idProperty("idPerson", integer);
 	idPropPerson.upperBound := -1;
-	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ _primitiveProperty("age", integer)});
+	var person : APP::StandardClass := _class("Person",  idPropPerson, OrderedSet{ 
+			_primitiveProperty("age", integer)});
 	
-	var model : APP::ModelRoot := _appStructure(Set{integer,person});	 
+	var model : APP::ModelRoot := _appStructure(OrderedSet{integer,person});	 
 }

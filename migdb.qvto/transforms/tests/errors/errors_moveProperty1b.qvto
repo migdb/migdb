@@ -1,0 +1,15 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation errors_MoveProperty1b(out inoutModel : ERR);
+
+main(){
+	var notExistClsParentMessage : String := "Structure doesn't contains " +
+												"generalClass called Person";
+	var notExistClsParentError : EvolutionError := _evolutionError(
+													1, 
+													notExistClsParentMessage, 
+													"evolution_app.qvto");
+													
+	_errorLog(OrderedSet{notExistClsParentError});
+}

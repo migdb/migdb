@@ -1,0 +1,14 @@
+import builder_rdb;
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+transformation addIndex_ops(out inoutModel : RDB);
+
+
+main() {
+	var addIndex : RDB::ops::ModelOperation := _addIndex(
+														"public", 
+														"first", 
+														"ix_col_first", 
+														Set{"col"});
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addIndex};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

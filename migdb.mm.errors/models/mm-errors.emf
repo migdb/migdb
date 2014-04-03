@@ -1,0 +1,27 @@
+@namespace(uri="http://www.collectionspro.eu/jam/mm", prefix="mm")
+package mm;
+
+@namespace(uri="http://www.collectionspro.eu/jam/mm/errors", prefix="errors")
+package errors {
+  class ErrorLog {
+    val Error[*]#owningLog errors;
+  }
+
+  abstract class Error {
+    attr String[1] message;
+    readonly derived ref ErrorLog[1]#errors owningLog;
+    attr String transformationId;
+  }
+
+  class ValidationError extends Error {
+  }
+
+  class EvolutionError extends Error {
+    attr int operationIndex;
+  }
+
+  class OrmError extends Error {
+  }
+
+}
+

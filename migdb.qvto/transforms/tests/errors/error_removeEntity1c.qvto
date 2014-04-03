@@ -1,0 +1,12 @@
+import builder_errors;
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+transformation error_removeEntity1c(out inoutModel : ERR);
+
+main(){
+	var evolutionError : EvolutionError := _evolutionError(
+													1, 
+													"Structure doesn't contains entity called Tab", 
+													"evolution_app.qvto");
+	_errorLog(OrderedSet{evolutionError});
+}

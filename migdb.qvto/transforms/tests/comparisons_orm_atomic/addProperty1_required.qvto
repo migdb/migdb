@@ -1,0 +1,17 @@
+import builder_rdb;
+import queries_rdb;
+
+modeltype RDB uses "http://www.collectionspro.eu/jam/mm/rdb";
+
+transformation addProperty1_required(out inoutModel : RDB);
+
+main() {
+	var publicSchemaName : String := getDefaultSchemaName();
+	var addCollumn : RDB::ops::AddColumn := _addColumn(
+											publicSchemaName,
+											"tab",
+											"pr",
+											PrimitiveType::int);
+	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{addCollumn};
+	var model : RDB::ModelRoot := _rdbOperations(ops);	 
+}

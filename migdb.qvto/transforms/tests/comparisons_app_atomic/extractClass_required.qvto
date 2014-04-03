@@ -1,0 +1,31 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation extractClass_str(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var string : PrimitiveClass := _primitiveClass("String", app::PrimitiveType::char);
+	var first : StandardClass := _class(
+									"First", 
+									_idProperty("idFirst", int), 
+									OrderedSet{_primitiveProperty("att", int)}, 
+									app::InheritanceType::joined);
+	var pointerOpposite : AssociationProperty := _associationProperty("owningFirst", first, 1, 1);
+	var secondProps: OrderedSet(MultipliableProperty) := OrderedSet{
+														pointerOpposite, 
+														_primitiveProperty("extractedPr", int)};
+	var second : StandardClass := _class(
+										"Second", 
+										_idProperty("idSecond", int), 
+										secondProps, 
+										app::InheritanceType::joined);
+	var pointer : AssociationProperty := _associationProperty("second", second, 1, 1);
+	first.properties += pointer;
+	setOpposite(pointer, pointerOpposite);
+	
+	_appStructure(OrderedSet{int, string, first, second});
+}
