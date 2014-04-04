@@ -1,4 +1,4 @@
-![Závislosti](http://pl05.uvadi.cz/migdb/migdb_logo_mini_cvut.jpg)
+![Závislosti](http://pl05.uvadi.cz/migdb/migdb_logo_mini.jpg)
 
 ### About
 
