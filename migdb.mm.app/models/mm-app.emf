@@ -13,6 +13,15 @@ package app {
   class Operations extends ModelRoot {
     val ops.ModelOperation[*]#owningOperations operations;
   }
+  
+  class Diff extends ModelRoot{
+ 	val diff.ClassPair[*] classPairs;
+ 	val diff.PropertyPair[*] propertyPairs;
+ 	ref StandardClass[*] removedClasses;
+ 	ref StandardClass[*] addedClasses;
+ 	ref MultipliableProperty[*] removedProperties;
+ 	ref MultipliableProperty[*] addedProperties;
+  }
 
   abstract class ModelEntity {
     readonly derived ref Structure[1]#entities owningModel;
@@ -229,5 +238,18 @@ package app {
     }    
   }
 
+@namespace(uri="http://www.collectionspro.eu/jam/mm/app-diff", prefix="app-diff")
+  package diff {
+  	class ClassPair{
+  	   ref StandardClass[1] source;   
+  	   ref StandardClass[1] reflection;
+  	}
+  	
+  	class PropertyPair{
+  	   ref Property[1] source;
+  	   ref Property[1] reflection;
+  	}
+  }
+  
 }
 

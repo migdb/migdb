@@ -1,0 +1,73 @@
+module migb.testing.app.oracle.run.test_app_matcher
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/matcher_class_names"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
+var IN_TEST_DIF_STR_DIR = "${QVTO_DIR}/tests/tests_diff"
+//var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+//var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_oracle"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/matcher_class_names.qvto"
+
+TestWorkflow {
+/***** DEFINE META-MODELS *****/
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+
+/***** MAIN TESTING *****/
+/**/
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/01_addedStructure"
+		qvtInput = "${IN_STR}/structure_int.qvto"
+	qvtInput = "${IN_STR}/structure_tab_joined.qvto"
+		qvtComparison = ""//diff
+		testDescription = "TEST 01 addedStructure"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/02_removedStructure"
+		qvtInput = "${IN_STR}/structure_tab_joined.qvto"
+		qvtInput = "${IN_STR}/structure_int.qvto"
+		qvtComparison = ""//diff
+		testDescription = "TEST 02 removedStructure"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/03_matchingClass"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure1.qvto"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure1.qvto"
+		qvtComparison = ""//diff
+		testDescription = "TEST 03 matchingClass"
+	}
+	
+	}

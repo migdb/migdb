@@ -13,6 +13,20 @@
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//app/ops/ModelOperation" containment="true" eOpposite="#//app/ops/ModelOperation/owningOperations"/>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="Diff" eSuperTypes="#//app/ModelRoot">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="classPairs" upperBound="-1"
+          eType="#//app/diff/ClassPair" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="propertyPairs" upperBound="-1"
+          eType="#//app/diff/PropertyPair" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="removedClasses" upperBound="-1"
+          eType="#//app/StandardClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="addedClasses" upperBound="-1"
+          eType="#//app/StandardClass"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="removedProperties" upperBound="-1"
+          eType="#//app/MultipliableProperty"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="addedProperties" upperBound="-1"
+          eType="#//app/MultipliableProperty"/>
+    </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModelEntity" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
           eType="#//app/Structure" changeable="false" derived="true" eOpposite="#//app/Structure/entities"/>
@@ -268,6 +282,21 @@
             upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="toleranceType" lowerBound="1"
             eType="#//app/ToleranceType"/>
+      </eClassifiers>
+    </eSubpackages>
+    <eSubpackages name="diff" nsURI="http://www.collectionspro.eu/jam/mm/app-diff"
+        nsPrefix="app-diff">
+      <eClassifiers xsi:type="ecore:EClass" name="ClassPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+            eType="#//app/StandardClass"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
+            eType="#//app/StandardClass"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="PropertyPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
+            eType="#//app/Property"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
+            eType="#//app/Property"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

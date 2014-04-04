@@ -586,7 +586,7 @@ helper _class(_name : String, _idProperty : PrimitiveProperty ) : StandardClass 
 	var cls : StandardClass := _class(
 									_name, 
 									_idProperty, 
-									OrderedSet{}, 
+									OrderedSet{_idProperty}, 
 									false, 
 									InheritanceType::joined);
 	return cls;
@@ -596,7 +596,7 @@ helper _class(_name : String, _idProperty : PrimitiveProperty, _isAbstract : Boo
 	var cls : StandardClass := _class(
 									_name, 
 									_idProperty, 
-									OrderedSet{}, 
+									OrderedSet{_idProperty}, 
 									_isAbstract, 
 									_inheritanceType);
 	return cls;	
@@ -618,4 +618,15 @@ helper _primitiveClass(_name : String, _primitiveType : PrimitiveType) : Primiti
  		name := _name;
  		primitiveType := _primitiveType;
  	}
+}
+
+helper _diff() : Diff{
+	return object Diff{
+		classPairs := OrderedSet{};
+		propertyPairs := OrderedSet{};
+		removedClasses := OrderedSet{};
+		addedClasses := OrderedSet{};
+		addedProperties := OrderedSet{};
+		removedProperties := OrderedSet{};
+	};
 }

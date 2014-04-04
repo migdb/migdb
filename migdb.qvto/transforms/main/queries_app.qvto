@@ -515,10 +515,20 @@ query app::Structure::print(){
 }
 
 query StandardClass::repr() : String{
-	var returnVal : String := self.repr();
+	var returnVal : String := "class(" + self.name;
+	if(self.parent <> null)then{ 
+		returnVal := returnVal + ", " + "parent:" + self.parent.name + ", "; 
+	}else{
+		returnVal := returnVal + ", id:" + self.idProperty.repr() + ", ";
+	}endif;
+	returnVal := returnVal + "OrderedSet{";
 	self.properties->forEach(prop){
-		returnVal := returnVal + "\n" + prop.repr();
+		if(self.properties->first() <> prop)then{
+			returnVal := returnVal  + ", ";
+		}endif;
+		returnVal := returnVal + prop.repr();
 	};
+	returnVal := returnVal + "})";
 	return returnVal;
 }
 
