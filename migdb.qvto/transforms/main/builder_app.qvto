@@ -390,10 +390,21 @@ helper _appStructure(_entities : OrderedSet(ModelEntity)) : Structure{
 	};
 }
 
-helper _appOperations(_appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
+helper _appOperations() : APP::Operations{
 	return object Operations{
-		operations := _appOperations;
+		operations := OrderedSet{};
 	}
+}
+
+helper _appOperations(_appOperations : OrderedSet(APP::ops::ModelOperation)) : APP::Operations{
+	var returnVal : Operations := _appOperations();
+	var condition : Boolean :=  _appOperations <> null;
+ 	if(not condition)then{
+ 		log("Error when calling constructor _appOperations(" + "null" + ") - null param");
+ 	}endif;
+	assert(condition);
+	returnVal.operations := _appOperations;
+	return returnVal;
 }
 
 

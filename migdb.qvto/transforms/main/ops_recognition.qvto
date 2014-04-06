@@ -1,0 +1,153 @@
+import evolution_app;
+import builder_app;
+import builder_errors;
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
+
+/**
+    This transformation is used to recognised operations from diff model. It can be used in 
+    combination with any matching algorithm
+**/
+
+library ops_recognition;
+
+//alternative... is less eficient but cann use properties
+//transformation ops_recognition(diffModel : APP, inout errors : ERR, out APP);
+//main(){
+
+helper recognizeOperations(diffModel : APP, inout errors : ERR) : Operations{
+	var diff : Diff := diffModel.rootObjects()![Diff];
+	var ops : Operations := _appOperations();
+	var errorModel : ErrorLog := _errorLog();
+	diff.classPairs->forEach(classPair){
+		recognizeClassMatch(classPair, ops, errorModel)
+	};
+	diff.removedClasses->forEach(cls){
+		processRemoveClass(cls, ops, errorModel);
+	};
+	diff.addedClasses->forEach(cls){
+		processAddClass(cls, ops, errorModel);
+	};
+	diff.propertyPairs->forEach(propertyPair){
+		recognizePropertyMatch(propertyPair, ops, errorModel);
+	};
+	diff.addedProperties->forEach(prop){
+		processAddProperty(prop, ops, errorModel);
+	};
+	diff.removedProperties->forEach(prop){
+		processRemoveProperty(prop, ops, errorModel);
+	};
+	diff->propertyPairs->forEach(propertyPair){
+		enrichReflectionProp(propertyPair, ops, errorModel);
+	};
+	return ops;
+}
+
+helper recognizeClassMatch(classPair : APP::diff::ClassPair, inout operations : Operations, inout errorLog : ErrorLog){
+	//equal name => Equal class
+	if(classPair.relation = APP::diff::ClassRelation::equal)then{
+		return;
+	}endif;
+	return;
+}
+
+helper processRemoveClass(cls : StandardClass, inout operations : Operations, inout errorLog : ErrorLog){
+	operations.operations+= _removeEntity(cls.name);
+	return;
+}
+
+helper processAddClass(cls : StandardClass, inout operations : Operations, inout errorLog : ErrorLog){
+	operations.operations+= _addStandardClass(cls.name, cls.isAbstract, cls.inheritanceType);
+	return;
+}
+
+
+helper recognizePropertyMatch(propertyPair : APP::diff::PropertyPair, inout operations : Operations, inout errorLog : ErrorLog){
+	if(propertyPair.source.name = propertyPair.reflection.name)then{
+		return;
+	}endif;
+}
+
+helper processAddProperty(prop : MultipliableProperty, inout operations : Operations, inout errorLog : ErrorLog){
+	var typeName : String;
+	var defaultValue : String;
+	if(prop.oclIsTypeOf(PrimitiveProperty))then{
+		var primProp : PrimitiveProperty := prop.oclAsType(PrimitiveProperty);
+		typeName := primProp.type.name;
+		defaultValue := primProp.defaultValue; 
+	}else{
+		typeName := prop.oclAsType(AssociationProperty).type.name;
+		defaultValue := null; 		
+	}endif;
+	operations.operations += _addProperty(
+										prop.owningGeneralClass.name, 
+										prop.name,
+										typeName,
+										prop.lowerBound, 
+										prop.upperBound,
+										defaultValue,
+										prop.isOrdered,
+										prop.isUnique);
+	return;
+}
+
+helper processRemoveProperty(prop : MultipliableProperty, inout operations : Operations, inout errorLog : ErrorLog){
+	operations.operations += _removeProperty(
+											prop.owningGeneralClass.name,
+											prop.name);
+	return;
+}
+
+helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations : Operations, inout errorLog : ErrorLog){
+	var sourceProp : MultipliableProperty := propPair.source.oclAsType(MultipliableProperty);
+	var reflectionProp : MultipliableProperty := propPair.reflection.oclAsType(MultipliableProperty);
+	var owningTargetClassName : String := reflectionProp.owningGeneralClass.name;
+	if(sourceProp.lowerBound <> reflectionProp.lowerBound or 
+			sourceProp.upperBound <> reflectionProp.upperBound)then{
+		operations.operations += _setBounds(
+										owningTargetClassName,
+										reflectionProp.name,
+										reflectionProp.lowerBound,
+										reflectionProp.upperBound); 	
+	}endif;
+	if(sourceProp.isOrdered <> reflectionProp.isOrdered)then{
+		operations.operations += _setOrdered(
+											owningTargetClassName,
+											reflectionProp.name,
+											reflectionProp.isOrdered);
+	}endif;
+	if(sourceProp.isUnique <> reflectionProp.isUnique)then{
+		operations.operations += _setUnique(
+										owningTargetClassName,
+										reflectionProp.name,
+										reflectionProp.isUnique);
+	}endif;
+	if(propPair.source.oclIsTypeOf(PrimitiveProperty))then{
+		//DEFAULT PROPERTY isn't processed
+	}else { 
+		//matched associationProperty MUST BE OWNING - not validated, it's matcher's responsibility
+		if(propPair.source.oclIsTypeOf(AssociationProperty))then{
+			var sourceAssoc : AssociationProperty := sourceProp.oclAsType(AssociationProperty);
+			var reflectionAssoc : AssociationProperty := reflectionProp.oclAsType(
+																			AssociationProperty);
+			
+			if(sourceAssoc.oppositeProperty <> null and 
+					reflectionAssoc.oppositeProperty = null)then{
+				operations.operations+= _changeBidirectionalAssociationToUnidirectional(
+																owningTargetClassName,
+																reflectionAssoc.name);
+			}endif;
+			if(reflectionAssoc.oppositeProperty <> null and 
+					sourceAssoc.oppositeProperty = null)then{
+				var linkName : String := reflectionAssoc.oppositeProperty.name;
+				operations.operations+= _changeUnidirectionalAssociationToBidirectional(
+																owningTargetClassName,
+																reflectionAssoc.name,
+																linkName);
+			}endif;
+		}endif;
+	}endif;
+	operations.operations;
+	return;
+}

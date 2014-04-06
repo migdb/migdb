@@ -291,12 +291,25 @@
             eType="#//app/StandardClass"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
             eType="#//app/StandardClass"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
+            eType="#//app/diff/ClassRelation"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
+        <eLiterals name="equal"/>
+        <eLiterals name="similar" value="1"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PropertyPair">
         <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
             eType="#//app/Property"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
             eType="#//app/Property"/>
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
+            eType="#//app/diff/PropertyRelation"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EEnum" name="PropertyRelation">
+        <eLiterals name="equalInEqual"/>
+        <eLiterals name="equalInSimilar" value="1"/>
+        <eLiterals name="similarInEqual" value="2"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

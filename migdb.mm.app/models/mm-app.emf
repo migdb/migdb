@@ -243,11 +243,24 @@ package app {
   	class ClassPair{
   	   ref StandardClass[1] source;   
   	   ref StandardClass[1] reflection;
+  	   attr ClassRelation[1] relation;
+  	}
+  	
+  	enum ClassRelation{
+  	   equal = 0;
+  	   similar = 1;
   	}
   	
   	class PropertyPair{
   	   ref Property[1] source;
   	   ref Property[1] reflection;
+  	   attr PropertyRelation[1] relation;
+  	}
+  	
+  	enum PropertyRelation{
+  	   equalInEqual = 0;
+  	   equalInSimilar = 1;
+  	   similarInEqual = 2;
   	}
   }
   
