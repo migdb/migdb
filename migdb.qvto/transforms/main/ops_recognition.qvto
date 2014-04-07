@@ -12,66 +12,113 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 library ops_recognition;
 
-//alternative... is less eficient but cann use properties
+//alternative... is less eficient but can use properties
 //transformation ops_recognition(diffModel : APP, inout errors : ERR, out APP);
 //main(){
 
-helper recognizeOperations(diffModel : APP, inout errors : ERR) : Operations{
-	var diff : Diff := diffModel.rootObjects()![Diff];
-	var ops : Operations := _appOperations();
+property IS_DEBUG_ON : Boolean = false;
+
+helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
+	var diff : Diff := inputDiff;
+	if(IS_DEBUG_ON)then{
+		diff := diff.deepclone().oclAsType(Diff);
+	}endif;
 	var errorModel : ErrorLog := _errorLog();
 	diff.classPairs->forEach(classPair){
-		recognizeClassMatch(classPair, ops, errorModel)
+		recognizeClassMatch(classPair, ops)
 	};
-	diff.removedClasses->forEach(cls){
-		processRemoveClass(cls, ops, errorModel);
+	diff.removedClasses->forEach(diffCls){
+		processRemoveClass(diffCls, ops);
 	};
-	diff.addedClasses->forEach(cls){
-		processAddClass(cls, ops, errorModel);
+	diff.addedClasses->forEach(diffCls){
+		processAddClass(diffCls, ops);
 	};
+	diff.classPairs->forEach(classPair){
+		enrichReflection(classPair, ops);
+	};
+	
 	diff.propertyPairs->forEach(propertyPair){
-		recognizePropertyMatch(propertyPair, ops, errorModel);
+		recognizePropertyMatch(propertyPair, ops);
 	};
-	diff.addedProperties->forEach(prop){
-		processAddProperty(prop, ops, errorModel);
+	diff.addedProperties->forEach(diffProp){
+		processAddProperty(diffProp, ops);
 	};
-	diff.removedProperties->forEach(prop){
-		processRemoveProperty(prop, ops, errorModel);
+	diff.removedProperties->forEach(diffProp){
+		processRemoveProperty(diffProp, ops);
 	};
 	diff->propertyPairs->forEach(propertyPair){
-		enrichReflectionProp(propertyPair, ops, errorModel);
+		enrichReflectionProp(propertyPair, ops);
 	};
 	return ops;
+	
+	
 }
 
-helper recognizeClassMatch(classPair : APP::diff::ClassPair, inout operations : Operations, inout errorLog : ErrorLog){
+helper enrichReflection(classPair : APP::diff::ClassPair, inout operations : Operations){
+	var reflection : StandardClass := classPair.reflection;
+	var source : StandardClass := classPair.source;
+	if(classPair.relation = APP::diff::ClassRelation::equal)then{
+		//handle addParent case
+		if(reflection.parent <> null and source.parent = null)then{
+			operations.operations += _addParent(
+											reflection.name,
+											reflection.parent.name);
+			var conflictProperties : Collection(MultipliableProperty) := reflection.properties->
+									select(reflectionProp | reflection.parent.properties->
+										exists(parentProp | 
+												parentProp.name = reflectionProp.name));
+			classPair.owningDiff.removedProperties := classPair.owningDiff.removedProperties->reject(diffProp | 
+								conflictProperties->exists(prop | diffProp.prop = prop));
+		}endif;
+		//handle removeParent case
+		if(source.parent <> null and reflection.parent = null)then{
+			operations.operations += _removeParent(
+												reflection.name);
+			var conflictProperties : Collection(MultipliableProperty) := source.properties->
+									select(sourceProp | source.parent.properties->
+										exists(parentProp | 
+												parentProp.name = sourceProp.name));
+			classPair.owningDiff.addedProperties := classPair.owningDiff.removedProperties->reject(diffProp | 
+								conflictProperties->exists(prop | diffProp.prop = prop));
+		}endif;
+		return;
+	}endif;
+	
+}
+
+helper recognizeClassMatch(classPair : APP::diff::ClassPair, inout operations : Operations){
 	//equal name => Equal class
 	if(classPair.relation = APP::diff::ClassRelation::equal)then{
+		//fix parency must be processed at the end when parent's existance is assured
 		return;
 	}endif;
 	return;
 }
 
-helper processRemoveClass(cls : StandardClass, inout operations : Operations, inout errorLog : ErrorLog){
-	operations.operations+= _removeEntity(cls.name);
+helper processRemoveClass(diffCls : APP::diff::DiffClass, inout operations : Operations){
+	operations.operations+= _removeEntity(diffCls.cls.name);
 	return;
 }
 
-helper processAddClass(cls : StandardClass, inout operations : Operations, inout errorLog : ErrorLog){
-	operations.operations+= _addStandardClass(cls.name, cls.isAbstract, cls.inheritanceType);
+helper processAddClass(diffCls : APP::diff::DiffClass, inout operations : Operations){
+	operations.operations+= _addStandardClass(
+											diffCls.cls.name, 
+											diffCls.cls.isAbstract, 
+											diffCls.cls.inheritanceType);
 	return;
 }
 
 
-helper recognizePropertyMatch(propertyPair : APP::diff::PropertyPair, inout operations : Operations, inout errorLog : ErrorLog){
-	if(propertyPair.source.name = propertyPair.reflection.name)then{
+helper recognizePropertyMatch(propertyPair : APP::diff::PropertyPair, inout operations : Operations){
+	if(propertyPair.relation = APP::diff::PropertyRelation::equalInEqual)then{
 		return;
 	}endif;
 }
 
-helper processAddProperty(prop : MultipliableProperty, inout operations : Operations, inout errorLog : ErrorLog){
+helper processAddProperty(diffProp : APP::diff::DiffProperty, inout operations : Operations){
 	var typeName : String;
 	var defaultValue : String;
+	var prop : MultipliableProperty := diffProp.prop.oclAsType(MultipliableProperty);
 	if(prop.oclIsTypeOf(PrimitiveProperty))then{
 		var primProp : PrimitiveProperty := prop.oclAsType(PrimitiveProperty);
 		typeName := primProp.type.name;
@@ -92,14 +139,15 @@ helper processAddProperty(prop : MultipliableProperty, inout operations : Operat
 	return;
 }
 
-helper processRemoveProperty(prop : MultipliableProperty, inout operations : Operations, inout errorLog : ErrorLog){
+helper processRemoveProperty(diffProp : APP::diff::DiffProperty, inout operations : Operations){
+	var prop : MultipliableProperty := diffProp.prop.oclAsType(MultipliableProperty);
 	operations.operations += _removeProperty(
 											prop.owningGeneralClass.name,
 											prop.name);
 	return;
 }
 
-helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations : Operations, inout errorLog : ErrorLog){
+helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations : Operations){
 	var sourceProp : MultipliableProperty := propPair.source.oclAsType(MultipliableProperty);
 	var reflectionProp : MultipliableProperty := propPair.reflection.oclAsType(MultipliableProperty);
 	var owningTargetClassName : String := reflectionProp.owningGeneralClass.name;

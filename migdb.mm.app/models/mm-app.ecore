@@ -15,17 +15,17 @@
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Diff" eSuperTypes="#//app/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="classPairs" upperBound="-1"
-          eType="#//app/diff/ClassPair" containment="true"/>
+          eType="#//app/diff/ClassPair" containment="true" eOpposite="#//app/diff/ClassPair/owningDiff"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="propertyPairs" upperBound="-1"
-          eType="#//app/diff/PropertyPair" containment="true"/>
+          eType="#//app/diff/PropertyPair" containment="true" eOpposite="#//app/diff/PropertyPair/owningDiff"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="removedClasses" upperBound="-1"
-          eType="#//app/StandardClass"/>
+          eType="#//app/diff/DiffClass" containment="true" eOpposite="#//app/diff/DiffClass/owningRemovedDiff"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="addedClasses" upperBound="-1"
-          eType="#//app/StandardClass"/>
+          eType="#//app/diff/DiffClass" containment="true" eOpposite="#//app/diff/DiffClass/owningAddedDiff"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="removedProperties" upperBound="-1"
-          eType="#//app/MultipliableProperty"/>
+          eType="#//app/diff/DiffProperty" containment="true" eOpposite="#//app/diff/DiffProperty/owningRemovedDiff"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="addedProperties" upperBound="-1"
-          eType="#//app/MultipliableProperty"/>
+          eType="#//app/diff/DiffProperty" containment="true" eOpposite="#//app/diff/DiffProperty/owningAddedDiff"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="ModelEntity" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EReference" name="owningModel" lowerBound="1"
@@ -293,6 +293,8 @@
             eType="#//app/StandardClass"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
             eType="#//app/diff/ClassRelation"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
+            eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/classPairs"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
         <eLiterals name="equal"/>
@@ -305,6 +307,23 @@
             eType="#//app/Property"/>
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
             eType="#//app/diff/PropertyRelation"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
+            eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/propertyPairs"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DiffClass">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="cls" lowerBound="1"
+            eType="#//app/StandardClass"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningAddedDiff" eType="#//app/Diff"
+            changeable="false" derived="true" eOpposite="#//app/Diff/addedClasses"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningRemovedDiff"
+            eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/removedClasses"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="DiffProperty">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="prop" eType="#//app/Property"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningAddedDiff" eType="#//app/Diff"
+            changeable="false" derived="true" eOpposite="#//app/Diff/addedProperties"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningRemovedDiff"
+            eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/removedProperties"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="PropertyRelation">
         <eLiterals name="equalInEqual"/>

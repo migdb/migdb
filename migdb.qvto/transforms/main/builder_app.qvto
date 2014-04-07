@@ -641,3 +641,17 @@ helper _diff() : Diff{
 		removedProperties := OrderedSet{};
 	};
 }
+
+helper _diffProperty(_prop : Property) : APP::diff::DiffProperty{
+	assert(_prop <> null);
+	return object APP::diff::DiffProperty{
+		prop := _prop;
+	};
+}
+
+helper _diffClass(_cls : StandardClass) : APP::diff::DiffClass{
+	assert(_cls <> null);
+	return object APP::diff::DiffClass{
+		cls := _cls;
+	}
+}

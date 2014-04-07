@@ -26,18 +26,20 @@ library queries_diff;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
-helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass){
+helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation){
 	diff.classPairs+= object app::diff::ClassPair{
 		source := sourceClass;
 		reflection := targetClass;
+		relation := _relation;
 	};
 	return;
 }
 
-helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, targetProperty : MultipliableProperty){
+helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, targetProperty : MultipliableProperty, _relation : APP::diff::PropertyRelation){
 	diff.propertyPairs+= object app::diff::PropertyPair{
 		source := sourceProperty;
 		reflection := targetProperty;
+		relation := _relation;
 	};
 	return;
 }

@@ -47,8 +47,9 @@ TestWorkflow {
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/01_addedStructure"
 		qvtInput = "${IN_STR}/structure_int.qvto"
-	qvtInput = "${IN_STR}/structure_tab_joined.qvto"
+		qvtInput = "${IN_STR}/structure_tab_joined.qvto"
 		qvtComparison = ""//diff
+		qvtComparison = ""//ops
 		testDescription = "TEST 01 addedStructure"
 	}
 	
@@ -58,6 +59,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/structure_tab_joined.qvto"
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtComparison = ""//diff
+		qvtComparison = ""//ops
 		testDescription = "TEST 02 removedStructure"
 	}
 	
@@ -67,6 +69,7 @@ TestWorkflow {
 		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure1.qvto"
 		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure1.qvto"
 		qvtComparison = ""//diff
+		qvtComparison = ""//ops
 		testDescription = "TEST 03 matchingClass"
 	}
 	

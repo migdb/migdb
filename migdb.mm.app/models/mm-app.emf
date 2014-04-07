@@ -15,12 +15,12 @@ package app {
   }
   
   class Diff extends ModelRoot{
- 	val diff.ClassPair[*] classPairs;
- 	val diff.PropertyPair[*] propertyPairs;
- 	ref StandardClass[*] removedClasses;
- 	ref StandardClass[*] addedClasses;
- 	ref MultipliableProperty[*] removedProperties;
- 	ref MultipliableProperty[*] addedProperties;
+ 	val diff.ClassPair[*]#owningDiff classPairs;
+ 	val diff.PropertyPair[*]#owningDiff propertyPairs;
+ 	val diff.DiffClass[*]#owningRemovedDiff removedClasses;
+ 	val diff.DiffClass[*]#owningAddedDiff addedClasses;
+ 	val diff.DiffProperty[*]#owningRemovedDiff removedProperties;
+ 	val diff.DiffProperty[*]#owningAddedDiff addedProperties;
   }
 
   abstract class ModelEntity {
@@ -244,6 +244,7 @@ package app {
   	   ref StandardClass[1] source;   
   	   ref StandardClass[1] reflection;
   	   attr ClassRelation[1] relation;
+  	   readonly derived ref Diff[1]#classPairs owningDiff;
   	}
   	
   	enum ClassRelation{
@@ -255,6 +256,21 @@ package app {
   	   ref Property[1] source;
   	   ref Property[1] reflection;
   	   attr PropertyRelation[1] relation;
+  	   readonly derived ref Diff[1]#propertyPairs owningDiff;
+ 	}
+  	
+  	class DiffClass{
+  	   ref StandardClass[1] cls;
+  	   readonly derived ref Diff[?]#addedClasses owningAddedDiff;
+  	   readonly derived ref Diff[?]#removedClasses owningRemovedDiff;
+  	}
+  	
+  	
+  	class DiffProperty{
+  	   ref Property prop;
+  	   readonly derived ref Diff[?]#addedProperties owningAddedDiff;
+  	   readonly derived ref Diff[?]#removedProperties owningRemovedDiff;
+  	   
   	}
   	
   	enum PropertyRelation{

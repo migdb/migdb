@@ -1,6 +1,8 @@
 import queries_app;
 import builder_app;
 import queries_diff;
+import ops_recognition;
+import creator_app_operations;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
@@ -9,7 +11,7 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 	There is problem with the same types of models - solution found in creator_rdb_operations.qvto
 	but outROperations must be inout model.
 **/
-transformation diff_class_names(in sourceModel:APP, in targetModel:APP , out diffModel : APP);
+transformation diff_class_names(in sourceModel:APP, in targetModel:APP , out diffModel : APP, out recognisedOperations : APP);
 
 //transformation diff_class_names();
 
@@ -28,18 +30,21 @@ main() {
 	initAlgorithm(sourceClses, targetClses);
 	matchClassesByName(sourceClses, targetClses, diff);
 	addUnmatched(diff);
+	new creator_app_operations(recognisedOperations).transform();
+	var ops : Operations := recognisedOperations.rootObjects()![Operations];
+	recognizeOperations(diff, ops);
 }
 
 helper initAlgorithm(sourceClses : Sequence(StandardClass), targetClses : Sequence(StandardClass)){
 	sourceClses->forEach(cls){
 		unmatchedSourceClasses += cls;
-		cls.properties->forEach(prop){
+		cls.properties->forEach(prop | prop <> cls.idProperty){
 			unmatchedSourceProperties += prop;
 		};
 	};
 	targetClses->forEach(cls){
 		unmatchedTargetClasses += cls;
-		cls.properties->forEach(prop){
+		cls.properties->forEach(prop  | prop <> cls.idProperty){
 			unmatchedTargetProperties += prop;
 		};
 	};
@@ -50,24 +55,36 @@ helper matchClassesByName(sourceClses : Sequence(StandardClass), targetClses : S
 		targetClses->forOne(tarCls | tarCls.name = srcCls.name){
 			unmatchedSourceClasses := unmatchedSourceClasses->reject(cls | cls = srcCls);
 			unmatchedTargetClasses := unmatchedTargetClasses->reject(cls | cls = tarCls);
-			addMatch(diff, srcCls, tarCls);
-			srcCls.properties->forEach(srcProp){
-				tarCls.properties->forOne(targetProp | targetProp.name = srcProp.name ){
-					unmatchedSourceProperties := unmatchedSourceProperties->
-														reject(prop | prop.name = srcProp.name);
-					unmatchedTargetProperties := unmatchedTargetProperties->
-														reject(prop | prop.name = targetProp.name);
-					addMatch(diff, srcProp, targetProp);
-				}
-			}
+			addMatch(diff, srcCls, tarCls, APP::diff::ClassRelation::equal);
+			matchEqualProperties(srcCls, tarCls, diff, APP::diff::PropertyRelation::equalInEqual);
 		};
 	}
 }
 
+helper matchEqualProperties(sourceClass : StandardClass, targetClass : StandardClass, diff : Diff, relation : APP::diff::PropertyRelation){
+	sourceClass.properties->forEach(srcProp | srcProp <> sourceClass.idProperty){
+		targetClass.properties->forOne(targetProp | targetProp.name = srcProp.name ){
+			unmatchedSourceProperties := unmatchedSourceProperties->
+														reject(prop | prop.name = srcProp.name);
+			unmatchedTargetProperties := unmatchedTargetProperties->
+														reject(prop | prop.name = targetProp.name);
+			addMatch(diff, srcProp, targetProp, relation);
+		}
+	}	
+}
+
 helper addUnmatched(inout diff : Diff){
-	diff.removedClasses := unmatchedSourceClasses;
-	diff.addedClasses := unmatchedTargetClasses;
-	diff.removedProperties := unmatchedSourceProperties;
-	diff.addedProperties := unmatchedTargetProperties;
+	unmatchedSourceClasses->forEach(cls){
+		diff.removedClasses += _diffClass(cls);
+	};
+	unmatchedTargetClasses->forEach(cls){
+	 	diff.addedClasses += _diffClass(cls);
+	};
+	unmatchedSourceProperties->forEach(prop){
+		diff.removedProperties += _diffProperty(prop);
+	};
+	unmatchedTargetProperties->forEach(prop){
+		diff.addedProperties += _diffProperty(prop);
+	};
 	return;
 }

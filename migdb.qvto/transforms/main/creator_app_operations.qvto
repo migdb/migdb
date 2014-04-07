@@ -1,0 +1,9 @@
+import builder_app;
+
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation creator_app_operations(out inStructure : APP);
+
+main() {
+	_appOperations(OrderedSet{});	 
+}
