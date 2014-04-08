@@ -1,0 +1,14 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation removeParent2_required(out inoutModel : APP);
+
+main(){
+	var className : String := "Woman";
+	var operations : Operations := _appOperations();
+	operations.operations += _removeParent(className);
+	operations.operations += _removeProperty(className, "age");
+	operations.operations += _removeProperty(className, "name");
+	
+}

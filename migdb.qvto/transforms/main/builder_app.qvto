@@ -506,14 +506,22 @@ helper _associationProperty(_name : String, _type : StandardClass, _lowerBound :
 }
 
 helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperBound : Integer) : AssociationProperty {
- 	var condition : Boolean := _oppositeProperty <> null ;
-	if(not condition)then{
-	log("Error when calling constructor _associationProperty(" + _name + ", " + _type.repr() + 
-		_oppositeProperty.repr() + ", " + _lowerBound.repr() + ", " + _upperBound.repr() + ")");
- 	}endif;	
-	assert(condition);
  	var prop : AssociationProperty := _associationProperty(_name, _type,_lowerBound, _upperBound);
-	prop.oppositeProperty := _oppositeProperty;
+	if(_oppositeProperty <> null)then{
+		setOpposite(prop, _oppositeProperty);
+	}endif;
+	return prop;
+}
+
+helper _associationProperty(_name : String, _type : StandardClass, _oppositeProperty : AssociationProperty, _lowerBound : Integer, _upperBound : Integer, _isOrdered:Boolean, _isUnique : Boolean) : AssociationProperty {
+	var prop : AssociationProperty := _associationProperty(
+														_name,
+														_type,
+														_oppositeProperty,
+														_lowerBound,
+														_upperBound);
+	prop.isOrdered := _isOrdered;
+	prop.isUnique := _isUnique;
 	return prop;
 }
 
@@ -529,6 +537,41 @@ helper _associationProperty(_name : String, _type : StandardClass, _lowerBound :
 	prop.isOrdered := _isOrdered;
 	prop.isUnique := _isUnique;
 	return prop;
+}
+
+/**
+	Copy constructor
+*/
+helper _multipliableProperty(orig : MultipliableProperty) : MultipliableProperty{
+	if(orig.oclIsTypeOf(PrimitiveProperty))then{
+		var primOrig : PrimitiveProperty := orig.oclAsType(PrimitiveProperty);
+		return _primitiveProperty(
+								primOrig.name,
+								primOrig.type,
+								primOrig.lowerBound,
+								primOrig.upperBound,
+								primOrig.defaultValue,
+								primOrig.isOrdered,
+								primOrig.isUnique);
+	}endif;
+	if(orig.oclIsTypeOf(AssociationProperty))then{
+		var asocOrig : AssociationProperty := _orig.oclAsType(AssociationProperty);
+		//this constructor set's only opposite of isOwning props
+		var oppositte : AssociationProperty := null;
+		if(asocOrig.isOwning)then{
+			oppositte := asocOrig.oppositeProperty;
+		}endif;
+		return _associationProperty(
+								asocOrig.name, 
+								asocOrig.type, 
+								oppositte, 
+								asocOrig.lowerBound, 
+								asocOrig.upperBound, 
+								asocOrig.isOrdered, 
+								asocOrig.isUnique);
+	}endif;
+	assert(false);
+	return null;
 }
 
 helper _class(_name : String, _parent : StandardClass, _properties : OrderedSet(MultipliableProperty)) : StandardClass {

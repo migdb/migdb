@@ -1,0 +1,14 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addedStructure_required(out inoutModel : APP);
+
+main(){
+	var className : String := "Tab";
+	var propertyName : String := "pr";
+	var propertyTypeName : String := "Integer";
+	var operations : Operations := _appOperations();
+	operations.operations += _addStandardClass(className, false, InheritanceType::joined);
+	operations.operations += _addProperty(className, propertyName, propertyTypeName);
+}

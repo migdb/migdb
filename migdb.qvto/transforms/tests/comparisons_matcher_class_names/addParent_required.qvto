@@ -1,0 +1,12 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addParent_required(out inoutModel : APP);
+
+main(){
+	var className : String := "Woman";
+	var parentName : String := "Person";
+	var operations : Operations := _appOperations();
+	operations.operations += _addParent(className, parentName);
+}

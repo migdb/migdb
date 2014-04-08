@@ -1,0 +1,13 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation removedStructure_required(out inoutModel : APP);
+
+main(){
+	var className : String := "Tab";
+	var propertyName : String := "pr";
+	var operations : Operations := _appOperations();
+	operations.operations += _removeProperty(className, propertyName);
+	operations.operations += _removeEntity(className);
+}

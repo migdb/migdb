@@ -38,6 +38,10 @@ rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
 
+rm $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$BUILDER_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$QUERIES_APP_LINK
+rm $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$TEXT_SERVICE_LINK
+
 rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_RDB_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_RDB_LINK
 rm $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$TEXT_SERVICE_LINK
@@ -109,6 +113,10 @@ ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparator_component/$TEXT_SE
 ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$QUERIES_APP_LINK
 ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$BUILDER_APP_LINK
 ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_app_atomic/$TEXT_SERVICE_LINK
+
+ln -s ../../$QUERIES_APP_PATH $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$QUERIES_APP_LINK
+ln -s ../../$BUILDER_APP_PATH $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$BUILDER_APP_LINK
+ln -s ../../$TEXT_SERVICE_PATH $D_MIGDB_QVTO/tests/comparisons_matcher_class_names/$TEXT_SERVICE_LINK
 
 ln -s ../../$QUERIES_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$QUERIES_RDB_LINK
 ln -s ../../$BUILDER_RDB_PATH $D_MIGDB_QVTO/tests/comparisons_rdb_atomic/$BUILDER_RDB_LINK

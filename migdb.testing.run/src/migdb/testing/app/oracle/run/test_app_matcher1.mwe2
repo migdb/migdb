@@ -20,6 +20,7 @@ var IN_STR = "${QVTO_DIR}/tests/structures/app"
 var IN_TEST_DIF_STR_DIR = "${QVTO_DIR}/tests/tests_diff"
 //var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 //var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_oracle"
+var COMPARISONS_RECOG_OPS_DIR = "${QVTO_DIR}/tests/comparisons_matcher_class_names"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/matcher_class_names.qvto"
 
 TestWorkflow {
@@ -49,7 +50,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtInput = "${IN_STR}/structure_tab_joined.qvto"
 		qvtComparison = ""//diff
-		qvtComparison = ""//ops
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/addedStructure_required.qvto"//ops
 		testDescription = "TEST 01 addedStructure"
 	}
 	
@@ -59,7 +60,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/structure_tab_joined.qvto"
 		qvtInput = "${IN_STR}/structure_int.qvto"
 		qvtComparison = ""//diff
-		qvtComparison = ""//ops
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/removedStructure_required.qvto"//ops
 		testDescription = "TEST 02 removedStructure"
 	}
 	
@@ -69,8 +70,48 @@ TestWorkflow {
 		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure1.qvto"
 		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure1.qvto"
 		qvtComparison = ""//diff
-		qvtComparison = ""//ops
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/matchingClass_required.qvto"//ops
 		testDescription = "TEST 03 matchingClass"
 	}
-	
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/04_addParent"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure2.qvto"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure2.qvto"
+		qvtComparison = ""//diff
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/addParent_required.qvto"//ops
+		testDescription = "TEST 04 addParent"
 	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/05_removeParent"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure2.qvto"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure2.qvto"
+		qvtComparison = ""//diff
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/removeParent_required.qvto"//ops
+		testDescription = "TEST 05 removeParent"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/05b_removeParent"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure3.qvto"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure3.qvto"
+		qvtComparison = ""//diff
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/removeParent2_required.qvto"//ops
+		testDescription = "TEST 05 b removeParent - conflict props"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/06_setAtributes"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/sourceStructure4.qvto"
+		qvtInput = "${IN_TEST_DIF_STR_DIR}/targetStructure4.qvto"
+		qvtComparison = ""//diff
+		qvtComparison = "${COMPARISONS_RECOG_OPS_DIR}/setAtributes_required.qvto"//ops
+		testDescription = "TEST 06 set atributes, unique, ordered, bounds"
+	}
+	
+}

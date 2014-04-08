@@ -1,0 +1,30 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation addParent_required(out inoutModel : APP);
+
+main(){
+	var className : String := "Person";
+	var firstPropertyName : String := "age";
+	var secondPropertyName : String := "name";
+	var operations : Operations := _appOperations();
+	operations.operations += _setBounds(
+										className,
+										firstPropertyName,
+										1,
+										-1);
+	operations.operations += _setUnique(
+									className,
+									firstPropertyName,
+									true);
+	operations.operations += _setBounds(
+										className,
+										secondPropertyName,
+										0,
+										-1);
+	operations.operations += _setOrdered(
+									className,
+									secondPropertyName,
+									true);
+}

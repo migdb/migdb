@@ -12,11 +12,7 @@ modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
 
 library ops_recognition;
 
-//alternative... is less eficient but can use properties
-//transformation ops_recognition(diffModel : APP, inout errors : ERR, out APP);
-//main(){
-
-property IS_DEBUG_ON : Boolean = false;
+property IS_DEBUG_ON : Boolean = true;
 
 helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 	var diff : Diff := inputDiff;
@@ -27,12 +23,10 @@ helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 	diff.classPairs->forEach(classPair){
 		recognizeClassMatch(classPair, ops)
 	};
-	diff.removedClasses->forEach(diffCls){
-		processRemoveClass(diffCls, ops);
-	};
 	diff.addedClasses->forEach(diffCls){
 		processAddClass(diffCls, ops);
 	};
+	//handles addParent, removeParent
 	diff.classPairs->forEach(classPair){
 		enrichReflection(classPair, ops);
 	};
@@ -40,15 +34,20 @@ helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 	diff.propertyPairs->forEach(propertyPair){
 		recognizePropertyMatch(propertyPair, ops);
 	};
+	//there is no enriching needed for newly created props, they are created with all atributes set
 	diff.addedProperties->forEach(diffProp){
 		processAddProperty(diffProp, ops);
 	};
 	diff.removedProperties->forEach(diffProp){
 		processRemoveProperty(diffProp, ops);
 	};
+	diff.removedClasses->forEach(diffCls){
+		processRemoveClass(diffCls, ops);
+	};
 	diff->propertyPairs->forEach(propertyPair){
 		enrichReflectionProp(propertyPair, ops);
 	};
+
 	return ops;
 	
 	
@@ -74,12 +73,24 @@ helper enrichReflection(classPair : APP::diff::ClassPair, inout operations : Ope
 		if(source.parent <> null and reflection.parent = null)then{
 			operations.operations += _removeParent(
 												reflection.name);
+			source.parent.properties->reject(prop | prop = source.parent.idProperty)->
+					forEach(prop){
+				if(reflection->properties->exists(reflProp | reflProp.name = prop.name))then{
+						classPair.owningDiff.addedProperties := classPair.owningDiff.
+								addedProperties->reject(diffProp | diffProp.prop.name = prop.name);					
+				}else{
+					//this may looks little confusing... but due to fact removeParent doesn't 
+					//specify movedProperties it copies all... so they must be moved to 
+					//reflectionModel where they can be ommited...
+					var multiplProp : MultipliableProperty := _multipliableProperty(prop);
+					source.properties += multiplProp;
+					classPair.owningDiff.removedProperties+= _diffProperty(multiplProp);
+				}endif;
+			};
 			var conflictProperties : Collection(MultipliableProperty) := source.properties->
 									select(sourceProp | source.parent.properties->
 										exists(parentProp | 
 												parentProp.name = sourceProp.name));
-			classPair.owningDiff.addedProperties := classPair.owningDiff.removedProperties->reject(diffProp | 
-								conflictProperties->exists(prop | diffProp.prop = prop));
 		}endif;
 		return;
 	}endif;
