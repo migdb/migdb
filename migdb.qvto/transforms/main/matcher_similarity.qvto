@@ -1,0 +1,215 @@
+import queries_app;
+import builder_app;
+import queries_diff;
+import ops_recognition;
+import creator_app_operations;
+
+modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
+
+
+/**
+	There is problem with the same types of models - solution found in creator_rdb_operations.qvto
+	but outROperations must be inout model.
+**/
+transformation diff_class_names(in sourceModel:APP, in targetModel:APP , out diffModel : APP, out recognisedOperations : APP);
+
+//transformation diff_class_names();
+
+property matchClassesCandidates : Dict(StandardClass, OrderedSet(StandardClass)) = Dict{};
+property sourcePropertyCandidates : Dict(MultipliableProperty, OrderedSet(MultipliableProperty)) = Dict{};
+property unmatchedSourceClasses : OrderedSet(StandardClass) = OrderedSet{};
+property unmatchedTargetClasses : OrderedSet(StandardClass) = OrderedSet{};
+property unmatchedSourceProperties : OrderedSet(MultipliableProperty) = OrderedSet{};
+property unmatchedTargetProperties : OrderedSet(MultipliableProperty) = OrderedSet{};
+
+main() {
+	var diff : Diff := _diff();
+	var sourceClses : Sequence(StandardClass) := sourceModel.rootObjects()![Structure].deepclone().oclAsType(Structure)->entities[StandardClass];
+	var targetClses : Sequence(StandardClass) := targetModel.rootObjects()![Structure].deepclone().oclAsType(Structure)->entities[StandardClass];
+	
+	initAlgorithm(sourceClses, targetClses);
+	matchClassesByName(sourceClses, targetClses, diff);
+	matchClassesBySimilarity(sourceClses, targetClses, diff);
+	addUnmatched(diff);
+	new creator_app_operations(recognisedOperations).transform();
+	var ops : Operations := recognisedOperations.rootObjects()![Operations];
+	recognizeOperations(diff, ops);
+}
+
+helper initAlgorithm(sourceClses : Sequence(StandardClass), targetClses : Sequence(StandardClass)){
+	sourceClses->forEach(cls){
+		unmatchedSourceClasses += cls;
+		cls.properties->forEach(prop | prop <> cls.idProperty){
+			unmatchedSourceProperties += prop;
+		};
+	};
+	targetClses->forEach(cls){
+		unmatchedTargetClasses += cls;
+		cls.properties->forEach(prop  | prop <> cls.idProperty){
+			unmatchedTargetProperties += prop;
+		};
+	};
+}
+
+helper matchClassesByName(sourceClses : Sequence(StandardClass), targetClses : Sequence(StandardClass), diff : Diff){
+	sourceClses->forEach(srcCls){
+		targetClses->forOne(tarCls | tarCls.name = srcCls.name){
+			unmatchedSourceClasses := unmatchedSourceClasses->reject(cls | cls = srcCls);
+			unmatchedTargetClasses := unmatchedTargetClasses->reject(cls | cls = tarCls);
+			var classPair : APP::diff::ClassPair := addMatch(
+															diff, 
+															srcCls, 
+															tarCls, 
+															APP::diff::ClassRelation::equal);
+			matchProperties(
+							classPair,
+							diff, 
+							APP::diff::PropertyRelation::equalInEqual);
+		};
+	}
+}
+
+helper matchClassesBySimilarity(sourceClses : Sequence(StandardClass), targetClses : Sequence(StandardClass), diff : Diff){
+	sourceClses->forEach(cls){
+		initSimilarityCandidates(cls, targetClses);
+	};
+//	while(not matchClassesCandidates->isEmpty()){
+		matchClassesCandidates->keys()->forEach(sourceCls){
+			//if sourceCls is paired then reflection in candidates cannot be paired or there
+			//is mistake in algorithm
+			if(sourceCls.isReplacingReflectionRecognized(diff))then{
+				var sourceEqualPair : APP::diff::ClassPair := diff.getSourceEqualPair(sourceCls);
+				matchClassesCandidates->get(sourceCls)->forEach(candidate){ 
+					matchClassBySimilarityWithKnownSource(sourceEqualPair, candidate);
+				};
+			}endif;
+//		};
+	};
+}
+
+helper initSimilarityCandidates(sourceCls : StandardClass,  targetClses : Sequence(StandardClass)){
+	var candidates : OrderedSet(StandardClass) := OrderedSet{};
+	targetClses->forEach(targetCls | sourceCls.isSimilar(targetCls)){
+		candidates += targetCls;
+	};
+	if(not candidates->isEmpty())then{
+		matchClassesCandidates->put(sourceCls, candidates);
+	}endif;
+}
+
+/**
+	There is replaced pair of sourceClass so it's the case of 1->N pair relationShip
+**/
+helper matchClassBySimilarityWithKnownSource(replacedPair : APP::diff::ClassPair, candidateClass : StandardClass){
+	var sourceStructure : Structure := replacedPair.source.owningModel;
+	var targetStructure : Structure := replacedPair.reflection.owningModel;
+	var reflectionClass : StandardClass := replacedPair.reflection;
+	var sourceClass : StandardClass := replacedPair.source;
+	var diff : Diff := replacedPair.owningDiff;
+	//there must
+	if(not sourceStructure.containsEntity(candidateClass.name) and 
+			reflectionClass->properties[AssociationProperty]->exists(assProp | 
+			assProp.type = candidateClass and 
+			not sourceClass.containsProperty(assProp.name)))then{
+		var link : AssociationProperty := reflectionClass->properties[AssociationProperty]->
+			selectOne(assProp | assProp.type = candidateClass and 
+				not sourceClass.containsProperty(assProp.name));
+		var classPair : APP::diff::ClassPair := addMatch(
+														diff, 
+														sourceClass, 
+														candidateClass, 
+														APP::diff::ClassRelation::extractClass);
+		var extractClassPair : APP::diff::ExtractClassPair := classPair.oclAsType(
+																	APP::diff::ExtractClassPair);
+		extractClassPair.link := link;
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
+		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link);
+		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link.oppositeProperty);
+		
+	}endif;
+}
+
+/**
+	replacing reflection - eg StandardClass which equals object or that has the same content
+	(for example renameEntity is applied to it). Current implementation works only for equal pair.
+**/
+helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
+	return diff->classPairs->exists(clsPair | clsPair.source = self and 
+							clsPair.relation = APP::diff::ClassRelation::equal);	
+}
+
+/**
+	replacing source - eg StandardClass which equals object or that has the same content
+	(for example renameEntity is applied to it). Current implementation works only for equal pair
+**/
+helper StandardClass::isReplacingSourceRecognized(diff : Diff) : Boolean{
+	return diff->classPairs->exists(clsPair | clsPair.reflection = self and 
+							clsPair.relation = APP::diff::ClassRelation::equal);
+}
+
+/**
+	returns true if class from SOURCE MODEL(self) is similar to class from TARGET MODEL(targetCls),
+	class similarity is verified by finding at least one equal property which isn't matched yet
+**/	
+helper StandardClass::isSimilar(targetCls : StandardClass) : Boolean{
+	return self.properties->exists(prop | unmatchedSourceProperties->includes(prop) and 
+		targetCls->properties->exists(targetProp | targetProp.equals(prop) and 
+					unmatchedTargetProperties->includes(targetProp)));
+}
+
+/**
+	returns true if property equals to property. Properties equals when their name equals
+**/	
+helper MultipliableProperty::equals( prop : MultipliableProperty) : Boolean{
+	return self.name = prop.name;
+}
+
+helper matchProperties(classPair : APP::diff::ClassPair, diff : Diff, relation : APP::diff::PropertyRelation){
+	var sourceClass : StandardClass := classPair.source;
+	var targetClass : StandardClass := classPair.reflection;
+	sourceClass.properties->forEach(srcProp | srcProp <> sourceClass.idProperty){
+		targetClass.properties->forOne(targetProp | targetProp.name = srcProp.name){
+			unmatchedSourceProperties := unmatchedSourceProperties->
+														reject(prop | prop.name = srcProp.name);
+			unmatchedTargetProperties := unmatchedTargetProperties->
+														reject(prop | prop.name = targetProp.name);
+			var propertyPair : app::diff::PropertyPair := addMatch(
+																diff, 
+																srcProp, 
+																targetProp, 
+																relation);
+			addPropertyPair(classPair, propertyPair);
+		}
+	}	
+}
+
+/**
+	@DEAD CODE... TO BE DELETED ATM
+**/
+helper MultipliableProperty::isSourcePropertyUnmatched() : Boolean{
+	return unmatchedSourceProperties->includes(self);
+}
+
+/**
+	@DEAD CODE... TO BE DELETED ATM
+**/
+helper MultipliableProperty::isTargetPropertyUnmatched() : Boolean{
+	return unmatchedTargetProperties->includes(self);
+}
+
+helper addUnmatched(inout diff : Diff){
+	unmatchedSourceClasses->forEach(cls){
+		diff.removedClasses += _diffClass(cls);
+	};
+	unmatchedTargetClasses->forEach(cls){
+	 	diff.addedClasses += _diffClass(cls);
+	};
+	unmatchedSourceProperties->forEach(prop){
+		diff.removedProperties += _diffProperty(prop);
+	};
+	unmatchedTargetProperties->forEach(prop){
+		diff.addedProperties += _diffProperty(prop);
+	};
+	return;
+}

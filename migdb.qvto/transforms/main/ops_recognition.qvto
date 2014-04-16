@@ -103,6 +103,23 @@ helper recognizeClassMatch(classPair : APP::diff::ClassPair, inout operations : 
 		//fix parency must be processed at the end when parent's existance is assured
 		return;
 	}endif;
+	var sourceModel : Structure := classPair.source.owningModel;
+	var targetModel : Structure := classPair.reflection.owningModel;
+	var sourceClass : StandardClass := classPair.source;
+	if(classPair.relation = APP::diff::ClassRelation::extractClass)then{
+		var extractedPropertyNames : OrderedSet(String) := classPair.underlyingPairs->
+															collect(source.name)->
+															toStringOrderedSet();
+		var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
+		var link : AssociationProperty := classPair.oclAsType(APP::diff::ExtractClassPair).link;
+		
+		operations.operations += _extractClass(
+											sourceClass.name,
+											link.name,
+											link.oppositeProperty.name,
+											classPair.reflection.name,
+											extractedPropertyNames);
+	}endif;
 	return;
 }
 
@@ -210,3 +227,11 @@ helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations
 	operations.operations;
 	return;
 }
+
+helper Collection(String)::toStringOrderedSet() : OrderedSet(String){
+	var stringSet : OrderedSet(String) := OrderedSet{};
+	self->forEach(str){
+		stringSet += str;
+	};
+	return stringSet;
+} 

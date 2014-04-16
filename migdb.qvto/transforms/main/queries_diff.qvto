@@ -26,20 +26,46 @@ library queries_diff;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
-helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation){
-	diff.classPairs+= object app::diff::ClassPair{
-		source := sourceClass;
-		reflection := targetClass;
-		relation := _relation;
-	};
-	return;
+helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation) : APP::diff::ClassPair{
+
+	var classPair : APP::diff::ClassPair;
+	if(_relation = APP::diff::ClassRelation::extractClass)then{
+		 classPair := object app::diff::ExtractClassPair{
+														source := sourceClass;
+														reflection := targetClass;
+														relation := _relation;
+		}; 
+	}else{
+		classPair := object app::diff::ClassPair{
+												source := sourceClass;
+												reflection := targetClass;
+												relation := _relation;
+		};
+	}endif;
+	diff.classPairs+= classPair; 
+	return classPair;
 }
 
-helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, targetProperty : MultipliableProperty, _relation : APP::diff::PropertyRelation){
-	diff.propertyPairs+= object app::diff::PropertyPair{
-		source := sourceProperty;
-		reflection := targetProperty;
-		relation := _relation;
+helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, targetProperty : MultipliableProperty, _relation : APP::diff::PropertyRelation) : APP::diff::PropertyPair{
+	var propertyPair : APP::diff::PropertyPair := object app::diff::PropertyPair{
+																	source := sourceProperty;
+																	reflection := targetProperty;
+																	relation := _relation;
 	};
+	diff.propertyPairs+= propertyPair;
+	return propertyPair;
+}
+
+query Diff::getSourceEqualPair(equationSource : StandardClass) : APP::diff::ClassPair{
+	return self.classPairs->selectOne(equalPair | equalPair.source = equationSource);
+}
+
+query Diff::getReflectionEqualPair(equationReflection : StandardClass) : APP::diff::ClassPair{
+	return self.classPairs->selectOne(equalPair | equalPair.source = equationReflection);
+}
+
+helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPair : APP::diff::PropertyPair){
+	classPair.underlyingPairs += propertyPair;
+	propertyPair.owningClassPair := classPair;
 	return;
 }

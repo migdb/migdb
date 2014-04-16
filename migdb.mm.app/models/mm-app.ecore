@@ -295,10 +295,22 @@
             eType="#//app/diff/ClassRelation"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/classPairs"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="underlyingPairs" upperBound="-1"
+            eType="#//app/diff/PropertyPair"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractClassPair" eSuperTypes="#//app/diff/ClassPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
+            eType="#//app/AssociationProperty"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
         <eLiterals name="equal"/>
-        <eLiterals name="similar" value="1"/>
+        <eLiterals name="renameEntity" value="1"/>
+        <eLiterals name="extractClass" value="2"/>
+        <eLiterals name="extractSuperClass" value="3"/>
+        <eLiterals name="addParent" value="4"/>
+        <eLiterals name="removeParent" value="5"/>
+        <eLiterals name="collapseHierarchy" value="6"/>
+        <eLiterals name="inlineClass" value="7"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="PropertyPair">
         <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
@@ -309,6 +321,7 @@
             eType="#//app/diff/PropertyRelation"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/propertyPairs"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningClassPair" eType="#//app/diff/ClassPair"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DiffClass">
         <eStructuralFeatures xsi:type="ecore:EReference" name="cls" lowerBound="1"

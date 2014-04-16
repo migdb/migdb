@@ -1,0 +1,61 @@
+module migb.testing.app.oracle.run.test_app_matcher2
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/matcher_similarity"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
+var IN_OPS = "${QVTO_DIR}/tests/operations/app"
+var IN_TEST_DIF_STR_DIR = "${QVTO_DIR}/tests/tests_diff"
+//var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
+//var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_oracle"
+var COMPARISONS_RECOG_OPS_DIR = "${QVTO_DIR}/tests/comparisons_matcher_class_names"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/matcher_similarity.qvto"
+var COMPARISONS_STRUCTURES_DIR = "${QVTO_DIR}/tests/comparisons_app_atomic"
+
+TestWorkflow {
+/***** DEFINE META-MODELS *****/
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+
+/***** MAIN TESTING *****/
+/**/
+
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/012_extractClass"
+		qvtInput = "${IN_STR}/extractClass_str.qvto"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_OPS}/extractClass_ops.qvto"
+		testDescription = "extractClass"
+	}		
+	
+}

@@ -1,4 +1,4 @@
-module migb.testing.app.oracle.run.test_app_matcher
+module migb.testing.app.oracle.run.test_app_matcher1
 
 import org.eclipse.emf.mwe.utils.*
 import org.eclipse.xtext.mwe.*

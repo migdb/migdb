@@ -181,7 +181,6 @@ package app {
     }    
 
 	// Create new parent to classes
-	// in Fowler it extracts properties as well
     class ExtractSuperClass extends ModelOperation {
       attr String[+] sourceClassesName;
       attr String[1] extractParentName;
@@ -245,11 +244,22 @@ package app {
   	   ref StandardClass[1] reflection;
   	   attr ClassRelation[1] relation;
   	   readonly derived ref Diff[1]#classPairs owningDiff;
+  	   ref PropertyPair [*] underlyingPairs;
+  	}
+  	
+  	class ExtractClassPair extends ClassPair{
+  	   ref AssociationProperty[1] link;   
   	}
   	
   	enum ClassRelation{
   	   equal = 0;
-  	   similar = 1;
+  	   renameEntity = 1;
+  	   extractClass = 2;
+  	   extractSuperClass = 3;
+  	   addParent = 4;
+  	   removeParent = 5;
+  	   collapseHierarchy = 6;
+  	   inlineClass = 7;
   	}
   	
   	class PropertyPair{
@@ -257,6 +267,7 @@ package app {
   	   ref Property[1] reflection;
   	   attr PropertyRelation[1] relation;
   	   readonly derived ref Diff[1]#propertyPairs owningDiff;
+  	   ref ClassPair [?] owningClassPair; 
  	}
   	
   	class DiffClass{
