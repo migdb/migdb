@@ -823,7 +823,7 @@ helper APP::ops::CollapseHierarchy::isValid(structure : APP::Structure, inout er
 helper APP::ops::CollapseHierarchy::apply(inout structure : Structure){
 	var parentClass : StandardClass := structure.findStandardClass(self.superClassName);
 	var childClass : StandardClass := structure.findStandardClass(self.subClassName);
-	//class that is merged
+	//class that is merged, won't exist after applying operation
 	var removedClass : StandardClass;
 	//class which is merge product
 	var productClass : StandardClass;

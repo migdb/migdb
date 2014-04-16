@@ -239,23 +239,53 @@ package app {
 
 @namespace(uri="http://www.collectionspro.eu/jam/mm/app-diff", prefix="app-diff")
   package diff {
-  	class ClassPair{
+  	abstract class ClassPair{
   	   ref StandardClass[1] source;   
   	   ref StandardClass[1] reflection;
-  	   attr ClassRelation[1] relation;
   	   readonly derived ref Diff[1]#classPairs owningDiff;
   	   ref PropertyPair [*] underlyingPairs;
   	}
   	
-  	class ExtractClassPair extends ClassPair{
+  	abstract class ModifyingClassPair extends ClassPair{
+  	}
+  	
+  	abstract class ConstructiveClassPair extends ClassPair{
+  	}
+  	
+  	abstract class DestructiveClassPair extends ClassPair{
+  	}
+  	
+  	class EqualClassPair extends ModifyingClassPair{   
+  	}
+  	
+  	class RenameClassPair extends ModifyingClassPair{
+  	}
+  	
+  	class AddParentPair extends ModifyingClassPair{
+  	}
+  	
+  	class RemoveParentPair extends ModifyingClassPair{
+  	}
+  	
+  	class ExtractSubclassPair extends ConstructiveClassPair{
+  	}
+  	
+  	class ExtractClassPair extends ConstructiveClassPair{
   	   ref AssociationProperty[1] link;   
+  	}
+  	
+  	class InlineClass extends DestructiveClassPair{
+  	   ref AssociationProperty[1] link;
+  	}
+  	
+  	class CollapseHierarchy extends DestructiveClassPair{
   	}
   	
   	enum ClassRelation{
   	   equal = 0;
   	   renameEntity = 1;
   	   extractClass = 2;
-  	   extractSuperClass = 3;
+  	   extractSubClass = 3;
   	   addParent = 4;
   	   removeParent = 5;
   	   collapseHierarchy = 6;

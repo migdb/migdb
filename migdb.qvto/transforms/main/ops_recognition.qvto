@@ -1,6 +1,7 @@
 import evolution_app;
 import builder_app;
 import builder_errors;
+import queries_diff;
 
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
 modeltype ERR uses "http://www.collectionspro.eu/jam/mm/errors";
@@ -56,7 +57,7 @@ helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 helper enrichReflection(classPair : APP::diff::ClassPair, inout operations : Operations){
 	var reflection : StandardClass := classPair.reflection;
 	var source : StandardClass := classPair.source;
-	if(classPair.relation = APP::diff::ClassRelation::equal)then{
+	if(classPair.oclIsKindOf(APP::diff::EqualClassPair))then{
 		//handle addParent case
 		if(reflection.parent <> null and source.parent = null)then{
 			operations.operations += _addParent(
@@ -98,29 +99,7 @@ helper enrichReflection(classPair : APP::diff::ClassPair, inout operations : Ope
 }
 
 helper recognizeClassMatch(classPair : APP::diff::ClassPair, inout operations : Operations){
-	//equal name => Equal class
-	if(classPair.relation = APP::diff::ClassRelation::equal)then{
-		//fix parency must be processed at the end when parent's existance is assured
-		return;
-	}endif;
-	var sourceModel : Structure := classPair.source.owningModel;
-	var targetModel : Structure := classPair.reflection.owningModel;
-	var sourceClass : StandardClass := classPair.source;
-	if(classPair.relation = APP::diff::ClassRelation::extractClass)then{
-		var extractedPropertyNames : OrderedSet(String) := classPair.underlyingPairs->
-															collect(source.name)->
-															toStringOrderedSet();
-		var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
-		var link : AssociationProperty := classPair.oclAsType(APP::diff::ExtractClassPair).link;
-		
-		operations.operations += _extractClass(
-											sourceClass.name,
-											link.name,
-											link.oppositeProperty.name,
-											classPair.reflection.name,
-											extractedPropertyNames);
-	}endif;
-	return;
+	classPair.recognizeOperation(operations);
 }
 
 helper processRemoveClass(diffCls : APP::diff::DiffClass, inout operations : Operations){
@@ -227,11 +206,3 @@ helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations
 	operations.operations;
 	return;
 }
-
-helper Collection(String)::toStringOrderedSet() : OrderedSet(String){
-	var stringSet : OrderedSet(String) := OrderedSet{};
-	self->forEach(str){
-		stringSet += str;
-	};
-	return stringSet;
-} 

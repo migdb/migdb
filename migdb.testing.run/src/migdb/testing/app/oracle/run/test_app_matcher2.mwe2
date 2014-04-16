@@ -56,6 +56,16 @@ TestWorkflow {
 		qvtComparison = ""
 		qvtComparison = "${IN_OPS}/extractClass_ops.qvto"
 		testDescription = "extractClass"
-	}		
+	}
+
+	component = TestComponent {
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/013_extractSubclass1"
+		qvtInput = "${IN_STR}/extractSubclass1_structure.qvto"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_OPS}/extractSubclass1.qvto"
+		testDescription = "extractSubclass"
+	}
 	
 }

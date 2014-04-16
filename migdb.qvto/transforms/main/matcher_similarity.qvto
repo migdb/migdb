@@ -80,7 +80,19 @@ helper matchClassesBySimilarity(sourceClses : Sequence(StandardClass), targetCls
 			if(sourceCls.isReplacingReflectionRecognized(diff))then{
 				var sourceEqualPair : APP::diff::ClassPair := diff.getSourceEqualPair(sourceCls);
 				matchClassesCandidates->get(sourceCls)->forEach(candidate){ 
-					matchClassBySimilarityWithKnownSource(sourceEqualPair, candidate);
+					if(not candidate.isOriginalSourceRecognized(diff))then{	
+						matchConstructivePair(sourceEqualPair, candidate);
+					}else{
+						//weird
+						//matchModifyingPair(sourceEqualPair, candidate);
+					}endif;
+				};
+			}else{
+				matchClassesCandidates->get(sourceCls)->forEach(candidate){
+					var targetEqualPair : APP::diff::ClassPair := diff.getReflectionEqualPair(candidate); 
+					if(candidate.isOriginalSourceRecognized(diff))then{
+						matchDestructivePair(targetEqualPair, candidate);
+					}endif;
 				};
 			}endif;
 //		};
@@ -100,15 +112,15 @@ helper initSimilarityCandidates(sourceCls : StandardClass,  targetClses : Sequen
 /**
 	There is replaced pair of sourceClass so it's the case of 1->N pair relationShip
 **/
-helper matchClassBySimilarityWithKnownSource(replacedPair : APP::diff::ClassPair, candidateClass : StandardClass){
-	var sourceStructure : Structure := replacedPair.source.owningModel;
-	var targetStructure : Structure := replacedPair.reflection.owningModel;
-	var reflectionClass : StandardClass := replacedPair.reflection;
-	var sourceClass : StandardClass := replacedPair.source;
-	var diff : Diff := replacedPair.owningDiff;
-	//there must
-	if(not sourceStructure.containsEntity(candidateClass.name) and 
-			reflectionClass->properties[AssociationProperty]->exists(assProp | 
+helper matchConstructivePair(replacedSourcePair : APP::diff::ClassPair, candidateClass : StandardClass){
+	var sourceStructure : Structure := replacedSourcePair.source.owningModel;
+	var targetStructure : Structure := replacedSourcePair.reflection.owningModel;
+	var reflectionClass : StandardClass := replacedSourcePair.reflection;
+	var sourceClass : StandardClass := replacedSourcePair.source;
+	var diff : Diff := replacedSourcePair.owningDiff;
+	//reflectionClass cannot exist because it is constructivePair - reflection is created by 
+	//operation defined by constructive pair
+	if(reflectionClass->properties[AssociationProperty]->exists(assProp | 
 			assProp.type = candidateClass and 
 			not sourceClass.containsProperty(assProp.name)))then{
 		var link : AssociationProperty := reflectionClass->properties[AssociationProperty]->
@@ -126,8 +138,29 @@ helper matchClassBySimilarityWithKnownSource(replacedPair : APP::diff::ClassPair
 		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link.oppositeProperty);
-		
+	} else{
+		if(candidateClass.parent.name = reflectionClass.name)then{
+		var classPair : APP::diff::ClassPair := addMatch(
+														diff, 
+														sourceClass, 
+														candidateClass, 
+														APP::diff::ClassRelation::extractSubClass);	
+		var extractSubclassPair : APP::diff::ExtractSubclassPair := classPair.oclAsType(
+																APP::diff::ExtractSubclassPair);
+		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		}endif;
 	}endif;
+}
+
+helper matchModifyingPair(matchingClass : StandardClass, candidateClass : StandardClass){
+	assert(false);
+	log("not implemented yet");
+}
+
+helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, candidateClass : StandardClass){
+	assert(false);
+	log("not implemented yet");	
 }
 
 /**
@@ -136,16 +169,16 @@ helper matchClassBySimilarityWithKnownSource(replacedPair : APP::diff::ClassPair
 **/
 helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
 	return diff->classPairs->exists(clsPair | clsPair.source = self and 
-							clsPair.relation = APP::diff::ClassRelation::equal);	
+							clsPair.oclIsKindOf(APP::diff::EqualClassPair));	
 }
 
 /**
 	replacing source - eg StandardClass which equals object or that has the same content
 	(for example renameEntity is applied to it). Current implementation works only for equal pair
 **/
-helper StandardClass::isReplacingSourceRecognized(diff : Diff) : Boolean{
+helper StandardClass::isOriginalSourceRecognized(diff : Diff) : Boolean{
 	return diff->classPairs->exists(clsPair | clsPair.reflection = self and 
-							clsPair.relation = APP::diff::ClassRelation::equal);
+							clsPair.oclIsKindOf(APP::diff::EqualClassPair));
 }
 
 /**

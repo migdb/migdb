@@ -286,27 +286,41 @@
     </eSubpackages>
     <eSubpackages name="diff" nsURI="http://www.collectionspro.eu/jam/mm/app-diff"
         nsPrefix="app-diff">
-      <eClassifiers xsi:type="ecore:EClass" name="ClassPair">
+      <eClassifiers xsi:type="ecore:EClass" name="ClassPair" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
             eType="#//app/StandardClass"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
             eType="#//app/StandardClass"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
-            eType="#//app/diff/ClassRelation"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/classPairs"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="underlyingPairs" upperBound="-1"
             eType="#//app/diff/PropertyPair"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="ExtractClassPair" eSuperTypes="#//app/diff/ClassPair">
+      <eClassifiers xsi:type="ecore:EClass" name="ModifyingClassPair" abstract="true"
+          eSuperTypes="#//app/diff/ClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ConstructiveClassPair" abstract="true"
+          eSuperTypes="#//app/diff/ClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="DestructiveClassPair" abstract="true"
+          eSuperTypes="#//app/diff/ClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="EqualClassPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="RenameClassPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="AddParentPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="RemoveParentPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractSubclassPair" eSuperTypes="#//app/diff/ConstructiveClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="ExtractClassPair" eSuperTypes="#//app/diff/ConstructiveClassPair">
         <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
             eType="#//app/AssociationProperty"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="InlineClass" eSuperTypes="#//app/diff/DestructiveClassPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
+            eType="#//app/AssociationProperty"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="CollapseHierarchy" eSuperTypes="#//app/diff/DestructiveClassPair"/>
       <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
         <eLiterals name="equal"/>
         <eLiterals name="renameEntity" value="1"/>
         <eLiterals name="extractClass" value="2"/>
-        <eLiterals name="extractSuperClass" value="3"/>
+        <eLiterals name="extractSubClass" value="3"/>
         <eLiterals name="addParent" value="4"/>
         <eLiterals name="removeParent" value="5"/>
         <eLiterals name="collapseHierarchy" value="6"/>

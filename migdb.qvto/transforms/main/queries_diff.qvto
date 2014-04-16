@@ -24,24 +24,31 @@
  */
 library queries_diff;
 
+import queries_app;
+import builder_app;
+
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
 helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation) : APP::diff::ClassPair{
-
 	var classPair : APP::diff::ClassPair;
 	if(_relation = APP::diff::ClassRelation::extractClass)then{
 		 classPair := object app::diff::ExtractClassPair{
 														source := sourceClass;
 														reflection := targetClass;
-														relation := _relation;
 		}; 
-	}else{
-		classPair := object app::diff::ClassPair{
-												source := sourceClass;
-												reflection := targetClass;
-												relation := _relation;
+	}else if(_relation = APP::diff::ClassRelation::equal)then{	
+		classPair := object app::diff::EqualClassPair{
+													source := sourceClass;
+													reflection := targetClass;
 		};
-	}endif;
+	}else if(_relation = APP::diff::ClassRelation::extractSubClass)then{
+		classPair := object app::diff::ExtractSubclassPair{
+														source := sourceClass;
+														reflection := targetClass;
+		};
+	}endif 
+	endif
+	endif;
 	diff.classPairs+= classPair; 
 	return classPair;
 }
@@ -69,3 +76,43 @@ helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPai
 	propertyPair.owningClassPair := classPair;
 	return;
 }
+
+abstract helper APP::diff::ClassPair::recognizeOperation(inout operations : Operations);
+
+helper APP::diff::ExtractClassPair::recognizeOperation(inout operations : Operations){
+	var targetModel : Structure := self.reflection.owningModel;
+	var sourceClass : StandardClass := self.source;
+	var extractedPropertyNames : OrderedSet(String) := self.underlyingPairs->
+															collect(source.name)->
+															toStringOrderedSet();
+	var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
+	operations.operations += _extractClass(
+										sourceClass.name,
+										self.link.name,
+										self.link.oppositeProperty.name,
+										self.reflection.name,
+										extractedPropertyNames);
+	return;
+}
+
+helper APP::diff::ExtractSubclassPair::recognizeOperation(inout operations : Operations){
+	var targetModel : Structure := self.reflection.owningModel;
+	var sourceClass : StandardClass := self.source;
+	var extractedPropertyNames : OrderedSet(String) := self.underlyingPairs->
+															collect(source.name)->
+															toStringOrderedSet();
+	var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
+	operations.operations += _extractSubClass(
+											sourceClass.name,
+											self.reflection.name,
+											extractedPropertyNames);
+	return;
+}
+
+helper Collection(String)::toStringOrderedSet() : OrderedSet(String){
+	var stringSet : OrderedSet(String) := OrderedSet{};
+	self->forEach(str){
+		stringSet += str;
+	};
+	return stringSet;
+} 
