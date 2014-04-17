@@ -46,7 +46,13 @@ helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : St
 														source := sourceClass;
 														reflection := targetClass;
 		};
+	} else if(_relation = APP::diff::ClassRelation::inlineClass)then{
+		classPair := object app::diff::InlineClass{
+												source := sourceClass;
+												reflection := targetClass;
+		};
 	}endif 
+	endif 
 	endif
 	endif;
 	diff.classPairs+= classPair; 
@@ -68,7 +74,7 @@ query Diff::getSourceEqualPair(equationSource : StandardClass) : APP::diff::Clas
 }
 
 query Diff::getReflectionEqualPair(equationReflection : StandardClass) : APP::diff::ClassPair{
-	return self.classPairs->selectOne(equalPair | equalPair.source = equationReflection);
+	return self.classPairs->selectOne(equalPair | equalPair.reflection = equationReflection);
 }
 
 helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPair : APP::diff::PropertyPair){
@@ -78,6 +84,11 @@ helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPai
 }
 
 abstract helper APP::diff::ClassPair::recognizeOperation(inout operations : Operations);
+
+helper APP::diff::EqualClassPair::recognizeOperation(inout operations : Operations){
+	//equal Pair implicates no change, it's important only for matching rest
+	return;
+}
 
 helper APP::diff::ExtractClassPair::recognizeOperation(inout operations : Operations){
 	var targetModel : Structure := self.reflection.owningModel;
@@ -106,6 +117,18 @@ helper APP::diff::ExtractSubclassPair::recognizeOperation(inout operations : Ope
 											sourceClass.name,
 											self.reflection.name,
 											extractedPropertyNames);
+	return;
+}
+
+helper APP::diff::InlineClass::recognizeOperation(inout operations : Operations){
+	var inlinedPropertyNames : OrderedSet(String) := self.underlyingPairs->
+															collect(source.name)->
+															toStringOrderedSet();
+	operations.operations += _inlineClass(
+										self.reflection.name,
+										self.link.name,
+										//stupid - there is no documentation for this...
+										APP::ToleranceType::strict);
 	return;
 }
 

@@ -91,7 +91,7 @@ helper matchClassesBySimilarity(sourceClses : Sequence(StandardClass), targetCls
 				matchClassesCandidates->get(sourceCls)->forEach(candidate){
 					var targetEqualPair : APP::diff::ClassPair := diff.getReflectionEqualPair(candidate); 
 					if(candidate.isOriginalSourceRecognized(diff))then{
-						matchDestructivePair(targetEqualPair, candidate);
+						matchDestructivePair(targetEqualPair, sourceCls);
 					}endif;
 				};
 			}endif;
@@ -120,11 +120,13 @@ helper matchConstructivePair(replacedSourcePair : APP::diff::ClassPair, candidat
 	var diff : Diff := replacedSourcePair.owningDiff;
 	//reflectionClass cannot exist because it is constructivePair - reflection is created by 
 	//operation defined by constructive pair
+	//-----------------------------------------------------
+	//extractClass case
 	if(reflectionClass->properties[AssociationProperty]->exists(assProp | 
-			assProp.type = candidateClass and 
+			assProp.isOwning and assProp.type = candidateClass and 
 			not sourceClass.containsProperty(assProp.name)))then{
 		var link : AssociationProperty := reflectionClass->properties[AssociationProperty]->
-			selectOne(assProp | assProp.type = candidateClass and 
+			selectOne(assProp | assProp.isOwning and assProp.type = candidateClass and 
 				not sourceClass.containsProperty(assProp.name));
 		var classPair : APP::diff::ClassPair := addMatch(
 														diff, 
@@ -138,8 +140,8 @@ helper matchConstructivePair(replacedSourcePair : APP::diff::ClassPair, candidat
 		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link.oppositeProperty);
-	} else{
-		if(candidateClass.parent.name = reflectionClass.name)then{
+	//ExtractSubClass case
+	} else if(candidateClass.parent.name = reflectionClass.name)then{
 		var classPair : APP::diff::ClassPair := addMatch(
 														diff, 
 														sourceClass, 
@@ -149,8 +151,8 @@ helper matchConstructivePair(replacedSourcePair : APP::diff::ClassPair, candidat
 																APP::diff::ExtractSubclassPair);
 		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
 		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
-		}endif;
-	}endif;
+	}endif
+	endif;
 }
 
 helper matchModifyingPair(matchingClass : StandardClass, candidateClass : StandardClass){
@@ -158,9 +160,44 @@ helper matchModifyingPair(matchingClass : StandardClass, candidateClass : Standa
 	log("not implemented yet");
 }
 
-helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, candidateClass : StandardClass){
-	assert(false);
-	log("not implemented yet");	
+/**
+	destroyedClass - class that is missing in target model, destroyedClass is merged into 
+	reflection of replacedReflectionPair
+	
+**/
+helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, destroyedClass : StandardClass){
+	//class to which is destroyedClass merged into
+	var destinationClass : StandardClass := replacedReflectionPair.reflection;
+	//class whose reflection is destinationClass
+	var classDestinationSource : StandardClass := replacedReflectionPair.source;
+	var sourceModel : Structure := classDestinationSource.owningModel;
+	var diff : Diff := replacedReflectionPair.owningDiff;
+	//destroyed class cannot exist in target model
+	//-----------------------------------------------------
+	//inlineClass case	
+	if(classDestinationSource->properties[AssociationProperty]->exists(assocProp | 
+		assocProp.isOwning and assocProp.type.name = destroyedClass.name and 
+		not destinationClass.containsProperty(assocProp.name)))then{
+		var link : AssociationProperty := classDestinationSource->properties[AssociationProperty]->
+			selectOne(assProp | assProp.isOwning and assProp.type.name = destroyedClass.name and 
+				not destinationClass.containsProperty(assProp.name));
+		var classPair : APP::diff::ClassPair := addMatch(
+														diff, 
+														destroyedClass, 
+														destinationClass, 
+														APP::diff::ClassRelation::inlineClass);
+		var inlineClassPair : APP::diff::InlineClass := classPair.oclAsType(
+																	APP::diff::InlineClass);
+		inlineClassPair.link := link;
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
+		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link);
+		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link.oppositeProperty);
+	//collapse hierarchy case
+	}else if(false)then{
+		
+	}endif 
+	endif;
 }
 
 /**
@@ -173,7 +210,7 @@ helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
 }
 
 /**
-	replacing source - eg StandardClass which equals object or that has the same content
+	original source - eg StandardClass which equals object or that has the same content
 	(for example renameEntity is applied to it). Current implementation works only for equal pair
 **/
 helper StandardClass::isOriginalSourceRecognized(diff : Diff) : Boolean{
