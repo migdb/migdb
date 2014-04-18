@@ -29,6 +29,11 @@ import builder_app;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
+helper APP::diff::ClassPair::isReplacingPair() : Boolean{
+	return self.oclIsKindOf(APP::diff::EqualClassPair) or 
+			self.oclIsKindOf(APP::diff::RenameClassPair);
+}
+
 helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation) : APP::diff::ClassPair{
 	var classPair : APP::diff::ClassPair;
 	if(_relation = APP::diff::ClassRelation::extractClass)then{
@@ -56,7 +61,12 @@ helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : St
 												source := sourceClass;
 												reflection := targetClass;
 		};
-	} 
+	}else if(_relation = APP::diff::ClassRelation::renameEntity)then{
+		classPair := object app::diff::RenameClassPair{
+												source := sourceClass;
+												reflection := targetClass;
+		};
+	}endif 
 	endif 
 	endif 
 	endif 
@@ -76,12 +86,14 @@ helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, target
 	return propertyPair;
 }
 
-query Diff::getSourceEqualPair(equationSource : StandardClass) : APP::diff::ClassPair{
-	return self.classPairs->selectOne(equalPair | equalPair.source = equationSource);
+query Diff::getSourceReplacementPair(replacedSource : StandardClass) : APP::diff::ClassPair{
+	return self.classPairs->selectOne(replacedPair | replacedPair.source = replacedSource and 
+														replacedPair.isReplacingPair());
 }
 
-query Diff::getReflectionEqualPair(equationReflection : StandardClass) : APP::diff::ClassPair{
-	return self.classPairs->selectOne(equalPair | equalPair.reflection = equationReflection);
+query Diff::getReflectionReplacementPair(replacedReflection : StandardClass) : APP::diff::ClassPair{
+	return self.classPairs->selectOne(replacedPair | replacedPair.reflection = replacedReflection 
+														and replacedPair.isReplacingPair());
 }
 
 helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPair : APP::diff::PropertyPair){
@@ -157,6 +169,13 @@ helper APP::diff::CollapseHierarchyPair::recognizeOperation(inout operations : O
 												superClassName,
 												subClassName,
 												isIntoSubClass);
+	return;
+}
+
+helper APP::diff::RenameClassPair::recognizeOperation(inout operations : Operations){
+	operations.operations += _renameEntity(
+												self.source.name,
+												self.reflection.name);
 	return;
 }
 

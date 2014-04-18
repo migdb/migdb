@@ -47,6 +47,15 @@ TestWorkflow {
 /***** MAIN TESTING *****/
 /**/
 
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/004_renameEntity"
+		qvtInput = "${IN_STR}/structure_tab.qvto"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/renameEntity1_required"
+		qvtComparison = ""
+		qvtComparison = "${IN_OPS}/renameEntity1.qvto"
+		testDescription = "renameEntity standardClass"
+	}
 
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"

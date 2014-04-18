@@ -69,6 +69,27 @@ helper matchClassesByName(sourceClses : Sequence(StandardClass), targetClses : S
 	}
 }
 
+helper matchRenamePair(sourceCls : StandardClass, candidateClass : StandardClass, diff : Diff){
+	var sourceParentCls : StandardClass := sourceCls.parent;
+	var areParentsReplacing : Boolean := sourceParentCls.isReplacingReflectionRecognized(diff) and 
+			diff.getSourceReplacementPair(sourceParentCls).reflection = candidateClass.parent;
+	
+	if(sourceCls.parent = null and candidateClass.parent = null or areParentsReplacing)then{
+		unmatchedSourceClasses := unmatchedSourceClasses->reject(cls | cls = sourceCls);
+		unmatchedTargetClasses := unmatchedTargetClasses->reject(cls | cls = candidateClass);
+		var classPair : APP::diff::ClassPair := addMatch(
+														diff, 
+														sourceCls, 
+														candidateClass, 
+														APP::diff::ClassRelation::renameEntity);
+		matchProperties(
+						classPair,
+						diff, 
+						APP::diff::PropertyRelation::equalInEqual);
+	}endif;
+	return;
+}
+
 helper matchClassesBySimilarity(sourceClses : Sequence(StandardClass), targetClses : Sequence(StandardClass), diff : Diff){
 	sourceClses->forEach(cls){
 		initSimilarityCandidates(cls, targetClses);
@@ -78,25 +99,34 @@ helper matchClassesBySimilarity(sourceClses : Sequence(StandardClass), targetCls
 			//if sourceCls is paired then reflection in candidates cannot be paired or there
 			//is mistake in algorithm
 			if(sourceCls.isReplacingReflectionRecognized(diff))then{
-				var sourceEqualPair : APP::diff::ClassPair := diff.getSourceEqualPair(sourceCls);
-				matchClassesCandidates->get(sourceCls)->forEach(candidate){ 
-					if(not candidate.isOriginalSourceRecognized(diff))then{	
-						matchConstructivePair(sourceEqualPair, candidate);
+				var sourceEqualPair : APP::diff::ClassPair := diff.getSourceReplacementPair(
+																					sourceCls);
+				matchClassesCandidates->get(sourceCls)->forEach(candidateCls){ 
+					if(not candidateCls.isOriginalSourceRecognized(diff))then{	
+						matchConstructivePair(sourceEqualPair, candidateCls);
 					}else{
-						//weird
+						//weird - modifyingExcept rename
 						//matchModifyingPair(sourceEqualPair, candidate);
 					}endif;
 				};
 			}else{
-				matchClassesCandidates->get(sourceCls)->forEach(candidate){
-					var targetEqualPair : APP::diff::ClassPair := diff.getReflectionEqualPair(candidate); 
-					if(candidate.isOriginalSourceRecognized(diff))then{
+				matchClassesCandidates->get(sourceCls)->forEach(candidateCls){
+					var targetEqualPair : APP::diff::ClassPair := diff.getReflectionReplacementPair(
+																					candidateCls); 
+					if(candidateCls.isOriginalSourceRecognized(diff))then{
 						matchDestructivePair(targetEqualPair, sourceCls);
+					//original - unrecognized, reflection unrecognized -> find replacing match
+					}else{
+						matchRenamePair(sourceCls, candidateCls, diff);
 					}endif;
 				};
 			}endif;
 //		};
 	};
+}
+
+helper markCandidateMatched(){
+	
 }
 
 helper initSimilarityCandidates(sourceCls : StandardClass,  targetClses : Sequence(StandardClass)){
@@ -193,7 +223,7 @@ helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, destr
 		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link.oppositeProperty);
-	//collapse hierarchy case
+	//collapse hierarchy case - isIntoSub is recognized by parency relation in out model
 	}else if(destroyedClass.parent = replacedReflectionPair.source or 
 			destroyedClass = replacedReflectionPair.source.parent)then{
 		var classPair : APP::diff::ClassPair := addMatch(
@@ -206,15 +236,6 @@ helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, destr
 		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
 		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
 	} 
-	//else if()then{
-	//	var classPair : APP::diff::ClassPair := addMatch(
-	//													diff, 
-	//													destroyedClass, 
-	//													destinationClass, 
-	//													APP::diff::ClassRelation::collapseHierarchy);
-	//	var collapseHierarchyPair : APP::diff::CollapseHierarchyPair := classPair.oclAsType(
-	//																APP::diff::CollapseHierarchyPair);	
-	//}endif
 	endif 
 	endif;
 }
@@ -225,7 +246,7 @@ helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, destr
 **/
 helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
 	return diff->classPairs->exists(clsPair | clsPair.source = self and 
-							clsPair.oclIsKindOf(APP::diff::EqualClassPair));	
+								clsPair.isReplacingPair());	
 }
 
 /**
@@ -234,7 +255,7 @@ helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
 **/
 helper StandardClass::isOriginalSourceRecognized(diff : Diff) : Boolean{
 	return diff->classPairs->exists(clsPair | clsPair.reflection = self and 
-							clsPair.oclIsKindOf(APP::diff::EqualClassPair));
+								clsPair.isReplacingPair());
 }
 
 /**
