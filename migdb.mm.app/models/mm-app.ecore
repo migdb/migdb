@@ -311,11 +311,11 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
             eType="#//app/AssociationProperty"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="InlineClass" eSuperTypes="#//app/diff/DestructiveClassPair">
+      <eClassifiers xsi:type="ecore:EClass" name="InlineClassPair" eSuperTypes="#//app/diff/DestructiveClassPair">
         <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
             eType="#//app/AssociationProperty"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CollapseHierarchy" eSuperTypes="#//app/diff/DestructiveClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="CollapseHierarchyPair" eSuperTypes="#//app/diff/DestructiveClassPair"/>
       <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
         <eLiterals name="equal"/>
         <eLiterals name="renameEntity" value="1"/>

@@ -70,6 +70,27 @@ TestWorkflow {
 
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/017_collapseHierarchy"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"
+		qvtInput = "${IN_STR}/extractSubclass1_structure.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_OPS}/collapseHierarchy1_ops.qvto"		
+		testDescription = "collapseHierarchy"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/017b_collapseHierarchy"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractSubclass1_required.qvto"
+		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/collapse_hierarchy2_required.qvto"
+		qvtComparison = ""
+		qvtComparison = "${IN_OPS}/collapseHierarchy2_ops.qvto"		
+		testDescription = "collapseHierarchy"
+	}
+	
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/018_inlineClass"
 		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/extractClass_required.qvto"
 		qvtInput = "${IN_STR}/extractClass_str.qvto"
@@ -77,5 +98,5 @@ TestWorkflow {
 		qvtComparison = "${IN_OPS}/inlineClass1_ops.qvto"
 		testDescription = "inlineClass"
 	}
-		
+	
 }

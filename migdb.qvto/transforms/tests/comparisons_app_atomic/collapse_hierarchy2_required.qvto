@@ -1,0 +1,17 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation collapse_hierarchy2_required(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	var propertySet : OrderedSet(MultipliableProperty) := OrderedSet{
+										_primitiveProperty("stayingPr", int),
+										_primitiveProperty("extractedPr", int)};
+	var mergedClass : StandardClass := _class(
+											"SubClass", 
+											_idProperty("idParent", int),
+											propertySet);
+	_appStructure(OrderedSet{int, mergedClass});
+}

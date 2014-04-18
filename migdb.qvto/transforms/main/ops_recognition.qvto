@@ -71,7 +71,10 @@ helper enrichReflection(classPair : APP::diff::ClassPair, inout operations : Ope
 								conflictProperties->exists(prop | diffProp.prop = prop));
 		}endif;
 		//handle removeParent case
-		if(source.parent <> null and reflection.parent = null)then{
+		if(source.parent <> null and reflection.parent = null and 
+				not classPair.owningDiff.classPairs->exists(pair | 
+					pair.oclIsKindOf(APP::diff::CollapseHierarchyPair) and 
+					pair.reflection = reflection))then{
 			operations.operations += _removeParent(
 												reflection.name);
 			source.parent.properties->reject(prop | prop = source.parent.idProperty)->

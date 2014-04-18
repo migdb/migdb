@@ -185,18 +185,37 @@ helper matchDestructivePair(replacedReflectionPair : APP::diff::ClassPair, destr
 														diff, 
 														destroyedClass, 
 														destinationClass, 
-														APP::diff::ClassRelation::inlineClass);
-		var inlineClassPair : APP::diff::InlineClass := classPair.oclAsType(
-																	APP::diff::InlineClass);
+													APP::diff::ClassRelation::inlineClass);
+		var inlineClassPair : APP::diff::InlineClassPair := classPair.oclAsType(
+																	APP::diff::InlineClassPair);
 		inlineClassPair.link := link;
 		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
 		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link.oppositeProperty);
 	//collapse hierarchy case
-	}else if(false)then{
-		
-	}endif 
+	}else if(destroyedClass.parent = replacedReflectionPair.source or 
+			destroyedClass = replacedReflectionPair.source.parent)then{
+		var classPair : APP::diff::ClassPair := addMatch(
+														diff, 
+														destroyedClass, 
+														destinationClass, 
+														APP::diff::ClassRelation::collapseHierarchy);
+		var collapseHierarchyPair : APP::diff::CollapseHierarchyPair := classPair.oclAsType(
+																	APP::diff::CollapseHierarchyPair);
+		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+	} 
+	//else if()then{
+	//	var classPair : APP::diff::ClassPair := addMatch(
+	//													diff, 
+	//													destroyedClass, 
+	//													destinationClass, 
+	//													APP::diff::ClassRelation::collapseHierarchy);
+	//	var collapseHierarchyPair : APP::diff::CollapseHierarchyPair := classPair.oclAsType(
+	//																APP::diff::CollapseHierarchyPair);	
+	//}endif
+	endif 
 	endif;
 }
 

@@ -46,12 +46,19 @@ helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : St
 														source := sourceClass;
 														reflection := targetClass;
 		};
-	} else if(_relation = APP::diff::ClassRelation::inlineClass)then{
-		classPair := object app::diff::InlineClass{
+	}else if(_relation = APP::diff::ClassRelation::inlineClass)then{
+		classPair := object app::diff::InlineClassPair{
 												source := sourceClass;
 												reflection := targetClass;
 		};
-	}endif 
+	}else if(_relation = APP::diff::ClassRelation::collapseHierarchy)then{
+		classPair := object app::diff::CollapseHierarchyPair{
+												source := sourceClass;
+												reflection := targetClass;
+		};
+	} 
+	endif 
+	endif 
 	endif 
 	endif
 	endif;
@@ -120,7 +127,7 @@ helper APP::diff::ExtractSubclassPair::recognizeOperation(inout operations : Ope
 	return;
 }
 
-helper APP::diff::InlineClass::recognizeOperation(inout operations : Operations){
+helper APP::diff::InlineClassPair::recognizeOperation(inout operations : Operations){
 	var inlinedPropertyNames : OrderedSet(String) := self.underlyingPairs->
 															collect(source.name)->
 															toStringOrderedSet();
@@ -129,6 +136,27 @@ helper APP::diff::InlineClass::recognizeOperation(inout operations : Operations)
 										self.link.name,
 										//stupid - there is no documentation for this...
 										APP::ToleranceType::strict);
+	return;
+}
+
+helper APP::diff::CollapseHierarchyPair::recognizeOperation(inout operations : Operations){
+	var isIntoSubClass : Boolean;
+	var subClassName : String;
+	var superClassName : String;
+	//if is into superClass, eg isIntoSub = false
+	if(self.source.parent.name = self.reflection.name)then{
+		isIntoSubClass := false;
+		subClassName := self.source.name;
+		superClassName := self.reflection.name;
+	}else{
+		isIntoSubClass := true;
+		subClassName := self.reflection.name;
+		superClassName := self.source.name;
+	}endif;
+	operations.operations += _collapseHierarchy(
+												superClassName,
+												subClassName,
+												isIntoSubClass);
 	return;
 }
 

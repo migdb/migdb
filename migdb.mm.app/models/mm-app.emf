@@ -274,11 +274,11 @@ package app {
   	   ref AssociationProperty[1] link;   
   	}
   	
-  	class InlineClass extends DestructiveClassPair{
+  	class InlineClassPair extends DestructiveClassPair{
   	   ref AssociationProperty[1] link;
   	}
   	
-  	class CollapseHierarchy extends DestructiveClassPair{
+  	class CollapseHierarchyPair extends DestructiveClassPair{
   	}
   	
   	enum ClassRelation{
