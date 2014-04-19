@@ -50,7 +50,7 @@ RemoveEntity returns ops::RemoveEntity:
 AddProperty returns ops::AddProperty:
 	'add' 
 	owningClassName=ID '.' name=ID ':' typeName=ID 
-		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
+		('['((upperBound=INT) | (lowerBound=INT '..' upperBound=INT))']')?
 ;
 
 RenameProperty returns ops::RenameProperty:
