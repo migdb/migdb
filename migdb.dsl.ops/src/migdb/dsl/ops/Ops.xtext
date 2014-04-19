@@ -14,8 +14,7 @@ Operations returns app::Operations:
 ;
 
 ModelOperation returns ops::ModelOperation:
-	AddPrimitiveClass
-	| RenameEntity
+	RenameEntity
 //diploma
 	| AddClass
 	| RemoveEntity
@@ -30,10 +29,6 @@ ModelOperation returns ops::ModelOperation:
 	| ExtractClass
 	| ExtractSubClass
 	| ExtractSuperClass
-;
-
-AddPrimitiveClass returns ops::AddPrimitiveClass:
-	'addPrimitive' name=ID ':' primitiveType=PrimitiveType
 ;
 
 RenameEntity returns ops::RenameEntity:
