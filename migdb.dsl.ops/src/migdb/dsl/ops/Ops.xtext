@@ -10,7 +10,8 @@ ModelRoot returns app::ModelRoot:
 ;
 
 Operations returns app::Operations:
-	(operations+=ModelOperation)*
+	operations+=ModelOperation
+	(';'? operations+=ModelOperation)*
 ;
 
 ModelOperation returns ops::ModelOperation:
