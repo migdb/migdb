@@ -7,8 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import mm.app.AppFactory;
 import mm.app.ModelRoot;
-import mm.app.impl.AppFactoryImpl;
 import mm.errors.Error;
 import mm.errors.ErrorLog;
 import mm.errors.EvolutionError;
@@ -34,6 +34,11 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 	private static final String QVTO = "platform:/plugin/migdb.qvto/transforms/main/evolution_app_run.qvto";
 	
 	/**
+	 * Path to migdb's QVTO transformation to create the default primitives.
+	 */
+	private static final String PRIMITIVES = "platform:/plugin/migdb.qvto/transforms/main/default_primitives.qvto";
+	
+	/**
 	 * Map used to save indices of found evolution errors.
 	 */
 	private Map<Integer, String> errorIndex;
@@ -47,17 +52,15 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 	 */
 	@Check
 	public void applyModelTransformation(ModelRoot root) {
-		URI transformationURI = URI.createURI(QVTO);
+		URI transformationURI = checkAndLogPath(QVTO);
 
-		if (transformationURI == null) {
-			error("Couldn't load input file:'" + QVTO + "'!", null);
+		if (transformationURI == null)
 			return;
-		}
 
 		TransformationExecutor executor = new TransformationExecutor(
 				transformationURI);
 		
-		ModelExtent inStructure = emptyStructure(); // empty structure model
+		ModelExtent inStructure = primitives(); // structure with primitives
 		ModelExtent inOperations = makeModelExtent(root);
 		ModelExtent outStructure = new BasicModelExtent();
 		ModelExtent cleanStructure = new BasicModelExtent();
@@ -105,8 +108,45 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 	 * @return New instance of ModelExtent which contains the Structure.
 	 */
 	private ModelExtent emptyStructure() {
-		ModelRoot r = AppFactoryImpl.init().createStructure();
+		ModelRoot r = AppFactory.eINSTANCE.createStructure();
 		return makeModelExtent(r);
+	}
+	
+	/**
+	 * Executes QVTO transformation to create the structure with primitives.
+	 * @return Instance of ModelExtent containing primitives.
+	 */
+	private ModelExtent primitives() {
+		ModelExtent inoutModel = emptyStructure();
+		
+		URI transformationURI = checkAndLogPath(PRIMITIVES);
+
+		if (transformationURI == null)
+			return inoutModel;
+
+		TransformationExecutor executor = new TransformationExecutor(
+				transformationURI);
+		
+		ExecutionContextImpl context = new ExecutionContextImpl();
+		context.setConfigProperty("keepModeling", true);
+		
+		ExecutionDiagnostic result = executor.execute(context, inoutModel);
+
+		return result.getSeverity() == Diagnostic.OK ? inoutModel : emptyStructure();
+	}
+	
+	/**
+	 * Checks if given path exists and returns it as URI.
+	 * If the path doesnt exists, it is logged as error.
+	 * @param uri Path to the QVTO transformation
+	 * @return URI or null.
+	 */
+	private URI checkAndLogPath(String uri) {
+		URI transformationURI = URI.createURI(uri);
+
+		if (transformationURI == null)
+			error("Couldn't load input file:'" + uri + "'!", null);
+		return transformationURI;
 	}
 
 	/**
