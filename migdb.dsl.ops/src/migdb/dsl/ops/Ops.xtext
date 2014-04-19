@@ -49,13 +49,8 @@ RemoveEntity returns ops::RemoveEntity:
 
 AddProperty returns ops::AddProperty:
 	'add' 
-//	(
-//		('!ordered' | isOrdered?='ordered')?
-//		& ('!unique' | isUnique?='unique')?
-//	) 
 	owningClassName=ID '.' name=ID ':' typeName=ID 
 		('['((upperBound=INT) | (lowerBound=INT '..' (upperBound=INT)?))']')?
-		//('=' defaultValue=DefaultValue)?
 ;
 
 RenameProperty returns ops::RenameProperty:
@@ -96,7 +91,7 @@ AddParent returns ops::AddParent:
 ;
 
 RemoveParent returns ops::RemoveParent:
-	'set' className=ID '!<:' ID
+	'remove' className=ID '<:' ID
 ;
 
 ExtractClass returns ops::ExtractClass:
@@ -133,27 +128,6 @@ ExtractSuperClass returns ops::ExtractSuperClass:
 
 /**
  */
-enum PrimitiveType returns app::PrimitiveType:
-	boolean = 'boolean'
-	| char = 'char'
-	| int = 'int'
-;
-
-enum InheritanceType returns app::InheritanceType:
-	joined = 'joined'
-	| tablePerClass = 'tablePerClass'
-	| singleTable = 'singleTable'
-;
-
-Boolean returns ecore::EBoolean:
-	'true'
-	| 'false'
-;
-
-DefaultValue returns ecore::EString:
-	ID | INT | Boolean
-;
-
 terminal ID:
 	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
 ;
