@@ -24,7 +24,7 @@ var OPS_PATH //the path where the Operations file is located
 
 //constants
 var OUTPUT_SQL_DIR = "outputs_sql"
-var QVTO_DIR = "platform:/resource/migdb.qvto/transforms" //it must contain prefix 'platform:/resource'
+var QVTO_DIR = "platform:/resource/migdb.qvto/transforms/main" //it must contain prefix 'platform:/resource'
 
 Workflow {
 	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
@@ -50,7 +50,7 @@ Workflow {
 		}
 		
 		uriMap = {
-			from = "platform:/plugin/migdb.qvto/transforms"
+			from = "platform:/plugin/migdb.qvto/transforms/main"
 			to = "${QVTO_DIR}"
 		}
 	}
@@ -69,7 +69,7 @@ Workflow {
 
 	//Creates empty APP Structure
 	component = QVTOExecutor2 { //uses derived version of QVTOExector
-		transformationFile = "${QVTO_DIR}/tests/structures/app/empty_structure.qvto"
+		transformationFile = "${QVTO_DIR}/default_primitives.qvto"
 		outputSlot = "strApp"
 	}
 
@@ -82,7 +82,7 @@ Workflow {
 		outputSlot = "outStrRdb"
 		outputSlot = "opsRdb"
 		outputSlot = "errorLog"
-		transformationFile = "${QVTO_DIR}/main/migdb_executer.qvto"
+		transformationFile = "${QVTO_DIR}/migdb_executer.qvto"
 	}
 
 /***** PRINT ERROR LOG *****/

@@ -1,0 +1,16 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation default_primitives(out inoutModel : APP);
+
+main() {
+	var struc : OrderedSet(APP::ModelEntity) := OrderedSet{};
+
+	struc += _primitiveClass(getAppDefaultIdTypeName(), app::PrimitiveType::int);
+	struc += _primitiveClass("String", APP::PrimitiveType::char);
+	struc += _primitiveClass("Char", APP::PrimitiveType::char);
+	struc += _primitiveClass("Bool", APP::PrimitiveType::boolean);
+
+	_appStructure(struc);
+}
