@@ -67,7 +67,7 @@ MoveProperty returns ops::MoveProperties:
 		'.' propertiesNames+=ID
 		| '{' propertiesNames+=ID (',' propertiesNames+=ID)* '}'
 	)
-	'/' linkName=ID '->' ID
+	'/' linkName=ID '->' ID?
 ;
 
 PullUpProperty returns ops::PullUpProperties:
@@ -91,7 +91,7 @@ AddParent returns ops::AddParent:
 ;
 
 RemoveParent returns ops::RemoveParent:
-	'remove' className=ID '<:' ID
+	'remove' className=ID '<:' ID?
 ;
 
 ExtractClass returns ops::ExtractClass:
