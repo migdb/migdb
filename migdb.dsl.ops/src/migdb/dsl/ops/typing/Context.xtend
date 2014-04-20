@@ -249,5 +249,19 @@ class Context {
 		subclasses.remove(child)
 		return this
 	}
+	
+	def prettyPrint() {
+		LOG.error('''
+		
+		«FOR cls : classes.keySet»
+			class «cls» <: «par(cls)» {
+				«FOR p : classes.get(cls)»
+				«p.name» : «p.type» [«p.low»..«p.upper»]
+				«ENDFOR»
+			}
+			
+		«ENDFOR»
+		'''.toString)
+	}
 	 
 }
