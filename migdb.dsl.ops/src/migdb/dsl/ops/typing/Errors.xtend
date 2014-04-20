@@ -1,10 +1,7 @@
 package migdb.dsl.ops.typing
 
 class Errors {
-	
-	def static reservedKey(String name)
-		'''«name» is reserved keyword'''
-		
+			
 	def static classExists(String name)
 		'''Class «name» already exists'''
 	

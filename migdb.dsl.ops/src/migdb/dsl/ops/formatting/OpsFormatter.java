@@ -52,7 +52,6 @@ public class OpsFormatter extends AbstractDeclarativeFormatter {
 		setLineWrap(c, Style.AFTER, 1, 1, 2, f.getOperationsAccess().getSemicolonKeyword_1_0());
 		
 		setLineWrap(c, Style.AFTER, 1, 1, 2,
-				f.getRenameEntityRule(),
 				f.getAddClassRule(),
 				f.getRemoveEntityRule(),
 				f.getAddPropertyRule(),

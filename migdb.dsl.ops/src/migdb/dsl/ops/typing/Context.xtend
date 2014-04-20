@@ -11,7 +11,7 @@ class Context {
 	static Logger LOG = Logger::getLogger(typeof(Context))
 	Map<String, PropertySet> classes
 	Map<String, String> subclasses
-	static List<String> PRIMITIVES = newArrayList("Integer", "Bool", "Char", "String")
+	public static List<String> PRIMITIVES = newArrayList("Integer", "Bool", "Char", "String")
 	public static String TOP = "Top"
 	
 	new() {

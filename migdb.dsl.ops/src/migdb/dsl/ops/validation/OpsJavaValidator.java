@@ -14,6 +14,7 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 
 	private static final Logger LOG = Logger.getLogger(OpsJavaValidator.class);
 	private TypeChecker checker = new TypeChecker();
+	private TextChecker text = new TextChecker();
 
 	/**
 	 * Type-checks given instance of ModelRoot containing operations.
@@ -23,6 +24,19 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 	 */
 	@Check
 	public void applyTypeCheck(ModelRoot root) {
+		boolean textErrors = false;
+		for (EObject obj : root.eContents()) {
+			ModelOperation op = (ModelOperation) obj;
+			String result = text.check(op);
+			if (result != null) {
+				textErrors = true;
+				error(result, obj, null, 0);
+			}
+		}
+		
+		if(textErrors)
+			return;
+
 		Context gamma = new Context();
 		for (EObject obj : root.eContents()) {
 			ModelOperation op = (ModelOperation) obj;
@@ -32,10 +46,4 @@ public class OpsJavaValidator extends AbstractOpsJavaValidator {
 			gamma = result.context; // keep type-checking
 		}
 	}
-
-//	@Check
-//	public void checkNames(AddStandardClass op) {
-//		if ("Top".equalsIgnoreCase(op.getName()))
-//			error(Errors.reservedKey(op.getName()).toString(), OpsPackage.Literals.ADD_STANDARD_CLASS__NAME, op.getName());
-//	}
 }
