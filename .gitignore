@@ -14,6 +14,7 @@ migdb.dsl.app/bin/
 migdb.dsl.app.ui/bin/
 migdb.dsl.ops/bin/
 migdb.dsl.ops.ui/bin/
+migdb.dsl.ops.tests/bin/
 
 #ide
 migdb.dsl.ide/bin/

@@ -1,0 +1,11 @@
+add Food
+add Fruit
+
+set Fruit <: Food
+
+add Food.test : Integer
+
+extractSub Food.test -> Banan
+
+//wrong behavior
+add Food.test : Integer //child classes already have test

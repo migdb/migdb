@@ -1,0 +1,8 @@
+add Fruit
+add Leaf
+
+add Fruit.koko : Integer
+add Fruit.leaf : Leaf[0..6]
+
+//wrong behavior
+move Fruit.koko / leaf -> Leaf //leaf has invalid bounds

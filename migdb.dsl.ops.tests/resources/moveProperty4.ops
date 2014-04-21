@@ -1,0 +1,8 @@
+add Fruit
+add Leaf
+
+add Fruit.koko : Integer
+add Fruit.leaf : Integer
+
+//wrong behavior
+move Fruit.koko / leaf -> Leaf2 //leaf is not valid type

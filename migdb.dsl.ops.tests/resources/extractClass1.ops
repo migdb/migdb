@@ -1,0 +1,10 @@
+add Food
+add Fruit
+
+add Fruit.koko : Integer
+add Food.margo : Integer
+
+set Fruit <: Food
+
+//wrong behavior
+extract Fruit.koko / margo -> Leaf.fruit //margo already exists in Food

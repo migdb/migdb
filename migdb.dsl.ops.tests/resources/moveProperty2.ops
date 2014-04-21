@@ -1,0 +1,8 @@
+add Fruit
+add Leaf
+
+add Fruit.koko : Integer
+add Fruit.leaf : Leaf
+
+//wrong behavior
+move Fruit.koko / leaf2 -> Leaf //asociation leaf2 does not exist in Fruit

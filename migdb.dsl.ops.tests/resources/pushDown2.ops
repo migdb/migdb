@@ -1,0 +1,5 @@
+add Food
+add Food.koko : Integer
+
+//wrong behavior
+pushDown Food.koko //Food does not have any subclasses

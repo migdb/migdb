@@ -1,0 +1,9 @@
+add Fruit
+add Citrus
+add Orange
+
+set Citrus <: Fruit
+set Orange <: Citrus
+
+//wrong behavior
+set Fruit <: Orange //creates cycle in the class hierarchy

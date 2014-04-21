@@ -1,0 +1,9 @@
+add Food
+add Fruit
+
+set Fruit <: Food
+
+add Food.test : Integer
+
+//wrong behavior
+extractSub Fruit.test2 -> Banan //test2 does not exist in Fruit

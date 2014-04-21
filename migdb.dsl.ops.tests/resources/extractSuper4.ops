@@ -1,0 +1,9 @@
+add Fruit
+add Banana
+
+set Banana <: Fruit
+
+add Banana.koko : Integer
+
+//wrong behavior
+extractSuper Banana.koko -> Food //Banan already has a parent

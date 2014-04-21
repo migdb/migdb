@@ -1,0 +1,6 @@
+add Fruit
+
+add Fruit.koko : Integer
+
+//wrong behavior
+extractSuper Fruit.koko2 -> Food //koko2 does not exist in Fruit

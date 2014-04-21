@@ -1,0 +1,8 @@
+add Food
+add Fruit
+set Fruit <: Food
+
+add Fruit.test : Integer
+
+//wrong behavior
+add Food.test : Integer //test already exists in child's class Fruit

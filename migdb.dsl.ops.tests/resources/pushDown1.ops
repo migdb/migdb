@@ -1,0 +1,11 @@
+add Food
+add Fruit
+add Vegetable
+
+set Fruit <: Food
+set Vegetable <: Food
+
+add Food.koko : Integer
+
+//wrong behavior
+pushDown Fruit.koko //koko does not exist in Fruit

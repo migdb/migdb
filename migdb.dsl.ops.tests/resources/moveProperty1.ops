@@ -1,0 +1,9 @@
+add Fruit
+add Leaf
+
+add Fruit.koko : Integer
+add Fruit.leaf : Leaf
+add Leaf.koko : Integer
+
+//wrong behavior
+move Ghost.koko / leaf -> Leaf //Ghost does not exist

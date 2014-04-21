@@ -1,0 +1,9 @@
+add Food
+add Fruit
+set Fruit <: Food
+
+add Fruit.koko : Integer
+add Food.test : Integer
+
+//wrong behavior
+rename Food.test -> koko //koko already exists in child Fruit

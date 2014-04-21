@@ -1,0 +1,8 @@
+add Fruit
+add Fruit.koko : Integer
+
+add Banan
+add Banan.koko : Integer
+
+//wrong behavior
+extractSuper {Fruit, Banan}.koko -> Banan //Banan already exists

@@ -1,0 +1,6 @@
+add Fruit
+
+add Fruit.koko : Integer
+
+//wrong behavior
+extractSuper Fruit.koko -> Fruit //extracted Fruit already exists

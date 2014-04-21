@@ -1,0 +1,11 @@
+add Food
+add Fruit
+add Banana
+
+set Fruit <: Food
+
+add Banana.koko : Integer
+add Fruit.koko : Integer
+
+//wrong behavior
+set Food <: Banana //Food's child class Fruit already has property koko
