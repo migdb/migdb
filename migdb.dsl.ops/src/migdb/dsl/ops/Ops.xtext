@@ -123,5 +123,5 @@ ExtractSuperClass returns ops::ExtractSuperClass:
 /**
  */
 terminal ID:
-	('a'..'z'|'A'..'Z'|'_') ('a'..'z'|'A'..'Z'|'_'|'0'..'9')*
+	('a'..'z'|'A'..'Z') ('a'..'z'|'A'..'Z'|'0'..'9')*
 ;
