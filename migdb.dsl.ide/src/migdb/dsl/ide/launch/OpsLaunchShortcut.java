@@ -139,7 +139,7 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 				false);
 		wc.setAttribute(
 				IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
-				info.opsFile);
+				info.args);
 		wc.setAttribute(RefreshTab.ATTR_REFRESH_SCOPE, "${workspace}");
 		wc.setAttribute(RefreshTab.ATTR_REFRESH_RECURSIVE, true);
 
@@ -155,17 +155,18 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 	private class LaunchConfigurationInfo {
 		private final String name;
 		private final String project;
-		private final String opsFile;
+		private final String args;
 
 		private LaunchConfigurationInfo(final IFile file) {
 			name = file.getName();
 			project = file.getProject().getName();
-			opsFile = file.getProjectRelativePath().toString();
+			args = "-"+MigDbLauncher.FILE + " " + file.getProjectRelativePath().toString()
+					+ " -" + MigDbLauncher.OUTPUT + " " + fileNameNoExt(file);
 		}
 
 		private boolean configEquals(final ILaunchConfiguration a)
 				throws CoreException {
-			return opsFile.equals(a.getAttribute(
+			return args.equals(a.getAttribute(
 					IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS,
 					"X"))
 					&& MigDbLauncher.class.getName().equals(
@@ -182,5 +183,12 @@ public class OpsLaunchShortcut implements ILaunchShortcut {
 		}
 
 	}
+	
+    private static String fileNameNoExt(IFile file) {
+            String fileExt = file.getFileExtension();
+            int extLen = fileExt != null ? fileExt.length() + 1 : 0;
+            String fileNameWithExt = file.getName();
+            return fileNameWithExt.substring(0, fileNameWithExt.length() - extLen);
+    }
 
 }

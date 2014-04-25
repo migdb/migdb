@@ -19,8 +19,8 @@ import migdb.mm.errors.*
 import migdb.run.utils.*
 
 //DONT CHANGE THIS !!! these parameters are passed from the console/Run configuration.
-//i.e: java MigDbLauncher launcher.mwe2 -p operations_path=src/in.ops
 var OPS_PATH //the path where the Operations file is located
+var OUT_NAME //output filename
 
 //constants
 var OUTPUT_SQL_DIR = "outputs_sql"
@@ -96,7 +96,7 @@ Workflow {
 		withoutModel = false
 		slot = "opsRdb"
 		generator = Generator {
-			filename = "000.sql"
+			filename = "${OUT_NAME}.sql"
 		}
 		outputPath = "${OUTPUT_SQL_DIR}"
 	}
