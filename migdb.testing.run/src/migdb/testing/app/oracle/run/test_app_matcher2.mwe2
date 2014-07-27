@@ -84,7 +84,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/extractSubclass1_structure.qvto"
 		qvtComparison = ""
 		qvtComparison = "${IN_OPS}/collapseHierarchy1_ops.qvto"		
-		testDescription = "collapseHierarchy"
+		testDescription = "collapseHierarchy into parent"
 	}
 
 	component = TestComponent{
@@ -94,7 +94,7 @@ TestWorkflow {
 		qvtInput = "${COMPARISONS_STRUCTURES_DIR}/collapse_hierarchy2_required.qvto"
 		qvtComparison = ""
 		qvtComparison = "${IN_OPS}/collapseHierarchy2_ops.qvto"		
-		testDescription = "collapseHierarchy"
+		testDescription = "collapseHierarchy into child"
 	}
 	
 
@@ -107,5 +107,8 @@ TestWorkflow {
 		qvtComparison = "${IN_OPS}/inlineClass1_ops.qvto"
 		testDescription = "inlineClass"
 	}
+	
+
+	
 	
 }

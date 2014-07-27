@@ -11,7 +11,7 @@ modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 	There is problem with the same types of models - solution found in creator_rdb_operations.qvto
 	but outROperations must be inout model.
 **/
-transformation diff_class_names(in sourceModel:APP, in targetModel:APP , out diffModel : APP, out recognisedOperations : APP);
+transformation matcher_class_names(in sourceModel:APP, in targetModel:APP , out diffModel : APP, out recognisedOperations : APP);
 
 //transformation diff_class_names();
 

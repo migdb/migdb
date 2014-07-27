@@ -156,14 +156,14 @@ helper APP::diff::CollapseHierarchyPair::recognizeOperation(inout operations : O
 	var subClassName : String;
 	var superClassName : String;
 	//if is into superClass, eg isIntoSub = false
-	if(self.source.parent.name = self.reflection.name)then{
-		isIntoSubClass := false;
-		subClassName := self.source.name;
-		superClassName := self.reflection.name;
-	}else{
+	if(self.isIntoSub)then{
 		isIntoSubClass := true;
 		subClassName := self.reflection.name;
 		superClassName := self.source.name;
+	}else{
+		isIntoSubClass := false;
+		subClassName := self.source.name;
+		superClassName := self.reflection.name;
 	}endif;
 	operations.operations += _collapseHierarchy(
 												superClassName,
@@ -177,6 +177,25 @@ helper APP::diff::RenameClassPair::recognizeOperation(inout operations : Operati
 												self.source.name,
 												self.reflection.name);
 	return;
+}
+
+
+/**
+	replacing reflection - eg StandardClass which equals object or that has the same content
+	(for example renameEntity is applied to it). Current implementation works only for equal pair.
+**/
+helper StandardClass::isReplacingReflectionRecognized(diff : Diff) : Boolean{
+	return diff->classPairs->exists(clsPair | clsPair.source = self and 
+								clsPair.isReplacingPair());	
+}
+
+/**
+	original source - eg StandardClass which equals object or that has the same content
+	(for example renameEntity is applied to it). Current implementation works only for equal pair
+**/
+helper StandardClass::isOriginalSourceRecognized(diff : Diff) : Boolean{
+	return diff->classPairs->exists(clsPair | clsPair.reflection = self and 
+								clsPair.isReplacingPair());
 }
 
 helper Collection(String)::toStringOrderedSet() : OrderedSet(String){

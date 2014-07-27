@@ -279,6 +279,7 @@ package app {
   	}
   	
   	class CollapseHierarchyPair extends DestructiveClassPair{
+       attr boolean[1] isIntoSub;  		
   	}
   	
   	enum ClassRelation{

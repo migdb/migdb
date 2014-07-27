@@ -1,0 +1,38 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation matcher_similarity_target1(out inoutModel : APP);
+
+main(){
+	var int : PrimitiveClass := _primitiveClass(
+											getAppDefaultIdTypeName(), 
+											app::PrimitiveType::int);
+	var string : PrimitiveClass := _primitiveClass(
+											"String", 
+											app::PrimitiveType::char);
+	var identityProps : OrderedSet(MultipliableProperty) := OrderedSet{
+												_primitiveProperty("firstName", string, 1, 1),
+												_primitiveProperty("secondName", string, 1, 1)};													
+	var identityClass : StandardClass := _class(
+											"Identity",
+											_idProperty("idIdentity", int),
+											identityProps);
+	var propIdentity : AssociationProperty := _associationProperty("identity", identityClass);
+	var personProps : OrderedSet(MultipliableProperty) := OrderedSet{
+													_primitiveProperty("age", int, 1, 1),
+													propIdentity};
+	
+	var person : StandardClass := _class(
+									"Person", 
+									_idProperty("idPerson", int),
+									personProps); 								
+	var owningPerson : AssociationProperty := __associationProperty("owningPerson", person);
+	setOpposite(propIdentity, owningPerson);
+	identityClass.properties += owningPerson;	
+	var woman : StandardClass := _class(
+									"Woman",
+									person,
+									OrderedSet{_primitiveProperty("car", string, 1, 1)});
+	_appStructure(OrderedSet{int, string, identityClass, person, woman});
+}

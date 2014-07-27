@@ -1,0 +1,28 @@
+import builder_app;
+import queries_app;
+modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
+
+transformation constructiveColision_ops(out inoutModel : APP);
+
+main(){
+	var extractedPropsNames : OrderedSet(String) := OrderedSet{
+		"firstName",
+		"secondName"
+	};
+	var extractClass : APP::ops::ModelOperation  := _extractClass(
+																"Man", 
+																"identity",
+																"owningPerson",
+																"Identity", 
+																extractedPropsNames);
+	var pushedDownPropNames : OrderedSet(String) := OrderedSet{"car"};
+	var extractSubclass : APP::ops::ModelOperation := _extractSubClass(
+																	"Man", 
+																	"Woman", 
+																	pushedDownPropNames);
+	var opsSet : OrderedSet(APP::ops::ModelOperation) := OrderedSet{
+															_renameEntity("Man", "Person"),
+															extractClass,
+															extractSubclass};
+	_appOperations(opsSet);	
+}

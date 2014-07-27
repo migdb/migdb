@@ -1,0 +1,127 @@
+module migb.testing.app.oracle.run.test_app_matcher2_sequences
+
+import org.eclipse.emf.mwe.utils.*
+import org.eclipse.xtext.mwe.*
+
+import org.eclipse.xtext.mwe.SlotEntry
+import org.eclipse.xtext.mwe.ResourceLoadingSlotEntry
+import org.eclipse.xtext.mwe.Validator
+import org.eclipse.xtext.mwe.NameBasedFilter
+
+import org.eclipse.emf.mwe.utils.Writer
+import org.eclipse.emf.mwe.utils.Reader
+
+import eu.collectionspro.mwe.*
+import migdb.generator.*
+
+var QVTO_DIR = "../migdb.qvto/transforms"
+var OUTPUT_BASE_DIR = "output-tests/matcher_similarity"
+var IN_STR = "${QVTO_DIR}/tests/structures/app"
+var COMPARISON_OPS = "${QVTO_DIR}/tests/operations/app"
+var TEST_TRANSFORMATION = "${QVTO_DIR}/main/matcher_similarity.qvto"
+var APP_EVO_TRANSTORMATION = "${QVTO_DIR}/main/evolution_app_run.qvto"
+var SOURCE_MODEL_SLOT_NAME = "INPUT_0"
+var TARGET_MODEL_SLOT_NAME = "INPUT_1"
+var OPERATIONS_SLOT_NAME = "RESULT_1"
+var OUT_STRUCTURE_SLOT_NAME = "OUT_0"
+var OUT_ERRORS_SLOT_NAME = "OUT_2"
+var EMPTY_ERRORS_SLOT = "EMPTY_ERRORS"
+var EVOLUTION_MODEL_RESULT_SLOT_NAME = "COMP0"
+var EMPTY_ERRORS_FILE = "${QVTO_DIR}/tests/errors/empty_errors.qvto"
+
+/**
+ * This TestWorkflow is special one - it contains sequences of operations that can have more than one 
+ * ordering - eg nonDeterministic tests can fail, but there is part necessary that shouldn't fail 
+ * - eg recognised operations are leading to target model.
+ */
+TestWorkflow {
+/***** DEFINE META-MODELS *****/
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.app.AppPackage"
+	}
+/**/
+	bean = org.eclipse.emf.mwe.utils.StandaloneSetup {
+		platformUri = ".."
+		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
+	}
+
+/***** CLEAN DIRECTORIES [XMI] *****/
+/**/
+	component = org.eclipse.emf.mwe.utils.DirectoryCleaner {
+		directory = "${OUTPUT_BASE_DIR}"
+	}
+	
+	component = QVTOExecutor{
+		transformationFile ="${EMPTY_ERRORS_FILE}"
+		outputSlot = "${EMPTY_ERRORS_SLOT}"
+	}
+	
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/020_ConstructiveColision"
+		qvtInput = "${IN_STR}/matcher_similarity_source1.qvto"
+		qvtInput = "${IN_STR}/matcher_similarity_target1.qvto"
+		qvtComparison = ""
+		qvtComparison = "${COMPARISON_OPS}/constructiveColision_ops.qvto"
+		testDescription = "Rename, extractSubclass, extractClass - nonDeterministic, can fail"
+	}
+
+	/** PART SAME for each test, can be almost copy pasted - except test description part*/	
+	component = QVTOExecutor{
+		transformationFile ="${APP_EVO_TRANSTORMATION}"
+		inputSlot = "${SOURCE_MODEL_SLOT_NAME}"
+		inputSlot = "${OPERATIONS_SLOT_NAME}"
+		outputSlot = "${OUT_STRUCTURE_SLOT_NAME}"
+		outputSlot = "${EVOLUTION_MODEL_RESULT_SLOT_NAME}"
+		outputSlot = "${OUT_ERRORS_SLOT_NAME}"
+	}
+	
+	component = SlotComparator{
+		testedURI = "${EVOLUTION_MODEL_RESULT_SLOT_NAME}"
+		resultURI = "${TARGET_MODEL_SLOT_NAME}"
+		testDescription = "Rename, extractSubclass, extractClass - necessary part"
+	}
+
+	component = SlotComparator{
+		testedURI = "${OUT_ERRORS_SLOT_NAME}"
+		resultURI = "${EMPTY_ERRORS_SLOT}"
+		testDescription = "Rename, extractSubclass, extractClass - ERRORS necessary part"
+	}
+
+	component = TestComponent{
+		transformationFile = "${TEST_TRANSFORMATION}"
+		outputParentUri = "${OUTPUT_BASE_DIR}/021_DestructiveColision"
+		qvtInput = "${IN_STR}/matcher_similarity_target1.qvto"
+		qvtInput = "${IN_STR}/matcher_similarity_source1.qvto"
+		qvtComparison = ""
+		qvtComparison = "${COMPARISON_OPS}/destructiveColision_ops.qvto"
+		testDescription = "Rename, CollapseHierarchy, InlineClass - nonDeterministic, can fail"
+	}
+	
+	/** PART SAME for each test, can be almost copy pasted - except test description part*/
+	component = QVTOExecutor{
+		transformationFile ="${APP_EVO_TRANSTORMATION}"
+		inputSlot = "${SOURCE_MODEL_SLOT_NAME}"
+		inputSlot = "${OPERATIONS_SLOT_NAME}"
+		outputSlot = "${OUT_STRUCTURE_SLOT_NAME}"
+		outputSlot = "${EVOLUTION_MODEL_RESULT_SLOT_NAME}"
+		outputSlot = "${OUT_ERRORS_SLOT_NAME}"
+	}
+	
+	component = SlotComparator{
+		testedURI = "${EVOLUTION_MODEL_RESULT_SLOT_NAME}"
+		resultURI = "${TARGET_MODEL_SLOT_NAME}"
+		testDescription = "Rename, CollapseHierarchy, InlineClass - necessary part"
+	}
+
+	component = SlotComparator{
+		testedURI = "${OUT_ERRORS_SLOT_NAME}"
+		resultURI = "${EMPTY_ERRORS_SLOT}"
+		testDescription = "Rename, CollapseHierarchy, InlineClass - ERRORS necessary part"
+	}
+
+
+		
+}

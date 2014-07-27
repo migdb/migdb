@@ -315,7 +315,10 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="link" lowerBound="1"
             eType="#//app/AssociationProperty"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="CollapseHierarchyPair" eSuperTypes="#//app/diff/DestructiveClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="CollapseHierarchyPair" eSuperTypes="#//app/diff/DestructiveClassPair">
+        <eStructuralFeatures xsi:type="ecore:EAttribute" name="isIntoSub" lowerBound="1"
+            eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="ClassRelation">
         <eLiterals name="equal"/>
         <eLiterals name="renameEntity" value="1"/>

@@ -318,6 +318,10 @@ helper _extractSubClass (_sourceClassName : String, _extractedClassName : String
 	};
 }
 
+helper _inlineClass(_targetClassName : String, _associationPropertyName : String) : APP::ops::InlineClass{
+	return _inlineClass(_targetClassName, _associationPropertyName, APP::ToleranceType::strict);
+}
+
 helper _inlineClass (_targetClassName : String, _associationPropertyName : String, _toleranceType : APP::ToleranceType) : APP::ops::InlineClass{
 	var condition : Boolean := isLegalClassName(_targetClassName) and 
 			isLegalPropertyName(_associationPropertyName) and _toleranceType <> null;
