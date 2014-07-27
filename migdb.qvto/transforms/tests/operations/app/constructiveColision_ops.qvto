@@ -10,14 +10,14 @@ main(){
 		"secondName"
 	};
 	var extractClass : APP::ops::ModelOperation  := _extractClass(
-																"Man", 
+																"Person", 
 																"identity",
 																"owningPerson",
 																"Identity", 
 																extractedPropsNames);
 	var pushedDownPropNames : OrderedSet(String) := OrderedSet{"car"};
 	var extractSubclass : APP::ops::ModelOperation := _extractSubClass(
-																	"Man", 
+																	"Person", 
 																	"Woman", 
 																	pushedDownPropNames);
 	var opsSet : OrderedSet(APP::ops::ModelOperation) := OrderedSet{

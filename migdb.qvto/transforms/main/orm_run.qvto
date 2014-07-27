@@ -45,3 +45,4 @@ query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout er
 	}endif;
 	return true;	
 }
+

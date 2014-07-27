@@ -32,3 +32,4 @@ main() {
 	new app_root_cleaner(outStructure, cleanStructure).transform();
 	
 }
+

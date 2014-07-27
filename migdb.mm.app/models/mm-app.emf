@@ -243,22 +243,27 @@ package app {
   	   ref StandardClass[1] source;   
   	   ref StandardClass[1] reflection;
   	   readonly derived ref Diff[1]#classPairs owningDiff;
-  	   ref PropertyPair [*] underlyingPairs;
+  	   ref PropertyPair [*]#owningClassPair underlyingPairs;
   	}
   	
   	abstract class ModifyingClassPair extends ClassPair{
   	}
   	
   	abstract class ConstructiveClassPair extends ClassPair{
+  		ref ReplacingClassPair [1] sourceReplacingPair;
   	}
   	
   	abstract class DestructiveClassPair extends ClassPair{
+  		ref ReplacingClassPair [1] reflectionReplacingPair;
   	}
   	
-  	class EqualClassPair extends ModifyingClassPair{   
+  	abstract class ReplacingClassPair extends ClassPair{
   	}
   	
-  	class RenameClassPair extends ModifyingClassPair{
+  	class EqualClassPair extends ReplacingClassPair{   
+  	}
+  	
+  	class RenameClassPair extends ReplacingClassPair{
   	}
   	
   	class AddParentPair extends ModifyingClassPair{
@@ -293,12 +298,28 @@ package app {
   	   inlineClass = 7;
   	}
   	
-  	class PropertyPair{
+  	abstract class PropertyPair{
   	   ref Property[1] source;
   	   ref Property[1] reflection;
-  	   attr PropertyRelation[1] relation;
   	   readonly derived ref Diff[1]#propertyPairs owningDiff;
-  	   ref ClassPair [?] owningClassPair; 
+  	}
+ 	
+ 	abstract class ReplacingPropertyPair extends PropertyPair{
+ 	   readonly derived ref ClassPair [1]#underlyingPairs owningClassPair; 
+ 	}
+ 	
+ 	class EqualPropertyPair extends ReplacingPropertyPair{
+ 	}
+ 	
+ 	class RenamePropertyPair extends ReplacingPropertyPair{
+ 	}
+ 	
+ 	class PullUpPropertyPair extends PropertyPair{
+ 	   
+ 	}
+ 	
+ 	class PushDownPropertyPair extends PropertyPair{
+ 	   
  	}
   	
   	class DiffClass{
@@ -312,13 +333,13 @@ package app {
   	   ref Property prop;
   	   readonly derived ref Diff[?]#addedProperties owningAddedDiff;
   	   readonly derived ref Diff[?]#removedProperties owningRemovedDiff;
-  	   
   	}
   	
   	enum PropertyRelation{
   	   equalInEqual = 0;
-  	   equalInSimilar = 1;
-  	   similarInEqual = 2;
+  	   renameProperty = 1;
+  	   pullUpProperty = 2;
+  	   pushDownProperty = 3;
   	}
   }
   

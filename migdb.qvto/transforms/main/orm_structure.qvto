@@ -4,7 +4,6 @@ import queries_rdb;
 import builder_errors;
 import name_service_app;
 import text_service;
-// imported because of toRdbType(APP::TYPE) RDB::Type
 import orm;
 
 modeltype APP uses "http://www.collectionspro.eu/jam/mm/app";
@@ -406,3 +405,4 @@ query APP::StandardClass::getMappedClassSet() : OrderedSet(StandardClass){
 query rdb::Table::getPKColumn():rdb::Column{
 	return self.columns->selectOne(col | col.name = getDbIdColumnName(self.name));
 }
+

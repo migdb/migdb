@@ -31,7 +31,7 @@ var EMPTY_ERRORS_FILE = "${QVTO_DIR}/tests/errors/empty_errors.qvto"
 
 /**
  * This TestWorkflow is special one - it contains sequences of operations that can have more than one 
- * ordering - eg nonDeterministic tests can fail, but there is part necessary that shouldn't fail 
+ * ordering - eg deterministic tests can fail, but there is part necessary that shouldn't fail 
  * - eg recognised operations are leading to target model.
  */
 TestWorkflow {
@@ -58,6 +58,7 @@ TestWorkflow {
 		outputSlot = "${EMPTY_ERRORS_SLOT}"
 	}
 	
+	/**	deterministic Test   */
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/020_ConstructiveColision"
@@ -65,7 +66,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/matcher_similarity_target1.qvto"
 		qvtComparison = ""
 		qvtComparison = "${COMPARISON_OPS}/constructiveColision_ops.qvto"
-		testDescription = "Rename, extractSubclass, extractClass - nonDeterministic, can fail"
+		testDescription = "Rename, extractSubclass, extractClass - deterministic, can fail"
 	}
 
 	/** PART SAME for each test, can be almost copy pasted - except test description part*/	
@@ -90,6 +91,7 @@ TestWorkflow {
 		testDescription = "Rename, extractSubclass, extractClass - ERRORS necessary part"
 	}
 
+	/**	indeterministic Test   */
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUTPUT_BASE_DIR}/021_DestructiveColision"
@@ -97,7 +99,7 @@ TestWorkflow {
 		qvtInput = "${IN_STR}/matcher_similarity_source1.qvto"
 		qvtComparison = ""
 		qvtComparison = "${COMPARISON_OPS}/destructiveColision_ops.qvto"
-		testDescription = "Rename, CollapseHierarchy, InlineClass - nonDeterministic, can fail"
+		testDescription = "Rename, CollapseHierarchy, InlineClass - indeterministic, can fail"
 	}
 	
 	/** PART SAME for each test, can be almost copy pasted - except test description part*/
@@ -120,8 +122,5 @@ TestWorkflow {
 		testedURI = "${OUT_ERRORS_SLOT_NAME}"
 		resultURI = "${EMPTY_ERRORS_SLOT}"
 		testDescription = "Rename, CollapseHierarchy, InlineClass - ERRORS necessary part"
-	}
-
-
-		
+	}		
 }

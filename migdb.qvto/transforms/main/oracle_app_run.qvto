@@ -630,3 +630,4 @@ helper getAssociationPropertyOppositeDiffVal() : Integer{
 helper getClassNameDiffVal() : Integer{
 	return getDiffConstUnit();
 }
+

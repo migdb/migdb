@@ -299,11 +299,19 @@
       <eClassifiers xsi:type="ecore:EClass" name="ModifyingClassPair" abstract="true"
           eSuperTypes="#//app/diff/ClassPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="ConstructiveClassPair" abstract="true"
-          eSuperTypes="#//app/diff/ClassPair"/>
+          eSuperTypes="#//app/diff/ClassPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="sourceReplacingPair"
+            lowerBound="1" eType="#//app/diff/ReplacingClassPair"/>
+      </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="DestructiveClassPair" abstract="true"
+          eSuperTypes="#//app/diff/ClassPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="reflectionReplacingPair"
+            lowerBound="1" eType="#//app/diff/ReplacingClassPair"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ReplacingClassPair" abstract="true"
           eSuperTypes="#//app/diff/ClassPair"/>
-      <eClassifiers xsi:type="ecore:EClass" name="EqualClassPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
-      <eClassifiers xsi:type="ecore:EClass" name="RenameClassPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="EqualClassPair" eSuperTypes="#//app/diff/ReplacingClassPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="RenameClassPair" eSuperTypes="#//app/diff/ReplacingClassPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="AddParentPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="RemoveParentPair" eSuperTypes="#//app/diff/ModifyingClassPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="ExtractSubclassPair" eSuperTypes="#//app/diff/ConstructiveClassPair"/>
@@ -329,17 +337,23 @@
         <eLiterals name="collapseHierarchy" value="6"/>
         <eLiterals name="inlineClass" value="7"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="PropertyPair">
+      <eClassifiers xsi:type="ecore:EClass" name="PropertyPair" abstract="true">
         <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
             eType="#//app/Property"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
             eType="#//app/Property"/>
-        <eStructuralFeatures xsi:type="ecore:EAttribute" name="relation" lowerBound="1"
-            eType="#//app/diff/PropertyRelation"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/propertyPairs"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="owningClassPair" eType="#//app/diff/ClassPair"/>
       </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="ReplacingPropertyPair" abstract="true"
+          eSuperTypes="#//app/diff/PropertyPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningClassPair" lowerBound="1"
+            eType="#//app/diff/ClassPair" changeable="false" derived="true" eOpposite="#//app/diff/ClassPair/underlyingPairs"/>
+      </eClassifiers>
+      <eClassifiers xsi:type="ecore:EClass" name="EqualPropertyPair" eSuperTypes="#//app/diff/ReplacingPropertyPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="RenamePropertyPair" eSuperTypes="#//app/diff/ReplacingPropertyPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="PullUpPropertyPair" eSuperTypes="#//app/diff/PropertyPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="PushDownPropertyPair" eSuperTypes="#//app/diff/PropertyPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="DiffClass">
         <eStructuralFeatures xsi:type="ecore:EReference" name="cls" lowerBound="1"
             eType="#//app/StandardClass"/>
@@ -357,8 +371,9 @@
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="PropertyRelation">
         <eLiterals name="equalInEqual"/>
-        <eLiterals name="equalInSimilar" value="1"/>
-        <eLiterals name="similarInEqual" value="2"/>
+        <eLiterals name="renameProperty" value="1"/>
+        <eLiterals name="pullUpProperty" value="2"/>
+        <eLiterals name="pushDownProperty" value="3"/>
       </eClassifiers>
     </eSubpackages>
   </eSubpackages>

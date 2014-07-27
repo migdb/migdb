@@ -111,3 +111,4 @@ query getCollectionTableName(propertyName : String, owningClassName : String) : 
 query getDbIdColumnName(tableName : String) : String{
 	return getDbIdPrefix() + tableName;
 }
+

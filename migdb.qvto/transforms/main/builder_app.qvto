@@ -702,3 +702,4 @@ helper _diffClass(_cls : StandardClass) : APP::diff::DiffClass{
 		cls := _cls;
 	}
 }
+

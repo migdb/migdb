@@ -1,27 +1,3 @@
-/*
- * The MIT License
- * 
- * Copyright (c) 2010-2014 MigDB team [https://github.com/migdb/migdb/wiki]
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * 
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- * 
- */
 library queries_diff;
 
 import queries_app;
@@ -29,48 +5,73 @@ import builder_app;
 
 modeltype APP uses 'http://www.collectionspro.eu/jam/mm/app';
 
+helper APP::diff::ClassRelation::isReplacingRelation() : Boolean{
+	return self = APP::diff::ClassRelation::equal or 
+			self = APP::diff::ClassRelation::renameEntity;
+}
+
 helper APP::diff::ClassPair::isReplacingPair() : Boolean{
 	return self.oclIsKindOf(APP::diff::EqualClassPair) or 
 			self.oclIsKindOf(APP::diff::RenameClassPair);
 }
 
-helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation) : APP::diff::ClassPair{
+helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation, replacingPair : APP::diff::ReplacingClassPair) : APP::diff::ClassPair{
 	var classPair : APP::diff::ClassPair;
+	if(_relation.isReplacingRelation()) then{
+		assert(false);
+		return null;
+	}endif;
+	
 	if(_relation = APP::diff::ClassRelation::extractClass)then{
 		 classPair := object app::diff::ExtractClassPair{
 														source := sourceClass;
 														reflection := targetClass;
+														sourceReplacingPair := replacingPair;
 		}; 
-	}else if(_relation = APP::diff::ClassRelation::equal)then{	
-		classPair := object app::diff::EqualClassPair{
-													source := sourceClass;
-													reflection := targetClass;
-		};
 	}else if(_relation = APP::diff::ClassRelation::extractSubClass)then{
 		classPair := object app::diff::ExtractSubclassPair{
 														source := sourceClass;
 														reflection := targetClass;
+														sourceReplacingPair := replacingPair;
 		};
 	}else if(_relation = APP::diff::ClassRelation::inlineClass)then{
 		classPair := object app::diff::InlineClassPair{
 												source := sourceClass;
 												reflection := targetClass;
+												reflectionReplacingPair := replacingPair;
 		};
 	}else if(_relation = APP::diff::ClassRelation::collapseHierarchy)then{
 		classPair := object app::diff::CollapseHierarchyPair{
 												source := sourceClass;
 												reflection := targetClass;
+												reflectionReplacingPair := replacingPair;
 		};
-	}else if(_relation = APP::diff::ClassRelation::renameEntity)then{
+	}endif
+	endif
+	endif
+	endif;
+	diff.classPairs+= classPair; 
+	return classPair;
+}
+
+helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : StandardClass, _relation : APP::diff::ClassRelation) : APP::diff::ClassPair{
+	var classPair : APP::diff::ClassPair;
+	if(not _relation.isReplacingRelation())then{
+		assert(false);
+		return null;
+	}endif;
+	
+	if(_relation = APP::diff::ClassRelation::equal)then{	
+		classPair := object app::diff::EqualClassPair{
+													source := sourceClass;
+													reflection := targetClass;
+		};
+	} else if(_relation = APP::diff::ClassRelation::renameEntity)then{
 		classPair := object app::diff::RenameClassPair{
 												source := sourceClass;
 												reflection := targetClass;
 		};
 	}endif 
-	endif 
-	endif 
-	endif 
-	endif
 	endif;
 	diff.classPairs+= classPair; 
 	return classPair;
@@ -86,14 +87,18 @@ helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, target
 	return propertyPair;
 }
 
-query Diff::getSourceReplacementPair(replacedSource : StandardClass) : APP::diff::ClassPair{
-	return self.classPairs->selectOne(replacedPair | replacedPair.source = replacedSource and 
-														replacedPair.isReplacingPair());
+query Diff::getSourceReplacementPair(replacedSource : StandardClass) : APP::diff::ReplacingClassPair{
+	var pair : APP::diff::ClassPair := self.classPairs->selectOne(replacedPair | 
+													replacedPair.source = replacedSource and 
+													replacedPair.isReplacingPair());
+	return pair.oclAsType(APP::diff::ReplacingClassPair);
 }
 
-query Diff::getReflectionReplacementPair(replacedReflection : StandardClass) : APP::diff::ClassPair{
-	return self.classPairs->selectOne(replacedPair | replacedPair.reflection = replacedReflection 
-														and replacedPair.isReplacingPair());
+query Diff::getReflectionReplacementPair(replacedReflection : StandardClass) : APP::diff::ReplacingClassPair{
+	var pair : APP::diff::ClassPair := self.classPairs->selectOne(replacedPair | 
+												replacedPair.reflection = replacedReflection and 
+												replacedPair.isReplacingPair());
+	return pair.oclAsType(APP::diff::ReplacingClassPair);
 }
 
 helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPair : APP::diff::PropertyPair){
@@ -115,9 +120,9 @@ helper APP::diff::ExtractClassPair::recognizeOperation(inout operations : Operat
 	var extractedPropertyNames : OrderedSet(String) := self.underlyingPairs->
 															collect(source.name)->
 															toStringOrderedSet();
-	var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
+	var sourceReplacingCls : StandardClass := self.sourceReplacingPair.reflection;
 	operations.operations += _extractClass(
-										sourceClass.name,
+										sourceReplacingCls.name,
 										self.link.name,
 										self.link.oppositeProperty.name,
 										self.reflection.name,
@@ -131,9 +136,9 @@ helper APP::diff::ExtractSubclassPair::recognizeOperation(inout operations : Ope
 	var extractedPropertyNames : OrderedSet(String) := self.underlyingPairs->
 															collect(source.name)->
 															toStringOrderedSet();
-	var equalClsTargetModel : StandardClass := targetModel.findStandardClass(sourceClass.name);
+	var sourceReplacingCls : StandardClass := self.sourceReplacingPair.reflection;
 	operations.operations += _extractSubClass(
-											sourceClass.name,
+											sourceReplacingCls.name,
 											self.reflection.name,
 											extractedPropertyNames);
 	return;
@@ -174,8 +179,8 @@ helper APP::diff::CollapseHierarchyPair::recognizeOperation(inout operations : O
 
 helper APP::diff::RenameClassPair::recognizeOperation(inout operations : Operations){
 	operations.operations += _renameEntity(
-												self.source.name,
-												self.reflection.name);
+										self.source.name,
+										self.reflection.name);
 	return;
 }
 
@@ -205,3 +210,4 @@ helper Collection(String)::toStringOrderedSet() : OrderedSet(String){
 	};
 	return stringSet;
 } 
+

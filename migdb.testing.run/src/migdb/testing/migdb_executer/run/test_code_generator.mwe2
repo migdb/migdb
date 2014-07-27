@@ -19,135 +19,182 @@ import migdb.mm.app.*
 import migdb.mm.errors.*
 
 var QVTO_DIR = "../migdb.qvto/transforms"
-var OUTPUT_BASE_DIR = "output-tests/code_gen"
+var OUTPUT_BASE_DIR = "output-tests/gen_SQL"
 var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
 var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
 //rdb ops output slot of TestingComponent
+//needed for generating SQL from operations
 var RDB_OPS_SLOT = "RESULT_2"
+//rdb schema output slot needed for schema generating component 
+var RDB_STRUCTURE_SLOT = "RESULT_0"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/migdb_executer.qvto"
+var ORM_TRANSFORMATION = "${QVTO_DIR}/main/orm_structure_run.qvto"
 
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
 var EMPTY_ERRORS = "${COMPARE_ERRORS_DIR}/empty_errors.qvto"
+
+var SCHEMA_FILE_STRING = "schema"
 
 var ADD_CLASS_STRING = "001_addClass"
 var OUT_DIR_ADD_CLASS = "${OUTPUT_BASE_DIR}/${ADD_CLASS_STRING}"
 
 var ADD_PROPERTY_STRING = "002_addProperty"
 var OUT_DIR_ADD_PROPERTY = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_STRING}"
+var OUT_DIR_ADD_PROPERTY_SCHEMA = "${OUT_DIR_ADD_PROPERTY}/schema"
 
 var ADD_PROPERTY_B_STRING = "002b_addProperty"
 var OUT_DIR_ADD_PROPERTY_B = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_B_STRING}"
+var OUT_DIR_ADD_PROPERTY_B_SCHEMA = "${OUT_DIR_ADD_PROPERTY_B}/schema"
+
 
 var ADD_PROPERTY_C_STRING = "002c_addProperty"
 var OUT_DIR_ADD_PROPERTY_C = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_C_STRING}"
+var OUT_DIR_ADD_PROPERTY_C_SCHEMA = "${OUT_DIR_ADD_PROPERTY_C}/schema"
 
 var ADD_PROPERTY_D_STRING = "002d_addProperty"
 var OUT_DIR_ADD_PROPERTY_D = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_D_STRING}"
+var OUT_DIR_ADD_PROPERTY_D_SCHEMA = "${OUT_DIR_ADD_PROPERTY_D}/schema"
+
 
 var ADD_PROPERTY_E_STRING = "002e_addProperty"
 var OUT_DIR_ADD_PROPERTY_E = "${OUTPUT_BASE_DIR}/${ADD_PROPERTY_E_STRING}"
+var OUT_DIR_ADD_PROPERTY_E_SCHEMA = "${OUT_DIR_ADD_PROPERTY_E}/schema"
 
 var RENAME_ENTITY_STRING = "003_renameEntity"
 var OUT_DIR_RENAME_ENTITY = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_STRING}"
+var OUT_DIR_RENAME_ENTITY_SCHEMA = "${OUT_DIR_RENAME_ENTITY}/schema"
 
 var RENAME_ENTITY_B_STRING = "003b_renameEntity"
 var OUT_DIR_RENAME_ENTITY_B = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_B_STRING}"
+var OUT_DIR_RENAME_ENTITY_B_SCHEMA = "${OUT_DIR_RENAME_ENTITY_B}/schema"
 
 var RENAME_ENTITY_C_STRING = "003c_renameEntity"
 var OUT_DIR_RENAME_ENTITY_C = "${OUTPUT_BASE_DIR}/${RENAME_ENTITY_C_STRING}"
+var OUT_DIR_RENAME_ENTITY_C_SCHEMA = "${OUT_DIR_RENAME_ENTITY_C}/schema"
 
 var REMOVE_ENTITY_STRING = "004_removeEntity"
 var OUT_DIR_REMOVE_ENTITY = "${OUTPUT_BASE_DIR}/${REMOVE_ENTITY_STRING}"
+var OUT_DIR_REMOVE_ENTITY_SCHEMA = "${OUT_DIR_REMOVE_ENTITY}/schema"
 
 var RENAME_PROPERTY_STRING = "005_renameProperty"
 var OUT_DIR_RENAME_PROPERTY = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_STRING}"
+var OUT_DIR_RENAME_PROPERTY_SCHEMA = "${OUT_DIR_RENAME_PROPERTY}/schema"
 
 var RENAME_PROPERTY_B_STRING = "005b_renameProperty"
 var OUT_DIR_RENAME_PROPERTY_B = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_B_STRING}"
+var OUT_DIR_RENAME_PROPERTY_B_SCHEMA = "${OUT_DIR_RENAME_PROPERTY_B}/schema"
 
 var RENAME_PROPERTY_C_STRING = "005c_renameProperty"
 var OUT_DIR_RENAME_PROPERTY_C = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_C_STRING}"
+var OUT_DIR_RENAME_PROPERTY_C_SCHEMA = "${OUT_DIR_RENAME_PROPERTY_C}/schema"
 
 var RENAME_PROPERTY_D_STRING = "005d_renameProperty"
 var OUT_DIR_RENAME_PROPERTY_D = "${OUTPUT_BASE_DIR}/${RENAME_PROPERTY_D_STRING}"
+var OUT_DIR_RENAME_PROPERTY_D_SCHEMA = "${OUT_DIR_RENAME_PROPERTY_D}/schema"
 
 var REMOVE_PROPERTY_STRING = "006_removeProperty"
 var OUT_DIR_REMOVE_PROPERTY = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_STRING}"
+var OUT_DIR_REMOVE_PROPERTY_SCHEMA = "${OUT_DIR_REMOVE_PROPERTY}/schema"
 
 var REMOVE_PROPERTY_B_STRING = "006b_removeProperty"
 var OUT_DIR_REMOVE_PROPERTY_B = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_B_STRING}"
+var OUT_DIR_REMOVE_PROPERTY_B_SCHEMA = "${OUT_DIR_REMOVE_PROPERTY_B}/schema"
 
 var REMOVE_PROPERTY_C_STRING = "006c_removeProperty"
 var OUT_DIR_REMOVE_PROPERTY_C = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_C_STRING}"
+var OUT_DIR_REMOVE_PROPERTY_C_SCHEMA = "${OUT_DIR_REMOVE_PROPERTY_C}/schema"
 
 var REMOVE_PROPERTY_D_STRING = "006d_removeProperty"
 var OUT_DIR_REMOVE_PROPERTY_D = "${OUTPUT_BASE_DIR}/${REMOVE_PROPERTY_D_STRING}"
+var OUT_DIR_REMOVE_PROPERTY_D_SCHEMA = "${OUT_DIR_REMOVE_PROPERTY_D}/schema"
 
 var PULL_UP_PROPERTIES_STRING = "007_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES}/schema"
 
 var PULL_UP_PROPERTIES_B_STRING = "007b_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES_B = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_B_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_B_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES_B}/schema"
 
 var PULL_UP_PROPERTIES_C_STRING = "007c_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES_C = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_C_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_C_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES_C}/schema"
 
 var PULL_UP_PROPERTIES_D_STRING = "007d_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES_D = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_D_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_D_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES_D}/schema"
 
 var PULL_UP_PROPERTIES_E_STRING = "007e_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES_E = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_E_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_E_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES_E}/schema"
 
 var PULL_UP_PROPERTIES_F_STRING = "007f_pullUpProperties"
 var OUT_DIR_PULL_UP_PROPERTIES_F = "${OUTPUT_BASE_DIR}/${PULL_UP_PROPERTIES_F_STRING}"
+var OUT_DIR_PULL_UP_PROPERTIES_F_SCHEMA = "${OUT_DIR_PULL_UP_PROPERTIES_F}/schema"
 
 var PUSH_DOWN_PROPERTIES_STRING = "008_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES}/schema"
 
 var PUSH_DOWN_PROPERTIES_B_STRING = "008b_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES_B = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_B_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_B_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B}/schema"
 
 var PUSH_DOWN_PROPERTIES_C_STRING = "008c_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES_C = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_C_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_C_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C}/schema"
 
 var PUSH_DOWN_PROPERTIES_D_STRING = "008d_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES_D = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_D_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_D_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D}/schema"
 
 var PUSH_DOWN_PROPERTIES_E_STRING = "008e_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES_E = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_E_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_E_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E}/schema"
 
 var PUSH_DOWN_PROPERTIES_F_STRING = "008f_pushDownProperties"
 var OUT_DIR_PUSH_DOWN_PROPERTIES_F = "${OUTPUT_BASE_DIR}/${PUSH_DOWN_PROPERTIES_F_STRING}"
+var OUT_DIR_PUSH_DOWN_PROPERTIES_F_SCHEMA = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F}/schema"
 
 var ADD_PARENT_STRING = "009_addParent"
 var OUT_DIR_ADD_PARENT = "${OUTPUT_BASE_DIR}/${ADD_PARENT_STRING}"
+var OUT_DIR_ADD_PARENT_SCHEMA = "${OUT_DIR_ADD_PARENT}/schema"
 
 var ADD_PARENT_B_STRING = "009b_addParent"
 var OUT_DIR_ADD_PARENT_B = "${OUTPUT_BASE_DIR}/${ADD_PARENT_B_STRING}"
+var OUT_DIR_ADD_PARENT_B_SCHEMA = "${OUT_DIR_ADD_PARENT_B}/schema"
 
 var ADD_PARENT_C_STRING = "009c_addParent"
 var OUT_DIR_ADD_PARENT_C = "${OUTPUT_BASE_DIR}/${ADD_PARENT_C_STRING}"
+var OUT_DIR_ADD_PARENT_C_SCHEMA = "${OUT_DIR_ADD_PARENT_C}/schema"
 
 var ADD_PARENT_D_STRING = "009d_addParent"
 var OUT_DIR_ADD_PARENT_D = "${OUTPUT_BASE_DIR}/${ADD_PARENT_D_STRING}"
+var OUT_DIR_ADD_PARENT_D_SCHEMA = "${OUT_DIR_ADD_PARENT_D}/schema"
 
 var ADD_PARENT_E_STRING = "009e_addParent"
 var OUT_DIR_ADD_PARENT_E = "${OUTPUT_BASE_DIR}/${ADD_PARENT_E_STRING}"
+var OUT_DIR_ADD_PARENT_E_SCHEMA = "${OUT_DIR_ADD_PARENT_E}/schema"
 
 var REMOVE_PARENT_STRING = "010_removeParent"
 var OUT_DIR_REMOVE_PARENT = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_STRING}"
+var OUT_DIR_REMOVE_PARENT_SCHEMA = "${OUT_DIR_REMOVE_PARENT}/schema"
 
 var REMOVE_PARENT_B_STRING = "010b_removeParent"
 var OUT_DIR_REMOVE_PARENT_B = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_B_STRING}"
+var OUT_DIR_REMOVE_PARENT_B_SCHEMA = "${OUT_DIR_REMOVE_PARENT_B}/schema"
 
 var REMOVE_PARENT_C_STRING = "010c_removeParent"
 var OUT_DIR_REMOVE_PARENT_C = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_C_STRING}"
+var OUT_DIR_REMOVE_PARENT_C_SCHEMA = "${OUT_DIR_REMOVE_PARENT_C}/schema"
 
 var REMOVE_PARENT_D_STRING = "010d_removeParent"
 var OUT_DIR_REMOVE_PARENT_D = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_D_STRING}"
+var OUT_DIR_REMOVE_PARENT_D_SCHEMA = "${OUT_DIR_REMOVE_PARENT_D}/schema"
 
 var REMOVE_PARENT_E_STRING = "010e_removeParent"
 var OUT_DIR_REMOVE_PARENT_E = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_E_STRING}"
+var OUT_DIR_REMOVE_PARENT_E_SCHEMA = "${OUT_DIR_REMOVE_PARENT_E}/schema"
 
 /** This workflow uses TestingComponent as a "shortcut" to get results of migdb_executer 
  *  transformation and then execute code generation. This workflow wasn't designed to 
@@ -178,7 +225,8 @@ TestWorkflow{
 		platformUri=".."
 		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
-		
+	
+	//No Schema - Primitive class Int has no reflection	in Db
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_ADD_CLASS}"
@@ -201,19 +249,40 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_ADD_CLASS}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_SCHEMA}"
+	}
+	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_ADD_PROPERTY}"
 		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
 		qvtInput = "${IN_APP_OPS}/addProperty1.qvto"
 		qvtComparison = ""//COMPARISONS_APP_STRUCTURE - just note
-		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
-		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
+		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES - just note
+		qvtComparison = ""//COMPARISONS_RDB_OPS - just note
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "${ADD_PROPERTY_STRING} primitive"
-	}	
-	
-/***** SQL GENERATOR *****/	
+	}
+		
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -221,6 +290,27 @@ TestWorkflow{
 			filename = "${ADD_PROPERTY_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PROPERTY}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_B_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_B_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -235,7 +325,7 @@ TestWorkflow{
 		testDescription = "${ADD_PROPERTY_B_STRING} - association property to standard class"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -243,6 +333,27 @@ TestWorkflow{
 			filename = "${ADD_PROPERTY_B_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PROPERTY_B}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_C_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_C_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -257,7 +368,7 @@ TestWorkflow{
 		testDescription = "${ADD_PROPERTY_C_STRING} - association property UB = -1 to standard class"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -265,6 +376,27 @@ TestWorkflow{
 			filename = "${ADD_PROPERTY_C_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PROPERTY_C}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_D_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/addPropertyOrm.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_D_SCHEMA}"
 	}
 
 	component = TestComponent{
@@ -279,7 +411,7 @@ TestWorkflow{
 		testDescription = "${ADD_PROPERTY_D_STRING} - association UX, ORD property to standard class"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -287,6 +419,27 @@ TestWorkflow{
 			filename = "${ADD_PROPERTY_D_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PROPERTY_D}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PROPERTY_E_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_hierarchy.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PROPERTY_E_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -301,7 +454,7 @@ TestWorkflow{
 		testDescription = "${ADD_PROPERTY_E_STRING} - primitive UX, ORD property to standard class"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -309,6 +462,27 @@ TestWorkflow{
 			filename = "${ADD_PROPERTY_E_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PROPERTY_E}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY}"
+		qvtInput = "${IN_APP_STR}/structure_teacher_person.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY_SCHEMA}"
 	}
 		
 	component = TestComponent{
@@ -323,7 +497,7 @@ TestWorkflow{
 		testDescription = "${RENAME_ENTITY_STRING} - simple table rename"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -331,6 +505,27 @@ TestWorkflow{
 			filename = "${RENAME_ENTITY_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_RENAME_ENTITY}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY_B}"
+		qvtInput = "${IN_APP_STR}/structure_person_collection_addresses.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY_B_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -345,7 +540,7 @@ TestWorkflow{
 		testDescription = "${RENAME_ENTITY_B_STRING} - collection"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -353,6 +548,27 @@ TestWorkflow{
 			filename = "${RENAME_ENTITY_B_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_RENAME_ENTITY_B}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_ENTITY_C}"
+		qvtInput = "${IN_APP_STR}/structure_person_M_N_addresses.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_ENTITY_C_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -367,7 +583,7 @@ TestWorkflow{
 		testDescription = "${RENAME_ENTITY_C_STRING} - DB association collumn"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -377,6 +593,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_RENAME_ENTITY_C}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_ENTITY}"
+		qvtInput = "${IN_APP_STR}/structure_tab_plain.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}	
+	
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_ENTITY_SCHEMA}"
+	}
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -390,7 +626,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_ENTITY_STRING} - standardClass"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -400,6 +636,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_REMOVE_ENTITY}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY}"
+		qvtInput = "${IN_APP_STR}/structure_tab.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_SCHEMA}"
+	}
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_RENAME_PROPERTY}"
@@ -412,7 +668,7 @@ TestWorkflow{
 		testDescription = "${RENAME_PROPERTY_STRING} - PrimitiveProp"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -420,6 +676,26 @@ TestWorkflow{
 			filename = "${RENAME_PROPERTY_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_RENAME_PROPERTY}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_B}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_B_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -434,7 +710,7 @@ TestWorkflow{
 		testDescription = "${RENAME_PROPERTY_B_STRING} - unique ordered collection"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -444,6 +720,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_RENAME_PROPERTY_B}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_C}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_C_SCHEMA}"
+	}
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_C}"
@@ -456,7 +752,7 @@ TestWorkflow{
 		testDescription = "${RENAME_PROPERTY_C_STRING} - AssociationProp UB = 1 in StdCls"
 	}	
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -465,7 +761,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_RENAME_PROPERTY_C}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_D}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_RENAME_PROPERTY_D_SCHEMA}"
+	}
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_RENAME_PROPERTY_D}"
@@ -478,7 +794,7 @@ TestWorkflow{
 		testDescription = "${RENAME_PROPERTY_D_STRING} - AssociationProp UB = -1 in StdCls"		
 	}
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -488,6 +804,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_RENAME_PROPERTY_D}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY}"
@@ -500,7 +836,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PROPERTY_STRING} - plain Primitive"		
 	}
 	
-/***** SQL GENERATOR *****/	
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -509,6 +845,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_REMOVE_PROPERTY}"
 	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_B}"
+		qvtInput = "${IN_APP_STR}/structure_tab_joined_collection.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_B_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -531,6 +887,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_REMOVE_PROPERTY_B}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_C}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp2.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_C_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -554,6 +930,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_REMOVE_PROPERTY_C}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_D}"
+		qvtInput = "${IN_APP_STR}/ormRenameProp3.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PROPERTY_D_SCHEMA}"
+	}	
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_REMOVE_PROPERTY_D}"
@@ -566,6 +962,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PROPERTY_D_STRING} - association property M x N, ordered, UX"
 	}
 
+	/***** SQL GENERATOR *****/
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -574,6 +971,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_REMOVE_PROPERTY_D}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties1_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -587,6 +1004,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_STRING} - primitive"
 	}	
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -595,7 +1013,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_B}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties2_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_B_SCHEMA}"
+	}	
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_B}"
@@ -608,6 +1046,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_B_STRING} - collection"
 	}
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -616,6 +1055,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_B}"
 	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_C}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties3_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_C_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -629,6 +1088,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_C_STRING} - association 1 - M"
 	}
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -636,6 +1096,26 @@ TestWorkflow{
 			filename = "${PULL_UP_PROPERTIES_C_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_C}"
+	}
+	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_D}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties4_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_D_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -650,6 +1130,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_D_STRING} - association N - M"
 	}
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -658,6 +1139,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_D}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_E}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties5_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_E_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -671,6 +1172,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_E_STRING} - collection, UX, ORD"
 	}
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -679,6 +1181,26 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_E}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PULL_UP_PROPERTIES_F}"
+		qvtInput = "${IN_APP_STR}/pullUpProperties6_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_F_SCHEMA}"
+	}	
 	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
@@ -692,6 +1214,7 @@ TestWorkflow{
 		testDescription = "${PULL_UP_PROPERTIES_F_STRING} - association, UX, ORD"
 	}
 
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -700,7 +1223,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PULL_UP_PROPERTIES_F}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties1_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES}"
@@ -713,6 +1256,7 @@ TestWorkflow{
 		testDescription = "${PUSH_DOWN_PROPERTIES_STRING} - simple"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -720,6 +1264,26 @@ TestWorkflow{
 			filename = "${PUSH_DOWN_PROPERTIES_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties2_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -734,6 +1298,7 @@ TestWorkflow{
 		testDescription = "${PUSH_DOWN_PROPERTIES_B_STRING} - collection"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -741,6 +1306,26 @@ TestWorkflow{
 			filename = "${PUSH_DOWN_PROPERTIES_B_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_B}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties3_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -755,6 +1340,7 @@ TestWorkflow{
 		testDescription = "${PUSH_DOWN_PROPERTIES_C_STRING} - association 1 x M"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -762,6 +1348,26 @@ TestWorkflow{
 			filename = "${PUSH_DOWN_PROPERTIES_C_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_C}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties4_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -776,6 +1382,7 @@ TestWorkflow{
 		testDescription = "${PUSH_DOWN_PROPERTIES_D_STRING} - association M x N"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -784,7 +1391,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_D}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties5_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E}"
@@ -797,6 +1424,7 @@ TestWorkflow{
 		testDescription = "${PUSH_DOWN_PROPERTIES_E_STRING} - UX, ORD collection"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -805,7 +1433,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_E}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/pushDownProperties6_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F}"
@@ -817,7 +1465,8 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "${PUSH_DOWN_PROPERTIES_F_STRING} - UX, ORD association M x N"
 	}
-	
+
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -826,7 +1475,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_PUSH_DOWN_PROPERTIES_F}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/structure_tab_parent_joined.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_ADD_PARENT}"
@@ -839,6 +1508,7 @@ TestWorkflow{
 		testDescription = "${ADD_PARENT_STRING} simple adding parency FK"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -846,6 +1516,26 @@ TestWorkflow{
 			filename = "${ADD_PARENT_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PARENT}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_B_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/addParent_c.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_B_SCHEMA}"
 	}
 
 	component = TestComponent{
@@ -860,6 +1550,7 @@ TestWorkflow{
 		testDescription = "${ADD_PARENT_B_STRING} Man, Person => Man -> Person"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -869,6 +1560,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_ADD_PARENT_B}"
 	}
 
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_C_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormAddParent1_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_C_SCHEMA}"
+	}
+	
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_ADD_PARENT_C}"
@@ -881,6 +1592,7 @@ TestWorkflow{
 		testDescription = "${ADD_PARENT_C_STRING} - UX, ord primitive prop age"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -888,6 +1600,26 @@ TestWorkflow{
 			filename = "${ADD_PARENT_C_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_ADD_PARENT_C}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_D_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormAddParent2_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_D_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -901,7 +1633,8 @@ TestWorkflow{
 		qvtComparison = "${EMPTY_ERRORS}"
 		testDescription = "${ADD_PARENT_D_STRING} - assoc"
 	}
-	
+
+	/***** SQL GENERATOR *****/	
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -910,7 +1643,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_ADD_PARENT_D}"
 	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_ADD_PARENT_E_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormAddParent3_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
 	
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_ADD_PARENT_E_SCHEMA}"
+	}
+		
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_ADD_PARENT_E}"
@@ -923,6 +1676,7 @@ TestWorkflow{
 		testDescription = "${ADD_PARENT_E_STRING} - UX, ord assoc M x N"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -931,7 +1685,27 @@ TestWorkflow{
 		}
 		outputPath = "${OUT_DIR_ADD_PARENT_E}"
 	}
-	
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent1_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_REMOVE_PARENT}"
@@ -944,6 +1718,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PARENT_STRING} - simple remove Parency FK"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -953,6 +1728,26 @@ TestWorkflow{
 		outputPath = "${OUT_DIR_REMOVE_PARENT}"
 	}
 	
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_B_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent2_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_B_SCHEMA}"
+	}
+
 	component = TestComponent{
 		transformationFile = "${TEST_TRANSFORMATION}"
 		outputParentUri = "${OUT_DIR_REMOVE_PARENT_B}"
@@ -965,6 +1760,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PARENT_B_STRING} - distribute primitive atribute"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -972,6 +1768,26 @@ TestWorkflow{
 			filename = "${REMOVE_PARENT_B_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_REMOVE_PARENT_B}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_C_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent3_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_C_SCHEMA}"
 	}
 
 	component = TestComponent{
@@ -986,6 +1802,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PARENT_C_STRING} - distributed collection"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -993,6 +1810,26 @@ TestWorkflow{
 			filename = "${REMOVE_PARENT_C_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_REMOVE_PARENT_C}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_D_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent4_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_D_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -1007,6 +1844,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PARENT_D_STRING} - distributed association M x 1"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"
@@ -1014,6 +1852,26 @@ TestWorkflow{
 			filename = "${REMOVE_PARENT_D_STRING}.sql"
 		}
 		outputPath = "${OUT_DIR_REMOVE_PARENT_D}"
+	}
+
+	//test for creating schema
+	component = TestComponent{
+		transformationFile = "${ORM_TRANSFORMATION}"
+		outputParentUri = "${OUT_DIR_REMOVE_PARENT_E_SCHEMA}"
+		qvtInput = "${IN_APP_STR}/ormRemoveParent5_str.qvto"
+		qvtComparison =""//COMPARISONS_RDB_STRUCTURE - just note
+		qvtComparison ="${EMPTY_ERRORS}"
+		testDescription = "schema"
+	}
+
+	/***** Schema GENERATOR *****/	
+	component = CodeGenComponent2 {
+		withoutModel = false
+		slot = "${RDB_STRUCTURE_SLOT}"
+		generator = SchemaGenerator{
+			filename = "${SCHEMA_FILE_STRING}.sql"
+		}
+		outputPath = "${OUT_DIR_REMOVE_PARENT_E_SCHEMA}"
 	}
 	
 	component = TestComponent{
@@ -1028,6 +1886,7 @@ TestWorkflow{
 		testDescription = "${REMOVE_PARENT_E_STRING} - distributed association M x N"
 	}
 	
+	/***** SQL GENERATOR *****/		
 	component = CodeGenComponent2 {
 		withoutModel = false
 		slot = "${RDB_OPS_SLOT}"

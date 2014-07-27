@@ -15,6 +15,16 @@ library ops_recognition;
 
 property IS_DEBUG_ON : Boolean = true;
 
+/**
+	There is precedence of recognized operations. Precedence graph starts with Replaced pairs - equals. Precedence graph 
+	should correspond with apply method of each operation. In this notation on the left side is precedecor node 
+	on the right are successors. 
+	
+	replaced pairs - addClass, removeProperty, constructive operation
+	addClass - addProperty, enriching operation(addParent, removeParent)
+	addPropery - setPropertyBound, setOrdering, setUnique
+	removeProperty - removeClass, destructive operation
+**/
 helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 	var diff : Diff := inputDiff;
 	if(IS_DEBUG_ON)then{
@@ -42,6 +52,7 @@ helper recognizeOperations(inputDiff : Diff, ops : Operations) : Operations{
 	diff.removedProperties->forEach(diffProp){
 		processRemoveProperty(diffProp, ops);
 	};
+	
 	diff.removedClasses->forEach(diffCls){
 		processRemoveClass(diffCls, ops);
 	};
@@ -209,3 +220,4 @@ helper enrichReflectionProp(propPair : APP::diff::PropertyPair, inout operations
 	operations.operations;
 	return;
 }
+

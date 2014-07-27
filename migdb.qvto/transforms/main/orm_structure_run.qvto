@@ -15,3 +15,4 @@ main() {
 	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	inAppStructure.rootObjects()![APP::Structure].toRdb(errors.rootObjects()![ErrorLog]);	 
 }
+

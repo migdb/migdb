@@ -7,3 +7,4 @@ transformation creator_app_operations(out inStructure : APP);
 main() {
 	_appOperations(OrderedSet{});	 
 }
+

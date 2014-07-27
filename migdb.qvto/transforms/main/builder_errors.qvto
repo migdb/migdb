@@ -42,3 +42,4 @@ helper _ormError(_message : String, _transformationIdentifier : String) : OrmErr
 		transformationId := _transformationIdentifier;
 	};
 }
+

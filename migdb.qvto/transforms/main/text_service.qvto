@@ -120,3 +120,4 @@ query isLegalPropertyName(name : String) : Boolean {
 query isLegalString(testedString : String) : Boolean{
 	return testedString <> "" and testedString <> null;
 }
+
