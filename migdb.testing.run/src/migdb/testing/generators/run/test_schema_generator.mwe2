@@ -18,10 +18,12 @@ import migdb.generator.SchemaGenerator
 
 var QVTO_DIR = "../migdb.qvto/transforms"
 var RDB_STR_DIR = "${QVTO_DIR}/tests/comparisons_orm_structure"
-var OUT_DIR = "output-tests/schemaSchemaGenerator/"
 var RDB_STRUCTURES_SLOT = "RESULT_0"
 
 var OUTPUT_BASE_DIR = "output-tests/schema_gen/"
+
+var RANDOM_TEST_STRING = "random_test"
+var OUT_RANDOM_TEST = "${OUTPUT_BASE_DIR}/${RANDOM_TEST_STRING}"
 
 var ADD_CLASS_STRING = "001_addClass"
 var OUT_DIR_ADD_CLASS = "${OUTPUT_BASE_DIR}/${ADD_CLASS_STRING}"
@@ -143,7 +145,6 @@ var OUT_DIR_REMOVE_PARENT_D = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_D_STRING}"
 var REMOVE_PARENT_E_STRING = "010e_removeParent"
 var OUT_DIR_REMOVE_PARENT_E = "${OUTPUT_BASE_DIR}/${REMOVE_PARENT_E_STRING}"
 
-var IN_APP_OPS = "${QVTO_DIR}/tests/operations/app"
 var IN_APP_STR = "${QVTO_DIR}/tests/structures/app"
 var TEST_TRANSFORMATION = "${QVTO_DIR}/main/orm_structure_run.qvto"
 var COMPARE_ERRORS_DIR = "${QVTO_DIR}/tests/errors"
@@ -173,11 +174,13 @@ TestWorkflow{
 		platformUri=".."
 		registerGeneratedEPackage = "mm.errors.ErrorsPackage"
 	}
+	
+	//"any" db model
 	component = TestComponent{
 		transformationFile = "${RDB_STR_DIR}/structure_tab_joined_hierarchy_required.qvto"
 		qvtComparison =""
-		outputParentUri = "${OUTPUT_BASE_DIR}/random_test"
-		testDescription = "TEST structure generation"
+		outputParentUri = "${OUT_RANDOM_TEST}"
+		testDescription = "${RANDOM_TEST_STRING}"
 	}	
 	
 	/***** SQL GENERATOR *****/	
@@ -187,7 +190,7 @@ TestWorkflow{
 		generator = SchemaGenerator{
 			filename = "test.sql"
 		}
-		outputPath = "${OUT_DIR}"
+		outputPath = "${OUT_RANDOM_TEST}"
 	}
 	
 	component = TestComponent{

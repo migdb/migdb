@@ -83,9 +83,19 @@ class SchemaGenerator extends BaseCodeGenerator {
 			}	
 		}
 
+
 		for(TableConstraint constraint : constraints){
-			this.write(constraint.genSQL)
+			if(constraint instanceof PrimaryKeyImpl){
+				this.write(constraint.genSQL)
+			}
 		}
+		
+		for(TableConstraint constraint : constraints){
+			if(!(constraint instanceof PrimaryKeyImpl)){
+				this.write(constraint.genSQL)
+			}
+		}
+		
 	}
 	
 	/**
@@ -131,17 +141,20 @@ class SchemaGenerator extends BaseCodeGenerator {
 	def dispatch genSQL(ForeignKeyImpl foreignKey)'''
 		ALTER TABLE «foreignKey.owningTable.name» ADD CONSTRAINT «foreignKey.name»
 		   FOREIGN KEY («foreignKey.constrainedColumn.name») 
-		        REFERENCES «foreignKey.targetTable.name»(id_«foreignKey.targetTable.name»);
+		        REFERENCES «foreignKey.targetTable.name»(id_«foreignKey.targetTable.name»
+		);
 	'''
 
 	def dispatch genSQL(PrimaryKeyImpl primaryKey)'''
-		ALTER TABLE «primaryKey.owningTable.name» ADD CONSTRAINT «primaryKey.name» PRIMARY KEY («primaryKey.constrainedColumn.name»);
+		ALTER TABLE «primaryKey.owningTable.name» ADD CONSTRAINT «primaryKey.name» PRIMARY KEY («primaryKey.constrainedColumn.name»
+		);
 	'''
 
 	def dispatch genSQL(UniqueImpl unique)'''
 		ALTER TABLE «unique.owningTable.name» ADD CONSTRAINT «unique.name» 
 			UNIQUE («FOR column : unique.uniqueColumns SEPARATOR ","»
 				«column.name»
-			«ENDFOR»);
+			«ENDFOR»
+		);
 	'''
 }

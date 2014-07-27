@@ -96,8 +96,17 @@ public class SchemaGenerator extends BaseCodeGenerator {
         }
       }
       for (final TableConstraint constraint : constraints) {
-        CharSequence _genSQL_1 = this.genSQL(constraint);
-        this.write(_genSQL_1);
+        if ((constraint instanceof PrimaryKeyImpl)) {
+          CharSequence _genSQL_1 = this.genSQL(constraint);
+          this.write(_genSQL_1);
+        }
+      }
+      for (final TableConstraint constraint_1 : constraints) {
+        boolean _operator_not = BooleanExtensions.operator_not((constraint_1 instanceof PrimaryKeyImpl));
+        if (_operator_not) {
+          CharSequence _genSQL_2 = this.genSQL(constraint_1);
+          this.write(_genSQL_2);
+        }
       }
   }
   
@@ -250,8 +259,9 @@ public class SchemaGenerator extends BaseCodeGenerator {
     Table _targetTable_1 = foreignKey.getTargetTable();
     String _name_4 = _targetTable_1.getName();
     _builder.append(_name_4, "        ");
-    _builder.append(");");
     _builder.newLineIfNotEmpty();
+    _builder.append(");");
+    _builder.newLine();
     return _builder;
   }
   
@@ -268,8 +278,9 @@ public class SchemaGenerator extends BaseCodeGenerator {
     Column _constrainedColumn = primaryKey.getConstrainedColumn();
     String _name_2 = _constrainedColumn.getName();
     _builder.append(_name_2, "");
-    _builder.append(");");
     _builder.newLineIfNotEmpty();
+    _builder.append(");");
+    _builder.newLine();
     return _builder;
   }
   
@@ -300,11 +311,10 @@ public class SchemaGenerator extends BaseCodeGenerator {
         String _name_2 = column.getName();
         _builder.append(_name_2, "	");
         _builder.newLineIfNotEmpty();
-        _builder.append("\t\t\t");
       }
     }
     _builder.append(");");
-    _builder.newLineIfNotEmpty();
+    _builder.newLine();
     return _builder;
   }
   
