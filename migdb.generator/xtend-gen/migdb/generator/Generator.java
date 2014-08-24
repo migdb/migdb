@@ -850,18 +850,27 @@ public class Generator extends BaseCodeGenerator {
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t\t\t\t\t\t");
     _builder.append("(SELECT ");
-    String _sourceColumnName = op.getSourceColumnName();
-    _builder.append(_sourceColumnName, "							");
-    _builder.append(" FROM ");
     String _owningSchemaName_1 = op.getOwningSchemaName();
     _builder.append(_owningSchemaName_1, "							");
     _builder.append(".");
     String _sourceTableName = op.getSourceTableName();
     _builder.append(_sourceTableName, "							");
+    _builder.append(".");
+    String _sourceColumnName = op.getSourceColumnName();
+    _builder.append(_sourceColumnName, "							");
+    _builder.append(" FROM ");
+    String _owningSchemaName_2 = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName_2, "							");
+    _builder.append(".");
+    String _sourceTableName_1 = op.getSourceTableName();
+    _builder.append(_sourceTableName_1, "							");
     _builder.append(" WHERE ");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t\t\t\t\t     ");
     String _whereCondition = op.getWhereCondition();
-    _builder.append(_whereCondition, "							");
+    _builder.append(_whereCondition, "							     ");
     _builder.append(" );");
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   
@@ -877,6 +886,12 @@ public class Generator extends BaseCodeGenerator {
     String _tableName = op.getTableName();
     _builder.append(_tableName, "");
     _builder.append(" SET ");
+    String _owningSchemaName_1 = op.getOwningSchemaName();
+    _builder.append(_owningSchemaName_1, "");
+    _builder.append(".");
+    String _tableName_1 = op.getTableName();
+    _builder.append(_tableName_1, "");
+    _builder.append(".");
     String _columnName = op.getColumnName();
     _builder.append(_columnName, "");
     _builder.append(" = ");
@@ -886,6 +901,7 @@ public class Generator extends BaseCodeGenerator {
     String _whereCondition = op.getWhereCondition();
     _builder.append(_whereCondition, "							");
     _builder.append(" ;");
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   
@@ -907,9 +923,9 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(_targetTableName, "");
     _builder.append(" (");
     {
-      EList<String> _sourceColumnsNames = op.getSourceColumnsNames();
+      EList<String> _targetColumnNames = op.getTargetColumnNames();
       boolean _hasElements = false;
-      for(final String col : _sourceColumnsNames) {
+      for(final String col : _targetColumnNames) {
         if (!_hasElements) {
           _hasElements = true;
         } else {
@@ -923,20 +939,26 @@ public class Generator extends BaseCodeGenerator {
     _builder.append("\t");
     _builder.append("SELECT ");
     {
-      EList<String> _sourceColumnsNames_1 = op.getSourceColumnsNames();
+      EList<String> _sourceColumnsNames = op.getSourceColumnsNames();
       boolean _hasElements_1 = false;
-      for(final String col_1 : _sourceColumnsNames_1) {
+      for(final String col_1 : _sourceColumnsNames) {
         if (!_hasElements_1) {
           _hasElements_1 = true;
         } else {
           _builder.appendImmediate(",", "	");
         }
+        String _owningSchemaName_1 = op.getOwningSchemaName();
+        _builder.append(_owningSchemaName_1, "	");
+        _builder.append(".");
+        String _sourceTableName = op.getSourceTableName();
+        _builder.append(_sourceTableName, "	");
+        _builder.append(".");
         _builder.append(col_1, "	");
       }
     }
     _builder.append(" FROM ");
-    String _sourceTableName = op.getSourceTableName();
-    _builder.append(_sourceTableName, "	");
+    String _sourceTableName_1 = op.getSourceTableName();
+    _builder.append(_sourceTableName_1, "	");
     _builder.newLineIfNotEmpty();
     _builder.append("\t");
     {

@@ -580,7 +580,7 @@ TestWorkflow{
 		qvtComparison = ""//COMPARISONS_RDB_STRUCTURES_DIR - just note
 		qvtComparison = ""//COMPARISONS_RDB_OPS_DIR - just note
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "${RENAME_ENTITY_C_STRING} - DB association collumn"
+		testDescription = "${RENAME_ENTITY_C_STRING} - DB association table"
 	}	
 	
 	/***** SQL GENERATOR *****/	

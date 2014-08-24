@@ -78,11 +78,13 @@ helper addMatch(inout diff : Diff, sourceClass : StandardClass, targetClass : St
 }
 
 helper addMatch(inout diff : Diff, sourceProperty : MultipliableProperty, targetProperty : MultipliableProperty, _relation : APP::diff::PropertyRelation) : APP::diff::PropertyPair{
-	var propertyPair : APP::diff::PropertyPair := object app::diff::PropertyPair{
-																	source := sourceProperty;
-																	reflection := targetProperty;
-																	relation := _relation;
-	};
+	var propertyPair : APP::diff::PropertyPair;
+	if(_relation = APP::diff::PropertyRelation::equal)then{	
+		propertyPair := object app::diff::EqualPropertyPair{
+														source := sourceProperty;
+														reflection := targetProperty;
+		};
+	}endif;
 	diff.propertyPairs+= propertyPair;
 	return propertyPair;
 }
@@ -102,8 +104,9 @@ query Diff::getReflectionReplacementPair(replacedReflection : StandardClass) : A
 }
 
 helper addPropertyPair(inout classPair : APP::diff::ClassPair, inout propertyPair : APP::diff::PropertyPair){
-	classPair.underlyingPairs += propertyPair;
-	propertyPair.owningClassPair := classPair;
+	if(propertyPair.oclIsTypeOf(APP::diff::EqualPropertyPair))then{
+		classPair.underlyingPairs += propertyPair.oclAsType(APP::diff::EqualPropertyPair);
+	}endif;
 	return;
 }
 

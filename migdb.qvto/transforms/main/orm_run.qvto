@@ -11,8 +11,7 @@ transformation orm_run(in inStr : APP, in inOps : APP, out rdbOutOps : RDB, out 
 
 main(){	
 	var rdbOps : RDB::Operations := rdbOutOps.rootObjects()![RDB::Operations];
-	rdbOps := _rdbOperations(OrderedSet{});
-	var opsCol : OrderedSet(RDB::ops::ModelOperation) := rdbOps.operations;
+	rdbOps := _rdbOperations();
 	var errorLog : ErrorLog := errorModel.rootObjects()![ErrorLog];
 	errorLog := object ErrorLog{ errors:= OrderedSet{};};
 
@@ -22,12 +21,12 @@ main(){
 	
 	if(canProcessTest(appStr, appOps, errorLog))then{
 		appOps.operations->forEach(op){
-				op.toRdb(appStr)->forEach(rdbOp){
-				opsCol+=(rdbOp);
-			};
+			op.toRdb(appStr, rdbOps);
 		};
-		rdbOps.operations := opsCol;
+		consolidate(rdbOps);
+		setApplied(rdbOps);
 	}endif;
+	log("ending");
 }
 
 query canProcessTest(structure : APP::Structure, ops : APP::Operations, inout errorLog : ErrorLog) : Boolean{

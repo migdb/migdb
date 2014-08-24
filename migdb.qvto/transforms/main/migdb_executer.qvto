@@ -24,6 +24,7 @@ main() {
 	inAStructure.rootObjects().deepclone();
 	// hack - creating root model of rOperations by creator_rdb_operations.qvto
 	new creator_rdb_operations(outROperations).transform();
+	var rdbOperations : RDB::Operations := outROperations.rootObjects()![RDB::Operations];
 	var processedAStructure : APP::Structure := outAStructure.rootObjects()![APP::Structure];
 	var errorLog : ErrorLog := _errorLog(OrderedSet{});
 	processedAStructure.isModelValid(errorLog);
@@ -36,21 +37,25 @@ main() {
 	appOperations.rootObjects()![APP::Operations]->operations->forEach(apOperation){
 		//check atomicOperation validity
 		if(apOperation.isValid(processedAStructure, errorLog, operationIndex)) then {
-			// map throught ORM - TODO
-			var dbOps : OrderedSet(RDB::ops::ModelOperation) := apOperation.toRdb(
-																			processedAStructure);
-			outRdbOps.operations += dbOps;
+			apOperation.toRdb(
+							processedAStructure,
+							rdbOperations);
+			consolidate(rdbOperations);
+			
+			var rdbIndex : Integer := 0;
 			//apply dbOps
-			dbOps->forEach(dbOperation){
-				//log("check executer " + dbOp.isValid(processedRStructure).repr());
-				if(dbOperation.isValid(processedRStructure, errorLog, operationIndex)) then {
+			rdbOperations.operations->forEach(dbOperation){
+				if(dbOperation.isValid(processedRStructure, errorLog, operationIndex)) then {	
 					dbOperation.apply(processedRStructure);
+					rdbOperations.appliedOperations += dbOperation;
+					rdbIndex := rdbIndex + 1;
 				}else{
 					//log and "break" only set of Mapped operations from AtomicAppOp
-					log("rdb_operation not valid in current context " + dbOperation .repr());
+					log("rdb_operation(" + rdbIndex.toString() + " ) not valid in current context " 
+					     + dbOperation .repr());
 					break;
 				}endif;
-			};
+			};			
 			apOperation.apply(processedAStructure);
 			operationIndex := operationIndex + 1;
 		}else{

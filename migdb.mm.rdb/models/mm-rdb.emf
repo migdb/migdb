@@ -7,7 +7,9 @@ package rdb {
   }
 
   class Operations extends ModelRoot {
+  	val ops.ModelOperation[*]#owningAppliedOperations appliedOperations;
     val ops.ModelOperation[*]#owningOperations operations;
+    val ops.ModelOperation[*]#owningMirroredOperations mirroredOperations;
   }
 
   class Structure extends ModelRoot {
@@ -77,7 +79,9 @@ package rdb {
   @namespace(uri="http://www.collectionspro.eu/jam/mm/rdb-ops", prefix="rdb-ops")
   package ops {
     abstract class ModelOperation {
-      derived ref Operations[1]#operations owningOperations;
+      derived ref Operations[?]#operations owningOperations;
+      derived ref Operations[?]#mirroredOperations owningMirroredOperations;
+      derived ref Operations[?]#appliedOperations owningAppliedOperations;
     }
 
     class AddSchema extends ModelOperation {

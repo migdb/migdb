@@ -131,7 +131,7 @@ helper processAddClass(diffCls : APP::diff::DiffClass, inout operations : Operat
 
 
 helper recognizePropertyMatch(propertyPair : APP::diff::PropertyPair, inout operations : Operations){
-	if(propertyPair.relation = APP::diff::PropertyRelation::equalInEqual)then{
+	if(propertyPair.oclIsKindOf(APP::diff::EqualPropertyPair))then{
 		return;
 	}endif;
 }

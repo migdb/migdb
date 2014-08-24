@@ -67,7 +67,7 @@ helper matchClassesByName(sourceClses : Sequence(StandardClass), targetClses : S
 			matchProperties(
 							classPair,
 							diff, 
-							APP::diff::PropertyRelation::equalInEqual);
+							APP::diff::PropertyRelation::equal);
 		};
 	}
 }
@@ -98,7 +98,7 @@ helper matchRenamePair(sourceCls : StandardClass, candidateClass : StandardClass
 		matchProperties(
 						classPair,
 						diff, 
-						APP::diff::PropertyRelation::equalInEqual);
+						APP::diff::PropertyRelation::equal);
 		markCandidateClassMatched(sourceCls, candidateClass);
 	}endif;
 	return;
@@ -192,7 +192,7 @@ helper matchConstructivePair(sourceReplacingPair : APP::diff::ReplacingClassPair
 		var extractClassPair : APP::diff::ExtractClassPair := classPair.oclAsType(
 																	APP::diff::ExtractClassPair);
 		extractClassPair.link := link;
-		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equal);
 		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link);
 		unmatchedTargetProperties := unmatchedTargetProperties->excluding(link.oppositeProperty);
@@ -208,7 +208,7 @@ helper matchConstructivePair(sourceReplacingPair : APP::diff::ReplacingClassPair
 		var extractSubclassPair : APP::diff::ExtractSubclassPair := classPair.oclAsType(
 																APP::diff::ExtractSubclassPair);
 		unmatchedTargetClasses := unmatchedTargetClasses->excluding(candidateClass);
-		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equal);
 		markCandidateClassMatched(sourceClass, candidateClass);
 	}endif
 	endif;
@@ -261,7 +261,7 @@ helper matchDestructivePair(reflectionReplacingPair : APP::diff::ReplacingClassP
 		var inlineClassPair : APP::diff::InlineClassPair := classPair.oclAsType(
 																	APP::diff::InlineClassPair);
 		inlineClassPair.link := link;
-		matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+		matchProperties(classPair, diff, APP::diff::PropertyRelation::equal);
 		unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link);
 		unmatchedSourceProperties := unmatchedSourceProperties->excluding(link.oppositeProperty);
@@ -297,7 +297,7 @@ helper createCollapsePair(diff : APP::Diff, destroyedClass : StandardClass, dest
 																	APP::diff::CollapseHierarchyPair);
 	collapseHierarchyPair.isIntoSub := isIntoSubClass;
 	unmatchedSourceClasses := unmatchedSourceClasses->excluding(destroyedClass);
-	matchProperties(classPair, diff, APP::diff::PropertyRelation::equalInSimilar);
+	matchProperties(classPair, diff, APP::diff::PropertyRelation::equal);
 	markCandidateClassMatched(destroyedClass, destinationClass);
 }
 /**

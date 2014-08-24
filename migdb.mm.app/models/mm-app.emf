@@ -243,7 +243,8 @@ package app {
   	   ref StandardClass[1] source;   
   	   ref StandardClass[1] reflection;
   	   readonly derived ref Diff[1]#classPairs owningDiff;
-  	   ref PropertyPair [*]#owningClassPair underlyingPairs;
+  	   val EqualPropertyPair [*]#owningClassPair underlyingPairs;
+  	    
   	}
   	
   	abstract class ModifyingClassPair extends ClassPair{
@@ -301,14 +302,14 @@ package app {
   	abstract class PropertyPair{
   	   ref Property[1] source;
   	   ref Property[1] reflection;
-  	   readonly derived ref Diff[1]#propertyPairs owningDiff;
+  	   readonly derived ref Diff[?]#propertyPairs owningDiff;
   	}
  	
  	abstract class ReplacingPropertyPair extends PropertyPair{
- 	   readonly derived ref ClassPair [1]#underlyingPairs owningClassPair; 
  	}
  	
  	class EqualPropertyPair extends ReplacingPropertyPair{
+		readonly derived ref ClassPair [?]#underlyingPairs owningClassPair;
  	}
  	
  	class RenamePropertyPair extends ReplacingPropertyPair{
@@ -336,7 +337,7 @@ package app {
   	}
   	
   	enum PropertyRelation{
-  	   equalInEqual = 0;
+  	   equal = 0;
   	   renameProperty = 1;
   	   pullUpProperty = 2;
   	   pushDownProperty = 3;

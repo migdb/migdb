@@ -272,13 +272,15 @@ helper _rdbStructure( _schemas : OrderedSet(Schema)) : RDB::Structure{
 helper _rdbOperations() : RDB::Operations{
 	return object Operations{
 		operations := OrderedSet{};
+		mirroredOperations := OrderedSet{};
+		appliedOperations := OrderedSet{};
 	};
 }
 
-helper _rdbOperations(_operations : OrderedSet(RDB::ops::ModelOperation)) : RDB::Operations{
-	return object Operations{
-		operations := _operations;
-	};
+helper _rdbOperations(_appliedOperations : OrderedSet(RDB::ops::ModelOperation)) : RDB::Operations{
+	var rdbOps : RDB::Operations := _rdbOperations();
+	rdbOps.appliedOperations := _appliedOperations;
+	return rdbOps;
 }
 
 helper _schema( _name : String) : RDB::Schema{

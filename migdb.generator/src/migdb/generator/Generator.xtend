@@ -418,15 +418,18 @@ class Generator extends BaseCodeGenerator {
 	 */
 	def dispatch genOperation(UpdateRowsImpl op){
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
-							(SELECT «op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE «op.whereCondition» );''';
+							(SELECT «op.owningSchemaName».«op.sourceTableName».«op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE 
+							     «op.whereCondition» );
+	''';
 	}
 	
 	/**
 	 * Nill Rows
 	 */
 	def dispatch genOperation(NillRowsImpl op){
-			return '''UPDATE «op.owningSchemaName».«op.tableName» SET «op.columnName» = 
-							NULL WHERE «op.whereCondition» ;''';
+			return '''UPDATE «op.owningSchemaName».«op.tableName» SET «op.owningSchemaName».«op.tableName».«op.columnName» = 
+							NULL WHERE «op.whereCondition» ;
+	'''
 	}
 
 	/**
@@ -438,8 +441,8 @@ class Generator extends BaseCodeGenerator {
 	 * @param InsertRowsImpl op : op of type InsertRowsImpl
 	 */
 	def dispatch genOperation(InsertRowsImpl op)'''
-		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR»)
-			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«col»«ENDFOR» FROM «op.sourceTableName»
+		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.targetColumnNames SEPARATOR ","»«col»«ENDFOR»)
+			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«op.owningSchemaName».«op.sourceTableName».«col»«ENDFOR» FROM «op.sourceTableName»
 			«IF op.whereCondition != null && op.whereCondition != ""» where «op.whereCondition»«ENDIF»
 			;
 	'''

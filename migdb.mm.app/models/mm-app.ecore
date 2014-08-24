@@ -294,7 +294,7 @@
         <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/classPairs"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="underlyingPairs" upperBound="-1"
-            eType="#//app/diff/PropertyPair"/>
+            eType="#//app/diff/EqualPropertyPair" containment="true" eOpposite="#//app/diff/EqualPropertyPair/owningClassPair"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ModifyingClassPair" abstract="true"
           eSuperTypes="#//app/diff/ClassPair"/>
@@ -342,15 +342,15 @@
             eType="#//app/Property"/>
         <eStructuralFeatures xsi:type="ecore:EReference" name="reflection" lowerBound="1"
             eType="#//app/Property"/>
-        <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" lowerBound="1"
-            eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/propertyPairs"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningDiff" eType="#//app/Diff"
+            changeable="false" derived="true" eOpposite="#//app/Diff/propertyPairs"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="ReplacingPropertyPair" abstract="true"
-          eSuperTypes="#//app/diff/PropertyPair">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="owningClassPair" lowerBound="1"
-            eType="#//app/diff/ClassPair" changeable="false" derived="true" eOpposite="#//app/diff/ClassPair/underlyingPairs"/>
+          eSuperTypes="#//app/diff/PropertyPair"/>
+      <eClassifiers xsi:type="ecore:EClass" name="EqualPropertyPair" eSuperTypes="#//app/diff/ReplacingPropertyPair">
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningClassPair" eType="#//app/diff/ClassPair"
+            changeable="false" derived="true" eOpposite="#//app/diff/ClassPair/underlyingPairs"/>
       </eClassifiers>
-      <eClassifiers xsi:type="ecore:EClass" name="EqualPropertyPair" eSuperTypes="#//app/diff/ReplacingPropertyPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="RenamePropertyPair" eSuperTypes="#//app/diff/ReplacingPropertyPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="PullUpPropertyPair" eSuperTypes="#//app/diff/PropertyPair"/>
       <eClassifiers xsi:type="ecore:EClass" name="PushDownPropertyPair" eSuperTypes="#//app/diff/PropertyPair"/>
@@ -370,7 +370,7 @@
             eType="#//app/Diff" changeable="false" derived="true" eOpposite="#//app/Diff/removedProperties"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EEnum" name="PropertyRelation">
-        <eLiterals name="equalInEqual"/>
+        <eLiterals name="equal"/>
         <eLiterals name="renameProperty" value="1"/>
         <eLiterals name="pullUpProperty" value="2"/>
         <eLiterals name="pushDownProperty" value="3"/>

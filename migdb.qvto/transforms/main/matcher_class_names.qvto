@@ -56,7 +56,7 @@ helper matchClassesByName(sourceClses : Sequence(StandardClass), targetClses : S
 			unmatchedSourceClasses := unmatchedSourceClasses->reject(cls | cls = srcCls);
 			unmatchedTargetClasses := unmatchedTargetClasses->reject(cls | cls = tarCls);
 			addMatch(diff, srcCls, tarCls, APP::diff::ClassRelation::equal);
-			matchEqualProperties(srcCls, tarCls, diff, APP::diff::PropertyRelation::equalInEqual);
+			matchEqualProperties(srcCls, tarCls, diff, APP::diff::PropertyRelation::equal);
 		};
 	}
 }

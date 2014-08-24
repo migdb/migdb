@@ -6,8 +6,12 @@
   <eSubpackages name="rdb" nsURI="http://www.collectionspro.eu/jam/mm/rdb" nsPrefix="rdb">
     <eClassifiers xsi:type="ecore:EClass" name="ModelRoot" abstract="true"/>
     <eClassifiers xsi:type="ecore:EClass" name="Operations" eSuperTypes="#//rdb/ModelRoot">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="appliedOperations" upperBound="-1"
+          eType="#//rdb/ops/ModelOperation" containment="true" eOpposite="#//rdb/ops/ModelOperation/owningAppliedOperations"/>
       <eStructuralFeatures xsi:type="ecore:EReference" name="operations" upperBound="-1"
           eType="#//rdb/ops/ModelOperation" containment="true" eOpposite="#//rdb/ops/ModelOperation/owningOperations"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="mirroredOperations" upperBound="-1"
+          eType="#//rdb/ops/ModelOperation" containment="true" eOpposite="#//rdb/ops/ModelOperation/owningMirroredOperations"/>
     </eClassifiers>
     <eClassifiers xsi:type="ecore:EClass" name="Structure" eSuperTypes="#//rdb/ModelRoot">
       <eStructuralFeatures xsi:type="ecore:EReference" name="schemas" upperBound="-1"
@@ -91,8 +95,12 @@
     </eClassifiers>
     <eSubpackages name="ops" nsURI="http://www.collectionspro.eu/jam/mm/rdb-ops" nsPrefix="rdb-ops">
       <eClassifiers xsi:type="ecore:EClass" name="ModelOperation" abstract="true">
-        <eStructuralFeatures xsi:type="ecore:EReference" name="owningOperations" lowerBound="1"
-            eType="#//rdb/Operations" derived="true" eOpposite="#//rdb/Operations/operations"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningOperations" eType="#//rdb/Operations"
+            derived="true" eOpposite="#//rdb/Operations/operations"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningMirroredOperations"
+            eType="#//rdb/Operations" derived="true" eOpposite="#//rdb/Operations/mirroredOperations"/>
+        <eStructuralFeatures xsi:type="ecore:EReference" name="owningAppliedOperations"
+            eType="#//rdb/Operations" derived="true" eOpposite="#//rdb/Operations/appliedOperations"/>
       </eClassifiers>
       <eClassifiers xsi:type="ecore:EClass" name="AddSchema" eSuperTypes="#//rdb/ops/ModelOperation">
         <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1"

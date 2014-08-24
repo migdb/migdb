@@ -112,3 +112,11 @@ query getDbIdColumnName(tableName : String) : String{
 	return getDbIdPrefix() + tableName;
 }
 
+query getEqualityWhereCondition(sourceTableName : String, sourceColumnName : String, targetTableName : String, targetColumnName : String) : String{
+	return sourceTableName + "." + sourceColumnName + " = " + targetTableName + "." + targetColumnName;
+}
+
+query getComlementWhereCondition(sourceTableName : String, sourceColumnName : String, targetTableName : String, targetColumnName : String) : String{
+	return sourceTableName + "." + sourceColumnName + " NOT IN " + 
+						targetTableName + "." + targetColumnName;	
+}

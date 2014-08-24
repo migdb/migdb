@@ -3,6 +3,39 @@ library queries_rdb;
 modeltype RDB uses 'http://www.collectionspro.eu/jam/mm/rdb';
 
 
+helper addOperation(inout operation : RDB::ops::ModelOperation, inout operations : rdb::Operations){
+	operations.operations += operation;
+	return;
+}
+
+helper setApplied(inout operations : rdb::Operations){
+	operations.operations->forEach(op){
+		operations.appliedOperations += op;
+//		op.owningOperations := null;
+	};
+	operations.mirroredOperations->forEach(op){
+		operations.appliedOperations+= op;
+//		op.owningMirroredOperations := null;
+	};
+}
+
+helper addMirroredOperation(inout operation : rdb::ops::ModelOperation, inout operations : rdb::Operations){
+	operations.mirroredOperations += operation;
+	operation.owningMirroredOperations := operations;
+	return;
+}
+
+helper consolidate(inout operations : rdb::Operations){
+		var i : Integer := operations.mirroredOperations->size();
+		//reverse iteration
+		while(i > 0){
+			addOperation(operations.mirroredOperations->at(i), operations);
+			i := i - 1;
+		};
+		//operations.mirroredOperations := OrderedSet{};
+		return;
+}
+
 /********************************************************************************
  *									PRINTERS									*
  ********************************************************************************/
