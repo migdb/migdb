@@ -209,7 +209,8 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 														self.name.translate(), 
 														collumnType);
 		addOperation(addColumn, operations);
-		return operations;	
+		return operations;
+	//addProperty - primitive UB = -1 eg Collection 
 	}else{
 		if(self.upperBound > 1 or self.upperBound = -1)then{
 			var collectionTableName : String := getCollectionTableName(
@@ -288,7 +289,7 @@ helper processAddOrdering(inout operations : RDB::Operations, tableName : String
 																	tableName,
 																	columnNames,
 																	getUXOrderingName(tableName));
-	addOperation(addOrderingUniqueConstraint, operations);																				
+	addMirroredOperation(addOrderingUniqueConstraint, operations);																				
 	return operations;
 }
 
@@ -1057,16 +1058,18 @@ helper APP::ops::RemoveParent::toRdb(appStructure : APP::Structure, inout operat
 																	childTableName,
 																	fkParentName);
 	addOperation(removeFkParent, operations);
-	var idEqualityCondition : String := getEqualityWhereCondition(
-																parentTableName, 
-																idParentTableName, 
-																childTableName, 
-																idChildTableName);
+	var deleteEqualityCondition : String := getDeleteCondition(
+														defaultSchemaName,
+														parentTableName, 
+														idParentTableName, 
+														childTableName, 
+														idChildTableName,
+														false);
 	//remove rows from parent
 	var deleteRows : RDB::ops::ModelOperation := _deleteRows(
 															defaultSchemaName,
 															parentTableName,
-															idEqualityCondition);
+															deleteEqualityCondition);
 	addOperation(deleteRows, operations);
 	return operations;
 }
@@ -1235,6 +1238,20 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 															idSourceName,
 															targetTableName,
 															idTargetName);										
+	var deleteEqualCondition : String := getDeleteCondition(
+															defaultSchemaName,
+															sourceTableName, 
+															idSourceName,
+															targetTableName,
+															idTargetName,
+															false);
+	var deleteComplementCondition : String := getDeleteCondition(
+																defaultSchemaName,
+																sourceTableName, 
+																idSourceName,
+																targetTableName,
+																idTargetName,
+																true);
 	
 	if(self.upperBound = 1)then{
 		var addDataColumn : RDB::ops::ModelOperation := _addColumn(
@@ -1257,7 +1274,7 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 																	defaultSchemaName,
 																	sourceTableName,
 																	distributedColumnName,
-																	idComplementCondition);
+																	deleteComplementCondition);
 		addOperation(deleteSourceData, operations);
 	//distribute collection					
 	}else{
@@ -1283,39 +1300,46 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 																distributedColumnName,
 																dataColumnType);
 		addOperation(addDataColumn, operations);
+		if(self.isOrdered)then{
+			processAddOrdering(
+						operations, 
+						newCollectionTableName, 
+						idTargetName, 
+						distributedColumnName);
+			
+		}endif;
 		var sourceColumnNames : OrderedSet(String) := OrderedSet{
 																idSourceName,
-																distributedColumnName};
+																distributedColumnName,
+																getDbOrderingColumnName()};
 		var targetColumnNames : OrderedSet(String) := OrderedSet{
 																idTargetName,
-																distributedColumnName};
+																distributedColumnName,
+																getDbOrderingColumnName()};
 		var insertRows : RDB::ops::ModelOperation := _insertRows(
 																defaultSchemaName,
 																oldCollectionTableName,
 																sourceColumnNames,
 																newCollectionTableName,
 																targetColumnNames,
-																idEqualCondition);
+																deleteEqualCondition);
 		addOperation(insertRows, operations);
 		var deleteOldData : RDB::ops::ModelOperation := _deleteRows(
 																defaultSchemaName,
 																oldCollectionTableName,
-																idComplementCondition);
+																deleteComplementCondition);
 		addOperation(deleteOldData, operations);
-		processAddOrdering(
-						operations, 
-						newCollectionTableName, 
-						idTargetName, 
-						distributedColumnName);
 		var uxColumnNames : OrderedSet(String) := OrderedSet{
 															idTargetName, 
 															distributedColumnName};
-		var addUnique : RDB::ops::ModelOperation := _addUnique(
-															getDefaultSchemaName(),
-															newCollectionTableName,
-															uxColumnNames,
-															getUXName(targetClassName, self.name));
-		addOperation(addUnique, operations);		 
+		if(self.isUnique)then{
+			var addUnique : RDB::ops::ModelOperation := _addUnique(
+																getDefaultSchemaName(),
+																newCollectionTableName,
+																uxColumnNames,
+																getUXName(targetClassName, self.name));
+			addOperation(addUnique, operations);
+		}endif;		 
 	}endif;
 	return operations;
 }
@@ -1337,11 +1361,20 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 															idSourceName,
 															targetTableName,
 															idTargetName);
-	var idComplementCondition : String :=  getComlementWhereCondition(
-																	sourceTableName,
-																	idSourceName,
-																	targetTableName,
-																	idTargetName);										
+	var complexIdEqualCondition : String := getDeleteCondition(
+															defaultSchemaName,
+															sourceTableName,
+															idSourceName,
+															targetTableName,
+															idTargetName,
+															false);
+	var deleteComplementCondition : String := getDeleteCondition(
+																defaultSchemaName,
+																sourceTableName,
+																idSourceName,
+																targetTableName,
+																idTargetName,
+																true);								
 	//distributing simple association
 	if(self.upperBound = 1)then{
 		var fkName : String :=  getFkRefencingOppositeName(
@@ -1372,12 +1405,6 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 															fkName,
 															typeTableName);
 		addOperation(addFk, operations);
-		var deleteTransferedData : RDB::ops::ModelOperation :=_nillRows(
-																defaultSchemaName,
-																sourceTableName,
-																distributedColumnName,
-																idComplementCondition);
-		addOperation(deleteTransferedData, operations);
 	//distribute association M x N	
 	}else{
 		var sourceAssociationTableName : String := getAssociationTableName(
@@ -1388,10 +1415,12 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 																		targetClassName);
 		var sourceColumns : OrderedSet(String) := OrderedSet{
 															idSourceName,
-															idTypeName};
+															idTypeName,
+															getDbOrderingColumnName()};
 		var targetColumns : OrderedSet(String) := OrderedSet{
 															idTargetName,
-															idTypeName};
+															idTypeName,
+															getDbOrderingColumnName()};
 		var fkTypeName : String := getFKAssociationTableRefName(
 															targetAssociationTableName,
 															typeTableName);																										
@@ -1414,13 +1443,20 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 															idTypeName,
 															idColumnType);
 		addOperation(addIdRefType, operations);
+		if(self.isOrdered)then{
+			processAddOrdering(
+							operations, 
+							targetAssociationTableName, 
+							idTargetName,
+							idTypeName);					
+		}endif;
 		var insertRows : RDB::ops::ModelOperation := _insertRows(
 															defaultSchemaName,
 															sourceAssociationTableName,
 															sourceColumns,
 															targetAssociationTableName,
 															targetColumns,
-															idEqualCondition);
+															complexIdEqualCondition);
 		addOperation(insertRows, operations);
 		//add ref to targetTable
 		var addFkRefTarget : RDB::ops::ModelOperation := _addForeignKey(
@@ -1442,15 +1478,9 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 		var deleteTransferedData : RDB::ops::ModelOperation := _deleteRows(
 																	defaultSchemaName,
 																	sourceAssociationTableName,
-																	idComplementCondition);
+																	complexIdEqualCondition);
+																	//deleteComplementCondition);
 		addOperation(deleteTransferedData, operations);
-		if(self.isOrdered)then{
-			processAddOrdering(
-							operations, 
-							targetAssociationTableName, 
-							idTargetName,
-							idTypeName);					
-			}endif;
 		if(self.isUnique)then{
 			var columnNames : OrderedSet(String) := OrderedSet{
 															idTargetName, 

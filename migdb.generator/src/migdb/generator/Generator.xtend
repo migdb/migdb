@@ -427,7 +427,7 @@ class Generator extends BaseCodeGenerator {
 	 * Nill Rows
 	 */
 	def dispatch genOperation(NillRowsImpl op){
-			return '''UPDATE «op.owningSchemaName».«op.tableName» SET «op.owningSchemaName».«op.tableName».«op.columnName» = 
+			return '''UPDATE «op.owningSchemaName».«op.tableName» SET «op.columnName» = 
 							NULL WHERE «op.whereCondition» ;
 	'''
 	}

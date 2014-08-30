@@ -886,12 +886,6 @@ public class Generator extends BaseCodeGenerator {
     String _tableName = op.getTableName();
     _builder.append(_tableName, "");
     _builder.append(" SET ");
-    String _owningSchemaName_1 = op.getOwningSchemaName();
-    _builder.append(_owningSchemaName_1, "");
-    _builder.append(".");
-    String _tableName_1 = op.getTableName();
-    _builder.append(_tableName_1, "");
-    _builder.append(".");
     String _columnName = op.getColumnName();
     _builder.append(_columnName, "");
     _builder.append(" = ");
