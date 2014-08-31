@@ -173,8 +173,8 @@ helper app::ops::AddProperty::standardToStandardClass(appStructure : APP::Struct
 				processAddOrdering(
 								operations, 
 								newTableName, 
-								idOriginColName,
-								idTypeColName);					
+								idOriginColName
+								);					
 			}endif;
 			if(self.isUnique)then{
 				var columnNames : OrderedSet(String) := OrderedSet{
@@ -249,8 +249,7 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 				processAddOrdering(
 								operations, 
 								collectionTableName, 
-								idOwningTableName,
-								collectionCollumnName);	
+								idOwningTableName);	
 			}endif;
 			if(self.isUnique)then{
 				var columnNames : OrderedSet(String) := OrderedSet{
@@ -272,10 +271,9 @@ helper app::ops::AddProperty::primitiveToStandardClass(appStructure : APP::Struc
 	return operations;
 }
 
-helper processAddOrdering(inout operations : RDB::Operations, tableName : String, firstOrderedCollumn : String, secondOrderedCollumn : String) : RDB::Operations{
+helper processAddOrdering(inout operations : RDB::Operations, tableName : String, orderedCollumn : String) : RDB::Operations{
 	var columnNames : OrderedSet(String) := OrderedSet{
-														firstOrderedCollumn, 
-														secondOrderedCollumn,
+														orderedCollumn, 
 														getDbOrderingColumnName()};
 	var orderingColType : RDB::PrimitiveType := getOrderingCollumnType();
 	var addOrderingCollumn : RDB::ops::ModelOperation := _addColumn(
@@ -445,7 +443,6 @@ helper ormRenameFksReferencingCls(structure : APP::Structure, clz : StandardClas
 			var addFk : RDB::ops::ModelOperation := _addForeignKey(
 																defaultSchemaName,
 																newAssociationTableName,
-																//constrainedColumnName,
 																newConstrainedColumnName,
 																newFkName,
 																oldTableName);						
@@ -474,27 +471,27 @@ helper ormRenameRefColsToCls(structure : APP::Structure, clz : StandardClass, ne
 	//rename association refCol in associationTable (refCol in sourceTable has different naming 
 	//convention - eg isn't renamed)
 	clz.properties->forEach(prop | prop.isManyToManyBidirectional()){			
-			var associationTableName : String;	
-			//the tricky thing with naming M X N association
-			if(prop.oclAsType(AssociationProperty).isOwning)then{
-			 	associationTableName := getAssociationTableName(
-															prop.name, 
-															prop.owningGeneralClass.name);
-			}else{
-				var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
-				var oppositeProp : AssociationProperty := assocProp.oppositeProperty;
-				associationTableName := getAssociationTableName(
+		var associationTableName : String;	
+		//the tricky thing with naming M X N association
+		if(prop.oclAsType(AssociationProperty).isOwning)then{
+		 	associationTableName := getAssociationTableName(
+														prop.name, 
+														prop.owningGeneralClass.name);
+		}else{
+			var assocProp : AssociationProperty := prop.oclAsType(AssociationProperty);
+			var oppositeProp : AssociationProperty := assocProp.oppositeProperty;
+			associationTableName := getAssociationTableName(
 															oppositeProp.name, 
 															oppositeProp.owningGeneralClass.name);
-			}endif;
-			var renameAssocCol : RDB::ops::ModelOperation := _renameColumn(
+		}endif;
+		var renameAssocCol : RDB::ops::ModelOperation := _renameColumn(
 																	defaultSchemaName,
 																	associationTableName,
 																	oldIdName,
 																	newIdName);
-			addOperation(renameAssocCol, operations);
-		};
-	//};
+		addOperation(renameAssocCol, operations);
+	};
+	
 	//in unidirectional M x N there are all properties isOwning = true because this flag has 
 	//default value true
 	clz->properties[AssociationProperty]->forEach(assProp | 
@@ -1304,8 +1301,7 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 			processAddOrdering(
 						operations, 
 						newCollectionTableName, 
-						idTargetName, 
-						distributedColumnName);
+						idTargetName);
 			
 		}endif;
 		var sourceColumnNames : OrderedSet(String) := OrderedSet{
@@ -1447,8 +1443,7 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 			processAddOrdering(
 							operations, 
 							targetAssociationTableName, 
-							idTargetName,
-							idTypeName);					
+							idTargetName);					
 		}endif;
 		var insertRows : RDB::ops::ModelOperation := _insertRows(
 															defaultSchemaName,
@@ -1479,7 +1474,6 @@ helper AssociationProperty::ormDistributeProperty(appStructure : APP::Structure,
 																	defaultSchemaName,
 																	sourceAssociationTableName,
 																	complexIdEqualCondition);
-																	//deleteComplementCondition);
 		addOperation(deleteTransferedData, operations);
 		if(self.isUnique)then{
 			var columnNames : OrderedSet(String) := OrderedSet{
@@ -1703,7 +1697,8 @@ helper AssociationProperty::ormExportProperty(appStructure : APP::Structure, tar
 																	sourceClsName);
 		var newAssociationTableName : String := getAssociationTableName(
 																	self.name,
-																	targetTableName);			//rename Column according to new id name derived from tableName					
+																	targetTableName);			
+		//rename Column according to new id name derived from tableName					
 		var renameAssocTable  : RDB::ops::ModelOperation := _renameTable(
 																		publicSchemaName,
 																		oldAssociationTableName,

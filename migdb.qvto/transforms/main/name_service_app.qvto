@@ -121,7 +121,6 @@ query getComlementWhereCondition(sourceTableName : String, sourceColumnName : St
 						targetTableName + "." + targetColumnName;	
 }
 
-
 query getDeleteCondition(schemaName : String, instanceTableName : String, idColumnName : String, patternTableName : String, idPatternTableName : String, isComplement : Boolean) : String{
 	var operator : String := "IN";
 	if(isComplement)then{
