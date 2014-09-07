@@ -1697,7 +1697,14 @@ helper AssociationProperty::ormExportProperty(appStructure : APP::Structure, tar
 																	sourceClsName);
 		var newAssociationTableName : String := getAssociationTableName(
 																	self.name,
-																	targetTableName);			
+																	targetTableName);
+		var deleteIdEqualityCond : String := getDeleteCondition(
+																publicSchemaName,
+																oldAssociationTableName,
+																idSourceTableName,
+																targetTableName,
+																idTargetTableName,
+																true);
 		//rename Column according to new id name derived from tableName					
 		var renameAssocTable  : RDB::ops::ModelOperation := _renameTable(
 																		publicSchemaName,
@@ -1710,36 +1717,7 @@ helper AssociationProperty::ormExportProperty(appStructure : APP::Structure, tar
 																idSourceTableName,
 																idTargetTableName);
 		addMirroredOperation(renameIdCol, operations);
-		//rename table
-		if(self.isUnique)then{
-			var columnNames : OrderedSet(String) := OrderedSet{
-															idSourceTableName, 
-															idTypeColumnName};
-			updateUxName(
-						publicSchemaName,
-						oldAssociationTableName,
-						columnNames,
-						getUXName(sourceClsName, self.name),
-						getUXName(targetClassName, self.name),
-						operations);
-		}endif;
-		if(self.isOrdered)then{
-			var columnNames : OrderedSet(String) := OrderedSet{
-														idSourceTableName, 
-														idTypeColumnName,
-														getDbOrderingColumnName()};
-			var orderingColType : RDB::PrimitiveType := getOrderingCollumnType();
-			var oldOrdUxName : String := getUXOrderingName(oldAssociationTableName);
-			var newOrdUxName : String := getUXOrderingName(newAssociationTableName);
-			updateUxName(
-						publicSchemaName,
-						oldAssociationTableName,
-						columnNames,
-						oldOrdUxName,
-						newOrdUxName,
-						operations);
-		}endif;
-		
+
 		var oldFkOwnerName : String := getFKAssociationTableRefName(
 																oldAssociationTableName,
 																sourceTableName);
@@ -1771,6 +1749,42 @@ helper AssociationProperty::ormExportProperty(appStructure : APP::Structure, tar
 					newFkTypeName,
 					typeTableName,
 					operations);
+		//delete child parent association data		
+		var deleteParentAssociationData : RDB::ops::ModelOperation := _deleteRows(
+																			publicSchemaName,
+																			oldAssociationTableName,
+																			deleteIdEqualityCond);
+		addMirroredOperation(deleteParentAssociationData, operations);
+		//rename table
+		if(self.isUnique)then{
+			var columnNames : OrderedSet(String) := OrderedSet{
+															idSourceTableName, 
+															idTypeColumnName};
+			updateUxName(
+						publicSchemaName,
+						oldAssociationTableName,
+						columnNames,
+						getUXName(sourceClsName, self.name),
+						getUXName(targetClassName, self.name),
+						operations);
+		}endif;
+		if(self.isOrdered)then{
+			var columnNames : OrderedSet(String) := OrderedSet{
+														idSourceTableName, 
+														idTypeColumnName,
+														getDbOrderingColumnName()};
+			var orderingColType : RDB::PrimitiveType := getOrderingCollumnType();
+			var oldOrdUxName : String := getUXOrderingName(oldAssociationTableName);
+			var newOrdUxName : String := getUXOrderingName(newAssociationTableName);
+			updateUxName(
+						publicSchemaName,
+						oldAssociationTableName,
+						columnNames,
+						oldOrdUxName,
+						newOrdUxName,
+						operations);
+		}endif;
+		
 	}endif;
 	return operations;
 }
@@ -1810,7 +1824,8 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 																		owningTableName,
 																		dataColumnName);
 		addOperation(removeExportedCol, operations);
-	//exporting collection data																				
+	//exporting collection data
+	//renaming can be done only due to one child restriction																		
 	}else{
 		var oldCollectionTableName : String := getCollectionTableName(
 																self.name,
@@ -1818,6 +1833,13 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 		var newCollectionTableName : String := getCollectionTableName(
 																self.name,
 																targetClassName);
+		var deleteIdEqualityCond : String := getDeleteCondition(
+																defaultSchemaName,
+																oldCollectionTableName,
+																idOwningTableName,
+																targetTableName,
+																idTargetTableName,
+																true);
 		var renameCollectionTable : RDB::ops::ModelOperation :=  _renameTable(
 																		defaultSchemaName,
 																		oldCollectionTableName,
@@ -1831,6 +1853,29 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 																	idOwningTableName,
 																	idTargetTableName);
 		addMirroredOperation(renameIdCol, operations);
+		
+		//
+		var oldFkCollectionName : String := getFkCollectionName(
+															self.owningGeneralClass.name,
+															self.name);
+		var newFkCollectionName : String := getFkCollectionName(
+															targetClassName,
+															self.name);
+		//switch foreign key REFERENCING oldCls to new one, updateFkNAme can be used
+		updateFkName(
+					defaultSchemaName,
+					oldCollectionTableName,
+					idOwningTableName,
+					oldFkCollectionName,
+					newFkCollectionName,
+					targetTableName,
+					operations);
+		
+		var deleteChildCollectionData : RDB::ops::ModelOperation := _deleteRows(
+																			defaultSchemaName,
+																			oldCollectionTableName,
+																			deleteIdEqualityCond);
+		addMirroredOperation(deleteChildCollectionData, operations);
 		//rename collection table
 		if(self.isOrdered)then{
 			var columnNames : OrderedSet(String) := OrderedSet{
@@ -1867,21 +1912,6 @@ helper PrimitiveProperty::ormExportProperty(appStructure : APP::Structure, targe
 						newUxName,
 						operations);
 		}endif;
-		var oldFkCollectionName : String := getFkCollectionName(
-															self.owningGeneralClass.name,
-															self.name);
-		var newFkCollectionName : String := getFkCollectionName(
-															targetClassName,
-															self.name);
-		//switch foreign key REFERENCING oldCls to new one, updateFkNAme can be used
-		updateFkName(
-					defaultSchemaName,
-					oldCollectionTableName,
-					idOwningTableName,
-					oldFkCollectionName,
-					newFkCollectionName,
-					targetTableName,
-					operations);
 	}endif;
 	return operations;
 }
