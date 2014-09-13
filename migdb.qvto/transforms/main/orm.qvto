@@ -1271,7 +1271,7 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 																	defaultSchemaName,
 																	sourceTableName,
 																	distributedColumnName,
-																	deleteComplementCondition);
+																	deleteEqualCondition);
 		addOperation(deleteSourceData, operations);
 	//distribute collection					
 	}else{
@@ -1323,7 +1323,7 @@ helper PrimitiveProperty::ormDistributeProperty(appStructure : APP::Structure, t
 		var deleteOldData : RDB::ops::ModelOperation := _deleteRows(
 																defaultSchemaName,
 																oldCollectionTableName,
-																deleteComplementCondition);
+																deleteEqualCondition);
 		addOperation(deleteOldData, operations);
 		var uxColumnNames : OrderedSet(String) := OrderedSet{
 															idTargetName, 
