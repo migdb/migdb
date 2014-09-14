@@ -40,7 +40,7 @@ class Generator extends BaseCodeGenerator {
 	/*****************************************************************
 	 * 							ATRIBUTES    						 *
  	 *****************************************************************/
- 	 
+ 	
 	private PrintWriter writer //file writer
 	private boolean queryCheckerWritten = false //query checker generated
 	private String filename //output file name
@@ -419,7 +419,8 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(UpdateRowsImpl op){
 			return '''UPDATE «op.owningSchemaName».«op.targetTableName» SET «op.targetColumnName» = 
 							(SELECT «op.owningSchemaName».«op.sourceTableName».«op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE 
-							     «op.whereCondition» );
+							     «op.selectionWhereCondition» )
+							     «IF op.safeWhereCondition != null && op.safeWhereCondition != ""» WHERE «op.safeWhereCondition»«ENDIF»
 	''';
 	}
 	
@@ -443,8 +444,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(InsertRowsImpl op)'''
 		INSERT INTO «op.owningSchemaName».«op.targetTableName» («FOR col : op.targetColumnNames SEPARATOR ","»«col»«ENDFOR»)
 			SELECT «FOR col : op.sourceColumnsNames SEPARATOR ","»«op.owningSchemaName».«op.sourceTableName».«col»«ENDFOR» FROM «op.sourceTableName»
-			«IF op.whereCondition != null && op.whereCondition != ""» where «op.whereCondition»«ENDIF»
-			;
+			«IF op.whereCondition != null && op.whereCondition != ""» WHERE «op.whereCondition»«ENDIF»;
 	'''
 	
 	/**

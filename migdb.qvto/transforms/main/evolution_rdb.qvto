@@ -863,10 +863,10 @@ query RDB::ops::UpdateRows::isValid(structure : RDB::Structure, inout errorLog :
 									operationIndex, 
 									getEvolutionRdbTransformationId());
 	var isValidCondition : Boolean := checkIsValidWhereSqlPart(
-														self.whereCondition,
+														self.selectionWhereCondition,
 														errorLog, 
 														operationIndex, 
-														getEvolutionRdbTransformationId());								
+														getEvolutionRdbTransformationId());							
 	return existSchema and existSourceTable and existSourceColumn and existTargetTable and 
 			existTargetColumn and isSameType and isValidCondition;
 }

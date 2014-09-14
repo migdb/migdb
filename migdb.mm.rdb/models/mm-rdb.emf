@@ -215,7 +215,8 @@ package rdb {
       attr String[1] sourceColumnName;
       attr String[1] targetTableName;
       attr String[1] targetColumnName;
-      attr String[1] whereCondition;
+      attr String[1] selectionWhereCondition;
+      attr String[?] safeWhereCondition;
     }
     
     class NillRows extends ModelOperation {

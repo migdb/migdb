@@ -867,9 +867,28 @@ public class Generator extends BaseCodeGenerator {
     _builder.append(" WHERE ");
     _builder.newLineIfNotEmpty();
     _builder.append("\t\t\t\t\t\t\t     ");
-    String _whereCondition = op.getWhereCondition();
-    _builder.append(_whereCondition, "							     ");
-    _builder.append(" );");
+    String _selectionWhereCondition = op.getSelectionWhereCondition();
+    _builder.append(_selectionWhereCondition, "							     ");
+    _builder.append(" )");
+    _builder.newLineIfNotEmpty();
+    _builder.append("\t\t\t\t\t\t\t     ");
+    {
+      boolean _operator_and = false;
+      String _safeWhereCondition = op.getSafeWhereCondition();
+      boolean _operator_notEquals = ObjectExtensions.operator_notEquals(_safeWhereCondition, null);
+      if (!_operator_notEquals) {
+        _operator_and = false;
+      } else {
+        String _safeWhereCondition_1 = op.getSafeWhereCondition();
+        boolean _operator_notEquals_1 = ObjectExtensions.operator_notEquals(_safeWhereCondition_1, "");
+        _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_notEquals_1);
+      }
+      if (_operator_and) {
+        _builder.append(" WHERE ");
+        String _safeWhereCondition_2 = op.getSafeWhereCondition();
+        _builder.append(_safeWhereCondition_2, "							     ");
+      }
+    }
     _builder.newLineIfNotEmpty();
     return _builder;
   }
@@ -967,15 +986,13 @@ public class Generator extends BaseCodeGenerator {
         _operator_and = BooleanExtensions.operator_and(_operator_notEquals, _operator_notEquals_1);
       }
       if (_operator_and) {
-        _builder.append(" where ");
+        _builder.append(" WHERE ");
         String _whereCondition_2 = op.getWhereCondition();
         _builder.append(_whereCondition_2, "	");
       }
     }
-    _builder.newLineIfNotEmpty();
-    _builder.append("\t");
     _builder.append(";");
-    _builder.newLine();
+    _builder.newLineIfNotEmpty();
     return _builder;
   }
   

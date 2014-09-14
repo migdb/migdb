@@ -129,3 +129,7 @@ query getDeleteCondition(schemaName : String, instanceTableName : String, idColu
 	return idColumnName + " " + operator + " (SELECT "
 	    + idPatternTableName +" FROM " + schemaName + "." + patternTableName +")"; 
 }
+
+query getSafeCondition(schemaName : String, idInstanceTableName : String, patternTableName : String, idPatternTableName : String) : String{
+	return idInstanceTableName + " IN (SELECT " + idPatternTableName + " FROM " + patternTableName + ");";
+}

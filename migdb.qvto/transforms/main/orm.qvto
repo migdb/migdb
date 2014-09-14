@@ -1105,13 +1105,19 @@ helper PrimitiveProperty::ormMergeProperty(appStructure : APP::Structure, target
 																idOwningTableName,
 																targetTableName,
 																idTargetTableName);
+		var safeUpdateCondition : String := getSafeCondition(
+															defaultSchemaName,
+															idTargetTableName,
+															owningTableName,
+															idOwningTableName);
 		var updateRows : RDB::ops::ModelOperation := _updateRows(
 															defaultSchemaName,
 															owningTableName,
 															mergedColumnName,
 															targetTableName,
 															mergedColumnName,
-															idEqualityCondition);
+															idEqualityCondition,
+															safeUpdateCondition);
 		addOperation(updateRows, operations);
 		var removeColumn : RDB::ops::ModelOperation := _removeColumn(
 																	defaultSchemaName,
@@ -1509,13 +1515,19 @@ helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targ
 																	idSourceTableName,
 																	targetTableName,
 																	idTargetTableName);
+		var safeUpdateCondition : String := getSafeCondition(
+															defaultSchemaName,
+															idTargetTableName,
+															sourceTableName,
+															idSourceTableName);		
 		var updateRows : RDB::ops::ModelOperation := _updateRows(
 															defaultSchemaName,
 															sourceTableName,
 															mergedColumnName,
 															targetTableName,
 															mergedColumnName,
-															equalWhereCondition);
+															equalWhereCondition,
+															safeUpdateCondition);
 		addOperation(updateRows, operations);
 		var fkName : String := getFkRefencingOppositeName(
 														self.name,
@@ -1616,16 +1628,16 @@ helper AssociationProperty::ormMergeProperty(appStructure : APP::Structure, targ
 	owningClass extends targetClass or vice versa (it's not important information for mapping).
 	Adds operations to parameter collection. Result is returned back in new property.
 **/
-helper ormExportProperty(appStructure : APP::Structure, movedProperty : Property, targetClassName : String, operations : RDB::Operations) : RDB::Operations{
-	if(movedProperty.oclIsTypeOf(PrimitiveProperty))then{
-		var movedPrimProp : PrimitiveProperty := movedProperty.oclAsType(PrimitiveProperty);
-		return movedPrimProp.ormExportProperty(appStructure, targetClassName, operations);
+helper ormExportProperty(appStructure : APP::Structure, exportedProperty : Property, targetClassName : String, operations : RDB::Operations) : RDB::Operations{
+	if(exportedProperty.oclIsTypeOf(PrimitiveProperty))then{
+		var exportedPrimProp : PrimitiveProperty := exportedProperty.oclAsType(PrimitiveProperty);
+		return exportedPrimProp.ormExportProperty(appStructure, targetClassName, operations);
 	}endif;
-	if(movedProperty.oclIsTypeOf(AssociationProperty))then{
-		var movedAssocProp : AssociationProperty := movedProperty.oclAsType(AssociationProperty);
-		return movedAssocProp.ormExportProperty(appStructure, targetClassName, operations);
+	if(exportedProperty.oclIsTypeOf(AssociationProperty))then{
+		var exportedAssocProp : AssociationProperty := exportedProperty.oclAsType(AssociationProperty);
+		return exportedAssocProp.ormExportProperty(appStructure, targetClassName, operations);
 	}endif;
-	log("Unsupported export of property " + movedProperty.repr());
+	log("Unsupported export of property " + exportedProperty.repr());
 	assert(false);
 	return operations;
 }

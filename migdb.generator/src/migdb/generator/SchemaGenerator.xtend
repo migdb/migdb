@@ -24,7 +24,7 @@ class SchemaGenerator extends BaseCodeGenerator {
 	
 	/*****************************************************************
 	 * 							ATRIBUTES    						 *
- 	 *****************************************************************/
+	 *****************************************************************/
  	 
 	private PrintWriter writer //file writer
 	private String filename //output file name
