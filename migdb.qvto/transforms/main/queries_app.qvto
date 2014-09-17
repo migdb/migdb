@@ -302,8 +302,7 @@ query APP::Structure::findClass(className : String) : APP::StandardClass {
 }
 
 query areBoundsValid(lowerBound : Integer, upperBound : Integer) : Boolean {
-	return (lowerBound > -1 and 
-				(upperBound = -1 or (upperBound > 0 and upperBound >= lowerBound)));
+	return (lowerBound = 0 or lowerBound = 1) and (upperBound = 1 or upperBound = -1);
 }
 
 

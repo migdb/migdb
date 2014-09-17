@@ -167,8 +167,14 @@ query APP::ops::AddProperty::isValid(structure : APP::Structure, inout errorLog 
 									errorLog, 
 									operationIndex, 
 									getEvolutionAppTransformationId());
+	//adding prop with LB = 1 results into invalid model if data exists in class/table 
+	var notMandatory : Boolean := checkIsNotPropertyMandatory(
+															self.lowerBound, 
+															errorLog, 
+															operationIndex, 
+															getEvolutionAppTransformationId());
 	return generalClassExists and notIsPropertyInGeneralClassHierarchy and isPropertyTypeValid and 
-			areBoundsValid and formOfName;
+			areBoundsValid and formOfName and notMandatory;
 }
 
 
@@ -1218,6 +1224,19 @@ helper checkBounds(lowerBound : Integer, upperBound : Integer, inout errorLog : 
 		addEvolutionError(errorLog, errorMessage, transformationId, operationIndex);								
 	}endif;	   	
 	return areBoundsValid;	   	
+}
+
+//general checking of LB
+helper checkIsNotPropertyMandatory(lowerBound : Integer, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String){
+	var notMandatory : Boolean := lowerBound = 0;
+	if(not notMandatory)then{
+		var errorMessage : String := "Lower bound of property should not be mandatory";
+		addEvolutionError(
+						errorLog, 
+						errorMessage, 
+						getEvolutionAppTransformationId(),
+						operationIndex);
+	}endif;
 }
 		   	
 helper checkPropertyName(propertyName : String, structure : APP::Structure, inout errorLog : ErrorLog, operationIndex : Integer, transformationId : String) : Boolean{
