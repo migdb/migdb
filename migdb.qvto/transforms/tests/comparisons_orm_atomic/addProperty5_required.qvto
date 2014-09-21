@@ -32,15 +32,6 @@ main() {
 													collectionTableName,
 													"ordering",
 													RDB::PrimitiveType::int);
-	var orderingUXColNames : OrderedSet(String) := OrderedSet{
-														"id_tab", 
-														"pr", 
-														"ordering"};
-	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
-													publicSchemaName,
-													collectionTableName,
-													orderingUXColNames,
-													"ux_col_tab_pr_ord");
 	var uxNames : OrderedSet(String) := OrderedSet{
 											"id_tab", 
 											"pr"};
@@ -50,13 +41,21 @@ main() {
 											uxNames,
 											"ux_tab_pr");																																							
 																						
+	var orderingUXColNames : OrderedSet(String) := OrderedSet{
+														"id_tab", 
+														"ordering"};
+	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
+													publicSchemaName,
+													collectionTableName,
+													orderingUXColNames,
+													"ux_col_tab_pr_ord");
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															addTable, 
 															addCol, 
 															addDataCol,  
 															addFK, 
 															addOrderingCol, 
-															addOrderingUX, 
-															addUX};
+															addUX, 
+															addOrderingUX};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

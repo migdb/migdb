@@ -12,7 +12,12 @@ main() {
 	var targetIdName : String := "id_parent";
 	var oldCollectionTableName : String := "col_child_unique_and_ord";
 	var newCollectionTableName : String := "col_parent_unique_and_ord";
+
 	
+	var removeFK : RDB::ops::ModelOperation := _removeConstraint(
+															publicSchemaName,
+															oldCollectionTableName,
+															"fk_" + oldCollectionTableName);	
 	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldCollectionTableName,
@@ -39,16 +44,21 @@ main() {
 													oldCollectionTableName,
 													uxColumns,
 													"ux_parent_unique_and_ord");
-	var removeFK : RDB::ops::ModelOperation := _removeConstraint(
-															publicSchemaName,
-															oldCollectionTableName,
-															"fk_" + oldCollectionTableName);
+	var deleteWhereCondition : String := "id_child NOT IN (SELECT id_parent FROM public.parent)";
+	var deleteCollectData : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldCollectionTableName,
+																	deleteWhereCondition);
+
 	var addFk : RDB::ops::ModelOperation := _addForeignKey(
 														publicSchemaName,
 														oldCollectionTableName,
 														sourceIdName,
 														"fk_" + newCollectionTableName,
 														"parent");
+														
+														
+														
 	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
 																publicSchemaName,
 																oldCollectionTableName,
@@ -59,11 +69,14 @@ main() {
 															oldCollectionTableName,
 															newCollectionTableName);																												
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															removeFK,
 															removeOrd,
 															addOrd,
 															removeUx,
 															addUx,
-															removeFK,
+															//delete does nothing, can be excluded, but ATM pullUp is implemented 
+															//by same function as pushDown
+															deleteCollectData,
 															addFk,
 															renameColumn,
 															renameTable};

@@ -31,51 +31,35 @@ main() {
 																publicSchemaName,
 																oldFirstAssocTableName,
 																"fk_child_pulled_first_pr_child");
-	var addFirstFkTarget : RDB::ops::ModelOperation := _addForeignKey(
-																publicSchemaName,
-																oldFirstAssocTableName,
-																sourceIdName,
-																"fk_parent_pulled_first_pr_parent",
-																targetTableName);
 	var removeFirstFKType : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldFirstAssocTableName,
 																"fk_child_pulled_first_pr_type");
-	var addFirstFkType : RDB::ops::ModelOperation := _addForeignKey(
-															publicSchemaName,
-															oldFirstAssocTableName,
-															typeIdName,
-															"fk_parent_pulled_first_pr_type",
-															typeTableName);
-	var renameFirstColumn : RDB::ops::ModelOperation := _renameColumn(
-																	publicSchemaName,
-																	oldFirstAssocTableName,
-																	sourceIdName,
-																	targetIdName);
-	var renameFirstAssocTable : RDB::ops::ModelOperation := _renameTable(
-																		publicSchemaName,
-																		oldFirstAssocTableName,
-																		newFirstAssocTableName);
 	var removeSecondFKSource : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldSecondAssocTableName,
 																"fk_child_pulled_second_pr_child");
-	var addSecondFkTarget : RDB::ops::ModelOperation := _addForeignKey(
-															publicSchemaName,
-															oldSecondAssocTableName,
-															sourceIdName,
-															"fk_parent_pulled_second_pr_parent",
-															targetTableName);
 	var removeSecondFKType : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldSecondAssocTableName,
 																"fk_child_pulled_second_pr_type");
+	var deleteWhereConditionSecondAssoc : String := "id_child NOT IN (SELECT id_parent FROM public.parent)";
+	var deleteDataSecondAssoc : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldSecondAssocTableName,
+																	deleteWhereConditionSecondAssoc);
 	var addSecondFkType : RDB::ops::ModelOperation := _addForeignKey(
 															publicSchemaName,
 															oldSecondAssocTableName,
 															typeIdName,
 															"fk_parent_pulled_second_pr_type",
 															typeTableName);
+	var addSecondFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldSecondAssocTableName,
+															sourceIdName,
+															"fk_parent_pulled_second_pr_parent",
+															targetTableName);
 	var renameSecondColumn : RDB::ops::ModelOperation := _renameColumn(
 																	publicSchemaName,
 																	oldSecondAssocTableName,
@@ -85,20 +69,52 @@ main() {
 																		publicSchemaName,
 																		oldSecondAssocTableName,
 																		newSecondAssocTableName);																																																	
+	var deleteWhereFirstAssocCondition : String := deleteWhereConditionSecondAssoc;
+	var deleteDataFirstAssoc : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldFirstAssocTableName,
+																	deleteWhereFirstAssocCondition);
+	var addFirstFkType : RDB::ops::ModelOperation := _addForeignKey(
+															publicSchemaName,
+															oldFirstAssocTableName,
+															typeIdName,
+															"fk_parent_pulled_first_pr_type",
+															typeTableName);
+	var addFirstFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldFirstAssocTableName,
+																sourceIdName,
+																"fk_parent_pulled_first_pr_parent",
+																targetTableName);
+	var renameFirstColumn : RDB::ops::ModelOperation := _renameColumn(
+																	publicSchemaName,
+																	oldFirstAssocTableName,
+																	sourceIdName,
+																	targetIdName);
+	var renameFirstAssocTable : RDB::ops::ModelOperation := _renameTable(
+																		publicSchemaName,
+																		oldFirstAssocTableName,
+																		newFirstAssocTableName);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-															//update first association table
+															//remove FK first association table
 															removeFirstFKSource,
-															addFirstFkTarget,
 															removeFirstFKType,
-															addFirstFkType,
-															renameFirstColumn,
-															renameFirstAssocTable,
-															//update second assocTable
+															//removeFK second assocTable
 															removeSecondFKSource,
-															addSecondFkTarget,
 															removeSecondFKType,
+															//mirrored ops second assoc
+															deleteDataSecondAssoc,
 															addSecondFkType,
+															addSecondFkTarget,
 															renameSecondColumn,
-															renameSecondAssocTable};
+															renameSecondAssocTable,
+															
+															//mirrored ops first assoc
+															deleteDataFirstAssoc,
+															addFirstFkType,
+															addFirstFkTarget,
+															renameFirstColumn,
+															renameFirstAssocTable
+															};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

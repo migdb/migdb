@@ -29,6 +29,15 @@ main() {
 	var newOrdName : String := "ux_" + newAssocTableName + "_ord";
 	var oldUxName : String := "ux_" + sourceTableName + "_" + exportedColumnName;
 	var newUxName : String := "ux_" + targetTableName + "_" + exportedColumnName;
+
+	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+																		publicSchemaName,
+																		oldAssocTableName,
+																		fkSourceName);
+	var removeOldFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssocTableName,
+																	oldFkTypeName);
 	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldAssocTableName,
@@ -41,7 +50,7 @@ main() {
 													oldAssocTableName,
 													uniqueColumns,
 													newUxName);
-var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
+	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldAssocTableName,
 																oldOrdName);
@@ -53,21 +62,19 @@ var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
 													publicSchemaName,
 													oldAssocTableName,
 													orderedColumns,
-													newOrdName);																																																							
-	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
-																		publicSchemaName,
-																		oldAssocTableName,
-																		fkSourceName);
+													newOrdName);
+	//mirrored ops												
+	var deleteWhereCondition : String := "id_parent NOT IN (SELECT id_child FROM public.child)";
+	var deleteNonChildData : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldAssocTableName,
+																	deleteWhereCondition);																																															
 	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
 															publicSchemaName,
 															oldAssocTableName,
 															idSourceName,
 															fkTargetName,
 															targetTableName);
-	var removeOldFkType : RDB::ops::ModelOperation := _removeConstraint(
-																	publicSchemaName,
-																	oldAssocTableName,
-																	oldFkTypeName);
 	var addNewFkType : RDB::ops::ModelOperation := _addForeignKey(
 																publicSchemaName,
 																oldAssocTableName,
@@ -84,14 +91,18 @@ var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
 																oldAssocTableName,
 																newAssocTableName);																													
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//ops
+															removeFkSource,
+															removeOldFkType,
 															removeUx,
 															addUx,
 															removeOrd,
 															addOrd,
-															removeFkSource,
-															addFkTarget,
-															removeOldFkType,
+															deleteNonChildData,
+															
+															//mirrored ops
 															addNewFkType,
+															addFkTarget,
 															renameColumn,
 															renameAssocTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 

@@ -37,15 +37,6 @@ main() {
 													"person_residental_address",
 													"ordering",
 													RDB::PrimitiveType::int);
-	var orderingUXColNames : OrderedSet(String) := OrderedSet{
-														"id_person", 
-														"id_address", 
-														"ordering"};
-	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
-													publicSchemaName,
-													"person_residental_address",
-													orderingUXColNames,
-													"ux_person_residental_address_ord");
 	var uxNames : OrderedSet(String) := OrderedSet{
 											"id_person", 
 											"id_address"};
@@ -54,6 +45,14 @@ main() {
 											"person_residental_address",
 											uxNames,
 											"ux_person_residental_address");																																							
+	var orderingUXColNames : OrderedSet(String) := OrderedSet{
+														"id_person", 
+														"ordering"};
+	var addOrderingUX : RDB::ops::AddUnique := _addUnique(
+													publicSchemaName,
+													"person_residental_address",
+													orderingUXColNames,
+													"ux_person_residental_address_ord");
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															addTable, 
 															addPersonCol,
@@ -61,7 +60,7 @@ main() {
 															addFkPerson,
 															addFkAddress,
 															addOrderingCol,
-															addOrderingUX,
-															addUX};
+															addUX,
+															addOrderingUX};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

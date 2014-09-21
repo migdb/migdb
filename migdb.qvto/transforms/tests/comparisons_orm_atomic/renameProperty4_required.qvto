@@ -57,9 +57,9 @@ main() {
 															removeOrdConst,
 															addOrdConst,
 															removeFkOwner,
-															addFkOwner,
 															removeFkType,
 															addFkType,
+															addFkOwner,
 															renameTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

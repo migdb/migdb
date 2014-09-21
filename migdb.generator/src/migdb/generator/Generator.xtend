@@ -227,7 +227,7 @@ class Generator extends BaseCodeGenerator {
 	def dispatch genOperation(AddTableImpl op) '''
 		CREATE TABLE «op.owningSchemaName».«op.name» ();
 	'''
-	
+
 	/**
 	 * CREATE SCHEMA
 	 * To create a schema, use the CREATE SCHEMA command. Give the schema a name of your choice. For example:

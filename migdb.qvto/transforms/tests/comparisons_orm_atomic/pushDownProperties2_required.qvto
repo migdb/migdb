@@ -16,6 +16,11 @@ main() {
 																publicSchemaName,
 																oldFirstCollectionTableName,
 																"fk_col_parent_pushed_pr");
+	var deleteWhereCondition : String := "id_parent NOT IN (SELECT id_child FROM public.child)";
+	var deleteNonChildColData : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldFirstCollectionTableName,
+																	deleteWhereCondition);
 	var addFKFirstColect : RDB::ops::ModelOperation := _addForeignKey(
 																publicSchemaName,
 																oldFirstCollectionTableName,
@@ -34,6 +39,7 @@ main() {
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															//change first collection
 															removeFkFirstColect,
+															deleteNonChildColData,
 															addFKFirstColect,
 															renameFirstColectPr,
 															renameFirstColectTable};

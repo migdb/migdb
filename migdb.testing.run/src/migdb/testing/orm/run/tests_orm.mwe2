@@ -147,7 +147,7 @@ TestWorkflow{
 		qvtInput = "${IN_APP_OPS}/renameEntityOrm_ops.qvto"
 		qvtComparison = "${COMPARISONS_OPS_DIR}/renameEntity2_required.qvto"
 		qvtComparison = "${EMPTY_ERRORS}"
-		testDescription = "renameEntity_b - collection"
+		testDescription = "renameEntity_b - collection, assoc 1xN"
 	}
 	
 	component = TestComponent{

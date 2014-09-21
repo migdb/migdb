@@ -13,6 +13,10 @@ main() {
 	var sourceIdColumnName : String := "id_parent";
 	var targetIdColumnName : String := "id_child";
 	
+	var removeFkColect : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldCollectionTableName,
+																"fk_col_parent_pushed_pr");
 	var removeOrd : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldCollectionTableName,
@@ -38,10 +42,12 @@ main() {
 													oldCollectionTableName,
 													uxColumnNames,
 													"ux_child_pushed_pr");																																								
-	var removeFkColect : RDB::ops::ModelOperation := _removeConstraint(
-																publicSchemaName,
-																oldCollectionTableName,
-																"fk_col_parent_pushed_pr");
+	
+	var deleteWhereCondition : String := "id_parent NOT IN (SELECT id_child FROM public.child)";
+	var deleteNonParentData : RDB::ops::ModelOperation := _deleteRows(
+																	publicSchemaName,
+																	oldCollectionTableName,
+																	deleteWhereCondition);
 	var addFKColect : RDB::ops::ModelOperation := _addForeignKey(
 																publicSchemaName,
 																oldCollectionTableName,
@@ -58,11 +64,15 @@ main() {
 																	oldCollectionTableName,
 																	"col_child_pushed_pr");
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//normal ops
+															removeFkColect,
 															removeOrd,
 															addOrd,
 															removeUx,
 															addUx,
-															removeFkColect,
+															deleteNonParentData,
+															
+															//mirrored ops
 															addFKColect,
 															renameColectPr,
 															renameColectTable};

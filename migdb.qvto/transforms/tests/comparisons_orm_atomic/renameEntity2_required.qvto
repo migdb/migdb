@@ -21,7 +21,7 @@ main() {
 	var addNewFkCollection : RDB::ops::ModelOperation := _addForeignKey(
 																publicSchemaName,
 																"col_person_hobby",
-																"id_person",
+																newIdName,
 																"fk_col_man_hobby",
 																oldTableName);										
 	var removeAssocFK : RDB::ops::ModelOperation := _removeConstraint(
@@ -47,7 +47,7 @@ main() {
 	var addNewPk : RDB::ops::ModelOperation := _addPrimaryKey(
 															publicSchemaName,
 															oldTableName,
-															newIdName,
+															oldIdName,
 															newPkName);															
 	var renameCollectionRefCol : RDB::ops::ModelOperation := _renameColumn(
 																		publicSchemaName,
@@ -60,13 +60,13 @@ main() {
 															newTableName);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															removeFKCollection,
-															addNewFkCollection,
 															removeAssocFK,
-															addNewAssocFk,
-															renameId,
 															removeOldPk,
-															addNewPk,
 															renameCollectionRefCol,
+															addNewPk,
+															addNewAssocFk,
+															addNewFkCollection,
+															renameId,
 															renameTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }

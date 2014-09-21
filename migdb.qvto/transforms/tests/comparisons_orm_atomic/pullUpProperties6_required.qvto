@@ -15,6 +15,14 @@ main() {
 	var newAssociationTableName : String := "parent_unique_and_ord";
 	
 
+	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_child_unique_and_ord_child");
+	var removeFkType : RDB::ops::ModelOperation := _removeConstraint(
+																	publicSchemaName,
+																	oldAssociationTableName,
+																	"fk_child_unique_and_ord_type");															
 	var removeUx : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																oldAssociationTableName,
@@ -41,26 +49,23 @@ main() {
 													oldAssociationTableName,
 													ordColumns,
 													"ux_parent_unique_and_ord_ord");
-	var removeFkSource : RDB::ops::ModelOperation := _removeConstraint(
+	var deleteWhereCondition : String := "id_child NOT IN (SELECT id_parent FROM public.parent)";
+	var deleteNonChildData : RDB::ops::ModelOperation := _deleteRows(
 																	publicSchemaName,
 																	oldAssociationTableName,
-																	"fk_child_unique_and_ord_child");
-	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
-																publicSchemaName,
-																oldAssociationTableName,
-																sourceIdName,
-																"fk_parent_unique_and_ord_parent",
-																"parent");
-	var removeFkType : RDB::ops::ModelOperation := _removeConstraint(
-																	publicSchemaName,
-																	oldAssociationTableName,
-																	"fk_child_unique_and_ord_type");															
+																	deleteWhereCondition);
 	var addFkType : RDB::ops::ModelOperation := _addForeignKey(
 															publicSchemaName,
 															oldAssociationTableName,
 															typeIdName,
 															"fk_parent_unique_and_ord_type",
 															"type");
+	var addFkTarget : RDB::ops::ModelOperation := _addForeignKey(
+																publicSchemaName,
+																oldAssociationTableName,
+																sourceIdName,
+																"fk_parent_unique_and_ord_parent",
+																"parent");
 	//rename owner column														
 	var renameColumn : RDB::ops::ModelOperation := _renameColumn(
 																publicSchemaName,
@@ -72,14 +77,18 @@ main() {
 															oldAssociationTableName,
 															newAssociationTableName);															 														
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
+															//ops
+															removeFkSource,
+															removeFkType,
 															removeUx,
 															addUx,
 															removeOrd,
 															addOrd,
-															removeFkSource,
-															addFkTarget,
-															removeFkType,
+															deleteNonChildData,
+															
+															//mirrored ops
 															addFkType,
+															addFkTarget,
 															renameColumn,
 															renameTable
 	};

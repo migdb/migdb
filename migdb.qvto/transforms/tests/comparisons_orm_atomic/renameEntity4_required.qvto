@@ -13,11 +13,20 @@ main() {
 	var newPkName : String := getDbPrimaryKeyName(newTableName);
 	var oldIdName : String := "id_" + oldTableName;
 	var newIdName : String := "id_" + newTableName;
-	var removeFKAsTable : RDB::ops::ModelOperation := _removeConstraint(
+	var removeFkParent : RDB::ops::ModelOperation := _removeConstraint(
 																		publicSchemaName,
 																		"teacher",
 																		"par_teacher");
-	var addNewFkAsTable : RDB::ops::ModelOperation := _addForeignKey(
+	var removeOldPk : RDB::ops::ModelOperation := _removeConstraint(
+																publicSchemaName,
+																oldTableName,
+																oldPkName);
+	var addNewPk : RDB::ops::ModelOperation := _addPrimaryKey(
+															publicSchemaName,
+															oldTableName,
+															oldIdName,
+															newPkName);	
+	var addNewFkParent : RDB::ops::ModelOperation := _addForeignKey(
 																publicSchemaName,
 																"teacher",
 																"id_teacher",
@@ -28,25 +37,16 @@ main() {
 																"teacher",
 																"id_teacher",
 																"id_university_teacher");
-	var removeOldPk : RDB::ops::ModelOperation := _removeConstraint(
-																publicSchemaName,
-																oldTableName,
-																oldPkName);
-	var addNewPk : RDB::ops::ModelOperation := _addPrimaryKey(
-															publicSchemaName,
-															oldTableName,
-															newIdName,
-															newPkName);	
 	var renameOwnerTable : RDB::ops::ModelOperation := _renameTable(
 																publicSchemaName,
 																"teacher",
 																"university_teacher");
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
-															removeFKAsTable,
-															addNewFkAsTable,
-															renameIdCol,
+															removeFkParent,
 															removeOldPk,
 															addNewPk,
+															addNewFkParent,
+															renameIdCol,
 															renameOwnerTable};
 	var model : RDB::ModelRoot := _rdbOperations(ops);																												
 }
