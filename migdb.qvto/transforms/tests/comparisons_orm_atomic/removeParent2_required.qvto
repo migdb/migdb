@@ -12,10 +12,10 @@ main() {
 	var idChildTableName : String := "id_tab";
 	var idParentTableName : String := "id_parent";
 	var parencyFkName : String := "par_" + childTableName;
-	var equalityCondition : String := parentTableName + "." + idParentTableName + " = " + 
+	var updateEqualCondition : String := parentTableName + "." + idParentTableName + " = " + 
 											childTableName + "." + idChildTableName;
-	var complementCondition : String := parentTableName + "." + idParentTableName + " NOT in " + 
-											childTableName + "." + idChildTableName; 										
+	var deleteEqualityCondition : String := idParentTableName + " IN (SELECT " + 
+						idChildTableName + " FROM " + publicSchemaName + "." + childTableName + ")";
 	var pkChildName : String := "pk_" + childTableName;
 	var distributedColumnName : String := "age";
 	var distributedColumnType : RDB::PrimitiveType := RDB::PrimitiveType::int;
@@ -30,12 +30,12 @@ main() {
 																distributedColumnName,
 																childTableName,
 																distributedColumnName,
-																equalityCondition);
+																updateEqualCondition);
 	var nillParentRows : RDB::ops::ModelOperation := _nillRows(
 															publicSchemaName,
 															parentTableName,
 															distributedColumnName,
-															complementCondition);
+															deleteEqualityCondition);
 	var removeParencyFk : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
 																childTableName,
@@ -43,7 +43,7 @@ main() {
 	var cleanParentTable : RDB::ops::ModelOperation := _deleteRows(
 																publicSchemaName,
 																parentTableName,
-																equalityCondition);
+																deleteEqualityCondition);
 	var ops : OrderedSet(RDB::ops::ModelOperation):= OrderedSet{
 															addChildColumn,
 															updateChildRows,

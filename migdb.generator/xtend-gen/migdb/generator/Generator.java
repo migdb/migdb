@@ -890,6 +890,8 @@ public class Generator extends BaseCodeGenerator {
       }
     }
     _builder.newLineIfNotEmpty();
+    _builder.append("\t");
+    _builder.append(";");
     return _builder;
   }
   

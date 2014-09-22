@@ -12,8 +12,8 @@ main() {
 	var idChildTableName : String := "id_tab";
 	var idParentTableName : String := "id_parent";
 	var parencyFkName : String := "par_" + childTableName;
-	var equalityCondition : String := parentTableName + "." + idParentTableName + " = " + 
-											childTableName + "." + idChildTableName;
+	var equalityCondition : String := idParentTableName + " IN (SELECT "  + idChildTableName + " FROM "+
+	                               publicSchemaName + "." + childTableName + ")";
 	var pkChildName : String := "pk_" + childTableName;
 	var removeParencyFk : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,

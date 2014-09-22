@@ -27,13 +27,15 @@ main() {
 																parencyFkName,
 																parentTableName);
 	var whereCondition : String := "man.id_man = person.id_person";
+	var safeWhereCondition : String := "id_person IN (SELECT id_man FROM man)";
 	var updateParColumn : RDB::ops::ModelOperation := _updateRows(
 																publicSchemaName,
 																childTableName,
 																mergedColumnName,
 																parentTableName,
 																mergedColumnName,
-																whereCondition);
+																whereCondition,
+																safeWhereCondition);
 	var removeChildColumn : RDB::ops::ModelOperation := _removeColumn(
 																	publicSchemaName,
 																	childTableName,

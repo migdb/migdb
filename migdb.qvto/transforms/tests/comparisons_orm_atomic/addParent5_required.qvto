@@ -42,10 +42,12 @@ main() {
 	//var whereCondition : String := "man.id_man = person.id_person";	
 	var sourceColumnNames : OrderedSet(String) := OrderedSet{
 															idChildTableName,
-															idTypeTableName};
+															idTypeTableName,
+															getDbOrderingColumnName()};
 	var targetColumnNames : OrderedSet(String) := OrderedSet{
 															idParentTableName,
-															idTypeTableName};															
+															idTypeTableName,
+															getDbOrderingColumnName()};															
 	var insertAssocTable : RDB::ops::ModelOperation := _insertRows(
 																publicSchemaName,
 																childAssociationTableName,

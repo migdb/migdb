@@ -34,10 +34,12 @@ main() {
 																parentTableName);
 	var sourceCollectionColumns : OrderedSet(String) := OrderedSet{
 																idChildTableName,
-																mergedColumnName};
+																mergedColumnName,
+																getDbOrderingColumnName()};
 	var targetCollectionColumns : OrderedSet(String) := OrderedSet{
 																idParentTableName,
-																mergedColumnName};
+																mergedColumnName,
+																getDbOrderingColumnName()};
 														
 	var insertCollectionData : RDB::ops::ModelOperation := _insertRows(
 																	publicSchemaName,

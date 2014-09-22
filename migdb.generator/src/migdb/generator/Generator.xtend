@@ -421,7 +421,7 @@ class Generator extends BaseCodeGenerator {
 							(SELECT «op.owningSchemaName».«op.sourceTableName».«op.sourceColumnName» FROM «op.owningSchemaName».«op.sourceTableName» WHERE 
 							     «op.selectionWhereCondition» )
 							     «IF op.safeWhereCondition != null && op.safeWhereCondition != ""» WHERE «op.safeWhereCondition»«ENDIF»
-	''';
+	;''';
 	}
 	
 	/**
