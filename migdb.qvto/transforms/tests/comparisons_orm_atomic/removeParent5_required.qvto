@@ -12,10 +12,7 @@ main() {
 	var idChildTableName : String := "id_tab";
 	var idParentTableName : String := "id_parent";
 	var parencyFkName : String := "par_" + childTableName;
-	var equalityCondition : String := parentTableName + "." + idParentTableName + " = " + 
-											childTableName + "." + idChildTableName;
-	var complementCondition : String := parentTableName + "." + idParentTableName + " NOT in " + 
-											childTableName + "." + idChildTableName; 										
+	var equalityCondition : String := "id_parent IN (SELECT id_tab FROM public.tab)";
 	var pkChildName : String := "pk_" + childTableName;
 	var distributedColumnName : String := "age";
 	var distributedColumnType : RDB::PrimitiveType := RDB::PrimitiveType::int;
@@ -32,13 +29,21 @@ main() {
 	var fkRefTypeName : String := "fk_" + newAssociationTableName + "_" + typeTableName;	
 	var sourceColumnNames : OrderedSet(String) := OrderedSet{
 														idParentTableName,
-														idTypeTableName};
+														idTypeTableName,
+														orderingColumnName};
 	var insertedColumnNames : OrderedSet(String) := OrderedSet{
 														idChildTableName,
-														idTypeTableName};
-	var orderedColunNames : OrderedSet(String) := OrderedSet{
-														idChildTableName,
 														idTypeTableName,
+														orderingColumnName};
+	var uxColumnNames : OrderedSet(String) := OrderedSet{
+														idChildTableName,
+														idTypeTableName
+														//,orderingColumnName
+														};
+	
+	var orderedColumnNames : OrderedSet(String) := OrderedSet{
+														idChildTableName,
+														//idTypeTableName,
 														orderingColumnName};													 													
 	var addAssociationTable : RDB::ops::ModelOperation := _addTable(
 																publicSchemaName,
@@ -75,7 +80,7 @@ main() {
 	var deleteParentData : RDB::ops::ModelOperation := _deleteRows(
 																publicSchemaName,
 																oldAssociationTableName,
-																complementCondition);
+																equalityCondition);
 	var addOrderingColumn : RDB::ops::ModelOperation := _addColumn(
 																publicSchemaName,
 																newAssociationTableName,
@@ -84,12 +89,13 @@ main() {
 	var addOrderingUx : RDB::ops::ModelOperation := _addUnique(
 															publicSchemaName,
 															newAssociationTableName,
-															orderedColunNames,
+															orderedColumnNames,
 															ordUxName);
 	var addUx : RDB::ops::ModelOperation := _addUnique(
 													publicSchemaName,
 													newAssociationTableName,
-													insertedColumnNames,
+													uxColumnNames,
+													//insertedColumnNames,
 													uxName);																												 																														
 	var removeParencyFk : RDB::ops::ModelOperation := _removeConstraint(
 																publicSchemaName,
@@ -104,15 +110,16 @@ main() {
 															addAssociationTable,
 															addIdTargetColumn,
 															addIdTypeColumn,
+															addOrderingColumn,
+															
 															insertDataNewCollection,
 															addFkChild,
 															addFkType,
 															deleteParentData,
-															addOrderingColumn,
-															addOrderingUx,
 															addUx,
 															//standard part	
 															removeParencyFk, 
-															cleanParentTable};
+															cleanParentTable,
+															addOrderingUx};
 	var model : RDB::ModelRoot := _rdbOperations(ops);	 
 }
